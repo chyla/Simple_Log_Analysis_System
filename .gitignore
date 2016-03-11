@@ -1,0 +1,17 @@
+*~
+*.o
+*.in
+config.*
+
+Makefile
+aclocal.m4
+autom4te.cache/
+compile
+configure
+depcomp
+stamp-h1
+install-sh
+missing
+.deps/
+.dirstamp
+
