@@ -81,6 +81,8 @@ AX_BOOST_LOG
 
 AX_BOOST_LOG_SETUP
 
+PKG_CHECK_MODULES([DBUS], dbus-1 >= 1.8.0)
+
 # Checks for header files.
 
 # Checks for typedefs, structures, and compiler characteristics.
