@@ -4,10 +4,10 @@ AM_CPPFLAGS		= $(PTHREAD_CFLAGS) @BOOST_CPPFLAGS@ -DSYSCONFDIR="\"$(sysconfdir)\
 
 AM_LDFLAGS		= @BOOST_LDFLAGS@
 
-bin_PROGRAMS		= agent
-agent_SOURCES		= main.cpp
+bin_PROGRAMS		= server
+server_SOURCES		= main.cpp
 
-agent_LDADD		= @BOOST_PROGRAM_OPTIONS_LIB@ \
+server_LDADD		= @BOOST_PROGRAM_OPTIONS_LIB@ \
 				@BOOST_LOG_LIB@ \
 				@BOOST_LOG_SETUP_LIB@ \
 				@BOOST_REGEX_LIB@ \
