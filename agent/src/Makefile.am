@@ -1,6 +1,6 @@
 AUTOMAKE_OPTIONS	= subdir-objects
 
-AM_CPPFLAGS		= $(PTHREAD_CFLAGS) @BOOST_CPPFLAGS@ -DSYSCONFDIR="\"$(sysconfdir)\"" -DLOGDIR="\"$(localstatedir)/log/\""
+AM_CPPFLAGS		= $(PTHREAD_CFLAGS) @BOOST_CPPFLAGS@ -DSYSCONFDIR="\"$(sysconfdir)\"" -DLOGDIR="\"$(localstatedir)/log/\"" $(DBUS_CFLAGS)
 
 AM_LDFLAGS		= @BOOST_LDFLAGS@
 
@@ -16,5 +16,6 @@ agent_LDADD		= @BOOST_PROGRAM_OPTIONS_LIB@ \
 				@BOOST_SYSTEM_LIB@ \
 				@BOOST_THREAD_LIB@ \
 				@PTHREAD_LIBS@ \
-				@PTHREAD_CFLAGS@
+				@PTHREAD_CFLAGS@ \
+				$(DBUS_LIBS)
 

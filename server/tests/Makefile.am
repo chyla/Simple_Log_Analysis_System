@@ -1,4 +1,4 @@
-AM_CPPFLAGS		= $(PTHREAD_CFLAGS) @BOOST_CPPFLAGS@ -DSYSCONFDIR="\"$(sysconfdir)\"" -DLOGDIR="\"$(localstatedir)/log/\""
+AM_CPPFLAGS		= $(PTHREAD_CFLAGS) @BOOST_CPPFLAGS@ -DSYSCONFDIR="\"$(sysconfdir)\"" -DLOGDIR="\"$(localstatedir)/log/\"" $(DBUS_CFLAGS)
 
 AM_LDFLAGS		= @BOOST_LDFLAGS@
 
@@ -16,7 +16,8 @@ tests_LDADD	= @BOOST_UNIT_TEST_FRAMEWORK_LIB@ \
 			@BOOST_SYSTEM_LIB@ \
 			@BOOST_THREAD_LIB@ \
 			@PTHREAD_LIBS@ \
-			@PTHREAD_CFLAGS@
+			@PTHREAD_CFLAGS@ \
+			$(DBUS_LIBS)
 else
 tests_SOURCES	= main.cpp
 endif
