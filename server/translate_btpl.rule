@@ -1,0 +1,7 @@
+%: %.btpl
+	sed \
+		-e "s~%localstatedir%~@localstatedir@~g" \
+		-e "s~%package%~@PACKAGE@~g" \
+		-e "s~%sysconfdir%~@sysconfdir@~g" \
+		$< > $@
+

@@ -37,6 +37,11 @@ AC_LANG_CPLUSPLUS
 AC_PROG_CXX
 AC_PROG_CC
 
+AC_CHECK_PROG(DBUS_DAEMON_CHECK, dbus-daemon, yes)
+if test "x$DBUS_DAEMON_CHECK" != "xyes" ; then
+    AC_MSG_ERROR([cannot find dbus-daemon])
+fi
+
 # Checks for libraries.
 AX_CXX_COMPILE_STDCXX_11([noext])
 
@@ -89,4 +94,4 @@ PKG_CHECK_MODULES([DBUS], dbus-1 >= 1.8.0)
 
 # Checks for library functions.
 
-AC_OUTPUT(Makefile src/Makefile tests/Makefile)
+AC_OUTPUT(Makefile src/Makefile tests/Makefile configs/Makefile scripts/Makefile)

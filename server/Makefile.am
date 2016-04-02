@@ -1,2 +1,2 @@
 AUTOMAKE_OPTIONS = foreign
-SUBDIRS = src tests
+SUBDIRS = configs scripts src tests

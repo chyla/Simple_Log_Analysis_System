@@ -1,0 +1,7 @@
+# D-Bus configuration
+dbus_address=127.0.0.1
+dbus_port=1032
+dbus_family=ipv4
+
+dbus_pidfile=%localstatedir%/run/%package%/dbus.pid
+

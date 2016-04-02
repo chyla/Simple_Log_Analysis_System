@@ -1,0 +1,34 @@
+#!/bin/sh
+
+config_dir=%sysconfdir%/%package%
+server_config_file=${config_dir}/server.config
+dbus_template_file=${config_dir}/dbus.conf.template
+run_dir=%localstatedir%/run/%package%
+dbus_output_config_file=${run_dir}/dbus.conf
+
+get_variable () {
+	sed -r -n -e "s/$1=(.*)/\1/p" ${server_config_file}
+}
+
+create_config_file_from_template () {
+	dbus_address=`get_variable "dbus_address"`
+	dbus_port=`get_variable "dbus_port"`
+	dbus_family=`get_variable "dbus_family"`
+	dbus_pidfile=`get_variable "dbus_pidfile"`
+
+	mkdir -p ${run_dir}
+
+	sed -r \
+		-e "s~%dbus_address%~${dbus_address}~g" \
+		-e "s~%dbus_port%~${dbus_port}~g" \
+		-e "s~%dbus_family%~${dbus_family}~g" \
+		-e "s~%dbus_pidfile%~${dbus_pidfile}~g" \
+		${dbus_template_file} > ${dbus_output_config_file}
+}
+
+create_config_file_from_template
+
+dbus-daemon --config-file=${dbus_output_config_file}
+
+exit $?
+

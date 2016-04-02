@@ -1,0 +1,24 @@
+<!DOCTYPE busconfig PUBLIC "-//freedesktop//DTD D-Bus Bus Configuration 1.0//EN"
+ "http://www.freedesktop.org/standards/dbus/1.0/busconfig.dtd">
+<busconfig>
+  <type>session</type>
+
+  <keep_umask/>
+
+  <listen>tcp:host=%dbus_address%,port=%dbus_port%,family=%dbus_family%</listen>
+
+  <auth>ANONYMOUS</auth>
+  <allow_anonymous/>
+
+  <fork/>
+
+  <pidfile>%dbus_pidfile%</pidfile>
+
+  <syslog/>
+
+  <policy context="default">
+    <allow send_destination="*" eavesdrop="true"/>
+    <allow eavesdrop="true"/>
+    <allow own="*"/>
+  </policy>
+</busconfig>
