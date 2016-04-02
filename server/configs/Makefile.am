@@ -7,7 +7,7 @@ conf_generated_FILE	= $(conf_in_FILE:%.btpl=%)
 conf_DATA		= $(conf_FILE) $(conf_generated_FILE)
 
 EXTRA_DIST		= $(conf_FILE) $(conf_generated_FILE)
-DISTCLEANFILES		= $(conf_FILE) $(conf_generated_FILE)
+CLEANFILES		= $(conf_generated_FILE)
 
 include $(top_srcdir)/translate_btpl.rule
 

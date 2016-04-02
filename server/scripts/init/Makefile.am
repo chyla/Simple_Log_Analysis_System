@@ -6,7 +6,7 @@ init_generated_FILE	= $(init_in_FILE:%.btpl=%)
 init_SCRIPTS		= $(init_generated_FILE)
 
 EXTRA_DIST		= $(init_generated_FILE)
-DISTCLEANFILES		= $(init_generated_FILE)
+CLEANFILES		= $(init_generated_FILE)
 
 include $(top_srcdir)/translate_btpl.rule
 

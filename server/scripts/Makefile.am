@@ -6,7 +6,7 @@ script_generated_FILE	= $(script_in_FILE:%.btpl=%)
 script_SCRIPTS		= $(script_generated_FILE)
 
 EXTRA_DIST		= $(script_generated_FILE)
-DISTCLEANFILES		= $(script_generated_FILE)
+CLEANFILES		= $(script_generated_FILE)
 
 include $(top_srcdir)/translate_btpl.rule
 
