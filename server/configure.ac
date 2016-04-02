@@ -1,6 +1,6 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
-
+R
 m4_include([m4/ax_cxx_compile_stdcxx_11.m4])
 m4_include([m4/ax_pthread.m4])
 m4_include([m4/ax_boost_base.m4])
@@ -31,15 +31,42 @@ AC_ARG_ENABLE(debug,
 	  CXXFLAGS='-O2'
 	])
 
+AC_ARG_WITH([custom-dbus-binary-path],
+	AC_HELP_STRING([--with-custom-dbus-binary-path=ARG],
+			[Set custom D-Bus daemon binary directory path]),
+	[
+	  if test "x$withval" = "xno"; then
+		CUSTOM_DBUS_BINDIR="no"
+	  elif test "x$withval" = "xyes"; then
+		AC_MSG_ERROR(--with-boost-libdir expected path to binary)
+	  else
+		CUSTOM_DBUS_BINDIR="yes"
+		CUSTOM_DBUS_BINDIR_PATH="$withval"
+		AC_SUBST(CUSTOM_DBUS_BINDIR_PATH, $withval)
+	  fi
+	],
+	[
+	  CUSTOM_DBUS_BINDIR="no"
+          CUSTOM_DBUS_BINDIR_PATH=""
+	]
+)
+
 AC_LANG_CPLUSPLUS
 
 # Checks for programs.
 AC_PROG_CXX
 AC_PROG_CC
 
-AC_CHECK_PROG(DBUS_DAEMON_CHECK, dbus-daemon, yes)
-if test "x$DBUS_DAEMON_CHECK" != "xyes" ; then
-    AC_MSG_ERROR([cannot find dbus-daemon])
+if test "x$CUSTOM_DBUS_BINDIR" = "xno"; then
+	AC_CHECK_PROG(DBUS_DAEMON_CHECK, dbus-daemon, [yes], [no])
+	if test "x$DBUS_DAEMON_CHECK" != "xyes" ; then
+	    AC_MSG_ERROR([cannot find dbus-daemon])
+	fi
+else
+	AC_CHECK_PROG(DBUS_DAEMON_CHECK, dbus-daemon, [yes], [no], [$CUSTOM_DBUS_BINDIR_PATH])
+	if test "x$DBUS_DAEMON_CHECK" != "xyes" ; then
+		AC_MSG_ERROR([cannot find dbus-daemon in custom path])
+	fi
 fi
 
 # Checks for libraries.

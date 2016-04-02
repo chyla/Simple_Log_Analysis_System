@@ -3,5 +3,6 @@
 		-e "s~%localstatedir%~@localstatedir@~g" \
 		-e "s~%package%~@PACKAGE@~g" \
 		-e "s~%sysconfdir%~@sysconfdir@~g" \
+		-e "s~%custom_dbus_bindir_path%~@CUSTOM_DBUS_BINDIR_PATH@~g" \
 		$< > $@
 
