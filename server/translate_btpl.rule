@@ -4,5 +4,7 @@
 		-e "s~%package%~@PACKAGE@~g" \
 		-e "s~%sysconfdir%~@sysconfdir@~g" \
 		-e "s~%custom_dbus_bindir_path%~@CUSTOM_DBUS_BINDIR_PATH@~g" \
+		-e "s~%bindir%~@bindir@~g" \
+		-e "s~%libexecdir%~$(libexecdir)~g" \
 		$< > $@
 

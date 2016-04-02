@@ -1,7 +1,13 @@
+# General configuration (for D-Bus and PAT LMS)
+run_as_user=patlms
+
 # D-Bus configuration
 dbus_address=127.0.0.1
 dbus_port=1032
 dbus_family=ipv4
 
 dbus_pidfile=%localstatedir%/run/%package%/dbus.pid
+
+# PAT LMS specific options
+pidfile=%localstatedir%/run/%package%/patlms.pid
 

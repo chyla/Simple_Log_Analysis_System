@@ -13,3 +13,5 @@ include $(top_srcdir)/translate_btpl.rule
 install-exec-hook:
 	chmod +x run_dbus
 
+SUBDIRS = init
+

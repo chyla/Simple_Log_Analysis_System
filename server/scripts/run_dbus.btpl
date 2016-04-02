@@ -17,6 +17,7 @@ create_config_file_from_template () {
 	dbus_port=`get_variable "dbus_port"`
 	dbus_family=`get_variable "dbus_family"`
 	dbus_pidfile=`get_variable "dbus_pidfile"`
+	run_as_user=`get_variable "run_as_user"`
 
 	mkdir -p ${run_dir}
 
@@ -25,6 +26,7 @@ create_config_file_from_template () {
 		-e "s~%dbus_port%~${dbus_port}~g" \
 		-e "s~%dbus_family%~${dbus_family}~g" \
 		-e "s~%dbus_pidfile%~${dbus_pidfile}~g" \
+		-e "s~%run_as_user%~$(run_as_user)~g" \
 		${dbus_template_file} > ${dbus_output_config_file}
 }
 
