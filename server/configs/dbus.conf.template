@@ -10,6 +10,8 @@
   <auth>ANONYMOUS</auth>
   <allow_anonymous/>
 
+  <user>%run_as_user%</user>
+
   <fork/>
 
   <pidfile>%dbus_pidfile%</pidfile>

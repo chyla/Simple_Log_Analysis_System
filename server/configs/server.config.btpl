@@ -1,5 +1,5 @@
 # General configuration (for D-Bus and PAT LMS)
-run_as_user=patlms
+run_as_user=root
 
 # D-Bus configuration
 dbus_address=127.0.0.1

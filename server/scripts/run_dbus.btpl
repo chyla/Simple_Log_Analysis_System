@@ -26,7 +26,7 @@ create_config_file_from_template () {
 		-e "s~%dbus_port%~${dbus_port}~g" \
 		-e "s~%dbus_family%~${dbus_family}~g" \
 		-e "s~%dbus_pidfile%~${dbus_pidfile}~g" \
-		-e "s~%run_as_user%~$(run_as_user)~g" \
+		-e "s~%run_as_user%~${run_as_user}~g" \
 		${dbus_template_file} > ${dbus_output_config_file}
 }
 
