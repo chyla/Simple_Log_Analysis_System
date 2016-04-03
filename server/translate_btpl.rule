@@ -6,5 +6,11 @@
 		-e "s~%custom_dbus_bindir_path%~@CUSTOM_DBUS_BINDIR_PATH@~g" \
 		-e "s~%bindir%~@bindir@~g" \
 		-e "s~%libexecdir%~$(libexecdir)~g" \
+		-e "s~%apprundir%~$(apprundir)~g" \
+		-e "s~%appconfdir%~$(appconfdir)~g" \
+		-e "s~%appconffile%~$(appconffile)~g" \
+		-e "s~%dbusconffile%~$(dbusconffile)~g" \
+		-e "s~%dbusconftemplatefile%~$(dbusconftemplatefile)~g" \
+		-e "s~%appscriptdir%~${appscriptdir}~g" \
 		$< > $@
 

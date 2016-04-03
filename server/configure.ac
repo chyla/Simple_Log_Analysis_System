@@ -121,5 +121,13 @@ PKG_CHECK_MODULES([DBUS], dbus-1 >= 1.8.0)
 
 # Checks for library functions.
 
+# Variables
+AC_SUBST(apprundir, "${localstatedir}/run/${PACKAGE}/")
+AC_SUBST(appscriptdir, "${libexecdir}/${PACKAGE}/")
+AC_SUBST(appconfdir, "${sysconfdir}/${PACKAGE}/")
+AC_SUBST(appconffile, "${appconfdir}/server.config")
+AC_SUBST(dbusconffile, "${appconfdir}/dbus.config")
+AC_SUBST(dbusconftemplatefile, "${appconfdir}/dbus.config.template")
+
 AC_OUTPUT(Makefile src/Makefile tests/Makefile configs/Makefile scripts/Makefile scripts/init/Makefile)
 

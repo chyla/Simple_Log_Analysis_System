@@ -16,7 +16,7 @@ DAEMON="%bindir%/server"
 NAME=patlms
 SNAME=patlms
 DESC="PAT LMS service"
-PIDFILE="%localstatedir%/run/%package%/patlms.pid"
+PIDFILE="%apprundir%/patlms.pid"
 
 . /lib/lsb/init-functions
 

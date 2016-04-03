@@ -2,11 +2,9 @@
 
 export PATH="%custom_dbus_bindir_path%:$PATH"
 
-config_dir=%sysconfdir%/%package%
-server_config_file=${config_dir}/server.config
-dbus_template_file=${config_dir}/dbus.conf.template
-run_dir=%localstatedir%/run/%package%
-dbus_output_config_file=${run_dir}/dbus.conf
+server_config_file="%appconffile%"
+dbus_template_file="%dbusconftemplatefile%"
+dbus_output_config_file="%apprundir%/dbus.conf"
 
 get_variable () {
 	sed -r -n -e "s/$1=(.*)/\1/p" ${server_config_file}

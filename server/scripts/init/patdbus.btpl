@@ -12,11 +12,11 @@
 # Based on skeleton by Miquel van Smoorenburg and Ian Murdock
 
 PATH=/sbin:/bin:/usr/sbin:/usr/bin
-DAEMON="%libexecdir%/%package%/run_dbus"
+DAEMON="%appscriptdir%/run_dbus"
 NAME=patlms
 SNAME=patlms
 DESC="PAT LMS D-Bus service"
-PIDFILE="%localstatedir%/run/%package%/dbus.pid"
+PIDFILE="%apprundir%/dbus.pid"
 
 . /lib/lsb/init-functions
 
