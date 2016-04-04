@@ -14,7 +14,7 @@
 
   <fork/>
 
-  <pidfile>%dbus_pidfile%</pidfile>
+  <pidfile>%apprundir%/dbus.pid</pidfile>
 
   <syslog/>
 
