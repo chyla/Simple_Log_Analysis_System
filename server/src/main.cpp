@@ -4,6 +4,8 @@
 #include <boost/log/utility/setup/file.hpp>
 #include <boost/log/trivial.hpp>
 
+#include "program_options/parser.h"
+
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
@@ -29,6 +31,11 @@ main(int argc, char *argv[])
 #ifdef HAVE_CONFIG_H
     BOOST_LOG_TRIVIAL(info) << "Version: " << VERSION;
 #endif
+
+    program_options::Parser p;
+    p.SetCommandLineOptions(argc, argv);
+    p.SetConfigFilePath(SYSCONFFILE);
+    program_options::Options options = p.Parse();
   } catch (std::exception &ex) {
     std::cerr << ex.what() << '\n';
     BOOST_LOG_TRIVIAL(fatal) << ex.what();
