@@ -50,7 +50,7 @@ main(int argc, char *argv[])
 				    options.GetDbusFamily());
     dbus::Bus bus(dbus_options);
     bus.Connect();
-    bus.RequestConnectionName("org.chyla.patlms.server");
+    bus.RequestConnectionName("org.chyla.patlms.agent");
     
   } catch (std::exception &ex) {
     std::cerr << ex.what() << '\n';
