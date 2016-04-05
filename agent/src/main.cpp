@@ -9,6 +9,8 @@
 
 #include "program_options/parser.h"
 
+#include "dbus/bus.h"
+
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
@@ -43,6 +45,12 @@ main(int argc, char *argv[])
     p.SetConfigFilePath(SYSCONFFILE);
     program_options::Options options = p.Parse();
 
+    dbus::Bus::Options dbus_options(options.GetDbusAddress(),
+				    options.GetDbusPort(),
+				    options.GetDbusFamily());
+    dbus::Bus bus(dbus_options);
+    bus.Connect();
+    bus.RequestConnectionName("org.chyla.patlms.server");
     
   } catch (std::exception &ex) {
     std::cerr << ex.what() << '\n';
