@@ -15,7 +15,9 @@ m4_include([m4/ax_boost_log.m4])
 m4_include([m4/ax_boost_log_setup.m4])
 
 AC_PREREQ([2.69])
-AC_INIT(PATLMS, master, adam@chyla.org)
+AC_INIT(PATLMS,
+	m4_esyscmd_s(git describe --dirty --always --tags),
+	adam@chyla.org)
 AM_INIT_AUTOMAKE
 AC_CONFIG_HEADERS([config.h])
 
