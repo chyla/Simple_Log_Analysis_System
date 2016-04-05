@@ -91,4 +91,10 @@ PKG_CHECK_MODULES([DBUS], dbus-1 >= 1.8.0)
 
 # Checks for library functions.
 
+# Variables
+AC_SUBST(apprundir, "${localstatedir}/run/${PACKAGE}/")
+AC_SUBST(appscriptdir, "${libexecdir}/${PACKAGE}/")
+AC_SUBST(appconfdir, "${sysconfdir}/${PACKAGE}/")
+AC_SUBST(appconffile, "${appconfdir}/agent.config")
+
 AC_OUTPUT(Makefile src/Makefile tests/Makefile)
