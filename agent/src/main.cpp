@@ -7,6 +7,8 @@
 #include <boost/log/support/date_time.hpp>
 #include <boost/log/utility/setup/common_attributes.hpp>
 
+#include "program_options/parser.h"
+
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
@@ -35,6 +37,11 @@ main(int argc, char *argv[])
 #ifdef HAVE_CONFIG_H
     BOOST_LOG_TRIVIAL(info) << "Version: " << VERSION;
 #endif
+
+    program_options::Parser p;
+    p.SetCommandLineOptions(argc, argv);
+    p.SetConfigFilePath(SYSCONFFILE);
+    program_options::Options options = p.Parse();
 
     
   } catch (std::exception &ex) {

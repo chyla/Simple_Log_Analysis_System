@@ -1,11 +1,13 @@
 AUTOMAKE_OPTIONS	= subdir-objects
 
-AM_CPPFLAGS		= $(PTHREAD_CFLAGS) @BOOST_CPPFLAGS@ -DSYSCONFDIR="\"$(sysconfdir)\"" -DLOGDIR="\"$(localstatedir)/log/\"" $(DBUS_CFLAGS)
+AM_CPPFLAGS		= $(PTHREAD_CFLAGS) @BOOST_CPPFLAGS@ -DSYSCONFFILE="\"$(appconffile)\"" -DLOGDIR="\"$(localstatedir)/log/\"" $(DBUS_CFLAGS)
 
 AM_LDFLAGS		= @BOOST_LDFLAGS@
 
 bin_PROGRAMS		= agent
-agent_SOURCES		= main.cpp
+agent_SOURCES		= main.cpp \
+				program_options/options.cpp \
+				program_options/parser.cpp
 
 agent_LDADD		= @BOOST_PROGRAM_OPTIONS_LIB@ \
 				@BOOST_LOG_LIB@ \
