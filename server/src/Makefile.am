@@ -7,7 +7,11 @@ AM_LDFLAGS		= @BOOST_LDFLAGS@
 bin_PROGRAMS		= server
 server_SOURCES		= main.cpp \
 				program_options/options.cpp \
-				program_options/parser.cpp
+				program_options/parser.cpp \
+				dbus/bus.cpp \
+				dbus/dbus_error_guard.cpp \
+				dbus/object.cpp \
+				objects/bash.cpp
 
 server_LDADD		= @BOOST_PROGRAM_OPTIONS_LIB@ \
 				@BOOST_LOG_LIB@ \
