@@ -36,7 +36,7 @@ main(int argc, char *argv[])
 			   ),
       keywords::auto_flush = true
     );
-    BOOST_LOG_TRIVIAL(info) << "Server - HelloWorld";
+    BOOST_LOG_TRIVIAL(info) << "Server";
 #ifdef HAVE_CONFIG_H
     BOOST_LOG_TRIVIAL(info) << "Version: " << VERSION;
 #endif
