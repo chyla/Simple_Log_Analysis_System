@@ -4,7 +4,8 @@ namespace program_options
 {
 
 Options::Options()
-  : run_as_user_("root"),
+  : agent_name_("agent"),
+    run_as_user_("root"),
     pidfile_path_("/var/run/patlms/agent.pid"),
     dbus_address_("127.0.0.2"),
     dbus_port_(1032),
@@ -12,7 +13,12 @@ Options::Options()
     show_help_message_(false)
 {
 }
-  
+
+const std::string& Options::GetAgentName() const
+{
+  return agent_name_;
+}
+
 const std::string& Options::GetRunAsUser() const
 {
   return run_as_user_;
@@ -36,6 +42,11 @@ const unsigned& Options::GetDbusPort() const
 const std::string& Options::GetDbusFamily() const
 {
   return dbus_family_;
+}
+
+void Options::SetAgentName(const std::string &agent_name)
+{
+  agent_name_ = agent_name;
 }
 
 void Options::SetRunAsUser(const std::string &username)

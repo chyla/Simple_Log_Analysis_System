@@ -12,6 +12,7 @@ class Options
  public:
   Options();
 
+  const std::string& GetAgentName() const;
   const std::string& GetRunAsUser() const;
   const std::string& GetPidfilePath() const;
 
@@ -21,6 +22,7 @@ class Options
 
   const bool GetShowHelpMessage() const;
 
+  void SetAgentName(const std::string &agent_name);
   void SetRunAsUser(const std::string &username);
   void SetPidfilePath(const std::string &path);
 
@@ -31,6 +33,7 @@ class Options
   void SetShowHelpMessage(bool show);
   
  private:
+  std::string agent_name_;
   std::string run_as_user_;
   std::string pidfile_path_;
 

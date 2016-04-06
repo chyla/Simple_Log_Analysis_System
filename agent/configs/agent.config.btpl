@@ -1,4 +1,5 @@
 # General configuration
+agent_name=example_agent_name
 run_as_user=root
 
 # D-Bus configuration

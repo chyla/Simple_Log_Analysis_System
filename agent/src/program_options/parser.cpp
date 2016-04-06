@@ -15,6 +15,7 @@ Parser::Parser()
     help_options_("Help options")
 {
   general_options_.add_options()
+    ("agent_name", value<string>(), "agent name")
     ("run_as_user", value<string>(), "run as user")
     ("dbus_address", value<string>(), "D-Bus bus address")
     ("dbus_port", value<unsigned>(), "D-Bus bus port")
@@ -69,6 +70,9 @@ Options Parser::Parse()
 
   Options options;
   options.SetShowHelpMessage(variables.count("help"));
+
+  if (variables.count("agent_name"))
+    options.SetAgentName(variables["agent_name"].as<string>());
 
   if (variables.count("run_as_user"))
     options.SetRunAsUser(variables["run_as_user"].as<string>());

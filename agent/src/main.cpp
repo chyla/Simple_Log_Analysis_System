@@ -10,6 +10,7 @@
 #include "program_options/parser.h"
 
 #include "dbus/bus.h"
+#include "objects/bash_proxy.h"
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -50,8 +51,8 @@ main(int argc, char *argv[])
 				    options.GetDbusFamily());
     dbus::Bus bus(dbus_options);
     bus.Connect();
-    bus.RequestConnectionName("org.chyla.patlms.agent");
-    
+    bus.RequestConnectionName("org.chyla.patlms." + options.GetAgentName());
+
   } catch (std::exception &ex) {
     std::cerr << ex.what() << '\n';
     BOOST_LOG_TRIVIAL(fatal) << ex.what();
