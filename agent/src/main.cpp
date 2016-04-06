@@ -11,6 +11,7 @@
 
 #include "dbus/bus.h"
 #include "objects/bash_proxy.h"
+#include "bash/receive_messages.h"
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -52,6 +53,9 @@ main(int argc, char *argv[])
     dbus::Bus bus(dbus_options);
     bus.Connect();
     bus.RequestConnectionName("org.chyla.patlms." + options.GetAgentName());
+
+    objects::BashProxy bp(bus);
+    bash::receive_messages(&bp);
 
   } catch (std::exception &ex) {
     std::cerr << ex.what() << '\n';

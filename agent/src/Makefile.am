@@ -12,7 +12,8 @@ agent_SOURCES		= main.cpp \
 				dbus/dbus_error_guard.cpp \
 				dbus/object.cpp \
 				dbus/proxy_object.cpp \
-				objects/bash_proxy.cpp
+				objects/bash_proxy.cpp \
+				bash/receive_messages.cpp
 
 agent_LDADD		= @BOOST_PROGRAM_OPTIONS_LIB@ \
 				@BOOST_LOG_LIB@ \

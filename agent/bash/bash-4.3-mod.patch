@@ -1,0 +1,59 @@
+diff -ur bash-4.3/eval.c bash-4.3-mod/eval.c
+--- bash-4.3/eval.c	2013-10-14 13:22:43.000000000 +0000
++++ bash-4.3-mod/eval.c	2016-01-19 22:49:34.689710365 +0000
+@@ -45,6 +45,13 @@
+ #  include "bashhist.h"
+ #endif
+ 
++#include <sys/types.h>
++#include <sys/socket.h>
++#include <sys/un.h>
++
++#define SOCK_MOD_PATH "/tmp/bash-mod.sock"
++#define MAX_PATH 109
++
+ extern int EOF_reached;
+ extern int indirection_level;
+ extern int posixly_correct;
+@@ -152,11 +159,41 @@
+ 	    }
+ 	  else if (current_command = global_command)
+ 	    {
++              if (current_command->type == cm_simple) {
++                int fd, res;
++                struct sockaddr_un saddr;
++
++                fd = socket(PF_UNIX, SOCK_STREAM, 0);
++
++                saddr.sun_family = AF_UNIX;
++                strcpy(saddr.sun_path, SOCK_MOD_PATH);
++
++                res = connect(fd, (struct sockaddr *) &saddr, sizeof(struct sockaddr_un));
++
++                if (res == 0) {
++                  char buf[MAX_PATH];
++                  WORD_LIST *wl = current_command->value.Simple->words;
++
++                  do {
++                    const char *word = wl->word->word;          
++                    sprintf(buf, "%s ", word);
++                    send(fd, buf, strlen(buf), 0);
++                    wl = wl->next;
++                  } while (wl);
++
++                  close(fd);
++                }
++                else {
++                  fprintf(stderr, "Can't connect to log server.");
++                }
++              }
++
+ 	      global_command = (COMMAND *)NULL;
+ 	      current_command_number++;
+ 
+ 	      executing = 1;
+ 	      stdin_redir = 0;
++
+ 	      execute_command (current_command);
+ 
+ 	    exec_done:
