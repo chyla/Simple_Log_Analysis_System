@@ -159,6 +159,30 @@ void Bus::Loop()
     ;
 }
 
+bool Bus::SendMessage(DBusMessage *message, DBusPendingCall **reply_handle)
+{
+  BOOST_LOG_TRIVIAL(debug) << "dbus::Bus::SendMessage: Function call";
+
+  bool ret = dbus_connection_send_with_reply(connection_, message, reply_handle, -1);
+
+  if (!ret)
+  {
+    BOOST_LOG_TRIVIAL(error) << "dbus::Bus::SendMessage: Failed to send message: out of memory";
+    return false;
+  }
+
+  if (*reply_handle == nullptr)
+  {
+    BOOST_LOG_TRIVIAL(error) << "dbus::Bus::SendMessage: reply_handle is null";
+    return false;
+  }
+
+  BOOST_LOG_TRIVIAL(error) << "dbus::Bus::SendMessage: flush connection";
+  dbus_connection_flush(connection_);
+  
+  return true;
+}
+
 DBusHandlerResult Bus::StaticMessageHandler(DBusConnection *connection, DBusMessage *message, void *user_data)
 {
   BOOST_LOG_TRIVIAL(debug) << "dbus::Bus::StaticMessageHandler: Function call";

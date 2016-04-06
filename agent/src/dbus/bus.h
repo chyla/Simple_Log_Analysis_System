@@ -42,6 +42,8 @@ class Bus
 
   void Loop();
 
+  bool SendMessage(DBusMessage *message, DBusPendingCall **reply_handle);
+
  private:
   const Options options_;
   DBusConnection *connection_;
