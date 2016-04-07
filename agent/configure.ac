@@ -29,8 +29,8 @@ AC_ARG_ENABLE(debug,
 	  AC_DEFINE([HAVE_ENABLE_DEBUG], , [define if debug mode is enabled])
 	],
 	[
-	  CFLAGS='-O2'
-	  CXXFLAGS='-O2'
+	  CFLAGS="$CFLAGS -O2"
+	  CXXFLAGS="$CXXFLAGS -O2"
 	])
 
 AC_LANG_CPLUSPLUS
