@@ -74,7 +74,13 @@ fi
 # Checks for libraries.
 AX_CXX_COMPILE_STDCXX_11([noext])
 
-AX_PTHREAD([], [AC_MSG_ERROR([cannot find pthread library])])
+AX_PTHREAD([
+            LIBS="$LIBS $PTHREAD_LIBS"
+            CFLAGS="$CFLAGS $PTHREAD_CFLAGS"
+            CXXFLAGS="$CXXFLAGS $PTHREAD_CFLAGS"
+           ],
+           [AC_MSG_ERROR([cannot find pthread library])]
+          )
 
 AX_BOOST_BASE([1.55], [], [AC_MSG_ERROR([cannot find Boost libraries])])
 
