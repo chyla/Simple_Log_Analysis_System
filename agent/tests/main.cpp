@@ -5,16 +5,19 @@
 
 #include "../config.h"
 
-#ifdef HAVE_BOOST_UNIT_TEST_FRAMEWORK
+#if defined(HAVE_GTEST) && defined(HAVE_GMOCK)
 
-#define BOOST_TEST_DYN_LINK
-#define BOOST_TEST_MAIN
+#include <gtest/gtest.h>
 
-#include <boost/test/unit_test.hpp>
+int main(int argc, char **argv) {
+    testing::InitGoogleTest(&argc, argv);
+
+    return RUN_ALL_TESTS();
+}
 
 #else
 
-#error Cannot make tests. Boost Unit Test Framework not found.
+#error Cannot make tests. Google Test or Google Mock library not found.
 
 #endif // HAVE_BOOST_UNIT_TEST_FRAMEWORK
 

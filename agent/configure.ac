@@ -5,7 +5,6 @@ m4_include([m4/ax_cxx_compile_stdcxx_11.m4])
 m4_include([m4/ax_pthread.m4])
 m4_include([m4/ax_boost_base.m4])
 m4_include([m4/ax_boost_program_options.m4])
-m4_include([m4/ax_boost_unit_test_framework.m4])
 m4_include([m4/ax_boost_thread.m4])
 m4_include([m4/ax_boost_filesystem.m4])
 m4_include([m4/ax_boost_system.m4])
@@ -50,15 +49,62 @@ AX_PTHREAD([
            [AC_MSG_ERROR([cannot find pthread library])]
           )
 
+AC_MSG_CHECKING([Checking for Google Test])
+save_LIBS=$LIBS
+GTEST_LIBS="-lgtest"
+LIBS="$LIBS $GTEST_LIBS"
+AC_LINK_IFELSE([AC_LANG_SOURCE([
+                    #include <gtest/gtest.h>
+                    int main(int argc, char **argv) {
+                        testing::InitGoogleTest(&argc, argv);
+                        return 0;
+                    }
+                ])
+               ],
+               [AC_DEFINE([HAVE_GTEST], , [define if the Google Test library is available])
+                AC_SUBST(GTEST_LIBS)
+                AM_CONDITIONAL([HAVE_GTEST], [true])
+                AC_MSG_RESULT(yes)
+               ],
+               [
+                AM_CONDITIONAL([HAVE_GTEST], [false])
+                AC_MSG_RESULT(no)
+               ]
+              )
+LIBS=$save_LIBS
+
+AC_MSG_CHECKING([Checking for Google Mock])
+save_LIBS=$LIBS
+GMOCK_LIBS="-lgmock -lgtest"
+LIBS="$LIBS $GMOCK_LIBS"
+AC_LINK_IFELSE([AC_LANG_SOURCE([
+                    #include <gmock/gmock.h>
+                    int main(int argc, char **argv) {
+                        testing::InitGoogleMock(&argc, argv);
+                        return 0;
+                    }
+                ])
+               ],
+               [AC_DEFINE([HAVE_GMOCK], , [define if the Google Mock library is available])
+                AC_SUBST(GMOCK_LIBS)
+                AM_CONDITIONAL([HAVE_GMOCK], [true])
+                AC_MSG_RESULT(yes)
+               ],
+               [
+                AM_CONDITIONAL([HAVE_GMOCK], [false])
+                AC_MSG_RESULT(no)
+               ]
+              )
+LIBS=$save_LIBS
+
+AM_CONDITIONAL([CAN_RUN_TESTS], [test @HAVE_GMOCK@ -a @HAVE_GTEST@])
+
 AX_BOOST_BASE([1.55], [], [AC_MSG_ERROR([cannot find Boost libraries])])
 
 AX_BOOST_PROGRAM_OPTIONS
 if test "x$ax_cv_boost_program_options" != "xyes"; then
     AC_MSG_ERROR([cannot find the Boost Program Options library])
 fi
-
-AX_BOOST_UNIT_TEST_FRAMEWORK
-AM_CONDITIONAL(HAVE_BOOST_UNIT_TEST_FRAMEWORK, [test "x$ax_cv_boost_unit_test_framework" = "xyes"]) 
 
 AX_BOOST_THREAD
 if test "x$ax_cv_boost_thread" != "xyes"; then
