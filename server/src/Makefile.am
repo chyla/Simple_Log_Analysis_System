@@ -1,6 +1,6 @@
 AUTOMAKE_OPTIONS	= subdir-objects
 
-AM_CPPFLAGS		= $(PTHREAD_CFLAGS) @BOOST_CPPFLAGS@ -DSYSCONFFILE="\"$(appconffile)\"" -DLOGDIR="\"$(localstatedir)/log/\"" $(DBUS_CFLAGS)
+AM_CPPFLAGS		= $(PTHREAD_CFLAGS) @BOOST_CPPFLAGS@ -DSYSCONFFILE="\"$(appconffile)\"" -DLOGDIR="\"$(localstatedir)/log/\"" $(DBUS_CFLAGS) $(SQLite3_CFLAGS)
 
 AM_LDFLAGS		= @BOOST_LDFLAGS@ 
 
@@ -23,5 +23,6 @@ server_LDADD		= @BOOST_PROGRAM_OPTIONS_LIB@ \
 				@BOOST_THREAD_LIB@ \
 				@PTHREAD_LIBS@ \
 				@PTHREAD_CFLAGS@ \
-				$(DBUS_LIBS)
+				$(DBUS_LIBS) \
+				$(SQLite3_LIBS)
 

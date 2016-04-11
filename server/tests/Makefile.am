@@ -1,4 +1,4 @@
-AM_CPPFLAGS		= $(PTHREAD_CFLAGS) @BOOST_CPPFLAGS@ -DSYSCONFDIR="\"$(sysconfdir)\"" -DLOGDIR="\"$(localstatedir)/log/\"" $(DBUS_CFLAGS)
+AM_CPPFLAGS		= $(PTHREAD_CFLAGS) @BOOST_CPPFLAGS@ -DSYSCONFDIR="\"$(sysconfdir)\"" -DLOGDIR="\"$(localstatedir)/log/\"" $(DBUS_CFLAGS) $(SQLite3_CFLAGS)
 
 AM_LDFLAGS		= @BOOST_LDFLAGS@
 
@@ -18,7 +18,8 @@ tests_LDADD	= @GTEST_LIBS@ \
 			@BOOST_THREAD_LIB@ \
 			@PTHREAD_LIBS@ \
 			@PTHREAD_CFLAGS@ \
-			$(DBUS_LIBS)
+			$(DBUS_LIBS) \
+			$(SQLite3_LIBS)
 else
 tests_SOURCES	= main.cpp
 endif

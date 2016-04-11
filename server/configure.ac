@@ -169,6 +169,8 @@ AX_BOOST_LOG_SETUP
 
 PKG_CHECK_MODULES([DBUS], dbus-1 >= 1.8.0)
 
+PKG_CHECK_MODULES([SQLite3], sqlite3 >= 3.8.7.1)
+
 # Checks for header files.
 
 # Checks for typedefs, structures, and compiler characteristics.
