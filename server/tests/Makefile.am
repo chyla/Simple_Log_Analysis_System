@@ -1,3 +1,5 @@
+AUTOMAKE_OPTIONS	= subdir-objects
+
 AM_CPPFLAGS		= $(PTHREAD_CFLAGS) @BOOST_CPPFLAGS@ -DSYSCONFDIR="\"$(sysconfdir)\"" -DLOGDIR="\"$(localstatedir)/log/\"" $(DBUS_CFLAGS) $(SQLite3_CFLAGS)
 
 AM_LDFLAGS		= @BOOST_LDFLAGS@
