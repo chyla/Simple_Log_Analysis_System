@@ -23,8 +23,8 @@ AC_CONFIG_HEADERS([config.h])
 AC_ARG_ENABLE(debug,
 	[AS_HELP_STRING([--enable-debug], [Enable debug mode])],
 	[
-	  CFLAGS='-O0 -g -Wall'
-	  CXXFLAGS='-O0 -g -Wall'
+	  CFLAGS='-O0 -g -Wall -pedantic'
+	  CXXFLAGS='-O0 -g -Wall -pedantic'
 	  AC_DEFINE([HAVE_ENABLE_DEBUG], , [define if debug mode is enabled])
 	],
 	[
