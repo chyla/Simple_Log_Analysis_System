@@ -6,7 +6,9 @@ AM_LDFLAGS		= @BOOST_LDFLAGS@
 
 check_PROGRAMS	= tests
 if CAN_RUN_TESTS
-tests_SOURCES	= main.cpp
+tests_SOURCES	= main.cpp \
+		    database/database.cpp \
+		    ../src/database/database.cpp
 
 tests_LDADD	= @GTEST_LIBS@ \
 			@GMOCK_LIBS@ \

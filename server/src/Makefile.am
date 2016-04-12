@@ -2,10 +2,12 @@ AUTOMAKE_OPTIONS	= subdir-objects
 
 AM_CPPFLAGS		= $(PTHREAD_CFLAGS) @BOOST_CPPFLAGS@ -DSYSCONFFILE="\"$(appconffile)\"" -DLOGDIR="\"$(localstatedir)/log/\"" $(DBUS_CFLAGS) $(SQLite3_CFLAGS)
 
-AM_LDFLAGS		= @BOOST_LDFLAGS@ 
+AM_LDFLAGS		= @BOOST_LDFLAGS@
 
 bin_PROGRAMS		= server
 server_SOURCES		= main.cpp \
+				database/database.cpp \
+				database/sqlite.cpp \
 				program_options/options.cpp \
 				program_options/parser.cpp \
 				dbus/bus.cpp \
