@@ -7,12 +7,15 @@
 
 #if defined(HAVE_GTEST) && defined(HAVE_GMOCK)
 
+#include <boost/log/common.hpp>
 #include <gtest/gtest.h>
 
 int main(int argc, char **argv) {
-    testing::InitGoogleTest(&argc, argv);
+  boost::log::core::get()->set_logging_enabled(false);
 
-    return RUN_ALL_TESTS();
+  testing::InitGoogleTest(&argc, argv);
+
+  return RUN_ALL_TESTS();
 }
 
 #else
