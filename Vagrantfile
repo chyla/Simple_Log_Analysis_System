@@ -23,8 +23,8 @@ Vagrant.configure(2) do |config|
      sudo apt-get update
      sudo apt-get upgrade -y
      sudo apt-get install -y git vim
-     sudo apt-get install -y cmake autoconf automake gcc g++ colorgcc 
-     sudo apt-get install -y libboost-all-dev libdbus-1-dev
+     sudo apt-get install -y cmake autoconf automake gcc g++ colorgcc sqlite3
+     sudo apt-get install -y libboost-all-dev libdbus-1-dev libsqlite3-dev
 
      sudo bash /vagrant/vagrant_scripts/install_gtest_gmock.sh
    SHELL
