@@ -22,13 +22,13 @@ class Bus
 	    const std::string &family);
 
     const std::string GetAddress() const;
-    
+
   private:
     const std::string address_;
     const int port_;
     const std::string family_;
   };
-  
+
   explicit Bus(const Options &options);
 
   bool Connect();

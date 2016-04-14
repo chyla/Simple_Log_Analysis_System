@@ -1,7 +1,7 @@
 #ifndef PATLMS_OBJECTS_BASH_H
 #define PATLMS_OBJECTS_BASH_H
 
-#include "dbus/object.h"
+#include <patlms/dbus/object.h>
 
 
 namespace objects

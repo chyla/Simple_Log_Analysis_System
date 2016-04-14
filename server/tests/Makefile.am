@@ -23,7 +23,8 @@ tests_LDADD	= @GTEST_LIBS@ \
 			@PTHREAD_LIBS@ \
 			@PTHREAD_CFLAGS@ \
 			$(DBUS_LIBS) \
-			$(SQLite3_LIBS)
+			$(SQLite3_LIBS) \
+			@LIBPATLMS_LIBS@
 else
 tests_SOURCES	= main.cpp
 endif

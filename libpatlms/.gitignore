@@ -1,0 +1,6 @@
+src/server
+tests/tests
+
+libtool
+ltmain.sh
+

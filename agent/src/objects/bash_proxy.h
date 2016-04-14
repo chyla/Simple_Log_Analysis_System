@@ -3,7 +3,7 @@
 
 #include <string>
 
-#include "dbus/proxy_object.h"
+#include <patlms/dbus/proxy_object.h>
 
 
 namespace objects

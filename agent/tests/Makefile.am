@@ -20,7 +20,8 @@ tests_LDADD	= @GTEST_LIBS@ \
 			@BOOST_THREAD_LIB@ \
 			@PTHREAD_LIBS@ \
 			@PTHREAD_CFLAGS@ \
-			$(DBUS_LIBS)
+			$(DBUS_LIBS) \
+			@LIBPATLMS_LIBS@
 else
 tests_SOURCES	= main.cpp
 endif

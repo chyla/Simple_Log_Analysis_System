@@ -6,10 +6,10 @@
 #include <boost/log/trivial.hpp>
 #include <boost/log/support/date_time.hpp>
 #include <boost/log/utility/setup/common_attributes.hpp>
+#include <patlms/dbus/bus.h>
 
 #include "program_options/parser.h"
 
-#include "dbus/bus.h"
 #include "objects/bash.h"
 
 #ifdef HAVE_CONFIG_H

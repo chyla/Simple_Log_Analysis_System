@@ -9,7 +9,7 @@
 
 #include "program_options/parser.h"
 
-#include "dbus/bus.h"
+#include <patlms/dbus/bus.h>
 #include "objects/bash_proxy.h"
 #include "bash/receive_messages.h"
 
