@@ -1,5 +1,5 @@
-#ifndef PATLMS_DBUS_BUS_H
-#define PATLMS_DBUS_BUS_H
+#ifndef LIBPATLMS_DBUS_BUS_H
+#define LIBPATLMS_DBUS_BUS_H
 
 #include <string>
 #include <list>
@@ -57,4 +57,4 @@ class Bus
 
 }
 
-#endif // DBUS_BUS_H
+#endif // LIBPATLMS_DBUS_BUS_H

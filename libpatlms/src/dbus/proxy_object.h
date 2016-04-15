@@ -1,5 +1,5 @@
-#ifndef PATLMS_DBUS_PROXY_OBJECT_H
-#define PATLMS_DBUS_PROXY_OBJECT_H
+#ifndef LIBPATLMS_DBUS_PROXY_OBJECT_H
+#define LIBPATLMS_DBUS_PROXY_OBJECT_H
 
 #include "bus.h"
 
@@ -32,4 +32,4 @@ class ProxyObject
   
 }
 
-#endif // PATLMS_DBUS_PROXY_OBJECT_H
+#endif // LIBPATLMS_DBUS_PROXY_OBJECT_H

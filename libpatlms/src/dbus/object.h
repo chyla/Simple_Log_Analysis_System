@@ -1,5 +1,5 @@
-#ifndef PATLMS_DBUS_OBJECT_H
-#define PATLMS_DBUS_OBJECT_H
+#ifndef LIBPATLMS_DBUS_OBJECT_H
+#define LIBPATLMS_DBUS_OBJECT_H
 
 #include <dbus/dbus.h>
 
@@ -25,4 +25,4 @@ class Object
 
 }
 
-#endif
+#endif // LIBPATLMS_DBUS_OBJECT_H
