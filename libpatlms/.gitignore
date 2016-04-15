@@ -1,6 +1,7 @@
-src/server
+src/lib
 tests/tests
 
 libtool
 ltmain.sh
+*.lo
 
