@@ -5,7 +5,7 @@
 #include <memory>
 #include <vector>
 
-#include "src/interface/sqlite.h"
+#include "detail/sqlite_interface.h"
 #include "src/type/all.h"
 
 
@@ -14,7 +14,7 @@ namespace database
 
 class Database {
  public:
-  Database(std::unique_ptr<interface::SQLite> sqlite);
+  Database(std::unique_ptr<detail::SQLiteInterface> sqlite);
 
   void Open(const std::string &file_path);
 
@@ -29,7 +29,7 @@ class Database {
  private:
   bool is_open_;
   sqlite3 *db_handle_;
-  std::unique_ptr<interface::SQLite> sqlite_interface_;
+  std::unique_ptr<detail::SQLiteInterface> sqlite_interface_;
 };
 
 }

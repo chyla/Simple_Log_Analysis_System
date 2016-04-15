@@ -10,6 +10,9 @@ namespace database
 namespace exception
 {
 
+namespace detail
+{
+
 class CantOpenDatabaseException : public DatabaseException
 {
  public:
@@ -20,6 +23,8 @@ class CantOpenDatabaseException : public DatabaseException
 char const* CantOpenDatabaseException::what() const throw ()
 {
   return "Can't open database.";
+}
+
 }
 
 }

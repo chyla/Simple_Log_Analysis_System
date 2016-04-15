@@ -3,12 +3,15 @@
 
 #include <sqlite3.h>
 
-namespace interface
+namespace database
 {
 
-class SQLite {
+namespace detail
+{
+
+class SQLiteInterface {
  public:
-  virtual inline ~SQLite();
+  virtual inline ~SQLiteInterface();
 
   virtual int Open(const char *filename, sqlite3 **ppDb, int flags, const char *zVfs) = 0;
 
@@ -39,7 +42,9 @@ class SQLite {
   virtual int Exec(sqlite3 *pDb, const char *sql, int (*callback) (void *, int, char **, char **), void *arg, char **errmsg) = 0;
 };
 
-SQLite::~SQLite() {
+SQLiteInterface::~SQLiteInterface() {
+}
+
 }
 
 }

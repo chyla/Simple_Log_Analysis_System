@@ -10,6 +10,9 @@ namespace database
 namespace exception
 {
 
+namespace detail
+{
+
 class CantExecuteSqlStatementException : public DatabaseException
 {
  public:
@@ -20,6 +23,8 @@ class CantExecuteSqlStatementException : public DatabaseException
 char const* CantExecuteSqlStatementException::what() const throw ()
 {
   return "Can't execute statement.";
+}
+
 }
 
 }

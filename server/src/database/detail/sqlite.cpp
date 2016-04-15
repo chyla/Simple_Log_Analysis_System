@@ -6,6 +6,9 @@
 namespace database
 {
 
+namespace detail
+{
+
 int SQLite::Open(const char *filename, sqlite3 **ppDb, int flags, const char *zVfs) {
   BOOST_LOG_TRIVIAL(debug) << "database::SQLite::Open: Function call";
   return sqlite3_open_v2(filename, ppDb, flags, zVfs);
@@ -74,6 +77,8 @@ int SQLite::Close(sqlite3 *pDb) {
 int SQLite::Exec(sqlite3 *pDb, const char *sql, int (*callback) (void *, int, char **, char **), void *arg, char **errmsg) {
   BOOST_LOG_TRIVIAL(debug) << "database::SQLite::Exec: Function call";
   return sqlite3_exec(pDb, sql, callback, arg, errmsg);
+}
+
 }
 
 }

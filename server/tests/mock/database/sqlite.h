@@ -3,7 +3,7 @@
 
 #include <gmock/gmock.h>
 
-#include "src/interface/sqlite.h"
+#include "src/database/detail/sqlite_interface.h"
 
 
 namespace mock
@@ -12,7 +12,7 @@ namespace mock
 namespace database
 {
 
-class SQLite : public interface::SQLite {
+class SQLite : public ::database::detail::SQLiteInterface {
  public:
   MOCK_METHOD4(Open, int (const char *filename, sqlite3 **ppDb, int flags, const char *zVfs));
 

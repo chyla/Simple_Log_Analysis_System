@@ -1,13 +1,16 @@
 #ifndef PATLMS_DATABASE_SQLITE_H
 #define PATLMS_DATABASE_SQLITE_H
 
-#include "src/interface/sqlite.h"
+#include "sqlite_interface.h"
 
 
 namespace database
 {
 
-class SQLite : public interface::SQLite {
+namespace detail
+{
+
+class SQLite : public SQLiteInterface {
  public:
   int Open(const char *filename, sqlite3 **ppDb, int flags, const char *zVfs) override;
 
@@ -37,6 +40,8 @@ class SQLite : public interface::SQLite {
 
   int Exec(sqlite3 *pDb, const char *sql, int (*callback) (void *, int, char **, char **), void *arg, char **errmsg) override;
 };
+
+}
 
 }
 

@@ -2,10 +2,9 @@
 #include <utility>
 
 #include "src/database/database.h"
-#include "src/database/sqlite.h"
-#include "src/database/exception/cant_open_database_exception.h"
-#include "src/database/exception/cant_close_database_exception.h"
-#include "src/database/exception/cant_execute_sql_statement_exception.h"
+#include "src/database/exception/detail/cant_open_database_exception.h"
+#include "src/database/exception/detail/cant_close_database_exception.h"
+#include "src/database/exception/detail/cant_execute_sql_statement_exception.h"
 #include "src/type/all.h"
 
 #include "mock/database/sqlite.h"
@@ -64,7 +63,7 @@ TEST(DatabaseTest, OpenDatabaseWhenFailed) {
 
   database::Database database(move(sqlite_mock));
 
-  EXPECT_THROW(database.Open("sqlite.db"), database::exception::CantOpenDatabaseException);
+  EXPECT_THROW(database.Open("sqlite.db"), database::exception::detail::CantOpenDatabaseException);
   EXPECT_FALSE(database.IsOpen());
 }
 
@@ -103,7 +102,7 @@ TEST(DatabaseTest, CloseDatabaseWhenFailed) {
   database.Open("sqlite.db");
 
   EXPECT_TRUE(database.IsOpen());
-  EXPECT_THROW(database.Close(), database::exception::CantCloseDatabaseException);
+  EXPECT_THROW(database.Close(), database::exception::detail::CantCloseDatabaseException);
 }
 
 TEST(DatabaseTest, CloseDatabaseWhenDatabaseIsClosed) {
@@ -131,7 +130,7 @@ TEST(DatabaseTest, CreateBashLogsTableWhenDatabaseIsClosed) {
   database::Database database(move(sqlite_mock));
 
   EXPECT_FALSE(database.IsOpen());
-  EXPECT_THROW(database.CreateBashLogsTable(), database::exception::CantExecuteSqlStatementException);
+  EXPECT_THROW(database.CreateBashLogsTable(), database::exception::detail::CantExecuteSqlStatementException);
 }
 
 TEST(DatabaseTest, CreateBashLogsTableWhenFailed) {
@@ -141,7 +140,7 @@ TEST(DatabaseTest, CreateBashLogsTableWhenFailed) {
 
   database::Database database(move(sqlite_mock));
   database.Open("sqlite.db");
-  EXPECT_THROW(database.CreateBashLogsTable(), database::exception::CantExecuteSqlStatementException);
+  EXPECT_THROW(database.CreateBashLogsTable(), database::exception::detail::CantExecuteSqlStatementException);
 }
 
 TEST(DatabaseTest, AddBashLogsWithEmptyLogList) {
@@ -212,7 +211,7 @@ TEST(DatabaseTest, AddBashLogsOneLogEntryWhenPrepareFailed) {
   type::BashLogs logs;
   logs.push_back({"hostname", 10, 11, "command"});
 
-  EXPECT_THROW(database.AddBashLogs(logs), database::exception::CantExecuteSqlStatementException);
+  EXPECT_THROW(database.AddBashLogs(logs), database::exception::detail::CantExecuteSqlStatementException);
 }
 
 TEST(DatabaseTest, AddBashLogsOneLogEntryWhenBindHostnameFailed) {
@@ -227,7 +226,7 @@ TEST(DatabaseTest, AddBashLogsOneLogEntryWhenBindHostnameFailed) {
   type::BashLogs logs;
   logs.push_back({"hostname", 10, 11, "command"});
 
-  EXPECT_THROW(database.AddBashLogs(logs), database::exception::CantExecuteSqlStatementException);
+  EXPECT_THROW(database.AddBashLogs(logs), database::exception::detail::CantExecuteSqlStatementException);
 }
 
 TEST(DatabaseTest, AddBashLogsOneLogEntryWhenBindTimeFailed) {
@@ -243,7 +242,7 @@ TEST(DatabaseTest, AddBashLogsOneLogEntryWhenBindTimeFailed) {
   type::BashLogs logs;
   logs.push_back({"hostname", 10, 11, "command"});
 
-  EXPECT_THROW(database.AddBashLogs(logs), database::exception::CantExecuteSqlStatementException);
+  EXPECT_THROW(database.AddBashLogs(logs), database::exception::detail::CantExecuteSqlStatementException);
 }
 
 TEST(DatabaseTest, AddBashLogsOneLogEntryWhenBindUidFailed) {
@@ -260,7 +259,7 @@ TEST(DatabaseTest, AddBashLogsOneLogEntryWhenBindUidFailed) {
   type::BashLogs logs;
   logs.push_back({"hostname", 10, 11, "command"});
 
-  EXPECT_THROW(database.AddBashLogs(logs), database::exception::CantExecuteSqlStatementException);
+  EXPECT_THROW(database.AddBashLogs(logs), database::exception::detail::CantExecuteSqlStatementException);
 }
 
 TEST(DatabaseTest, AddBashLogsOneLogEntryWhenBindCommandFailed) {
@@ -278,7 +277,7 @@ TEST(DatabaseTest, AddBashLogsOneLogEntryWhenBindCommandFailed) {
   type::BashLogs logs;
   logs.push_back({"hostname", 10, 11, "command"});
 
-  EXPECT_THROW(database.AddBashLogs(logs), database::exception::CantExecuteSqlStatementException);
+  EXPECT_THROW(database.AddBashLogs(logs), database::exception::detail::CantExecuteSqlStatementException);
 }
 
 TEST(DatabaseTest, AddBashLogsOneLogEntryWhenStepFailed) {
@@ -297,7 +296,7 @@ TEST(DatabaseTest, AddBashLogsOneLogEntryWhenStepFailed) {
   type::BashLogs logs;
   logs.push_back({"hostname", 10, 11, "command"});
 
-  EXPECT_THROW(database.AddBashLogs(logs), database::exception::CantExecuteSqlStatementException);
+  EXPECT_THROW(database.AddBashLogs(logs), database::exception::detail::CantExecuteSqlStatementException);
 }
 
 TEST(DatabaseTest, AddBashLogsOneLogEntryWhenStepBusy) {
@@ -336,7 +335,7 @@ TEST(DatabaseTest, AddBashLogsOneLogEntryWhenFinalizeFailed) {
   type::BashLogs logs;
   logs.push_back({"hostname", 10, 11, "command"});
 
-  EXPECT_THROW(database.AddBashLogs(logs), database::exception::CantExecuteSqlStatementException);
+  EXPECT_THROW(database.AddBashLogs(logs), database::exception::detail::CantExecuteSqlStatementException);
 }
 
 TEST(DatabaseTest, AddBashLogsWhenDatabaseIsClosed) {
@@ -346,7 +345,7 @@ TEST(DatabaseTest, AddBashLogsWhenDatabaseIsClosed) {
   type::BashLogs logs;
 
   EXPECT_FALSE(database.IsOpen());
-  EXPECT_THROW(database.AddBashLogs(logs), database::exception::CantExecuteSqlStatementException);
+  EXPECT_THROW(database.AddBashLogs(logs), database::exception::detail::CantExecuteSqlStatementException);
 }
 
 TEST(DatabaseTest, AddBashLogsWhenBeginTransactionFailed) {
@@ -359,7 +358,7 @@ TEST(DatabaseTest, AddBashLogsWhenBeginTransactionFailed) {
   database.Open("sqlite.db");
   type::BashLogs logs;
 
-  EXPECT_THROW(database.AddBashLogs(logs), database::exception::CantExecuteSqlStatementException);
+  EXPECT_THROW(database.AddBashLogs(logs), database::exception::detail::CantExecuteSqlStatementException);
 }
 
 TEST(DatabaseTest, AddBashLogsWhenEndTransactionFailed) {
@@ -374,7 +373,7 @@ TEST(DatabaseTest, AddBashLogsWhenEndTransactionFailed) {
   database.Open("sqlite.db");
   type::BashLogs logs;
 
-  EXPECT_THROW(database.AddBashLogs(logs), database::exception::CantExecuteSqlStatementException);
+  EXPECT_THROW(database.AddBashLogs(logs), database::exception::detail::CantExecuteSqlStatementException);
 }
 
 TEST(DatabaseTest, AddBashLogsWhenEndTransactionFailedAndRollbackFailed) {
@@ -389,7 +388,7 @@ TEST(DatabaseTest, AddBashLogsWhenEndTransactionFailedAndRollbackFailed) {
   database.Open("sqlite.db");
   type::BashLogs logs;
 
-  EXPECT_THROW(database.AddBashLogs(logs), database::exception::CantExecuteSqlStatementException);
+  EXPECT_THROW(database.AddBashLogs(logs), database::exception::detail::CantExecuteSqlStatementException);
 }
 
 TEST(DatabaseTest, AddBashLogsWhenEndTransactionBusy) {
@@ -419,5 +418,5 @@ TEST(DatabaseTest, AddBashLogsWhenEndTransactionBusyAndRollbackFailed) {
   database.Open("sqlite.db");
   type::BashLogs logs;
 
-  EXPECT_THROW(database.AddBashLogs(logs), database::exception::CantExecuteSqlStatementException);
+  EXPECT_THROW(database.AddBashLogs(logs), database::exception::detail::CantExecuteSqlStatementException);
 }

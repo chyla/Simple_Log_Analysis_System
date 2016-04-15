@@ -3,16 +3,15 @@
 #include <utility>
 #include <boost/log/trivial.hpp>
 
-#include "src/database/exception/cant_open_database_exception.h"
-#include "src/database/exception/cant_close_database_exception.h"
-#include "src/database/exception/cant_execute_sql_statement_exception.h"
-#include "sqlite.h"
+#include "src/database/exception/detail/cant_open_database_exception.h"
+#include "src/database/exception/detail/cant_close_database_exception.h"
+#include "src/database/exception/detail/cant_execute_sql_statement_exception.h"
 
 
 namespace database
 {
 
-Database::Database(std::unique_ptr<interface::SQLite> sqlite)
+Database::Database(std::unique_ptr<database::detail::SQLiteInterface> sqlite)
   : is_open_(false),
   db_handle_(nullptr),
   sqlite_interface_(std::move(sqlite)) {
@@ -24,7 +23,7 @@ void Database::Open(const std::string &file_path) {
   int ret = sqlite_interface_->Open(file_path.c_str(), &db_handle_, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, nullptr);
   if (ret != SQLITE_OK) {
     BOOST_LOG_TRIVIAL(error) << "database::Database::Open: Open error: " << ret;
-    throw exception::CantOpenDatabaseException();
+    throw exception::detail::CantOpenDatabaseException();
   }
 
   is_open_ = true;
@@ -39,7 +38,7 @@ void Database::CreateBashLogsTable() {
 
   if (is_open_ == false) {
     BOOST_LOG_TRIVIAL(error) << "database::Database::CreateBashLogsTable: Database is not open.";
-    throw exception::CantExecuteSqlStatementException();
+    throw exception::detail::CantExecuteSqlStatementException();
   }
 
   const char *sql =
@@ -53,7 +52,7 @@ void Database::CreateBashLogsTable() {
   int ret = sqlite_interface_->Exec(db_handle_, sql, nullptr, nullptr, nullptr);
   if (ret != SQLITE_OK) {
     BOOST_LOG_TRIVIAL(error) << "database::Database::CreateBashLogsTable: Create table error: " << ret;
-    throw exception::CantExecuteSqlStatementException();
+    throw exception::detail::CantExecuteSqlStatementException();
   }
 }
 
@@ -62,7 +61,7 @@ bool Database::AddBashLogs(const type::BashLogs &log_entries) {
 
   if (is_open_ == false) {
     BOOST_LOG_TRIVIAL(error) << "database::Database::AddBashLogs: Database is not open.";
-    throw exception::CantExecuteSqlStatementException();
+    throw exception::detail::CantExecuteSqlStatementException();
   }
 
   auto rollback = [this]()
@@ -70,7 +69,7 @@ bool Database::AddBashLogs(const type::BashLogs &log_entries) {
     int ret = sqlite_interface_->Exec(db_handle_, "rollback", nullptr, nullptr, nullptr);
     if (ret != SQLITE_OK) {
       BOOST_LOG_TRIVIAL(error) << "database::Database::AddBashLogs: Rollback error: " << ret;
-      throw exception::CantExecuteSqlStatementException();
+      throw exception::detail::CantExecuteSqlStatementException();
     }
   };
 
@@ -78,7 +77,7 @@ bool Database::AddBashLogs(const type::BashLogs &log_entries) {
   ret = sqlite_interface_->Exec(db_handle_, "begin transaction", nullptr, nullptr, nullptr);
   if (ret != SQLITE_OK) {
     BOOST_LOG_TRIVIAL(error) << "database::Database::AddBashLogs: Begin transaction error: " << ret;
-    throw exception::CantExecuteSqlStatementException();
+    throw exception::detail::CantExecuteSqlStatementException();
   }
 
   for (const type::BashLogEntry &entry : log_entries) {
@@ -90,35 +89,35 @@ bool Database::AddBashLogs(const type::BashLogs &log_entries) {
     if (ret != SQLITE_OK) {
       BOOST_LOG_TRIVIAL(error) << "database::Database::AddBashLogs: Prepare insert error: " << ret;
       rollback();
-      throw exception::CantExecuteSqlStatementException();
+      throw exception::detail::CantExecuteSqlStatementException();
     }
 
     ret = sqlite_interface_->BindText(statement, 1, entry.hostname.c_str(), -1, nullptr);
     if (ret != SQLITE_OK) {
       BOOST_LOG_TRIVIAL(error) << "database::Database::AddBashLogs: Bind hostname error: " << ret;
       rollback();
-      throw exception::CantExecuteSqlStatementException();
+      throw exception::detail::CantExecuteSqlStatementException();
     }
 
     ret = sqlite_interface_->BindInt64(statement, 2, entry.time);
     if (ret != SQLITE_OK) {
       BOOST_LOG_TRIVIAL(error) << "database::Database::AddBashLogs: Bind time error: " << ret;
       rollback();
-      throw exception::CantExecuteSqlStatementException();
+      throw exception::detail::CantExecuteSqlStatementException();
     }
 
     ret = sqlite_interface_->BindInt(statement, 3, entry.user_id);
     if (ret != SQLITE_OK) {
       BOOST_LOG_TRIVIAL(error) << "database::Database::AddBashLogs: Bind user id error: " << ret;
       rollback();
-      throw exception::CantExecuteSqlStatementException();
+      throw exception::detail::CantExecuteSqlStatementException();
     }
 
     ret = sqlite_interface_->BindText(statement, 4, entry.command.c_str(), -1, nullptr);
     if (ret != SQLITE_OK) {
       BOOST_LOG_TRIVIAL(error) << "database::Database::AddBashLogs: Bind command error: " << ret;
       rollback();
-      throw exception::CantExecuteSqlStatementException();
+      throw exception::detail::CantExecuteSqlStatementException();
     }
 
     ret = sqlite_interface_->Step(statement);
@@ -129,14 +128,14 @@ bool Database::AddBashLogs(const type::BashLogs &log_entries) {
     } else if (ret != SQLITE_DONE) {
       BOOST_LOG_TRIVIAL(error) << "database::Database::AddBashLogs: Step error:" << ret;
       rollback();
-      throw exception::CantExecuteSqlStatementException();
+      throw exception::detail::CantExecuteSqlStatementException();
     }
 
     ret = sqlite_interface_->Finalize(statement);
     if (ret != SQLITE_OK) {
       BOOST_LOG_TRIVIAL(error) << "database::Database::AddBashLogs: Finalize error:" << ret;
       rollback();
-      throw exception::CantExecuteSqlStatementException();
+      throw exception::detail::CantExecuteSqlStatementException();
     }
   }
 
@@ -148,7 +147,7 @@ bool Database::AddBashLogs(const type::BashLogs &log_entries) {
   } else if (ret != SQLITE_OK) {
     BOOST_LOG_TRIVIAL(error) << "database::Database::AddBashLogs: End transaction error:" << ret;
     rollback();
-    throw exception::CantExecuteSqlStatementException();
+    throw exception::detail::CantExecuteSqlStatementException();
   }
 
   return true;
@@ -161,7 +160,7 @@ bool Database::Close() {
     int ret = sqlite_interface_->Close(db_handle_);
     if (ret != SQLITE_OK) {
       BOOST_LOG_TRIVIAL(error) << "database::Database::Close: Failed to close database: " << ret;
-      throw exception::CantCloseDatabaseException();
+      throw exception::detail::CantCloseDatabaseException();
     }
 
     is_open_ = false;

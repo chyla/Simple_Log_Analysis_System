@@ -7,7 +7,7 @@ AM_LDFLAGS		= @BOOST_LDFLAGS@ $(DBUS_LIBS)
 bin_PROGRAMS		= server
 server_SOURCES		= main.cpp \
 				database/database.cpp \
-				database/sqlite.cpp \
+				database/detail/sqlite.cpp \
 				program_options/options.cpp \
 				program_options/parser.cpp \
 				objects/bash.cpp
