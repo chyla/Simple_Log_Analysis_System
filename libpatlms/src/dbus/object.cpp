@@ -1,4 +1,4 @@
-#include "object.h"
+#include <patlms/dbus/object.h>
 
 #include <cstring>
 #include <boost/log/trivial.hpp>

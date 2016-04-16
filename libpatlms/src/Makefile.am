@@ -2,7 +2,7 @@ AUTOMAKE_OPTIONS	= subdir-objects
 
 ACLOCAL_AMFLAGS = -I m4
 
-AM_CPPFLAGS		= @BOOST_CPPFLAGS@ $(DBUS_CFLAGS)
+AM_CPPFLAGS		= @BOOST_CPPFLAGS@ $(DBUS_CFLAGS) -I${top_srcdir}/include
 AM_LDFLAGS		= @BOOST_LDFLAGS@ $(DBUS_LIBS)
 
 lib_LTLIBRARIES = lib/libpatlms.la
@@ -15,10 +15,10 @@ lib_libpatlms_la_SOURCES  = \
 
 pkginclude_dbusdir = $(pkgincludedir)/dbus
 pkginclude_dbus_HEADERS = \
- 					dbus/bus.h \
-					dbus/object.h \
-					dbus/proxy_object.h
+ 					$(top_srcdir)/include/patlms/dbus/bus.h \
+					$(top_srcdir)/include/patlms/dbus/object.h \
+					$(top_srcdir)/include/patlms/dbus/proxy_object.h
 
 pkginclude_dbus_detaildir = $(pkgincludedir)/dbus/detail
 pkginclude_dbus_detail_HEADERS = \
- 					dbus/detail/dbus_error_guard.h
+ 					$(top_srcdir)/include/patlms/dbus/detail/dbus_error_guard.h

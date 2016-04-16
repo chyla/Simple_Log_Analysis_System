@@ -5,7 +5,7 @@
 #include <list>
 #include <dbus/dbus.h>
 
-#include "object.h"
+#include <patlms/dbus/object.h>
 
 
 namespace dbus

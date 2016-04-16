@@ -1,10 +1,10 @@
-#include "bus.h"
+#include <patlms/dbus/object.h>
 
 #include <sstream>
 #include <boost/log/trivial.hpp>
 
-#include "detail/dbus_error_guard.h"
-#include "object.h"
+#include <patlms/dbus/bus.h>
+#include <patlms/dbus/detail/dbus_error_guard.h>
 
 
 namespace dbus

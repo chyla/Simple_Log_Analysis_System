@@ -1,4 +1,4 @@
-#include "proxy_object.h"
+#include <patlms/dbus/proxy_object.h>
 
 #include <boost/log/trivial.hpp>
 
