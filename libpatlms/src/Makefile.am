@@ -19,3 +19,6 @@ pkginclude_dbus_HEADERS = \
 					dbus/object.h \
 					dbus/proxy_object.h
 
+pkginclude_dbus_detaildir = $(pkgincludedir)/dbus/detail
+pkginclude_dbus_detail_HEADERS = \
+ 					dbus/detail/dbus_error_guard.h
