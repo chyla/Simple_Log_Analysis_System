@@ -6,12 +6,13 @@
 #include <dbus/dbus.h>
 
 #include <patlms/dbus/object.h>
+#include <patlms/dbus/detail/bus_interface.h>
 
 
 namespace dbus
 {
   
-class Bus
+class Bus : public detail::BusInterface
 {
  public:
   class Options

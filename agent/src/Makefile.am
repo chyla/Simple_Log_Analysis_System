@@ -9,7 +9,10 @@ agent_SOURCES		= main.cpp \
 				program_options/options.cpp \
 				program_options/parser.cpp \
 				objects/bash_proxy.cpp \
-				bash/receive_messages.cpp
+				bash/receive_messages.cpp \
+				dbus/dbus_thread.cpp \
+				dbus/dbus_thread_command.cpp \
+				dbus/detail/system.cpp
 
 agent_LDADD		= @BOOST_PROGRAM_OPTIONS_LIB@ \
 				@BOOST_LOG_LIB@ \

@@ -6,7 +6,11 @@ AM_LDFLAGS		= @BOOST_LDFLAGS@
 
 check_PROGRAMS	= tests
 if CAN_RUN_TESTS
-tests_SOURCES	= main.cpp
+tests_SOURCES	= main.cpp \
+			dbus/dbus_thread_test.cpp \
+			../src/dbus/dbus_thread.cpp \
+			../src/dbus/dbus_thread_command.cpp \
+			../src/dbus/detail/system.cpp
 
 tests_LDADD	= @GTEST_LIBS@ \
 			@GMOCK_LIBS@ \

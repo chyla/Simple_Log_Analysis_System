@@ -11,7 +11,8 @@ lib_libpatlms_la_SOURCES  = \
 					dbus/bus.cpp \
 					dbus/object.cpp \
 					dbus/proxy_object.cpp \
-					dbus/detail/dbus_error_guard.cpp
+					dbus/detail/dbus_error_guard.cpp \
+					dbus/detail/bus_interface.cpp
 
 pkginclude_dbusdir = $(pkgincludedir)/dbus
 pkginclude_dbus_HEADERS = \
@@ -21,4 +22,5 @@ pkginclude_dbus_HEADERS = \
 
 pkginclude_dbus_detaildir = $(pkgincludedir)/dbus/detail
 pkginclude_dbus_detail_HEADERS = \
- 					$(top_srcdir)/include/patlms/dbus/detail/dbus_error_guard.h
+ 					$(top_srcdir)/include/patlms/dbus/detail/dbus_error_guard.h \
+					$(top_srcdir)/include/patlms/dbus/detail/bus_interface.h
