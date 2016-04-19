@@ -3,6 +3,7 @@
 #include <utility>
 #include <boost/log/trivial.hpp>
 
+#include "detail/sqlite.h"
 #include "src/database/exception/detail/cant_open_database_exception.h"
 #include "src/database/exception/detail/cant_close_database_exception.h"
 #include "src/database/exception/detail/cant_execute_sql_statement_exception.h"
@@ -11,10 +12,14 @@
 namespace database
 {
 
-Database::Database(std::unique_ptr<database::detail::SQLiteInterface> sqlite)
-  : is_open_(false),
-  db_handle_(nullptr),
-  sqlite_interface_(std::move(sqlite)) {
+DatabasePtr Database::Create() {
+  std::unique_ptr<detail::SQLite> sqlite(new detail::SQLite());
+  return Database::Create(std::move(sqlite));
+}
+
+DatabasePtr Database::Create(std::unique_ptr<detail::SQLiteInterface> sqlite) {
+  DatabasePtr db(new Database(move(sqlite)));
+  return db;
 }
 
 void Database::Open(const std::string &file_path) {
@@ -110,7 +115,7 @@ bool Database::AddBashLogs(const type::BashLogs &log_entries) {
       rollback();
       throw exception::detail::CantExecuteSqlStatementException();
     }
-    
+
     ret = sqlite_interface_->BindInt(statement, 3, entry.utc_time.GetMinute());
     if (ret != SQLITE_OK) {
       BOOST_LOG_TRIVIAL(error) << "database::Database::AddBashLogs: Bind minute error: " << ret;
@@ -209,6 +214,12 @@ bool Database::Close() {
     BOOST_LOG_TRIVIAL(warning) << "database::Database::Close: Database already closed";
     return false;
   }
+}
+
+Database::Database(std::unique_ptr<database::detail::SQLiteInterface> sqlite)
+  : is_open_(false),
+  db_handle_(nullptr),
+  sqlite_interface_(std::move(sqlite)) {
 }
 
 }

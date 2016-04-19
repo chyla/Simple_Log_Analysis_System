@@ -12,14 +12,18 @@
 namespace database
 {
 
+class Database;
+typedef std::shared_ptr<Database> DatabasePtr;
+
 class Database {
  public:
-  Database(std::unique_ptr<detail::SQLiteInterface> sqlite);
+  static DatabasePtr Create();
+  static DatabasePtr Create(std::unique_ptr<detail::SQLiteInterface> sqlite);
 
   void Open(const std::string &file_path);
 
   bool IsOpen() const;
-  
+
   void CreateBashLogsTable();
 
   bool AddBashLogs(const type::BashLogs &log_entries);
@@ -30,6 +34,9 @@ class Database {
   bool is_open_;
   sqlite3 *db_handle_;
   std::unique_ptr<detail::SQLiteInterface> sqlite_interface_;
+
+ private:
+  Database(std::unique_ptr<detail::SQLiteInterface> sqlite);
 };
 
 }
