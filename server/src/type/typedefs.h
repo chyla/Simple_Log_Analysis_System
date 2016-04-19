@@ -6,8 +6,6 @@
 namespace type
 {
 
-typedef int64_t time_sec_t;
-
 struct BashLogEntry;
 typedef std::vector<type::BashLogEntry> BashLogs;
 

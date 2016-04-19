@@ -1,14 +1,14 @@
 #ifndef PATLMS_TYPE_BASH_LOG_ENTRY_H
 #define PATLMS_TYPE_BASH_LOG_ENTRY_H
 
-#include "src/type/typedefs.h"
+#include "src/type/time.h"
 
 namespace type
 {
 
 struct BashLogEntry {
   std::string hostname;
-  time_sec_t time;
+  Time utc_time;
   unsigned user_id;
   std::string command;
 };

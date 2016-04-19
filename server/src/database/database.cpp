@@ -45,7 +45,12 @@ void Database::CreateBashLogsTable() {
     "create table if not exists BASH_LOGS_TABLE("
     "  ID integer primary key, "
     "  HOSTNAME text, "
-    "  TIME integer, "
+    "  UTC_HOUR integer, "
+    "  UTC_MINUTE integer, "
+    "  UTC_SECOND integer, "
+    "  UTC_DAY integer, "
+    "  UTC_MONTH integer, "
+    "  UTC_YEAR integer, "
     "  USER_ID integer, "
     "  COMMAND text "
     ");";
@@ -81,9 +86,9 @@ bool Database::AddBashLogs(const type::BashLogs &log_entries) {
   }
 
   for (const type::BashLogEntry &entry : log_entries) {
-    BOOST_LOG_TRIVIAL(debug) << "database::Database::AddBashLogs: Processing: " << entry.hostname << " ; " << entry.time << " ; " << entry.user_id << " ; " << entry.command;
+    BOOST_LOG_TRIVIAL(debug) << "database::Database::AddBashLogs: Processing: " << entry.hostname << " ; " << entry.utc_time << " ; " << entry.user_id << " ; " << entry.command;
 
-    const char *sql = "insert into BASH_LOGS_TABLE(HOSTNAME, TIME, USER_ID, COMMAND) values(?, ?, ?, ?)";
+    const char *sql = "insert into BASH_LOGS_TABLE(HOSTNAME, UTC_HOUR, UTC_MINUTE, UTC_SECOND, UTC_DAY, UTC_MONTH, UTC_YEAR, USER_ID, COMMAND) values(?, ?, ?, ?, ?, ?, ?, ?, ?)";
     sqlite3_stmt *statement;
     ret = sqlite_interface_->Prepare(db_handle_, sql, -1, &statement, nullptr);
     if (ret != SQLITE_OK) {
@@ -99,21 +104,56 @@ bool Database::AddBashLogs(const type::BashLogs &log_entries) {
       throw exception::detail::CantExecuteSqlStatementException();
     }
 
-    ret = sqlite_interface_->BindInt64(statement, 2, entry.time);
+    ret = sqlite_interface_->BindInt(statement, 2, entry.utc_time.GetHour());
     if (ret != SQLITE_OK) {
-      BOOST_LOG_TRIVIAL(error) << "database::Database::AddBashLogs: Bind time error: " << ret;
+      BOOST_LOG_TRIVIAL(error) << "database::Database::AddBashLogs: Bind hour error: " << ret;
+      rollback();
+      throw exception::detail::CantExecuteSqlStatementException();
+    }
+    
+    ret = sqlite_interface_->BindInt(statement, 3, entry.utc_time.GetMinute());
+    if (ret != SQLITE_OK) {
+      BOOST_LOG_TRIVIAL(error) << "database::Database::AddBashLogs: Bind minute error: " << ret;
       rollback();
       throw exception::detail::CantExecuteSqlStatementException();
     }
 
-    ret = sqlite_interface_->BindInt(statement, 3, entry.user_id);
+    ret = sqlite_interface_->BindInt(statement, 4, entry.utc_time.GetSecond());
+    if (ret != SQLITE_OK) {
+      BOOST_LOG_TRIVIAL(error) << "database::Database::AddBashLogs: Bind second error: " << ret;
+      rollback();
+      throw exception::detail::CantExecuteSqlStatementException();
+    }
+
+    ret = sqlite_interface_->BindInt(statement, 5, entry.utc_time.GetDay());
+    if (ret != SQLITE_OK) {
+      BOOST_LOG_TRIVIAL(error) << "database::Database::AddBashLogs: Bind day error: " << ret;
+      rollback();
+      throw exception::detail::CantExecuteSqlStatementException();
+    }
+
+    ret = sqlite_interface_->BindInt(statement, 6, entry.utc_time.GetMonth());
+    if (ret != SQLITE_OK) {
+      BOOST_LOG_TRIVIAL(error) << "database::Database::AddBashLogs: Bind month error: " << ret;
+      rollback();
+      throw exception::detail::CantExecuteSqlStatementException();
+    }
+
+    ret = sqlite_interface_->BindInt(statement, 7, entry.utc_time.GetYear());
+    if (ret != SQLITE_OK) {
+      BOOST_LOG_TRIVIAL(error) << "database::Database::AddBashLogs: Bind year error: " << ret;
+      rollback();
+      throw exception::detail::CantExecuteSqlStatementException();
+    }
+
+    ret = sqlite_interface_->BindInt(statement, 8, entry.user_id);
     if (ret != SQLITE_OK) {
       BOOST_LOG_TRIVIAL(error) << "database::Database::AddBashLogs: Bind user id error: " << ret;
       rollback();
       throw exception::detail::CantExecuteSqlStatementException();
     }
 
-    ret = sqlite_interface_->BindText(statement, 4, entry.command.c_str(), -1, nullptr);
+    ret = sqlite_interface_->BindText(statement, 9, entry.command.c_str(), -1, nullptr);
     if (ret != SQLITE_OK) {
       BOOST_LOG_TRIVIAL(error) << "database::Database::AddBashLogs: Bind command error: " << ret;
       rollback();

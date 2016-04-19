@@ -8,7 +8,8 @@ check_PROGRAMS	= tests
 if CAN_RUN_TESTS
 tests_SOURCES	= main.cpp \
 		    database/database.cpp \
-		    ../src/database/database.cpp
+		    ../src/database/database.cpp \
+		    ../src/type/time.cpp
 
 tests_LDADD	= @GTEST_LIBS@ \
 			@GMOCK_LIBS@ \
