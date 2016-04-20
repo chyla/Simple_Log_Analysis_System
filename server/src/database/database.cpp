@@ -61,20 +61,17 @@ void Database::CreateBashLogsTable() {
     "  COMMAND text "
     ");";
   int ret = sqlite_interface_->Exec(db_handle_, sql, nullptr, nullptr, nullptr);
-  if (ret != SQLITE_OK) {
-    BOOST_LOG_TRIVIAL(error) << "database::Database::CreateBashLogsTable: Create table error: " << ret;
-    throw exception::detail::CantExecuteSqlStatementException();
-  }
+  StatementCheckForError(ret, "Create BASH_LOGS_TABLE error");
 }
 
 void Database::CreateApacheLogsTable() {
   BOOST_LOG_TRIVIAL(debug) << "database::Database::CreateApacheLogsTable: Function call";
-  
+
   if (is_open_ == false) {
     BOOST_LOG_TRIVIAL(error) << "database::Database::CreateBashLogsTable: Database is not open.";
     throw exception::detail::CantExecuteSqlStatementException();
   }
-  
+
   const char *sql =
     "create table if not exists APACHE_LOGS_TABLE("
     "  ID integer primary key, "
@@ -92,10 +89,7 @@ void Database::CreateApacheLogsTable() {
     "  USER_AGENT text "
     ");";
   int ret = sqlite_interface_->Exec(db_handle_, sql, nullptr, nullptr, nullptr);
-  if (ret != SQLITE_OK) {
-    BOOST_LOG_TRIVIAL(error) << "database::Database::CreateBashLogsTable: Create table error: " << ret;
-    throw exception::detail::CantExecuteSqlStatementException();
-  }
+  StatementCheckForError(ret, "Create APACHE_LOGS_TABLE error");
 }
 
 bool Database::AddBashLogs(const type::BashLogs &log_entries) {
@@ -106,21 +100,9 @@ bool Database::AddBashLogs(const type::BashLogs &log_entries) {
     throw exception::detail::CantExecuteSqlStatementException();
   }
 
-  auto rollback = [this]()
-  {
-    int ret = sqlite_interface_->Exec(db_handle_, "rollback", nullptr, nullptr, nullptr);
-    if (ret != SQLITE_OK) {
-      BOOST_LOG_TRIVIAL(error) << "database::Database::AddBashLogs: Rollback error: " << ret;
-      throw exception::detail::CantExecuteSqlStatementException();
-    }
-  };
-
   int ret;
   ret = sqlite_interface_->Exec(db_handle_, "begin transaction", nullptr, nullptr, nullptr);
-  if (ret != SQLITE_OK) {
-    BOOST_LOG_TRIVIAL(error) << "database::Database::AddBashLogs: Begin transaction error: " << ret;
-    throw exception::detail::CantExecuteSqlStatementException();
-  }
+  StatementCheckForError(ret, "Begin transaction error");
 
   for (const type::BashLogEntry &entry : log_entries) {
     BOOST_LOG_TRIVIAL(debug) << "database::Database::AddBashLogs: Processing: " << entry.hostname << " ; " << entry.utc_time << " ; " << entry.user_id << " ; " << entry.command;
@@ -128,104 +110,54 @@ bool Database::AddBashLogs(const type::BashLogs &log_entries) {
     const char *sql = "insert into BASH_LOGS_TABLE(HOSTNAME, UTC_HOUR, UTC_MINUTE, UTC_SECOND, UTC_DAY, UTC_MONTH, UTC_YEAR, USER_ID, COMMAND) values(?, ?, ?, ?, ?, ?, ?, ?, ?)";
     sqlite3_stmt *statement;
     ret = sqlite_interface_->Prepare(db_handle_, sql, -1, &statement, nullptr);
-    if (ret != SQLITE_OK) {
-      BOOST_LOG_TRIVIAL(error) << "database::Database::AddBashLogs: Prepare insert error: " << ret;
-      rollback();
-      throw exception::detail::CantExecuteSqlStatementException();
-    }
+    StatementCheckForErrorAndRollback(ret, "Prepare insert error");
 
     ret = sqlite_interface_->BindText(statement, 1, entry.hostname.c_str(), -1, nullptr);
-    if (ret != SQLITE_OK) {
-      BOOST_LOG_TRIVIAL(error) << "database::Database::AddBashLogs: Bind hostname error: " << ret;
-      rollback();
-      throw exception::detail::CantExecuteSqlStatementException();
-    }
+    StatementCheckForErrorAndRollback(ret, "Bind hostname error");
 
     ret = sqlite_interface_->BindInt(statement, 2, entry.utc_time.GetHour());
-    if (ret != SQLITE_OK) {
-      BOOST_LOG_TRIVIAL(error) << "database::Database::AddBashLogs: Bind hour error: " << ret;
-      rollback();
-      throw exception::detail::CantExecuteSqlStatementException();
-    }
+    StatementCheckForErrorAndRollback(ret, "Bind hour error");
 
     ret = sqlite_interface_->BindInt(statement, 3, entry.utc_time.GetMinute());
-    if (ret != SQLITE_OK) {
-      BOOST_LOG_TRIVIAL(error) << "database::Database::AddBashLogs: Bind minute error: " << ret;
-      rollback();
-      throw exception::detail::CantExecuteSqlStatementException();
-    }
+    StatementCheckForErrorAndRollback(ret, "Bind minute error");
 
     ret = sqlite_interface_->BindInt(statement, 4, entry.utc_time.GetSecond());
-    if (ret != SQLITE_OK) {
-      BOOST_LOG_TRIVIAL(error) << "database::Database::AddBashLogs: Bind second error: " << ret;
-      rollback();
-      throw exception::detail::CantExecuteSqlStatementException();
-    }
+    StatementCheckForErrorAndRollback(ret, "Bind second error");
 
     ret = sqlite_interface_->BindInt(statement, 5, entry.utc_time.GetDay());
-    if (ret != SQLITE_OK) {
-      BOOST_LOG_TRIVIAL(error) << "database::Database::AddBashLogs: Bind day error: " << ret;
-      rollback();
-      throw exception::detail::CantExecuteSqlStatementException();
-    }
+    StatementCheckForErrorAndRollback(ret, "Bind day error");
 
     ret = sqlite_interface_->BindInt(statement, 6, entry.utc_time.GetMonth());
-    if (ret != SQLITE_OK) {
-      BOOST_LOG_TRIVIAL(error) << "database::Database::AddBashLogs: Bind month error: " << ret;
-      rollback();
-      throw exception::detail::CantExecuteSqlStatementException();
-    }
+    StatementCheckForErrorAndRollback(ret, "Bind month error");
 
     ret = sqlite_interface_->BindInt(statement, 7, entry.utc_time.GetYear());
-    if (ret != SQLITE_OK) {
-      BOOST_LOG_TRIVIAL(error) << "database::Database::AddBashLogs: Bind year error: " << ret;
-      rollback();
-      throw exception::detail::CantExecuteSqlStatementException();
-    }
+    StatementCheckForErrorAndRollback(ret, "Bind year error");
 
     ret = sqlite_interface_->BindInt(statement, 8, entry.user_id);
-    if (ret != SQLITE_OK) {
-      BOOST_LOG_TRIVIAL(error) << "database::Database::AddBashLogs: Bind user id error: " << ret;
-      rollback();
-      throw exception::detail::CantExecuteSqlStatementException();
-    }
+    StatementCheckForErrorAndRollback(ret, "Bind user id error");
 
     ret = sqlite_interface_->BindText(statement, 9, entry.command.c_str(), -1, nullptr);
-    if (ret != SQLITE_OK) {
-      BOOST_LOG_TRIVIAL(error) << "database::Database::AddBashLogs: Bind command error: " << ret;
-      rollback();
-      throw exception::detail::CantExecuteSqlStatementException();
-    }
+    StatementCheckForErrorAndRollback(ret, "Bind command error");
 
     ret = sqlite_interface_->Step(statement);
     if (ret == SQLITE_BUSY) {
       BOOST_LOG_TRIVIAL(error) << "database::Database::AddBashLogs: Step error - SQLite is busy";
-      rollback();
+      Rollback();
       return false;
-    } else if (ret != SQLITE_DONE) {
-      BOOST_LOG_TRIVIAL(error) << "database::Database::AddBashLogs: Step error:" << ret;
-      rollback();
-      throw exception::detail::CantExecuteSqlStatementException();
     }
+    StatementCheckForErrorAndRollback(ret, "Step error");
 
     ret = sqlite_interface_->Finalize(statement);
-    if (ret != SQLITE_OK) {
-      BOOST_LOG_TRIVIAL(error) << "database::Database::AddBashLogs: Finalize error:" << ret;
-      rollback();
-      throw exception::detail::CantExecuteSqlStatementException();
-    }
+    StatementCheckForErrorAndRollback(ret, "Finalize error");
   }
 
   ret = sqlite_interface_->Exec(db_handle_, "end transaction", nullptr, nullptr, nullptr);
   if (ret == SQLITE_BUSY) {
     BOOST_LOG_TRIVIAL(error) << "database::Database::AddBashLogs: End transaction error - SQLite is busy";
-    rollback();
+    Rollback();
     return false;
-  } else if (ret != SQLITE_OK) {
-    BOOST_LOG_TRIVIAL(error) << "database::Database::AddBashLogs: End transaction error:" << ret;
-    rollback();
-    throw exception::detail::CantExecuteSqlStatementException();
   }
+  StatementCheckForErrorAndRollback(ret, "End transaction error");
 
   return true;
 }
@@ -252,6 +184,29 @@ Database::Database(std::unique_ptr<database::detail::SQLiteInterface> sqlite)
   : is_open_(false),
   db_handle_(nullptr),
   sqlite_interface_(std::move(sqlite)) {
+}
+
+void Database::StatementCheckForError(int return_value, const char *description) {
+  if (return_value != SQLITE_OK && return_value != SQLITE_DONE) {
+    BOOST_LOG_TRIVIAL(error) << "database::Database: " << description << ": " << return_value;
+    throw exception::detail::CantExecuteSqlStatementException();
+  }
+}
+
+void Database::StatementCheckForErrorAndRollback(int return_value, const char *description) {
+  if (return_value != SQLITE_OK && return_value != SQLITE_DONE) {
+    BOOST_LOG_TRIVIAL(error) << "database::Database: " << description << ": " << return_value;
+    Rollback();
+    throw exception::detail::CantExecuteSqlStatementException();
+  }
+}
+
+void Database::Rollback() {
+  int ret = sqlite_interface_->Exec(db_handle_, "rollback", nullptr, nullptr, nullptr);
+  if (ret != SQLITE_OK) {
+    BOOST_LOG_TRIVIAL(error) << "database::Database: Rollback error: " << ret;
+    throw exception::detail::CantExecuteSqlStatementException();
+  }
 }
 
 }

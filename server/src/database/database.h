@@ -37,8 +37,11 @@ class Database {
   sqlite3 *db_handle_;
   std::unique_ptr<detail::SQLiteInterface> sqlite_interface_;
 
- private:
   Database(std::unique_ptr<detail::SQLiteInterface> sqlite);
+  
+  void StatementCheckForError(int return_value, const char *description);
+  void StatementCheckForErrorAndRollback(int return_value, const char *description);
+  void Rollback();
 };
 
 }
