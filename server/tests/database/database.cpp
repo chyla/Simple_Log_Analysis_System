@@ -1,6 +1,9 @@
 #include <memory>
 #include <utility>
 
+#include <patlms/type/time.h>
+#include <patlms/type/bash_log_entry.h>
+
 #include "src/database/database.h"
 #include "src/database/exception/detail/cant_open_database_exception.h"
 #include "src/database/exception/detail/cant_close_database_exception.h"
