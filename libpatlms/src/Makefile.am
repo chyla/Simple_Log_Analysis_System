@@ -29,8 +29,9 @@ pkginclude_dbus_detail_HEADERS = \
 pkginclude_typedir = $(pkgincludedir)/type
 pkginclude_type_HEADERS = \
 					$(top_srcdir)/include/patlms/type/time.h \
-					$(top_srcdir)/include/patlms/type/bash_log_entry.h
-	
+					$(top_srcdir)/include/patlms/type/bash_log_entry.h \
+					$(top_srcdir)/include/patlms/type/apache_log_entry.h
+
 pkginclude_type_exceptiondir = $(pkgincludedir)/type/exception
 pkginclude_type_exception_HEADERS = \
  					$(top_srcdir)/include/patlms/type/exception/exception.h
