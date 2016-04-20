@@ -7,8 +7,7 @@
 namespace dbus
 {
 
-class ProxyObject
-{
+class ProxyObject {
  public:
   ProxyObject();
   virtual ~ProxyObject();
@@ -24,12 +23,18 @@ class ProxyObject
   virtual bool AppendArgument(DBusMessageIter *iter_args,
                               const char *param);
 
+  virtual bool AppendArgument(DBusMessageIter *iter_args,
+                              int param);
+  
+  virtual bool AppendArgument(DBusMessageIter *iter_args,
+                              unsigned param);
+  
   virtual DBusMessage* GetReplyMessage(DBusPendingCall *reply_handle);
 
   virtual void FreePendingCall(DBusPendingCall *reply_handle);
-  
+
 };
-  
+
 }
 
 #endif // LIBPATLMS_DBUS_PROXY_OBJECT_H

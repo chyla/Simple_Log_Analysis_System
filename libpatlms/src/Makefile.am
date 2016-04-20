@@ -12,7 +12,8 @@ lib_libpatlms_la_SOURCES  = \
 					dbus/object.cpp \
 					dbus/proxy_object.cpp \
 					dbus/detail/dbus_error_guard.cpp \
-					dbus/detail/bus_interface.cpp
+					dbus/detail/bus_interface.cpp \
+					type/time.cpp
 
 pkginclude_dbusdir = $(pkgincludedir)/dbus
 pkginclude_dbus_HEADERS = \
@@ -24,3 +25,16 @@ pkginclude_dbus_detaildir = $(pkgincludedir)/dbus/detail
 pkginclude_dbus_detail_HEADERS = \
  					$(top_srcdir)/include/patlms/dbus/detail/dbus_error_guard.h \
 					$(top_srcdir)/include/patlms/dbus/detail/bus_interface.h
+
+pkginclude_typedir = $(pkgincludedir)/type
+pkginclude_type_HEADERS = \
+					$(top_srcdir)/include/patlms/type/time.h \
+					$(top_srcdir)/include/patlms/type/bash_log_entry.h
+	
+pkginclude_type_exceptiondir = $(pkgincludedir)/type/exception
+pkginclude_type_exception_HEADERS = \
+ 					$(top_srcdir)/include/patlms/type/exception/exception.h
+
+pkginclude_type_exception_detaildir = $(pkgincludedir)/type/exception/detail
+pkginclude_type_exception_detail_HEADERS = \
+ 					$(top_srcdir)/include/patlms/type/exception/detail/wrong_time_value_exception.h

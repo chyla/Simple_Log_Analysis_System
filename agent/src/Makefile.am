@@ -8,11 +8,15 @@ bin_PROGRAMS		= agent
 agent_SOURCES		= main.cpp \
 				program_options/options.cpp \
 				program_options/parser.cpp \
-				objects/bash_proxy.cpp \
-				bash/receive_messages.cpp \
+				bash/bash_log_receiver.cpp \
+				bash/detail/bash_dbus_thread_command.cpp \
+				bash/detail/bash_proxy.cpp \
+				bash/detail/system.cpp \
+				bash/detail/system_interface.cpp \
 				dbus/dbus_thread.cpp \
 				dbus/dbus_thread_command.cpp \
-				dbus/detail/system.cpp
+				dbus/detail/system.cpp \
+				dbus/detail/dbus_thread_interface.cpp
 
 agent_LDADD		= @BOOST_PROGRAM_OPTIONS_LIB@ \
 				@BOOST_LOG_LIB@ \

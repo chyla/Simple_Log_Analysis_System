@@ -8,9 +8,16 @@ check_PROGRAMS	= tests
 if CAN_RUN_TESTS
 tests_SOURCES	= main.cpp \
 			dbus/dbus_thread_test.cpp \
+			bash/bash_log_receiver_test.cpp \
+			../src/bash/bash_log_receiver.cpp \
+			../src/bash/detail/bash_proxy.cpp \
+			../src/bash/detail/bash_dbus_thread_command.cpp \
+			../src/bash/detail/system_interface.cpp \
+			../src/bash/detail/system.cpp \
 			../src/dbus/dbus_thread.cpp \
 			../src/dbus/dbus_thread_command.cpp \
-			../src/dbus/detail/system.cpp
+			../src/dbus/detail/system.cpp \
+			../src/dbus/detail/dbus_thread_interface.cpp
 
 tests_LDADD	= @GTEST_LIBS@ \
 			@GMOCK_LIBS@ \

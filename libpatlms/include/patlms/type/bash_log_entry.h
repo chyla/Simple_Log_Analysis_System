@@ -1,7 +1,7 @@
 #ifndef PATLMS_TYPE_BASH_LOG_ENTRY_H
 #define PATLMS_TYPE_BASH_LOG_ENTRY_H
 
-#include "src/type/time.h"
+#include <patlms/type/time.h>
 
 namespace type
 {

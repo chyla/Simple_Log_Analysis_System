@@ -1,7 +1,6 @@
-#include "time.h"
+#include <patlms/type/time.h>
 
-#include "exception/wrong_time_value_exception.h"
-
+#include <patlms/type/exception/detail/wrong_time_value_exception.h>
 
 namespace type
 {
@@ -14,7 +13,7 @@ void Time::Set(int hour, int minute, int second,
     (day < 1 || day > 31) ||
     (month < 1 || month > 12) ||
     (year < 1970)) {
-    throw exception::WrongTimeValueException();
+    throw exception::detail::WrongTimeValueException();
   }
 
   hour_ = hour;

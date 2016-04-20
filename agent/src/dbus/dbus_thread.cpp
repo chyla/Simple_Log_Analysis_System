@@ -29,8 +29,10 @@ void DBusThread::StartLoop() {
   loop_running_ = true;
 
   while (loop_running_) {
-    CommandPtr command = GetCommand();
-    command->Execute();
+    if (IsCommandAvailable()) {
+      CommandPtr command = GetCommand();
+      command->Execute();
+    }
 
     system_->Sleep(1);
   }
@@ -57,6 +59,11 @@ DBusThread::CommandPtr DBusThread::GetCommand() {
   commands_.pop_front();
 
   return command;
+}
+
+bool DBusThread::IsCommandAvailable() {
+  lock_guard<mutex> guard(commands_mutex_);
+  return commands_.size();
 }
 
 }

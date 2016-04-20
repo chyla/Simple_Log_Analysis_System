@@ -9,11 +9,12 @@
 #include "dbus_thread_command.h"
 #include "detail/system.h"
 #include "detail/system_interface.h"
+#include "detail/dbus_thread_interface.h"
 
 namespace dbus
 {
 
-class DBusThread {
+class DBusThread : public detail::DBusThreadInterface {
  public:
   typedef std::shared_ptr<DBusThreadCommand> CommandPtr;
   typedef std::shared_ptr<DBusThread> DBusThreadPtr;
@@ -23,12 +24,12 @@ class DBusThread {
   static DBusThreadPtr Create(BusInterfacePtr bus);
   static DBusThreadPtr Create(BusInterfacePtr bus, SystemInterfacePtr system);
 
-  void AddCommand(CommandPtr command);
+  void AddCommand(CommandPtr command) override;
 
-  void StartLoop();
-  void StopLoop();
+  void StartLoop() override;
+  void StopLoop() override;
 
-  bool IsLoopRunning();
+  bool IsLoopRunning() override;
 
  private:
   typedef std::list<CommandPtr> ThreadCommands;
@@ -36,6 +37,7 @@ class DBusThread {
   DBusThread(BusInterfacePtr bus, SystemInterfacePtr system);
 
   CommandPtr GetCommand();
+  bool IsCommandAvailable();
 
   BusInterfacePtr bus_;
   SystemInterfacePtr system_;

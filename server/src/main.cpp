@@ -9,6 +9,7 @@
 #include <patlms/dbus/bus.h>
 
 #include "program_options/parser.h"
+#include "database/database.h"
 
 #include "objects/bash.h"
 
@@ -45,6 +46,10 @@ main(int argc, char *argv[])
     p.SetCommandLineOptions(argc, argv);
     p.SetConfigFilePath(SYSCONFFILE);
     program_options::Options options = p.Parse();
+    
+    database::DatabasePtr database = database::Database::Create();
+    database->Open("/tmp/server.db");
+    database->CreateBashLogsTable();
 
     dbus::Bus::Options dbus_options(options.GetDbusAddress(),
 				    options.GetDbusPort(),
@@ -53,7 +58,7 @@ main(int argc, char *argv[])
     bus.Connect();
     bus.RequestConnectionName("org.chyla.patlms.server");
 
-    objects::Bash bash;
+    objects::Bash bash(database);
     bus.RegisterObject(&bash);
 
     bus.Loop();

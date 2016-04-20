@@ -2,6 +2,7 @@
 
 #include <utility>
 #include <boost/log/trivial.hpp>
+#include <patlms/type/bash_log_entry.h>
 
 #include "detail/sqlite.h"
 #include "src/database/exception/detail/cant_open_database_exception.h"
