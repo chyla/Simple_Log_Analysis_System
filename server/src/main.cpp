@@ -50,6 +50,7 @@ main(int argc, char *argv[])
     database::DatabasePtr database = database::Database::Create();
     database->Open("/tmp/server.db");
     database->CreateBashLogsTable();
+    database->CreateApacheLogsTable();
 
     dbus::Bus::Options dbus_options(options.GetDbusAddress(),
 				    options.GetDbusPort(),

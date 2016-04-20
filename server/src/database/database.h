@@ -25,6 +25,8 @@ class Database {
   bool IsOpen() const;
 
   void CreateBashLogsTable();
+  
+  void CreateApacheLogsTable();
 
   bool AddBashLogs(const type::BashLogs &log_entries);
 

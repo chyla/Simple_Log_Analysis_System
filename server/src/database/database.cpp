@@ -67,6 +67,37 @@ void Database::CreateBashLogsTable() {
   }
 }
 
+void Database::CreateApacheLogsTable() {
+  BOOST_LOG_TRIVIAL(debug) << "database::Database::CreateApacheLogsTable: Function call";
+  
+  if (is_open_ == false) {
+    BOOST_LOG_TRIVIAL(error) << "database::Database::CreateBashLogsTable: Database is not open.";
+    throw exception::detail::CantExecuteSqlStatementException();
+  }
+  
+  const char *sql =
+    "create table if not exists APACHE_LOGS_TABLE("
+    "  ID integer primary key, "
+    "  VIRTUALHOST text, "
+    "  CLIENT_IP text, "
+    "  UTC_HOUR integer, "
+    "  UTC_MINUTE integer, "
+    "  UTC_SECOND integer, "
+    "  UTC_DAY integer, "
+    "  UTC_MONTH integer, "
+    "  UTC_YEAR integer, "
+    "  REQUEST text, "
+    "  STATUS_CODE integer, "
+    "  BYTES integer, "
+    "  USER_AGENT text "
+    ");";
+  int ret = sqlite_interface_->Exec(db_handle_, sql, nullptr, nullptr, nullptr);
+  if (ret != SQLITE_OK) {
+    BOOST_LOG_TRIVIAL(error) << "database::Database::CreateBashLogsTable: Create table error: " << ret;
+    throw exception::detail::CantExecuteSqlStatementException();
+  }
+}
+
 bool Database::AddBashLogs(const type::BashLogs &log_entries) {
   BOOST_LOG_TRIVIAL(debug) << "database::Database::AddBashLogs: Function call";
 
