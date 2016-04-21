@@ -1,5 +1,7 @@
 #!/bin/sh
 
+set -e
+
 export PATH="%custom_dbus_bindir_path%:$PATH"
 
 server_config_file="%appconffile%"
