@@ -20,41 +20,38 @@
 namespace expr = boost::log::expressions;
 namespace keywords = boost::log::keywords;
 
-
 int
-main(int argc, char *argv[])
-{
+main(int argc, char *argv[]) {
   try {
-    boost::log::add_common_attributes();
+    program_options::Parser p;
+    p.SetCommandLineOptions(argc, argv);
+    p.SetConfigFilePath(SYSCONFFILE);
+    program_options::Options options = p.Parse();
 
+    boost::log::add_common_attributes();
     boost::log::add_file_log(
-      keywords::file_name = LOGDIR "/server.log",
-      keywords::format = ( expr::stream << expr::format_date_time< boost::posix_time::ptime >("TimeStamp", "%d.%m.%Y %H:%M:%S")
-                                        << ": <"
-                                        << boost::log::trivial::severity
-                                        << ">\t"
-                                        << expr::smessage
-			   ),
-      keywords::auto_flush = true
-    );
+                             keywords::file_name = LOGDIR "/server.log",
+                             keywords::format = (expr::stream << expr::format_date_time< boost::posix_time::ptime >("TimeStamp", "%d.%m.%Y %H:%M:%S")
+                                                 << ": <"
+                                                 << boost::log::trivial::severity
+                                                 << ">\t"
+                                                 << expr::smessage
+                                                 ),
+                             keywords::auto_flush = true
+                             );
     BOOST_LOG_TRIVIAL(info) << "Server";
 #ifdef HAVE_CONFIG_H
     BOOST_LOG_TRIVIAL(info) << "Version: " << VERSION;
 #endif
 
-    program_options::Parser p;
-    p.SetCommandLineOptions(argc, argv);
-    p.SetConfigFilePath(SYSCONFFILE);
-    program_options::Options options = p.Parse();
-    
     database::DatabasePtr database = database::Database::Create();
     database->Open("/tmp/server.db");
     database->CreateBashLogsTable();
     database->CreateApacheLogsTable();
 
     dbus::Bus::Options dbus_options(options.GetDbusAddress(),
-				    options.GetDbusPort(),
-				    options.GetDbusFamily());
+                                    options.GetDbusPort(),
+                                    options.GetDbusFamily());
     dbus::Bus bus(dbus_options);
     bus.Connect();
     bus.RequestConnectionName("org.chyla.patlms.server");
@@ -63,7 +60,7 @@ main(int argc, char *argv[])
     bus.RegisterObject(&bash);
 
     bus.Loop();
-    
+
   } catch (std::exception &ex) {
     std::cerr << ex.what() << '\n';
     BOOST_LOG_TRIVIAL(fatal) << ex.what();
