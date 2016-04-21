@@ -17,7 +17,7 @@ create_config_file_from_template () {
 	dbus_pidfile=`get_variable "dbus_pidfile"`
 	run_as_user=`get_variable "run_as_user"`
 
-	mkdir -p ${run_dir}
+	mkdir -p %apprundir%
 
 	sed -r \
 		-e "s~%dbus_address%~${dbus_address}~g" \
