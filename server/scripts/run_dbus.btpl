@@ -2,8 +2,6 @@
 
 set -e
 
-export PATH="%custom_dbus_bindir_path%:$PATH"
-
 server_config_file="%appconffile%"
 dbus_template_file="%dbusconftemplatefile%"
 dbus_output_config_file="%apprundir%/dbus.conf"
@@ -32,7 +30,10 @@ create_config_file_from_template () {
 
 create_config_file_from_template
 
-dbus-daemon --config-file=${dbus_output_config_file}
+if [ "x%custom_dbus_bindir_path%" = "x" ]; then
+    dbus-daemon --config-file=${dbus_output_config_file}
+else
+    %custom_dbus_bindir_path%/dbus-daemon --config-file=${dbus_output_config_file}
+fi
 
 exit $?
-
