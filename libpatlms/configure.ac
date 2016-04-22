@@ -116,7 +116,7 @@ LIBS=$save_LIBS
 
 AM_CONDITIONAL([CAN_RUN_TESTS], [test @HAVE_GMOCK@ -a @HAVE_GTEST@])
 
-AX_BOOST_BASE([1.55], [], [AC_MSG_ERROR([cannot find Boost libraries])])
+AX_BOOST_BASE([1.54], [], [AC_MSG_ERROR([cannot find Boost libraries])])
 
 AX_BOOST_SYSTEM
 if test "x$ax_cv_boost_system" != "xyes"; then
