@@ -169,7 +169,7 @@ AX_BOOST_LOG_SETUP
 
 PKG_CHECK_MODULES([DBUS], dbus-1 >= 1.6.18)
 
-PKG_CHECK_MODULES([SQLite3], sqlite3 >= 3.8.7.1)
+PKG_CHECK_MODULES([SQLite3], sqlite3 >= 3.8.2)
 
 AC_MSG_CHECKING([Checking for PATLMS library])
 save_LIBS=$LIBS
