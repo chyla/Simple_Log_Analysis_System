@@ -7,8 +7,8 @@ Vagrant.configure(2) do |config|
   config.vm.box = "debian/contrib-jessie64"
 
   config.vm.provider "virtualbox" do |vb|
-    vb.memory = "512"
-    vb.cpus = 1
+    vb.memory = "1024"
+    vb.cpus = 4
   end
 
    config.vm.provision "shell", inline: <<-SHELL
