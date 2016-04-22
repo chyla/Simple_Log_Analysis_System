@@ -127,7 +127,7 @@ AX_BOOST_LOG
 
 AX_BOOST_LOG_SETUP
 
-PKG_CHECK_MODULES([DBUS], dbus-1 >= 1.8.0)
+PKG_CHECK_MODULES([DBUS], dbus-1 >= 1.6.18)
 
 # Checks for header files.
 
