@@ -18,6 +18,7 @@ export CPPFLAGS="$CPPFLAGS -I${GTEST_INSTALL_DIR}/include -I${GMOCK_INSTALL_DIR}
 
 # build libpatlms
 cd libpatlms
+./autogen.sh
 ./configure --prefix=${PATLMS_INSTALL_DIR}
 make
 make install
@@ -30,6 +31,7 @@ export LD_LIBRARY_PATH="${PATLMS_INSTALL_DIR}/lib"
 
 # build server
 cd ${START_DIR}/server
+./autogen.sh
 ./configure --prefix=${SERVER_INSTALL_DIR}
 make
 make install
@@ -37,6 +39,7 @@ make check
 
 # build agent
 cd ${START_DIR}/agent
+./autogen.sh
 ./configure --prefix=${AGENT_INSTALL_DIR}
 make
 make install
