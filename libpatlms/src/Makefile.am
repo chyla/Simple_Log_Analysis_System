@@ -13,6 +13,10 @@ lib_libpatlms_la_SOURCES  = \
 					dbus/proxy_object.cpp \
 					dbus/detail/dbus_error_guard.cpp \
 					dbus/detail/bus_interface.cpp \
+					network/network.cpp \
+					network/detail/network_interface.cpp \
+					network/detail/system.cpp \
+					network/detail/system_interface.cpp \
 					type/time.cpp
 
 pkginclude_dbusdir = $(pkgincludedir)/dbus
