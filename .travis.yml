@@ -3,6 +3,11 @@ sudo: required
 dist: trusty
 compiler:
 - gcc
+  addons:
+    apt:
+      sources: ['ubuntu-toolchain-r-test']
+      packages: ['g++-4.9', 'valgrind']
+  env: CXX=g++-4.9
 os:
 - linux
 
