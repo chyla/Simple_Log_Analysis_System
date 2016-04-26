@@ -12,7 +12,9 @@ tests_SOURCES	= main.cpp \
 			../src/network/detail/network_interface.cpp \
 			../src/network/detail/system.cpp \
 			../src/network/detail/system_interface.cpp \
-			network/network.cpp
+			../src/util/path.cpp \
+			network/network.cpp \
+			util/path.cpp
 
 tests_LDADD	= @GTEST_LIBS@ \
 			@GMOCK_LIBS@
