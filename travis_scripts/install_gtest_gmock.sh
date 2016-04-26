@@ -8,6 +8,10 @@ export GTEST_INSTALL_DIR=${DIR}/gtest
 export GMOCK_INSTALL_DIR=${DIR}/gmock
 export TMP_DIR=/tmp/gtest_gmock
 
+# Set compiler
+export CXX=$CXX_COMPILER
+export CC=$CC_COMPILER
+
 mkdir -p $TMP_DIR $GTEST_INSTALL_DIR $GMOCK_INSTALL_DIR
 cd $TMP_DIR
 

@@ -11,8 +11,8 @@ matrix:
           sources: ['ubuntu-toolchain-r-test']
           packages: ['g++-4.9']
       env:
-        - CXX=g++-4.9
-        - CC=gcc-4.9
+        - CXX_COMPILER=g++-4.9
+        - CC_COMPILER=gcc-4.9
 
     - os: linux
       compiler: gcc
@@ -21,8 +21,8 @@ matrix:
           sources: ['ubuntu-toolchain-r-test']
           packages: ['g++-5']
       env: 
-        - CXX=g++-4.9
-        - CC=gcc-4.9
+        - CXX_COMPILER=g++-4.9
+        - CC_COMPIELR=gcc-4.9
 
 before_install:
 - echo $LANG

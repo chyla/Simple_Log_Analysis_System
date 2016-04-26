@@ -11,6 +11,10 @@ export PATLMS_INSTALL_DIR=${DIR}/libpatlms
 export AGENT_INSTALL_DIR=${DIR}/agent
 export SERVER_INSTALL_DIR=${DIR}/server
 
+# Set compiler
+export CXX=$CXX_COMPILER
+export CC=$CC_COMPILER
+
 # Google Test & Google Mock flags
 export LDFLAGS="$LDFLAGS -L${GTEST_INSTALL_DIR}/lib -L${GMOCK_INSTALL_DIR}/lib"
 export CPPFLAGS="$CPPFLAGS -I${GTEST_INSTALL_DIR}/include -I${GMOCK_INSTALL_DIR}/include"
