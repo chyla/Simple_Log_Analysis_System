@@ -19,6 +19,7 @@ class NetworkInterface {
 
   virtual int OpenUnixSocket(const std::string &path) = 0;
   virtual int OpenIpv4Socket(const std::string &address, int port) = 0;
+  virtual void ConnectUnix(int socket, const std::string &filesystem_path) = 0;
   virtual void Close(int socket) = 0;
 
   virtual void SendText(int socket, const std::string &text) = 0;

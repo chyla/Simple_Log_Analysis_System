@@ -18,6 +18,8 @@ class System : public ::network::detail::SystemInterface {
  public:
   MOCK_METHOD1(Unlink, int(const char *pathname));
 
+  MOCK_METHOD3(Connect, int(int sockfd, const struct sockaddr *serv_addr, socklen_t addrlen));
+
   MOCK_METHOD3(Socket, int(int domain, int type, int protocol));
 
   MOCK_METHOD3(Bind, int(int sockfd, const struct sockaddr *addr, socklen_t addrlen));

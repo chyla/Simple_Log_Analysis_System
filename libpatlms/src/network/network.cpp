@@ -8,6 +8,7 @@
 #include <patlms/network/exception/detail/recv_exception.h>
 #include <patlms/network/exception/detail/timeout_exception.h>
 #include <patlms/network/exception/detail/message_too_long_exception.h>
+#include <patlms/network/exception/detail/connect_exception.h>
 
 #include <arpa/inet.h>
 #include <netinet/in.h>
@@ -69,6 +70,20 @@ int Network::OpenIpv4Socket(const string &address, int port) {
   return OpenSocket(PF_INET, (struct sockaddr *) &addr, sizeof (struct sockaddr_in));
 }
 
+void Network::ConnectUnix(int socket, const std::string &filesystem_path) {
+  if (filesystem_path.length() > 90)
+    throw exception::detail::BadAddressException();
+
+  struct sockaddr_un addr;
+  addr.sun_family = AF_UNIX;
+  addr.sun_path[90] = '\0';
+  strncpy(addr.sun_path, filesystem_path.c_str(), 91);
+
+  int ret = system_->Connect(socket, (struct sockaddr *) &addr, sizeof (struct sockaddr_un));
+  if (ret < 0)
+    throw exception::detail::ConnectException();
+}
+
 void Network::Close(int socket) {
   int ret = system_->Close(socket);
   if (ret < 0)
@@ -86,7 +101,8 @@ void Network::SendText(int socket, const string &text) {
     if (i + detail::MaxMessageLength <= text.length()) {
       to_copy = detail::MaxMessageLength - 1;
       msg_type = 'M';
-    } else {
+    }
+    else {
       to_copy = text.length() - i;
       msg_type = 'L';
     }
@@ -112,7 +128,8 @@ const string Network::ReceiveText(int socket) {
     receive_text_buffer.reserve(receive_text_buffer.size() + message.size() + 1);
     copy(message.begin() + 1, message.end(), back_inserter(receive_text_buffer));
 
-  } while (message.at(0) != 'L');
+  }
+  while (message.at(0) != 'L');
 
   receive_text_buffer.push_back('\0');
 
@@ -160,7 +177,8 @@ void Network::SendMessage(int socket, const NetworkMessage &message) {
   unsigned char message_length = static_cast<unsigned char> (message.size());
   do {
     sent = Send(socket, &message_length, 1);
-  } while (sent == 0);
+  }
+  while (sent == 0);
 
   const char *buffer = message.data();
   sent = 0;
@@ -194,7 +212,7 @@ ConnectionData Network::Accept(int socket) {
 }
 
 Network::Network(detail::SystemInterfacePtr system)
-  : system_(system) {
+: system_(system) {
 }
 
 int Network::OpenSocket(int domain, struct sockaddr *saddr, int saddr_size) {

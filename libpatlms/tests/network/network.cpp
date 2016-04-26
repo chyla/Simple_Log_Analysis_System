@@ -18,6 +18,7 @@
 #include <patlms/network/exception/detail/accept_exception.h>
 #include <patlms/network/exception/detail/timeout_exception.h>
 #include <patlms/network/exception/detail/message_too_long_exception.h>
+#include <patlms/network/exception/detail/connect_exception.h>
 
 #include "tests/mock/network/detail/system.h"
 
@@ -138,6 +139,20 @@ TEST_F(NetworkTest, OpenIpv4SocketWhenListenFailed) {
   NetworkPtr network = Network::Create(system);
 
   EXPECT_THROW(network->OpenIpv4Socket("127.1.0.1", 90), exception::detail::CantOpenSocketException);
+}
+
+TEST_F(NetworkTest, ConnectUnix) {
+  EXPECT_CALL(*system, Connect(13, _, _)).WillOnce(Return(0));
+  NetworkPtr network = Network::Create(system);
+
+  network->ConnectUnix(13, "/socket");
+}
+
+TEST_F(NetworkTest, ConnectUnixWhenConnectFail) {
+  EXPECT_CALL(*system, Connect(13, _, sizeof (struct sockaddr_un))).WillOnce(Return(-1));
+  NetworkPtr network = Network::Create(system);
+
+  EXPECT_THROW(network->ConnectUnix(13, "/socket"), exception::detail::ConnectException);
 }
 
 TEST_F(NetworkTest, Close) {

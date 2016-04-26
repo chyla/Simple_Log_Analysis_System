@@ -14,6 +14,10 @@ namespace detail
 System::~System() {
 }
 
+int System::Connect(int sockfd, const struct sockaddr *serv_addr, socklen_t addrlen) {
+  return connect(sockfd, serv_addr, addrlen);
+}
+
 int System::Accept(int sockfd, struct sockaddr *addr, socklen_t *addrlen) {
   return accept(sockfd, addr, addrlen);
 }

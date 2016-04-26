@@ -19,6 +19,7 @@ class Network : public detail::NetworkInterface {
 
   int OpenUnixSocket(const std::string &path) override;
   int OpenIpv4Socket(const std::string &address, int port) override;
+  void ConnectUnix(int socket, const std::string &filesystem_path) override;
   void Close(int socket) override;
 
   void SendText(int socket, const std::string &text);

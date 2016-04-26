@@ -13,6 +13,8 @@ class System : public SystemInterface {
  public:
   virtual ~System();
 
+  int Connect(int sockfd, const struct sockaddr *serv_addr, socklen_t addrlen);
+
   int Accept(int sockfd, struct sockaddr *addr, socklen_t *addrlen) override;
 
   int Unlink(const char *pathname) override;
