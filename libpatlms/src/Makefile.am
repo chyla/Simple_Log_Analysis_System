@@ -45,6 +45,36 @@ pkginclude_type_exception_detaildir = $(pkgincludedir)/type/exception/detail
 pkginclude_type_exception_detail_HEADERS = \
  					$(top_srcdir)/include/patlms/type/exception/detail/wrong_time_value_exception.h
 
+pkginclude_networkdir = $(pkgincludedir)/network
+pkginclude_network_HEADERS = \
+					$(top_srcdir)/include/patlms/network/network_message.h \
+					$(top_srcdir)/include/patlms/network/network.h \
+					$(top_srcdir)/include/patlms/network/connection_data.h \
+					$(top_srcdir)/include/patlms/network/wait_status.h
+
+pkginclude_network_exceptiondir = $(pkgincludedir)/network/exception
+pkginclude_network_exception_HEADERS = \
+					$(top_srcdir)/include/patlms/network/exception/network_exception.h
+
+pkginclude_network_exception_detaildir = $(pkgincludedir)/network/exception/detail
+pkginclude_network_exception_detail_HEADERS = \
+					$(top_srcdir)/include/patlms/network/exception/detail/close_exception.h \
+					$(top_srcdir)/include/patlms/network/exception/detail/connect_exception.h \
+					$(top_srcdir)/include/patlms/network/exception/detail/poll_exception.h \
+					$(top_srcdir)/include/patlms/network/exception/detail/bad_address_exception.h \
+					$(top_srcdir)/include/patlms/network/exception/detail/recv_exception.h \
+					$(top_srcdir)/include/patlms/network/exception/detail/message_too_long_exception.h \
+					$(top_srcdir)/include/patlms/network/exception/detail/cant_open_socket_exception.h \
+					$(top_srcdir)/include/patlms/network/exception/detail/timeout_exception.h \
+					$(top_srcdir)/include/patlms/network/exception/detail/accept_exception.h
+
+pkginclude_network_detaildir = $(pkgincludedir)/network/detail
+pkginclude_network_detail_HEADERS = \
+					$(top_srcdir)/include/patlms/network/detail/const_values.h \
+					$(top_srcdir)/include/patlms/network/detail/network_interface.h \
+					$(top_srcdir)/include/patlms/network/detail/system.h \
+					$(top_srcdir)/include/patlms/network/detail/system_interface.h
+
 pkginclude_utildir = $(pkgincludedir)/util
 pkginclude_util_HEADERS = \
 					$(top_srcdir)/include/patlms/util/path.h
