@@ -25,6 +25,18 @@ TEST(UtilTest, IsAbsoluteUnixPath_WithMinus) {
   EXPECT_TRUE(IsAbsoluteUnixPath(path));
 }
 
+TEST(UtilTest, IsAbsoluteUnixPath_NameWithDot) {
+  string path = "/var/log/file.dot";
+  
+  EXPECT_TRUE(IsAbsoluteUnixPath(path));
+}
+
+TEST(UtilTest, IsAbsoluteUnixPath_DirectoryWithDot) {
+  string path = "/var/l.og/filedot";
+  
+  EXPECT_TRUE(IsAbsoluteUnixPath(path));
+}
+
 TEST(UtilTest, IsAbsoluteUnixPath_WithEndingShlash) {
   string path = "/var/log/";
   
