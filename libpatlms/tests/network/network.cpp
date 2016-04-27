@@ -42,6 +42,27 @@ class NetworkTest : public ::testing::Test {
   std::shared_ptr<mock::network::detail::System> system;
 };
 
+TEST_F(NetworkTest, SocketDefault) {
+  EXPECT_CALL(*system, Socket(PF_INET, SOCK_STREAM, 0)).WillOnce(Return(13));
+  NetworkPtr network = Network::Create(system);
+
+  EXPECT_EQ(13, network->Socket());
+}
+
+TEST_F(NetworkTest, SocketUnix) {
+  EXPECT_CALL(*system, Socket(PF_UNIX, SOCK_STREAM, 0)).WillOnce(Return(13));
+  NetworkPtr network = Network::Create(system);
+
+  EXPECT_EQ(13, network->Socket(PF_UNIX));
+}
+
+TEST_F(NetworkTest, SocketDefaultWhenSocketFail) {
+  EXPECT_CALL(*system, Socket(PF_INET, SOCK_STREAM, 0)).WillOnce(Return(-1));
+  NetworkPtr network = Network::Create(system);
+
+  EXPECT_THROW(network->Socket(), exception::detail::CantOpenSocketException);
+}
+
 TEST_F(NetworkTest, CreateUnixSocket) {
   EXPECT_CALL(*system, Socket(PF_UNIX, SOCK_STREAM, 0)).WillOnce(Return(13));
   EXPECT_CALL(*system, Bind(_, _, sizeof (struct sockaddr_un))).WillOnce(Return(0));
@@ -207,21 +228,19 @@ TEST_F(NetworkTest, AcceptWhenAcceptFail) {
 }
 
 TEST_F(NetworkTest, RecvMessageOnePart) {
-  EXPECT_CALL(*system, Recv(13, _, 1, 0)).WillOnce(Invoke([](int, void *buffer, size_t, int)
-  {
+  EXPECT_CALL(*system, Recv(13, _, 1, 0)).WillOnce(Invoke([](int, void *buffer, size_t, int) {
     char *buf = (char*) buffer;
     buf[0] = 5;
     return 1;
   }));
-  EXPECT_CALL(*system, Recv(13, _, 5, 0)).WillOnce(Invoke([](int, void *buffer, size_t, int)
-  {
+  EXPECT_CALL(*system, Recv(13, _, 5, 0)).WillOnce(Invoke([](int, void *buffer, size_t, int) {
     char *buf = (char*) buffer;
     strncpy(buf, "test", 5);
     return 5;
   }));
   EXPECT_CALL(*system, Poll(_, 1, detail::TimeoutSeconds * 1000))
-    .WillOnce(Return(1))
-    .WillOnce(Return(1));
+      .WillOnce(Return(1))
+      .WillOnce(Return(1));
 
   NetworkPtr network = Network::Create(system);
 
@@ -232,30 +251,27 @@ TEST_F(NetworkTest, RecvMessageOnePart) {
 
 TEST_F(NetworkTest, RecvMessageTwoParts) {
   EXPECT_CALL(*system, Recv(13, _, 1, 0))
-    .WillOnce(Invoke([](int, void *buffer, size_t, int)
-    {
-      char *buf = (char*) buffer;
-      buf[0] = 5;
-      return 1;
-    }));
+      .WillOnce(Invoke([](int, void *buffer, size_t, int) {
+        char *buf = (char*) buffer;
+        buf[0] = 5;
+        return 1;
+      }));
   EXPECT_CALL(*system, Recv(13, _, 5, 0))
-    .WillOnce(Invoke([](int, void *buffer, size_t, int)
-    {
-      char *buf = (char*) buffer;
-      strncpy(buf, "te", 2);
-      return 2;
-    }));
+      .WillOnce(Invoke([](int, void *buffer, size_t, int) {
+        char *buf = (char*) buffer;
+        strncpy(buf, "te", 2);
+        return 2;
+      }));
   EXPECT_CALL(*system, Recv(13, _, 3, 0))
-    .WillOnce(Invoke([](int, void *buffer, size_t, int)
-    {
-      char *buf = (char*) buffer;
-      strncpy(buf, "st", 3);
-      return 3;
-    }));
+      .WillOnce(Invoke([](int, void *buffer, size_t, int) {
+        char *buf = (char*) buffer;
+        strncpy(buf, "st", 3);
+        return 3;
+      }));
   EXPECT_CALL(*system, Poll(_, 1, detail::TimeoutSeconds * 1000))
-    .WillOnce(Return(1))
-    .WillOnce(Return(1))
-    .WillOnce(Return(1));
+      .WillOnce(Return(1))
+      .WillOnce(Return(1))
+      .WillOnce(Return(1));
 
   NetworkPtr network = Network::Create(system);
 
@@ -266,38 +282,34 @@ TEST_F(NetworkTest, RecvMessageTwoParts) {
 
 TEST_F(NetworkTest, RecvMessageThreeParts) {
   EXPECT_CALL(*system, Recv(13, _, 1, 0))
-    .WillOnce(Invoke([](int, void *buffer, size_t, int)
-    {
-      char *buf = (char*) buffer;
-      buf[0] = 8;
-      return 1;
-    }));
+      .WillOnce(Invoke([](int, void *buffer, size_t, int) {
+        char *buf = (char*) buffer;
+        buf[0] = 8;
+        return 1;
+      }));
   EXPECT_CALL(*system, Recv(13, _, 8, 0))
-    .WillOnce(Invoke([](int, void *buffer, size_t, int)
-    {
-      char *buf = (char*) buffer;
-      strncpy(buf, "te", 2);
-      return 2;
-    }));
+      .WillOnce(Invoke([](int, void *buffer, size_t, int) {
+        char *buf = (char*) buffer;
+        strncpy(buf, "te", 2);
+        return 2;
+      }));
   EXPECT_CALL(*system, Recv(13, _, 6, 0))
-    .WillOnce(Invoke([](int, void *buffer, size_t, int)
-    {
-      char *buf = (char*) buffer;
-      strncpy(buf, "st", 2);
-      return 2;
-    }));
+      .WillOnce(Invoke([](int, void *buffer, size_t, int) {
+        char *buf = (char*) buffer;
+        strncpy(buf, "st", 2);
+        return 2;
+      }));
   EXPECT_CALL(*system, Recv(13, _, 4, 0))
-    .WillOnce(Invoke([](int, void *buffer, size_t, int)
-    {
-      char *buf = (char*) buffer;
-      strncpy(buf, "ing", 4);
-      return 4;
-    }));
+      .WillOnce(Invoke([](int, void *buffer, size_t, int) {
+        char *buf = (char*) buffer;
+        strncpy(buf, "ing", 4);
+        return 4;
+      }));
   EXPECT_CALL(*system, Poll(_, 1, detail::TimeoutSeconds * 1000))
-    .WillOnce(Return(1))
-    .WillOnce(Return(1))
-    .WillOnce(Return(1))
-    .WillOnce(Return(1));
+      .WillOnce(Return(1))
+      .WillOnce(Return(1))
+      .WillOnce(Return(1))
+      .WillOnce(Return(1));
 
   NetworkPtr network = Network::Create(system);
 
@@ -316,23 +328,21 @@ TEST_F(NetworkTest, RecvMessageWhenFirstMessageTimeout) {
 
 TEST_F(NetworkTest, RecvMessageWhenSecondMessageTimeout) {
   EXPECT_CALL(*system, Recv(13, _, 1, 0))
-    .WillOnce(Invoke([](int, void *buffer, size_t, int)
-    {
-      char *buf = (char*) buffer;
-      buf[0] = 5;
-      return 1;
-    }));
+      .WillOnce(Invoke([](int, void *buffer, size_t, int) {
+        char *buf = (char*) buffer;
+        buf[0] = 5;
+        return 1;
+      }));
   EXPECT_CALL(*system, Recv(13, _, 5, 0))
-    .WillOnce(Invoke([](int, void *buffer, size_t, int)
-    {
-      char *buf = (char*) buffer;
-      strncpy(buf, "te", 2);
-      return 3;
-    }));
+      .WillOnce(Invoke([](int, void *buffer, size_t, int) {
+        char *buf = (char*) buffer;
+        strncpy(buf, "te", 2);
+        return 3;
+      }));
   EXPECT_CALL(*system, Poll(_, 1, detail::TimeoutSeconds * 1000))
-    .WillOnce(Return(1))
-    .WillOnce(Return(1))
-    .WillOnce(Return(0));
+      .WillOnce(Return(1))
+      .WillOnce(Return(1))
+      .WillOnce(Return(0));
 
   NetworkPtr network = Network::Create(system);
 
@@ -340,8 +350,7 @@ TEST_F(NetworkTest, RecvMessageWhenSecondMessageTimeout) {
 }
 
 TEST_F(NetworkTest, RecvMessageOneLongMessage) {
-  EXPECT_CALL(*system, Recv(13, _, 1, 0)).WillOnce(Invoke([](int, void *buffer, size_t, int)
-  {
+  EXPECT_CALL(*system, Recv(13, _, 1, 0)).WillOnce(Invoke([](int, void *buffer, size_t, int) {
     unsigned char *buf = (unsigned char*) buffer;
     buf[0] = (unsigned char) (255);
     // copy buffer content
@@ -356,15 +365,13 @@ TEST_F(NetworkTest, RecvMessageOneLongMessage) {
 }
 
 TEST_F(NetworkTest, SendMessageOnePart) {
-  EXPECT_CALL(*system, Send(13, _, 1, 0)).WillOnce(Invoke([](int, const void *buffer, size_t, int)
-  {
+  EXPECT_CALL(*system, Send(13, _, 1, 0)).WillOnce(Invoke([](int, const void *buffer, size_t, int) {
     const unsigned char *buf = (const unsigned char*) buffer;
     int message_length = buf[0];
     EXPECT_EQ(5, message_length);
     return 1;
   }));
-  EXPECT_CALL(*system, Send(13, _, 5, 0)).WillOnce(Invoke([](int, const void *buffer, size_t, int)
-  {
+  EXPECT_CALL(*system, Send(13, _, 5, 0)).WillOnce(Invoke([](int, const void *buffer, size_t, int) {
     const char *buf = (const char*) buffer;
     EXPECT_STREQ("test", buf);
     return 5;
@@ -377,22 +384,19 @@ TEST_F(NetworkTest, SendMessageOnePart) {
 }
 
 TEST_F(NetworkTest, SendMessageOnePartWithTwoMessageLength) {
-  EXPECT_CALL(*system, Send(13, _, 1, 0)).WillOnce(Invoke([](int, const void *buffer, size_t, int)
-  {
+  EXPECT_CALL(*system, Send(13, _, 1, 0)).WillOnce(Invoke([](int, const void *buffer, size_t, int) {
     const unsigned char *buf = (const unsigned char*) buffer;
     int message_length = buf[0];
     EXPECT_EQ(5, message_length);
     return 0;
   }))
-  .WillOnce(Invoke([](int, const void *buffer, size_t, int)
-  {
+  .WillOnce(Invoke([](int, const void *buffer, size_t, int) {
     const unsigned char *buf = (const unsigned char*) buffer;
     int message_length = buf[0];
     EXPECT_EQ(5, message_length);
     return 1;
   }));
-  EXPECT_CALL(*system, Send(13, _, 5, 0)).WillOnce(Invoke([](int, const void *buffer, size_t, int)
-  {
+  EXPECT_CALL(*system, Send(13, _, 5, 0)).WillOnce(Invoke([](int, const void *buffer, size_t, int) {
     const char *buf = (const char*) buffer;
     EXPECT_STREQ("test", buf);
     return 5;
@@ -405,22 +409,19 @@ TEST_F(NetworkTest, SendMessageOnePartWithTwoMessageLength) {
 }
 
 TEST_F(NetworkTest, SendMessageTwoSendCalls) {
-  EXPECT_CALL(*system, Send(13, _, 1, 0)).WillOnce(Invoke([](int, const void *buffer, size_t, int)
-  {
+  EXPECT_CALL(*system, Send(13, _, 1, 0)).WillOnce(Invoke([](int, const void *buffer, size_t, int) {
     const unsigned char *buf = (const unsigned char*) buffer;
     int message_length = buf[0];
     EXPECT_EQ(5, message_length);
     return 1;
   }));
-  EXPECT_CALL(*system, Send(13, _, 5, 0)).WillOnce(Invoke([](int, const void *buffer, size_t, int)
-  {
+  EXPECT_CALL(*system, Send(13, _, 5, 0)).WillOnce(Invoke([](int, const void *buffer, size_t, int) {
     const char *buf = (const char*) buffer;
     EXPECT_EQ('t', buf[0]);
     EXPECT_EQ('e', buf[1]);
     return 2;
   }));
-  EXPECT_CALL(*system, Send(13, _, 3, 0)).WillOnce(Invoke([](int, const void *buffer, size_t, int)
-  {
+  EXPECT_CALL(*system, Send(13, _, 3, 0)).WillOnce(Invoke([](int, const void *buffer, size_t, int) {
     const char *buf = (const char*) buffer;
     EXPECT_EQ('s', buf[0]);
     EXPECT_EQ('t', buf[1]);
@@ -443,15 +444,13 @@ TEST_F(NetworkTest, SendMessageWhenMessageIsTooLong) {
 }
 
 TEST_F(NetworkTest, SendTextWhenTextIsShort) {
-  EXPECT_CALL(*system, Send(11, _, 1, 0)).WillOnce(Invoke([](int, const void *buffer, size_t, int)
-  {
+  EXPECT_CALL(*system, Send(11, _, 1, 0)).WillOnce(Invoke([](int, const void *buffer, size_t, int) {
     const unsigned char *buf = (const unsigned char*) buffer;
     int message_length = buf[0];
     EXPECT_EQ(13, message_length);
     return 1;
   }));
-  EXPECT_CALL(*system, Send(11, _, 13, 0)).WillOnce(Invoke([](int, const void *buffer, size_t, int)
-  {
+  EXPECT_CALL(*system, Send(11, _, 13, 0)).WillOnce(Invoke([](int, const void *buffer, size_t, int) {
     const char *buf = (const char*) buffer;
     char tmp[15] = {0};
     (void) strncpy(tmp, buf, 13);
@@ -471,15 +470,13 @@ TEST_F(NetworkTest, SendTextWhenTextIsLongAndFitsInOneMessage) {
   for (int i = 0; i < detail::MaxMessageLength - 1; i++)
     text += "a";
   ASSERT_EQ(254, text.length());
-  EXPECT_CALL(*system, Send(11, _, 1, 0)).WillOnce(Invoke([](int, const void *buffer, size_t, int)
-  {
+  EXPECT_CALL(*system, Send(11, _, 1, 0)).WillOnce(Invoke([](int, const void *buffer, size_t, int) {
     const unsigned char *buf = (const unsigned char*) buffer;
     int message_length = buf[0];
     EXPECT_EQ(255, message_length);
     return 1;
   }));
-  EXPECT_CALL(*system, Send(11, _, 255, 0)).WillOnce(Invoke([&text](int, const void *buffer, size_t, int)
-  {
+  EXPECT_CALL(*system, Send(11, _, 255, 0)).WillOnce(Invoke([&text](int, const void *buffer, size_t, int) {
     const char *buf = (const char*) buffer;
     char tmp[256] = {0};
     (void) strncpy(tmp, buf, 255);
@@ -501,15 +498,13 @@ TEST_F(NetworkTest, SendTextWhenTextIsLongAndFitsInTwoMessages) {
 
   InSequence s;
   ASSERT_EQ(255, text.length());
-  EXPECT_CALL(*system, Send(11, _, 1, 0)).WillOnce(Invoke([](int, const void *buffer, size_t, int)
-  {
+  EXPECT_CALL(*system, Send(11, _, 1, 0)).WillOnce(Invoke([](int, const void *buffer, size_t, int) {
     const unsigned char *buf = (const unsigned char*) buffer;
     int message_length = buf[0];
     EXPECT_EQ(255, message_length);
     return 1;
   }));
-  EXPECT_CALL(*system, Send(11, _, 255, 0)).WillOnce(Invoke([&text](int, const void *buffer, size_t, int)
-  {
+  EXPECT_CALL(*system, Send(11, _, 255, 0)).WillOnce(Invoke([&text](int, const void *buffer, size_t, int) {
     const char *buf = (const char*) buffer;
     char tmp[256] = {0};
     (void) strncpy(tmp, buf, 255);
@@ -517,15 +512,13 @@ TEST_F(NetworkTest, SendTextWhenTextIsLongAndFitsInTwoMessages) {
     EXPECT_EQ('a', tmp[254]);
     return 255;
   }));
-  EXPECT_CALL(*system, Send(11, _, 1, 0)).WillOnce(Invoke([](int, const void *buffer, size_t, int)
-  {
+  EXPECT_CALL(*system, Send(11, _, 1, 0)).WillOnce(Invoke([](int, const void *buffer, size_t, int) {
     const unsigned char *buf = (const unsigned char*) buffer;
     int message_length = buf[0];
     EXPECT_EQ(2, message_length);
     return 1;
   }));
-  EXPECT_CALL(*system, Send(11, _, 2, 0)).WillOnce(Invoke([&text](int, const void *buffer, size_t, int)
-  {
+  EXPECT_CALL(*system, Send(11, _, 2, 0)).WillOnce(Invoke([&text](int, const void *buffer, size_t, int) {
     const char *buf = (const char*) buffer;
     char tmp[256] = {0};
     (void) strncpy(tmp, buf, 255);
@@ -548,15 +541,13 @@ TEST_F(NetworkTest, SendTextWhenTextIsLongAndFitsInTwoMaximumSizeMessages) {
 
   InSequence s;
   ASSERT_EQ(508, text.length());
-  EXPECT_CALL(*system, Send(11, _, 1, 0)).WillOnce(Invoke([](int, const void *buffer, size_t, int)
-  {
+  EXPECT_CALL(*system, Send(11, _, 1, 0)).WillOnce(Invoke([](int, const void *buffer, size_t, int) {
     const unsigned char *buf = (const unsigned char*) buffer;
     int message_length = buf[0];
     EXPECT_EQ(255, message_length);
     return 1;
   }));
-  EXPECT_CALL(*system, Send(11, _, 255, 0)).WillOnce(Invoke([&text](int, const void *buffer, size_t, int)
-  {
+  EXPECT_CALL(*system, Send(11, _, 255, 0)).WillOnce(Invoke([&text](int, const void *buffer, size_t, int) {
     const char *buf = (const char*) buffer;
     char tmp[256] = {0};
     (void) strncpy(tmp, buf, 255);
@@ -564,15 +555,13 @@ TEST_F(NetworkTest, SendTextWhenTextIsLongAndFitsInTwoMaximumSizeMessages) {
     EXPECT_EQ('a', tmp[254]);
     return 255;
   }));
-  EXPECT_CALL(*system, Send(11, _, 1, 0)).WillOnce(Invoke([](int, const void *buffer, size_t, int)
-  {
+  EXPECT_CALL(*system, Send(11, _, 1, 0)).WillOnce(Invoke([](int, const void *buffer, size_t, int) {
     const unsigned char *buf = (const unsigned char*) buffer;
     int message_length = buf[0];
     EXPECT_EQ(255, message_length);
     return 1;
   }));
-  EXPECT_CALL(*system, Send(11, _, 255, 0)).WillOnce(Invoke([&text](int, const void *buffer, size_t, int)
-  {
+  EXPECT_CALL(*system, Send(11, _, 255, 0)).WillOnce(Invoke([&text](int, const void *buffer, size_t, int) {
     const char *buf = (const char*) buffer;
     char tmp[256] = {0};
     (void) strncpy(tmp, buf, 255);
@@ -597,15 +586,13 @@ TEST_F(NetworkTest, SendTextWhenTextIsLongAndFitsInThreeMessages) {
 
   InSequence s;
   ASSERT_EQ(509, text.length());
-  EXPECT_CALL(*system, Send(11, _, 1, 0)).WillOnce(Invoke([](int, const void *buffer, size_t, int)
-  {
+  EXPECT_CALL(*system, Send(11, _, 1, 0)).WillOnce(Invoke([](int, const void *buffer, size_t, int) {
     const unsigned char *buf = (const unsigned char*) buffer;
     int message_length = buf[0];
     EXPECT_EQ(255, message_length);
     return 1;
   }));
-  EXPECT_CALL(*system, Send(11, _, 255, 0)).WillOnce(Invoke([&text](int, const void *buffer, size_t, int)
-  {
+  EXPECT_CALL(*system, Send(11, _, 255, 0)).WillOnce(Invoke([&text](int, const void *buffer, size_t, int) {
     const char *buf = (const char*) buffer;
     char tmp[256] = {0};
     (void) strncpy(tmp, buf, 255);
@@ -613,15 +600,13 @@ TEST_F(NetworkTest, SendTextWhenTextIsLongAndFitsInThreeMessages) {
     EXPECT_EQ('a', tmp[254]);
     return 255;
   }));
-  EXPECT_CALL(*system, Send(11, _, 1, 0)).WillOnce(Invoke([](int, const void *buffer, size_t, int)
-  {
+  EXPECT_CALL(*system, Send(11, _, 1, 0)).WillOnce(Invoke([](int, const void *buffer, size_t, int) {
     const unsigned char *buf = (const unsigned char*) buffer;
     int message_length = buf[0];
     EXPECT_EQ(255, message_length);
     return 1;
   }));
-  EXPECT_CALL(*system, Send(11, _, 255, 0)).WillOnce(Invoke([&text](int, const void *buffer, size_t, int)
-  {
+  EXPECT_CALL(*system, Send(11, _, 255, 0)).WillOnce(Invoke([&text](int, const void *buffer, size_t, int) {
     const char *buf = (const char*) buffer;
     char tmp[256] = {0};
     (void) strncpy(tmp, buf, 255);
@@ -630,15 +615,13 @@ TEST_F(NetworkTest, SendTextWhenTextIsLongAndFitsInThreeMessages) {
     EXPECT_EQ('b', tmp[254]);
     return 255;
   }));
-  EXPECT_CALL(*system, Send(11, _, 1, 0)).WillOnce(Invoke([](int, const void *buffer, size_t, int)
-  {
+  EXPECT_CALL(*system, Send(11, _, 1, 0)).WillOnce(Invoke([](int, const void *buffer, size_t, int) {
     const unsigned char *buf = (const unsigned char*) buffer;
     int message_length = buf[0];
     EXPECT_EQ(2, message_length);
     return 1;
   }));
-  EXPECT_CALL(*system, Send(11, _, 2, 0)).WillOnce(Invoke([&text](int, const void *buffer, size_t, int)
-  {
+  EXPECT_CALL(*system, Send(11, _, 2, 0)).WillOnce(Invoke([&text](int, const void *buffer, size_t, int) {
     const char *buf = (const char*) buffer;
     char tmp[256] = {0};
     (void) strncpy(tmp, buf, 255);
@@ -653,20 +636,18 @@ TEST_F(NetworkTest, SendTextWhenTextIsLongAndFitsInThreeMessages) {
 }
 
 TEST_F(NetworkTest, ReceiveTextWhenTextIsShort) {
-  EXPECT_CALL(*system, Recv(11, _, 1, 0)).WillOnce(Invoke([](int, void *buffer, size_t, int)
-  {
+  EXPECT_CALL(*system, Recv(11, _, 1, 0)).WillOnce(Invoke([](int, void *buffer, size_t, int) {
     unsigned char *buf = (unsigned char*) buffer;
     buf[0] = (unsigned char) (13);
     return 1;
   }));
-  EXPECT_CALL(*system, Recv(11, _, 13, 0)).WillOnce(Invoke([](int, void *buffer, size_t, int)
-  {
+  EXPECT_CALL(*system, Recv(11, _, 13, 0)).WillOnce(Invoke([](int, void *buffer, size_t, int) {
     const char *text = "Lexample text";
     (void) strncpy((char*) buffer, text, 13);
     return 13;
   }));
   EXPECT_CALL(*system, Poll(_, 1, detail::TimeoutSeconds * 1000))
-    .WillRepeatedly(Return(1));
+      .WillRepeatedly(Return(1));
 
   NetworkPtr network = Network::Create(system);
 
@@ -678,33 +659,29 @@ TEST_F(NetworkTest, ReceiveTextWhenReceivedTwoMessages) {
   {
     InSequence s;
 
-    EXPECT_CALL(*system, Recv(11, _, 1, 0)).WillOnce(Invoke([](int, void *buffer, size_t, int)
-    {
+    EXPECT_CALL(*system, Recv(11, _, 1, 0)).WillOnce(Invoke([](int, void *buffer, size_t, int) {
       unsigned char *buf = (unsigned char*) buffer;
       buf[0] = (unsigned char) (13);
       return 1;
     }));
-    EXPECT_CALL(*system, Recv(11, _, 13, 0)).WillOnce(Invoke([](int, void *buffer, size_t, int)
-    {
+    EXPECT_CALL(*system, Recv(11, _, 13, 0)).WillOnce(Invoke([](int, void *buffer, size_t, int) {
       const char *text = "Mexample text";
       (void) strncpy((char*) buffer, text, 13);
       return 13;
     }));
-    EXPECT_CALL(*system, Recv(11, _, 1, 0)).WillOnce(Invoke([](int, void *buffer, size_t, int)
-    {
+    EXPECT_CALL(*system, Recv(11, _, 1, 0)).WillOnce(Invoke([](int, void *buffer, size_t, int) {
       unsigned char *buf = (unsigned char*) buffer;
       buf[0] = (unsigned char) (13);
       return 1;
     }));
-    EXPECT_CALL(*system, Recv(11, _, 13, 0)).WillOnce(Invoke([](int, void *buffer, size_t, int)
-    {
+    EXPECT_CALL(*system, Recv(11, _, 13, 0)).WillOnce(Invoke([](int, void *buffer, size_t, int) {
       const char *text = "Lnext text";
       (void) strncpy((char*) buffer, text, 13);
       return 13;
     }));
   }
   EXPECT_CALL(*system, Poll(_, 1, detail::TimeoutSeconds * 1000))
-    .WillRepeatedly(Return(1));
+      .WillRepeatedly(Return(1));
 
   NetworkPtr network = Network::Create(system);
 

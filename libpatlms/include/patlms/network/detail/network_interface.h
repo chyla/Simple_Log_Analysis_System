@@ -6,6 +6,7 @@
 #include <patlms/network/wait_status.h>
 
 #include <string>
+#include <sys/socket.h>
 
 namespace network
 {
@@ -17,6 +18,8 @@ class NetworkInterface {
  public:
   virtual ~NetworkInterface();
 
+  virtual int Socket(int domain = PF_INET) = 0;
+  
   virtual int OpenUnixSocket(const std::string &path) = 0;
   virtual int OpenIpv4Socket(const std::string &address, int port) = 0;
   virtual void ConnectUnix(int socket, const std::string &filesystem_path) = 0;

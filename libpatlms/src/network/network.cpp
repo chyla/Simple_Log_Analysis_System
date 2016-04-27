@@ -43,6 +43,15 @@ NetworkPtr Network::Create(detail::SystemInterfacePtr system) {
   return network_ptr;
 }
 
+int Network::Socket(int domain) {
+  int socket_fd = system_->Socket(domain, SOCK_STREAM, 0);
+  if (socket_fd < 0) {
+    throw exception::detail::CantOpenSocketException();
+  }
+
+  return socket_fd;
+}
+
 int Network::OpenUnixSocket(const string &filesystem_path) {
   if (filesystem_path.length() > 90)
     throw exception::detail::BadAddressException();
@@ -218,10 +227,7 @@ Network::Network(detail::SystemInterfacePtr system)
 int Network::OpenSocket(int domain, struct sockaddr *saddr, int saddr_size) {
   int ret, socket_fd;
 
-  socket_fd = system_->Socket(domain, SOCK_STREAM, 0);
-  if (socket_fd < 0) {
-    throw exception::detail::CantOpenSocketException();
-  }
+  socket_fd = Socket(domain);
 
   ret = system_->Bind(socket_fd, saddr, saddr_size);
   if (ret < 0) {

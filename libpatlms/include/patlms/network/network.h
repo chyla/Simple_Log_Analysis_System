@@ -17,6 +17,8 @@ class Network : public detail::NetworkInterface {
   static NetworkPtr Create();
   static NetworkPtr Create(detail::SystemInterfacePtr system);
 
+  int Socket(int domain = PF_INET) override;
+  
   int OpenUnixSocket(const std::string &path) override;
   int OpenIpv4Socket(const std::string &address, int port) override;
   void ConnectUnix(int socket, const std::string &filesystem_path) override;
