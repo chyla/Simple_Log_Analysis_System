@@ -43,6 +43,7 @@ pkginclude_type_exception_HEADERS = \
 
 pkginclude_type_exception_detaildir = $(pkgincludedir)/type/exception/detail
 pkginclude_type_exception_detail_HEADERS = \
+ 					$(top_srcdir)/include/patlms/type/exception/detail/wrong_path_exception.h \
  					$(top_srcdir)/include/patlms/type/exception/detail/wrong_time_value_exception.h
 
 pkginclude_networkdir = $(pkgincludedir)/network

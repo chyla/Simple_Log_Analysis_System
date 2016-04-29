@@ -6,6 +6,7 @@
 #include <patlms/network/wait_status.h>
 
 #include <string>
+#include <memory>
 #include <sys/socket.h>
 
 namespace network
@@ -35,6 +36,8 @@ class NetworkInterface {
 
   virtual ConnectionData Accept(int socket) = 0;
 };
+
+typedef std::shared_ptr<NetworkInterface> NetworkInterfacePtr;
 
 }
 

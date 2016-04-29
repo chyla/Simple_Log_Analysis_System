@@ -16,7 +16,10 @@ agent_SOURCES		= main.cpp \
 				dbus/dbus_thread.cpp \
 				dbus/dbus_thread_command.cpp \
 				dbus/detail/system.cpp \
-				dbus/detail/dbus_thread_interface.cpp
+				dbus/detail/dbus_thread_interface.cpp \
+				apache/apache_log_receiver.cpp \
+				apache/detail/apache_proxy.cpp \
+				apache/detail/apache_dbus_thread_command.cpp
 
 agent_LDADD		= @BOOST_PROGRAM_OPTIONS_LIB@ \
 				@BOOST_LOG_LIB@ \

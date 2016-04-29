@@ -1,2 +1,2 @@
 AUTOMAKE_OPTIONS = foreign
-SUBDIRS = src tests configs
+SUBDIRS = apache_helper_src src tests configs

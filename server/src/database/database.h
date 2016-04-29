@@ -29,6 +29,8 @@ class Database {
   void CreateApacheLogsTable();
 
   bool AddBashLogs(const type::BashLogs &log_entries);
+  
+  bool AddApacheLogs(const type::ApacheLogs &log_entries);
 
   bool Close();
 

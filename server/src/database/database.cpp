@@ -3,6 +3,7 @@
 #include <utility>
 #include <boost/log/trivial.hpp>
 #include <patlms/type/bash_log_entry.h>
+#include <patlms/type/apache_log_entry.h>
 
 #include "detail/sqlite.h"
 #include "src/database/exception/detail/cant_open_database_exception.h"
@@ -138,6 +139,83 @@ bool Database::AddBashLogs(const type::BashLogs &log_entries) {
 
     ret = sqlite_interface_->BindText(statement, 9, entry.command.c_str(), -1, nullptr);
     StatementCheckForErrorAndRollback(ret, "Bind command error");
+
+    ret = sqlite_interface_->Step(statement);
+    if (ret == SQLITE_BUSY) {
+      BOOST_LOG_TRIVIAL(error) << "database::Database::AddBashLogs: Step error - SQLite is busy";
+      Rollback();
+      return false;
+    }
+    StatementCheckForErrorAndRollback(ret, "Step error");
+
+    ret = sqlite_interface_->Finalize(statement);
+    StatementCheckForErrorAndRollback(ret, "Finalize error");
+  }
+
+  ret = sqlite_interface_->Exec(db_handle_, "end transaction", nullptr, nullptr, nullptr);
+  if (ret == SQLITE_BUSY) {
+    BOOST_LOG_TRIVIAL(error) << "database::Database::AddBashLogs: End transaction error - SQLite is busy";
+    Rollback();
+    return false;
+  }
+  StatementCheckForErrorAndRollback(ret, "End transaction error");
+
+  return true;
+}
+
+bool Database::AddApacheLogs(const type::ApacheLogs &log_entries) {
+  BOOST_LOG_TRIVIAL(debug) << "database::Database::AddApacheLogs: Function call";
+
+  if (is_open_ == false) {
+    BOOST_LOG_TRIVIAL(error) << "database::Database::AddApacheLogs: Database is not open.";
+    throw exception::detail::CantExecuteSqlStatementException();
+  }
+
+  int ret;
+  ret = sqlite_interface_->Exec(db_handle_, "begin transaction", nullptr, nullptr, nullptr);
+  StatementCheckForError(ret, "Begin transaction error");
+
+  for (const type::ApacheLogEntry &entry : log_entries) {
+    const char *sql = "insert into APACHE_LOGS_TABLE(VIRTUALHOST, CLIENT_IP, UTC_HOUR, UTC_MINUTE, UTC_SECOND, UTC_DAY, UTC_MONTH, UTC_YEAR, REQUEST, STATUS_CODE, BYTES, USER_AGENT) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    sqlite3_stmt *statement;
+    ret = sqlite_interface_->Prepare(db_handle_, sql, -1, &statement, nullptr);
+    StatementCheckForErrorAndRollback(ret, "Prepare insert error");
+
+    ret = sqlite_interface_->BindText(statement, 1, entry.virtualhost.c_str(), -1, nullptr);
+    StatementCheckForErrorAndRollback(ret, "Bind virtualhost error");
+
+    ret = sqlite_interface_->BindText(statement, 2, entry.client_ip.c_str(), -1, nullptr);
+    StatementCheckForErrorAndRollback(ret, "Bind client_ip error");
+
+    ret = sqlite_interface_->BindInt(statement, 3, entry.time.GetHour());
+    StatementCheckForErrorAndRollback(ret, "Bind hour error");
+
+    ret = sqlite_interface_->BindInt(statement, 4, entry.time.GetMinute());
+    StatementCheckForErrorAndRollback(ret, "Bind minute error");
+
+    ret = sqlite_interface_->BindInt(statement, 5, entry.time.GetSecond());
+    StatementCheckForErrorAndRollback(ret, "Bind second error");
+
+    ret = sqlite_interface_->BindInt(statement, 6, entry.time.GetDay());
+    StatementCheckForErrorAndRollback(ret, "Bind day error");
+
+    ret = sqlite_interface_->BindInt(statement, 7, entry.time.GetMonth());
+    StatementCheckForErrorAndRollback(ret, "Bind month error");
+
+    ret = sqlite_interface_->BindInt(statement, 8, entry.time.GetYear());
+    StatementCheckForErrorAndRollback(ret, "Bind year error");
+
+    ret = sqlite_interface_->BindText(statement, 9, entry.request.c_str(), -1, nullptr);
+    StatementCheckForErrorAndRollback(ret, "Bind request error");
+    
+    ret = sqlite_interface_->BindInt(statement, 10, entry.status_code);
+    StatementCheckForErrorAndRollback(ret, "Bind status_code id error");
+    
+    ret = sqlite_interface_->BindInt(statement, 11, entry.bytes);
+    StatementCheckForErrorAndRollback(ret, "Bind bytes error");
+
+    ret = sqlite_interface_->BindText(statement, 12, entry.user_agent.c_str(), -1, nullptr);
+    StatementCheckForErrorAndRollback(ret, "Bind user_agent error");
 
     ret = sqlite_interface_->Step(statement);
     if (ret == SQLITE_BUSY) {

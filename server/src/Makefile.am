@@ -10,7 +10,8 @@ server_SOURCES		= main.cpp \
 				database/detail/sqlite.cpp \
 				program_options/options.cpp \
 				program_options/parser.cpp \
-				objects/bash.cpp
+				objects/bash.cpp \
+				objects/apache.cpp
 
 server_LDADD		= @BOOST_PROGRAM_OPTIONS_LIB@ \
 				@BOOST_LOG_LIB@ \

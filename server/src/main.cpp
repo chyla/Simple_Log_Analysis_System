@@ -11,6 +11,7 @@
 #include "program_options/parser.h"
 #include "database/database.h"
 
+#include "objects/apache.h"
 #include "objects/bash.h"
 
 #ifdef HAVE_CONFIG_H
@@ -59,6 +60,9 @@ main(int argc, char *argv[]) {
     objects::Bash bash(database);
     bus.RegisterObject(&bash);
 
+    objects::Apache apache(database);
+    bus.RegisterObject(&apache);
+    
     bus.Loop();
 
   } catch (std::exception &ex) {
