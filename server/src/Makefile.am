@@ -4,8 +4,8 @@ AM_CPPFLAGS		= $(PTHREAD_CFLAGS) @BOOST_CPPFLAGS@ -DSYSCONFFILE="\"$(appconffile
 
 AM_LDFLAGS		= @BOOST_LDFLAGS@ $(DBUS_LIBS)
 
-bin_PROGRAMS		= server
-server_SOURCES		= main.cpp \
+bin_PROGRAMS		= patlms-server
+patlms_server_SOURCES	= main.cpp \
 				database/database.cpp \
 				database/detail/sqlite.cpp \
 				program_options/options.cpp \
@@ -13,7 +13,7 @@ server_SOURCES		= main.cpp \
 				objects/bash.cpp \
 				objects/apache.cpp
 
-server_LDADD		= @BOOST_PROGRAM_OPTIONS_LIB@ \
+patlms_server_LDADD	= @BOOST_PROGRAM_OPTIONS_LIB@ \
 				@BOOST_LOG_LIB@ \
 				@BOOST_LOG_SETUP_LIB@ \
 				@BOOST_REGEX_LIB@ \
@@ -26,4 +26,3 @@ server_LDADD		= @BOOST_PROGRAM_OPTIONS_LIB@ \
 				$(DBUS_LIBS) \
 				$(SQLite3_LIBS) \
 				@LIBPATLMS_LIBS@
-

@@ -1,7 +1,7 @@
 #! /bin/sh
 
 ### BEGIN INIT INFO
-# Provides:       patdbus
+# Provides:       patlms-dbus
 # Required-Start: $network $syslog
 # Required-Stop:  
 # Should-Start:   
@@ -13,8 +13,8 @@
 
 PATH=/sbin:/bin:/usr/sbin:/usr/bin
 DAEMON="%appscriptdir%/run_dbus"
-NAME=patlms
-SNAME=patlms
+NAME=patlms-dbus
+SNAME=patlms-dbus
 DESC="PAT LMS D-Bus service"
 PIDFILE="%apprundir%/dbus.pid"
 

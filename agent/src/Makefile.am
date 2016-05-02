@@ -4,8 +4,8 @@ AM_CPPFLAGS		= $(PTHREAD_CFLAGS) @BOOST_CPPFLAGS@ -DSYSCONFFILE="\"$(appconffile
 
 AM_LDFLAGS		= @BOOST_LDFLAGS@
 
-bin_PROGRAMS		= agent
-agent_SOURCES		= main.cpp \
+bin_PROGRAMS		= patlms-agent
+patlms_agent_SOURCES	= main.cpp \
 				program_options/options.cpp \
 				program_options/parser.cpp \
 				bash/bash_log_receiver.cpp \
@@ -21,7 +21,7 @@ agent_SOURCES		= main.cpp \
 				apache/detail/apache_proxy.cpp \
 				apache/detail/apache_dbus_thread_command.cpp
 
-agent_LDADD		= @BOOST_PROGRAM_OPTIONS_LIB@ \
+patlms_agent_LDADD	= @BOOST_PROGRAM_OPTIONS_LIB@ \
 				@BOOST_LOG_LIB@ \
 				@BOOST_LOG_SETUP_LIB@ \
 				@BOOST_REGEX_LIB@ \
@@ -33,4 +33,3 @@ agent_LDADD		= @BOOST_PROGRAM_OPTIONS_LIB@ \
 				@PTHREAD_CFLAGS@ \
 				$(DBUS_LIBS) \
 				@LIBPATLMS_LIBS@
-
