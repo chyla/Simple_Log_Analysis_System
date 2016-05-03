@@ -33,7 +33,7 @@ main(int argc, char *argv[]) {
 
     boost::log::add_common_attributes();
     boost::log::add_file_log(
-                             keywords::file_name = LOGDIR "/agent.log",
+                             keywords::file_name = options.GetLogfilePath(),
                              keywords::format = (expr::stream << expr::format_date_time< boost::posix_time::ptime >("TimeStamp", "%d.%m.%Y %H:%M:%S")
                                                  << ": <"
                                                  << boost::log::trivial::severity
