@@ -7,6 +7,7 @@
 #include <boost/log/support/date_time.hpp>
 #include <boost/log/utility/setup/common_attributes.hpp>
 #include <patlms/dbus/bus.h>
+#include <patlms/util/demonize.h>
 
 #include "program_options/parser.h"
 #include "database/database.h"
@@ -44,6 +45,8 @@ main(int argc, char *argv[]) {
 #ifdef HAVE_CONFIG_H
     BOOST_LOG_TRIVIAL(info) << "Version: " << VERSION;
 #endif
+    
+    util::Demonize(options.IsDaemon());
 
     database::DatabasePtr database = database::Database::Create();
     database->Open("/tmp/server.db");

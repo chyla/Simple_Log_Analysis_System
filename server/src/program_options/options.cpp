@@ -9,7 +9,8 @@ const Options Options::Create(const std::string &run_as_user,
                               const std::string &dbus_address,
                               unsigned dbus_port,
                               const std::string &dbus_family,
-                              bool help_message) {
+                              bool help_message,
+                              bool daemon) {
   Options options;
   options.run_as_user_ = run_as_user;
   options.pidfile_path_ = pidfile_path;
@@ -18,6 +19,7 @@ const Options Options::Create(const std::string &run_as_user,
   options.dbus_port_ = dbus_port;
   options.dbus_family_ = dbus_family;
   options.show_help_message_ = help_message;
+  options.daemon_ = daemon;
 
   return options;
 }
@@ -44,6 +46,10 @@ const unsigned& Options::GetDbusPort() const {
 
 const std::string& Options::GetDbusFamily() const {
   return dbus_family_;
+}
+
+bool Options::IsDaemon() const {
+  return daemon_;
 }
 
 }

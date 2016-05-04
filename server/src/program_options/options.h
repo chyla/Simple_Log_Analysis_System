@@ -15,7 +15,8 @@ class Options {
                               const std::string &dbus_address,
                               unsigned dbus_port,
                               const std::string &dbus_family,
-                              bool help_message);
+                              bool help_message,
+                              bool daemon);
 
   const std::string& GetRunAsUser() const;
   const std::string& GetPidfilePath() const;
@@ -26,6 +27,7 @@ class Options {
   const std::string& GetDbusFamily() const;
 
   const bool GetShowHelpMessage() const;
+  bool IsDaemon() const;
 
  private:
   Options() = default;
@@ -39,6 +41,7 @@ class Options {
   std::string dbus_family_;
 
   bool show_help_message_;
+  bool daemon_;
 };
 
 }
