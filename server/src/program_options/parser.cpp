@@ -20,7 +20,8 @@ help_options_("Help options") {
       ("dbus_family", value<string>(), "D-Bus bus family")
       ("pidfile", value<string>(), "pidfile path")
       ("logfile", value<string>(), "logfile path")
-      ("nodaemon", "don't start as daemon");
+      ("nodaemon", "don't start as daemon")
+      ("databasefile", value<string>(), "database file path");
 
   help_options_.add_options()
       ("help,h", "print help message and exit");
@@ -70,7 +71,8 @@ Options Parser::Parse() {
                                     variables["dbus_port"].as<unsigned>(),
                                     variables["dbus_family"].as<string>(),
                                     variables.count("help"),
-                                    !static_cast<bool> (variables.count("nodaemon")));
+                                    !static_cast<bool> (variables.count("nodaemon")),
+                                    variables["databasefile"].as<string>());
 
   return options;
 }

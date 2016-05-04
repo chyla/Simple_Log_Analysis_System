@@ -49,7 +49,7 @@ main(int argc, char *argv[]) {
     util::Demonize(options.IsDaemon());
 
     database::DatabasePtr database = database::Database::Create();
-    database->Open("/tmp/server.db");
+    database->Open(options.GetDatabasefilePath());
     database->CreateBashLogsTable();
     database->CreateApacheLogsTable();
 
