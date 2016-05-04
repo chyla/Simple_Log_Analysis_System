@@ -69,8 +69,12 @@ TEST_F(BashLogReceiverTest, OpenSocket) {
 TEST_F(BashLogReceiverTest, OpenSocketWhenUnlinkFailed) {
   shared_ptr<BashLogReceiver> receiver = BashLogReceiver::Create(bus, dbus_thread, system);
   EXPECT_CALL(*system, Unlink(StrEq(socket_path))).WillOnce(Return(-1));
+  EXPECT_CALL(*system, Socket(PF_UNIX, SOCK_STREAM, 0)).WillOnce(Return(SOCKET_FD));
+  EXPECT_CALL(*system, Bind(SOCKET_FD, _, _)).WillOnce(Return(0));
+  EXPECT_CALL(*system, Listen(SOCKET_FD, 20)).WillOnce(Return(0));
+  EXPECT_CALL(*system, Chmod(StrEq(socket_path), 0622)).WillOnce(Return(0));
 
-  EXPECT_THROW(receiver->OpenSocket(socket_path), exception::detail::CantOpenSocketException);
+  receiver->OpenSocket(socket_path);
 }
 
 TEST_F(BashLogReceiverTest, OpenSocketWhenSocketFailed) {
