@@ -11,6 +11,7 @@
 #include "program_options/parser.h"
 
 #include <patlms/dbus/bus.h>
+#include <patlms/util/demonize.h>
 
 #include "bash/bash_log_receiver.h"
 #include "apache/apache_log_receiver.h"
@@ -46,6 +47,8 @@ main(int argc, char *argv[]) {
 #ifdef HAVE_CONFIG_H
     BOOST_LOG_TRIVIAL(info) << "Version: " << VERSION;
 #endif
+    
+    util::Demonize(options.IsDaemon());
 
     dbus::Bus::Options dbus_options(options.GetDbusAddress(),
                                     options.GetDbusPort(),

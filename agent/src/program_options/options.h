@@ -10,13 +10,14 @@ namespace program_options
 class Options {
  public:
   static const Options Create(const std::string &agent_name,
-                       const std::string &run_as_user,
-                       const std::string &pidfile_path,
-                       const std::string &logfile_path,
-                       const std::string &dbus_address,
-                       unsigned dbus_port,
-                       const std::string &dbus_family,
-                       bool help_message);
+                              const std::string &run_as_user,
+                              const std::string &pidfile_path,
+                              const std::string &logfile_path,
+                              const std::string &dbus_address,
+                              unsigned dbus_port,
+                              const std::string &dbus_family,
+                              bool help_message,
+                              bool daemon);
 
   const std::string& GetAgentName() const;
   const std::string& GetRunAsUser() const;
@@ -28,6 +29,7 @@ class Options {
   const std::string& GetDbusFamily() const;
 
   bool IsHelpMessage() const;
+  bool IsDaemon() const;
 
  private:
   Options() = default;
@@ -42,6 +44,7 @@ class Options {
   std::string dbus_family_;
 
   bool help_message_;
+  bool daemon_;
 };
 
 }
