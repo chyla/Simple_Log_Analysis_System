@@ -8,4 +8,4 @@ dbus_family=ipv4
 
 # PAT LMS specific options
 pidfile=%localstatedir%/run/%package%/patlms.pid
-
+logfile=%localstatedir%/log/%package%/server.log

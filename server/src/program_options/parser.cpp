@@ -18,7 +18,8 @@ help_options_("Help options") {
       ("dbus_address", value<string>(), "D-Bus bus address")
       ("dbus_port", value<unsigned>(), "D-Bus bus port")
       ("dbus_family", value<string>(), "D-Bus bus family")
-      ("pidfile", value<string>(), "pidfile path");
+      ("pidfile", value<string>(), "pidfile path")
+      ("logfile", value<string>(), "logfile path");
 
   help_options_.add_options()
       ("help,h", "print help message and exit");
@@ -63,6 +64,7 @@ Options Parser::Parse() {
 
   Options options = Options::Create(variables["run_as_user"].as<string>(),
                                     variables["pidfile"].as<string>(),
+                                    variables["logfile"].as<string>(),
                                     variables["dbus_address"].as<string>(),
                                     variables["dbus_port"].as<unsigned>(),
                                     variables["dbus_family"].as<string>(),
