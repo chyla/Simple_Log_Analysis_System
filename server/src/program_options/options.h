@@ -7,10 +7,14 @@
 namespace program_options
 {
 
-class Options
-{
+class Options {
  public:
-  Options();
+  static const Options Create(const std::string &run_as_user,
+                              const std::string &pidfile_path,
+                              const std::string &dbus_address,
+                              unsigned dbus_port,
+                              const std::string &dbus_family,
+                              bool help_message);
 
   const std::string& GetRunAsUser() const;
   const std::string& GetPidfilePath() const;
@@ -21,16 +25,9 @@ class Options
 
   const bool GetShowHelpMessage() const;
 
-  void SetRunAsUser(const std::string &username);
-  void SetPidfilePath(const std::string &path);
-
-  void SetDbusAddress(const std::string &address);
-  void SetDbusPort(const unsigned &port);
-  void SetDbusFamily(const std::string &family);
-
-  void SetShowHelpMessage(bool show);
-  
  private:
+  Options() = default;
+
   std::string run_as_user_;
   std::string pidfile_path_;
 
