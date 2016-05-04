@@ -63,7 +63,7 @@ main(int argc, char *argv[]) {
     bash_log_receiver->OpenSocket("/tmp/bash-mod.sock");
 
     auto apache_log_receiver = apache::ApacheLogReceiver::Create(bus, dbus_thread);
-    apache_log_receiver->OpenSocket("/var/run/patlms-apache.sock");
+    apache_log_receiver->OpenSocket(options.GetApacheSocketPath());
 
     std::thread dbus_thread_t([&dbus_thread]
     {

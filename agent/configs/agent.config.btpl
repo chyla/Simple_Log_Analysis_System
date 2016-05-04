@@ -9,4 +9,5 @@ dbus_family=ipv4
 
 # PAT LMS specific options
 pidfile=%localstatedir%/run/%package%/patlms-agent.pid
+apache_socket_path=%localstatedir%/run/%package%/apache.socket
 logfile=%localstatedir%/log/%package%/agent.log
