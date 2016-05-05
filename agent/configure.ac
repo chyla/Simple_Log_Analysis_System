@@ -184,4 +184,4 @@ AC_SUBST(appscriptdir, "${libexecdir}/${PACKAGE}/")
 AC_SUBST(appconfdir, "${sysconfdir}/${PACKAGE}/")
 AC_SUBST(appconffile, "${appconfdir}/agent.config")
 
-AC_OUTPUT(Makefile apache_helper_src/Makefile src/Makefile tests/Makefile configs/Makefile)
+AC_OUTPUT(Makefile apache_helper_src/Makefile src/Makefile tests/Makefile configs/Makefile scripts/Makefile scripts/init/Makefile)

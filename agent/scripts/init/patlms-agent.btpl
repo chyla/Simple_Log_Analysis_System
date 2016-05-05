@@ -1,0 +1,65 @@
+#! /bin/sh
+
+### BEGIN INIT INFO
+# Provides:       patlms-agent
+# Required-Start: $network $syslog
+# Required-Stop:  
+# Should-Start:   
+# Default-Start:  2 3 4 5
+# Default-Stop:   0 1 6
+### END INIT INFO
+
+# Based on skeleton by Miquel van Smoorenburg and Ian Murdock
+
+PATH=/sbin:/bin:/usr/sbin:/usr/bin
+DAEMON="%bindir%/patlms-agent"
+NAME=patlms-agent
+SNAME=patlms-agent
+DESC="PAT LMS agent service"
+PIDFILE="%apprundir%/patlms-agent.pid"
+
+. /lib/lsb/init-functions
+
+test -f $DAEMON || exit 0
+
+set -e
+
+start_service () {
+        start-stop-daemon --start --oknodo --pidfile $PIDFILE --exec $DAEMON
+}
+
+stop_service () {
+        start-stop-daemon --stop --oknodo --pidfile $PIDFILE
+}
+
+case "$1" in
+  start)
+	echo -n "Starting $DESC: "
+	start_service
+	echo "$NAME."
+	;;
+
+  stop)
+	echo -n "Stopping $DESC: "
+	stop_service
+	echo "$NAME."
+	;;
+
+  restart)
+	echo -n "Restarting $DESC: "
+	stop_service
+	start_service
+	echo "$NAME."
+	;;
+
+  status)
+        status_of_proc -p $PATLMS_PIDFILE $DAEMON $NAME && exit 0 || exit $?
+        ;;
+  *)
+	N=/etc/init.d/$SNAME
+	echo "Usage: $N {start|stop|restart|status}" >&2
+	exit 1
+	;;
+esac
+
+exit 0
