@@ -8,15 +8,17 @@ AM_LDFLAGS		= @BOOST_LDFLAGS@ @BOOST_LOG_LIB@ @BOOST_LOG_SETUP_LIB@ @PTHREAD_LIB
 check_PROGRAMS	= tests
 if CAN_RUN_TESTS
 tests_SOURCES	= main.cpp \
-			../src/network/network.cpp \
-			../src/network/detail/network_interface.cpp \
-			../src/network/detail/system.cpp \
-			../src/network/detail/system_interface.cpp \
-			../src/util/path.cpp \
 			network/network.cpp \
 			util/path.cpp
 
-tests_LDADD	= @GTEST_LIBS@ \
+OBJECT_FILES	= ../src/network/network.o \
+			../src/network/detail/network_interface.o \
+			../src/network/detail/system.o \
+			../src/network/detail/system_interface.o \
+			../src/util/path.o
+
+tests_LDADD	= $(OBJECT_FILES) \
+			@GTEST_LIBS@ \
 			@GMOCK_LIBS@
 else
 tests_SOURCES	= main.cpp

@@ -8,18 +8,20 @@ check_PROGRAMS	= tests
 if CAN_RUN_TESTS
 tests_SOURCES	= main.cpp \
 			dbus/dbus_thread_test.cpp \
-			bash/bash_log_receiver_test.cpp \
-			../src/bash/bash_log_receiver.cpp \
-			../src/bash/detail/bash_proxy.cpp \
-			../src/bash/detail/bash_dbus_thread_command.cpp \
-			../src/bash/detail/system_interface.cpp \
-			../src/bash/detail/system.cpp \
-			../src/dbus/dbus_thread.cpp \
-			../src/dbus/dbus_thread_command.cpp \
-			../src/dbus/detail/system.cpp \
-			../src/dbus/detail/dbus_thread_interface.cpp
+			bash/bash_log_receiver_test.cpp
 
-tests_LDADD	= @GTEST_LIBS@ \
+OBJECT_FILES	= ../src/bash/bash_log_receiver.o \
+			../src/bash/detail/bash_proxy.o \
+			../src/bash/detail/bash_dbus_thread_command.o \
+			../src/bash/detail/system_interface.o \
+			../src/bash/detail/system.o \
+			../src/dbus/dbus_thread.o \
+			../src/dbus/dbus_thread_command.o \
+			../src/dbus/detail/system.o \
+			../src/dbus/detail/dbus_thread_interface.o
+
+tests_LDADD	= $(OBJECT_FILES) \
+			@GTEST_LIBS@ \
 			@GMOCK_LIBS@ \
 			@BOOST_PROGRAM_OPTIONS_LIB@ \
 			@BOOST_LOG_LIB@ \
