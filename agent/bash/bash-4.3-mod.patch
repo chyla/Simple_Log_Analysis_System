@@ -1,7 +1,7 @@
 diff -ur bash-4.3/eval.c bash-4.3-mod/eval.c
 --- bash-4.3/eval.c	2013-10-14 13:22:43.000000000 +0000
 +++ bash-4.3-mod/eval.c	2016-01-19 22:49:34.689710365 +0000
-@@ -45,6 +45,13 @@
+@@ -45,6 +45,14 @@
  #  include "bashhist.h"
  #endif
  
@@ -9,7 +9,8 @@ diff -ur bash-4.3/eval.c bash-4.3-mod/eval.c
 +#include <sys/socket.h>
 +#include <sys/un.h>
 +
-+#define SOCK_MOD_PATH "/tmp/bash-mod.sock"
++#warning Correct bash socket path
++#define SOCK_MOD_PATH "/var/lib/patlms/bash.socket"
 +#define MAX_PATH 109
 +
  extern int EOF_reached;

@@ -14,6 +14,7 @@ class Options {
                               const std::string &pidfile_path,
                               const std::string &logfile_path,
                               const std::string &apache_socket_path,
+                              const std::string &bash_socket_path,
                               const std::string &dbus_address,
                               unsigned dbus_port,
                               const std::string &dbus_family,
@@ -25,6 +26,7 @@ class Options {
   const std::string& GetPidfilePath() const;
   const std::string& GetLogfilePath() const;
   const std::string& GetApacheSocketPath() const;
+  const std::string& GetBashSocketPath() const;
 
   const std::string& GetDbusAddress() const;
   const unsigned& GetDbusPort() const;
@@ -41,6 +43,7 @@ class Options {
   std::string pidfile_path_;
   std::string logfile_path_;
   std::string apache_socket_path_;
+  std::string bash_socket_path_;
 
   std::string dbus_address_;
   unsigned dbus_port_;

@@ -22,7 +22,8 @@ help_options_("Help options") {
       ("pidfile", value<string>(), "pidfile path")
       ("logfile", value<string>(), "logfile path")
       ("nodaemon", "don't start as daemon")
-      ("apache_socket_path", value<string>(), "Apache socket path");
+      ("apache_socket_path", value<string>(), "Apache socket path")
+      ("bash_socket_path", value<string>(), "Bash socket path");
 
   help_options_.add_options()
       ("help,h", "print help message and exit");
@@ -70,6 +71,7 @@ Options Parser::Parse() {
                                           variables["pidfile"].as<string>(),
                                           variables["logfile"].as<string>(),
                                           variables["apache_socket_path"].as<string>(),
+                                          variables["bash_socket_path"].as<string>(),
                                           variables["dbus_address"].as<string>(),
                                           variables["dbus_port"].as<unsigned>(),
                                           variables["dbus_family"].as<string>(),
