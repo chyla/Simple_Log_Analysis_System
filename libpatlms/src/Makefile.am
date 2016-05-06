@@ -19,7 +19,8 @@ lib_libpatlms_la_SOURCES  = \
 					network/detail/system_interface.cpp \
 					type/time.cpp \
 					util/path.cpp \
-					util/demonize.cpp
+					util/demonize.cpp \
+					util/configure_logger.cpp
 
 pkginclude_dbusdir = $(pkgincludedir)/dbus
 pkginclude_dbus_HEADERS = \
@@ -80,7 +81,8 @@ pkginclude_network_detail_HEADERS = \
 pkginclude_utildir = $(pkgincludedir)/util
 pkginclude_util_HEADERS = \
 					$(top_srcdir)/include/patlms/util/path.h \
-					$(top_srcdir)/include/patlms/util/demonize.h
+					$(top_srcdir)/include/patlms/util/demonize.h \
+					$(top_srcdir)/include/patlms/util/configure_logger.h
 
 pkginclude_util_detaildir = $(pkgincludedir)/util/detail
 pkginclude_util_detail_HEADERS = \

@@ -1,4 +1,4 @@
-#include "configure.h"
+#include <patlms/util/configure_logger.h>
 
 #include <boost/log/common.hpp>
 #include <boost/log/expressions.hpp>
@@ -10,10 +10,10 @@
 namespace expr = boost::log::expressions;
 namespace keywords = boost::log::keywords;
 
-namespace logger
+namespace util
 {
 
-void Configure(const std::string& log_file) {
+void ConfigureLogger(const std::string& log_file) {
   boost::log::add_common_attributes();
 
   boost::log::add_file_log(keywords::file_name = log_file,

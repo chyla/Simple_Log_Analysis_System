@@ -6,8 +6,7 @@ AM_LDFLAGS		= @BOOST_LDFLAGS@
 bin_PROGRAMS		= patlms-apache-helper
 patlms_apache_helper_SOURCES	= main.cpp \
 				    program_options/options.cpp \
-				    program_options/parse_options.cpp \
-				    logger/configure.cpp
+				    program_options/parse_options.cpp
 patlms_apache_helper_LDADD	= @PTHREAD_LIBS@ \
 				    @BOOST_PROGRAM_OPTIONS_LIB@ \
 				    @BOOST_LOG_LIB@ \

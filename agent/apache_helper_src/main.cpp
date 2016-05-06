@@ -3,10 +3,10 @@
 
 #include <boost/program_options.hpp>
 #include <patlms/network/network.h>
+#include <patlms/util/configure_logger.h>
 #include <patlms/type/exception/exception.h>
 
 #include "program_options/parse_options.h"
-#include "logger/configure.h"
 
 using namespace program_options;
 using namespace network;
@@ -26,7 +26,7 @@ int main(int argc, char **argv) {
     return 1;
   }
 
-  logger::Configure(options.GetLogFilePath());
+  util::ConfigureLogger(options.GetLogFilePath());
 
   NetworkPtr network = Network::Create();
   int socket_fd = -1;

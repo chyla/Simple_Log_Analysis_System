@@ -3,10 +3,10 @@
 
 #include <string>
 
-namespace logger
+namespace util
 {
 
-void Configure(const std::string &log_file);
+void ConfigureLogger(const std::string &log_file);
 
 }
 
