@@ -38,8 +38,6 @@ class SystemInterface {
   virtual time_t Time(time_t *t) = 0;
 
   virtual struct tm *GMTime(const time_t *timep) = 0;
-  
-  virtual int Gethostname(char *name, size_t len) = 0;
 };
 
 }

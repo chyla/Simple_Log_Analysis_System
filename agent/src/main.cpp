@@ -46,6 +46,7 @@ main(int argc, char *argv[]) {
     auto dbus_thread = dbus::DBusThread::Create(bus);
 
     auto bash_log_receiver = bash::BashLogReceiver::Create(bus, dbus_thread);
+    bash_log_receiver->SetAgentName(options.GetAgentName());
     bash_log_receiver->OpenSocket(options.GetBashSocketPath());
 
     auto apache_log_receiver = apache::ApacheLogReceiver::Create(bus, dbus_thread);

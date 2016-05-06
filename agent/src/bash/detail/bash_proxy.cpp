@@ -15,7 +15,7 @@ BashProxy::BashProxy(std::shared_ptr<::dbus::detail::BusInterface> bus)
 bool BashProxy::AddLogEntry(const type::BashLogEntry &log_entry) {
   BOOST_LOG_TRIVIAL(debug) << "bash:detail:BashProxy:AddLogEntry: Function call";
   BOOST_LOG_TRIVIAL(debug) << "bash:detail:BashProxy:AddLogEntry: Call params: "
-    << "hostname=" << log_entry.hostname << " ; "
+    << "agent_name=" << log_entry.agent_name << " ; "
     << "time=" << log_entry.utc_time << " ; "
     << "user_id=" << log_entry.user_id << " ; "
     << "command=" << log_entry.command;
@@ -28,7 +28,7 @@ bool BashProxy::AddLogEntry(const type::BashLogEntry &log_entry) {
 
   DBusMessageIter args;
   InitArgument(message, &args);
-  AppendArgument(&args, log_entry.hostname.c_str());
+  AppendArgument(&args, log_entry.agent_name.c_str());
   AppendArgument(&args, log_entry.utc_time.GetHour());
   AppendArgument(&args, log_entry.utc_time.GetMinute());
   AppendArgument(&args, log_entry.utc_time.GetSecond());

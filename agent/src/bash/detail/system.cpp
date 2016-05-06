@@ -58,10 +58,6 @@ struct tm* System::GMTime(const time_t *timep) {
   return gmtime(timep);
 }
 
-int System::Gethostname(char *name, size_t len) {
-  return gethostname(name, len);
-}
-
 }
 
 }

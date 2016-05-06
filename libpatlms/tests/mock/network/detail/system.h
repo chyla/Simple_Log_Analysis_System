@@ -46,8 +46,6 @@ class System : public ::network::detail::SystemInterface {
   MOCK_METHOD1(Time, time_t(time_t *t));
 
   MOCK_METHOD1(GMTime, struct tm*(const time_t *timep));
-
-  MOCK_METHOD2(Gethostname, int(char *name, size_t len));
 };
 
 }

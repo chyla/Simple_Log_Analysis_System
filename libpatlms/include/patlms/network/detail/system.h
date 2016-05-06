@@ -40,8 +40,6 @@ class System : public SystemInterface {
   time_t Time(time_t *t) override;
 
   struct tm *GMTime(const time_t *timep) override;
-
-  int Gethostname(char *name, size_t len) override;
 };
 
 }

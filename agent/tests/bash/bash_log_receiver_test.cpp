@@ -11,7 +11,6 @@
 #include "src/bash/exception/detail/loop_getsockopt_exception.h"
 #include "src/bash/exception/detail/loop_time_exception.h"
 #include "src/bash/exception/detail/loop_gmtime_exception.h"
-#include "src/bash/exception/detail/loop_gethostname_exception.h"
 #include "src/bash/exception/detail/socket_is_not_open_exception.h"
 
 #include "tests/mock/bash/detail/system.h"
@@ -228,26 +227,4 @@ TEST_F(BashLogReceiverTest, StartLoopWhenGMTimeFailed) {
   receiver->OpenSocket(socket_path);
 
   EXPECT_THROW(receiver->StartLoop(), exception::detail::LoopGMTimeException);
-}
-
-TEST_F(BashLogReceiverTest, StartLoopWhenGethostnameFailed) {
-  constexpr int new_fd = 95;
-
-  shared_ptr<BashLogReceiver> receiver = BashLogReceiver::Create(bus, dbus_thread, system);
-  EXPECT_CALL(*system, Unlink(StrEq(socket_path))).WillOnce(Return(0));
-  EXPECT_CALL(*system, Socket(PF_UNIX, SOCK_STREAM, 0)).WillOnce(Return(SOCKET_FD));
-  EXPECT_CALL(*system, Bind(SOCKET_FD, _, _)).WillOnce(Return(0));
-  EXPECT_CALL(*system, Listen(SOCKET_FD, 20)).WillOnce(Return(0));
-  EXPECT_CALL(*system, Chmod(StrEq(socket_path), 0622)).WillOnce(Return(0));
-  EXPECT_CALL(*system, Poll(NotNull(), Eq(1), TIMEOUT)).WillOnce(Return(1));
-  EXPECT_CALL(*system, Accept(SOCKET_FD, _, _)).WillOnce(Return(new_fd));
-  EXPECT_CALL(*system, Getsockopt(new_fd, SOL_SOCKET, SO_PEERCRED, _, _)).WillOnce(Return(0));
-  EXPECT_CALL(*system, Recv(new_fd, _, _, 0)).WillOnce(Return(1));
-  EXPECT_CALL(*system, Time(nullptr)).WillOnce(Return(1));
-  EXPECT_CALL(*system, GMTime(_)).WillOnce(Return(EXAMPLE_PTR_VALUE));
-  EXPECT_CALL(*system, Gethostname(_, _)).WillOnce(Return(-1));
-
-  receiver->OpenSocket(socket_path);
-
-  EXPECT_THROW(receiver->StartLoop(), exception::detail::LoopGethostnameException);
 }

@@ -15,7 +15,6 @@
 #include "src/bash/exception/detail/loop_getsockopt_exception.h"
 #include "src/bash/exception/detail/loop_time_exception.h"
 #include "src/bash/exception/detail/loop_gmtime_exception.h"
-#include "src/bash/exception/detail/loop_gethostname_exception.h"
 #include "src/bash/exception/detail/socket_is_not_open_exception.h"
 #include "detail/bash_dbus_thread_command.h"
 #include "detail/system.h"
@@ -77,7 +76,6 @@ void BashLogReceiver::StartLoop() {
   std::shared_ptr<detail::BashProxy> bash_proxy(new detail::BashProxy(bus_));
   constexpr int timeout = 5000;
   char command[200] = {0};
-  char hostname[200] = {0};
   int ret = 0, new_fd;
 
   if (socket_fd_ < 0) {
@@ -121,24 +119,19 @@ void BashLogReceiver::StartLoop() {
           throw exception::detail::LoopGMTimeException();
         }
 
-        ret = system_->Gethostname(hostname, 199);
-        if (ret < 0) {
-          throw exception::detail::LoopGethostnameException();
-        }
-
         BOOST_LOG_TRIVIAL(debug) << "bash:BashLogReceiver: New log entry: "
-          << "hostname=" << hostname << " ; "
-          << "hour=" << tmval->tm_hour << " ; "
-          << "minute=" << tmval->tm_min << " ; "
-          << "seconds=" << (tmval->tm_sec % 60) << " ; "
-          << "day=" << tmval->tm_mday << " ; "
-          << "month=" << (tmval->tm_mon + 1) << " ; "
-          << "year=" << (tmval->tm_year + 1900) << " ; "
-          << "user_id=" << cr.uid << " ; "
-          << "command=" << command;
+            << "agent_name=" << agent_name_ << " ; "
+            << "hour=" << tmval->tm_hour << " ; "
+            << "minute=" << tmval->tm_min << " ; "
+            << "seconds=" << (tmval->tm_sec % 60) << " ; "
+            << "day=" << tmval->tm_mday << " ; "
+            << "month=" << (tmval->tm_mon + 1) << " ; "
+            << "year=" << (tmval->tm_year + 1900) << " ; "
+            << "user_id=" << cr.uid << " ; "
+            << "command=" << command;
 
         type::BashLogEntry log_entry;
-        log_entry.hostname = hostname;
+        log_entry.agent_name = agent_name_;
         log_entry.utc_time.Set(tmval->tm_hour, tmval->tm_min, tmval->tm_sec % 60,
                                tmval->tm_mday, tmval->tm_mon + 1, tmval->tm_year + 1900);
         log_entry.user_id = cr.uid;
@@ -147,14 +140,18 @@ void BashLogReceiver::StartLoop() {
         shared_ptr<detail::BashDBusThreadCommand> cmdptr(new detail::BashDBusThreadCommand(log_entry, bash_proxy));
         dbus_thread_->AddCommand(cmdptr);
 
-      } else if (ret == 0) {
+      }
+      else if (ret == 0) {
         // do nothing
-      } else if (ret < 0) {
+      }
+      else if (ret < 0) {
         throw exception::detail::LoopRecvException();
       }
-    } else if (ret == 0) { // timeout
+    }
+    else if (ret == 0) { // timeout
       // do nothing
-    } else { // error
+    }
+    else { // error
       throw exception::detail::LoopPollException();
     }
   }
@@ -169,14 +166,18 @@ bool BashLogReceiver::IsRunning() const {
   return running_;
 }
 
+void BashLogReceiver::SetAgentName(const std::string &agent_name) {
+  agent_name_ = agent_name;
+}
+
 BashLogReceiver::BashLogReceiver(std::shared_ptr<dbus::detail::BusInterface> bus,
                                  std::shared_ptr<dbus::detail::DBusThreadInterface> dbus_thread,
                                  std::shared_ptr<bash::detail::SystemInterface> system)
-  : bus_(bus),
-  dbus_thread_(dbus_thread),
-  system_(system),
-  socket_fd_(-1),
-  running_(false) {
+: bus_(bus),
+dbus_thread_(dbus_thread),
+system_(system),
+socket_fd_(-1),
+running_(false) {
 }
 
 }

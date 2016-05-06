@@ -223,7 +223,7 @@ TEST(DatabaseTest, AddBashLogsOneLogEntry) {
   MY_EXPECT_OPEN(sqlite_mock);
   EXPECT_CALL(*sqlite_mock, Exec(DB_HANDLE_EXAMPLE_PTR_VALUE, NotNull(), IsNull(), IsNull(), IsNull())).Times(2).WillRepeatedly(Return(SQLITE_OK));
   MY_EXPECT_PREPARE(sqlite_mock);
-  EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("hostname"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
+  EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("agentname"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
   MY_EXPECT_DEFAULT_TIME1(sqlite_mock);
   EXPECT_CALL(*sqlite_mock, BindInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 8, 11)).WillOnce(Return(SQLITE_OK));
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 9, StrEq("command"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
@@ -233,7 +233,7 @@ TEST(DatabaseTest, AddBashLogsOneLogEntry) {
   DatabasePtr database = Database::Create(move(sqlite_mock)); 
   database->Open("sqlite.db");
   type::BashLogs logs;
-  logs.push_back({"hostname", MY_DEFAULT_TIME1(), 11, "command"});
+  logs.push_back({"agentname", MY_DEFAULT_TIME1(), 11, "command"});
 
   EXPECT_TRUE(database->AddBashLogs(logs));
 }
@@ -244,12 +244,12 @@ TEST(DatabaseTest, AddBashLogsTwoLogsEntries) {
   EXPECT_CALL(*sqlite_mock, Exec(DB_HANDLE_EXAMPLE_PTR_VALUE, NotNull(), IsNull(), IsNull(), IsNull())).Times(2).WillRepeatedly(Return(SQLITE_OK));
   MY_EXPECT_PREPARE(sqlite_mock, 2);
 
-  EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("hostname"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
+  EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("agentname"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
   MY_EXPECT_DEFAULT_TIME1(sqlite_mock);
   EXPECT_CALL(*sqlite_mock, BindInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 8, 11)).WillOnce(Return(SQLITE_OK));
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 9, StrEq("command"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
 
-  EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("hostname2"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
+  EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("agentname2"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
   MY_EXPECT_DEFAULT_TIME2(sqlite_mock);
   EXPECT_CALL(*sqlite_mock, BindInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 8, 21)).WillOnce(Return(SQLITE_OK));
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 9, StrEq("command2"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
@@ -260,8 +260,8 @@ TEST(DatabaseTest, AddBashLogsTwoLogsEntries) {
   DatabasePtr database = Database::Create(move(sqlite_mock)); 
   database->Open("sqlite.db");
   type::BashLogs logs;
-  logs.push_back({"hostname", MY_DEFAULT_TIME1(), 11, "command"});
-  logs.push_back({"hostname2", MY_DEFAULT_TIME2(), 21, "command2"});
+  logs.push_back({"agentname", MY_DEFAULT_TIME1(), 11, "command"});
+  logs.push_back({"agentname2", MY_DEFAULT_TIME2(), 21, "command2"});
 
   EXPECT_TRUE(database->AddBashLogs(logs));
 }
@@ -275,7 +275,7 @@ TEST(DatabaseTest, AddBashLogsOneLogEntryWhenPrepareFailed) {
   DatabasePtr database = Database::Create(move(sqlite_mock)); 
   database->Open("sqlite.db");
   type::BashLogs logs;
-  logs.push_back({"hostname", MY_DEFAULT_TIME1(), 11, "command"});
+  logs.push_back({"agentname", MY_DEFAULT_TIME1(), 11, "command"});
 
   EXPECT_THROW(database->AddBashLogs(logs), database::exception::detail::CantExecuteSqlStatementException);
 }
@@ -285,12 +285,12 @@ TEST(DatabaseTest, AddBashLogsOneLogEntryWhenBindHostnameFailed) {
   MY_EXPECT_OPEN(sqlite_mock);
   EXPECT_CALL(*sqlite_mock, Exec(DB_HANDLE_EXAMPLE_PTR_VALUE, NotNull(), IsNull(), IsNull(), IsNull())).Times(2).WillRepeatedly(Return(SQLITE_OK));
   MY_EXPECT_PREPARE(sqlite_mock);
-  EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("hostname"), -1, nullptr)).WillOnce(Return(SQLITE_NOMEM));
+  EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("agentname"), -1, nullptr)).WillOnce(Return(SQLITE_NOMEM));
 
   DatabasePtr database = Database::Create(move(sqlite_mock)); 
   database->Open("sqlite.db");
   type::BashLogs logs;
-  logs.push_back({"hostname", MY_DEFAULT_TIME1(), 11, "command"});
+  logs.push_back({"agentname", MY_DEFAULT_TIME1(), 11, "command"});
 
   EXPECT_THROW(database->AddBashLogs(logs), database::exception::detail::CantExecuteSqlStatementException);
 }
@@ -300,14 +300,14 @@ TEST(DatabaseTest, AddBashLogsOneLogEntryWhenBindUidFailed) {
   MY_EXPECT_OPEN(sqlite_mock);
   EXPECT_CALL(*sqlite_mock, Exec(DB_HANDLE_EXAMPLE_PTR_VALUE, NotNull(), IsNull(), IsNull(), IsNull())).Times(2).WillRepeatedly(Return(SQLITE_OK));
   MY_EXPECT_PREPARE(sqlite_mock);
-  EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("hostname"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
+  EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("agentname"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
   MY_EXPECT_DEFAULT_TIME1(sqlite_mock);
   EXPECT_CALL(*sqlite_mock, BindInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 8, 11)).WillOnce(Return(SQLITE_NOMEM));
 
   DatabasePtr database = Database::Create(move(sqlite_mock)); 
   database->Open("sqlite.db");
   type::BashLogs logs;
-  logs.push_back({"hostname", MY_DEFAULT_TIME1(), 11, "command"});
+  logs.push_back({"agentname", MY_DEFAULT_TIME1(), 11, "command"});
 
   EXPECT_THROW(database->AddBashLogs(logs), database::exception::detail::CantExecuteSqlStatementException);
 }
@@ -317,7 +317,7 @@ TEST(DatabaseTest, AddBashLogsOneLogEntryWhenBindCommandFailed) {
   MY_EXPECT_OPEN(sqlite_mock);
   EXPECT_CALL(*sqlite_mock, Exec(DB_HANDLE_EXAMPLE_PTR_VALUE, NotNull(), IsNull(), IsNull(), IsNull())).Times(2).WillRepeatedly(Return(SQLITE_OK));
   MY_EXPECT_PREPARE(sqlite_mock);
-  EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("hostname"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
+  EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("agentname"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
   MY_EXPECT_DEFAULT_TIME1(sqlite_mock);
   EXPECT_CALL(*sqlite_mock, BindInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 8, 11)).WillOnce(Return(SQLITE_OK));
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 9, StrEq("command"), -1, nullptr)).WillOnce(Return(SQLITE_NOMEM));
@@ -325,7 +325,7 @@ TEST(DatabaseTest, AddBashLogsOneLogEntryWhenBindCommandFailed) {
   DatabasePtr database = Database::Create(move(sqlite_mock)); 
   database->Open("sqlite.db");
   type::BashLogs logs;
-  logs.push_back({"hostname", MY_DEFAULT_TIME1(), 11, "command"});
+  logs.push_back({"agentname", MY_DEFAULT_TIME1(), 11, "command"});
 
   EXPECT_THROW(database->AddBashLogs(logs), database::exception::detail::CantExecuteSqlStatementException);
 }
@@ -335,7 +335,7 @@ TEST(DatabaseTest, AddBashLogsOneLogEntryWhenStepFailed) {
   MY_EXPECT_OPEN(sqlite_mock);
   EXPECT_CALL(*sqlite_mock, Exec(DB_HANDLE_EXAMPLE_PTR_VALUE, NotNull(), IsNull(), IsNull(), IsNull())).Times(2).WillRepeatedly(Return(SQLITE_OK));
   MY_EXPECT_PREPARE(sqlite_mock);
-  EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("hostname"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
+  EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("agentname"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
   MY_EXPECT_DEFAULT_TIME1(sqlite_mock);
   EXPECT_CALL(*sqlite_mock, BindInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 8, 11)).WillOnce(Return(SQLITE_OK));
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 9, StrEq("command"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
@@ -344,7 +344,7 @@ TEST(DatabaseTest, AddBashLogsOneLogEntryWhenStepFailed) {
   DatabasePtr database = Database::Create(move(sqlite_mock)); 
   database->Open("sqlite.db");
   type::BashLogs logs;
-  logs.push_back({"hostname", MY_DEFAULT_TIME1(), 11, "command"});
+  logs.push_back({"agentname", MY_DEFAULT_TIME1(), 11, "command"});
 
   EXPECT_THROW(database->AddBashLogs(logs), database::exception::detail::CantExecuteSqlStatementException);
 }
@@ -354,7 +354,7 @@ TEST(DatabaseTest, AddBashLogsOneLogEntryWhenStepBusy) {
   MY_EXPECT_OPEN(sqlite_mock);
   EXPECT_CALL(*sqlite_mock, Exec(DB_HANDLE_EXAMPLE_PTR_VALUE, NotNull(), IsNull(), IsNull(), IsNull())).Times(2).WillRepeatedly(Return(SQLITE_OK));
   MY_EXPECT_PREPARE(sqlite_mock);
-  EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("hostname"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
+  EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("agentname"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
   MY_EXPECT_DEFAULT_TIME1(sqlite_mock);
   EXPECT_CALL(*sqlite_mock, BindInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 8, 11)).WillOnce(Return(SQLITE_OK));
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 9, StrEq("command"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
@@ -363,7 +363,7 @@ TEST(DatabaseTest, AddBashLogsOneLogEntryWhenStepBusy) {
   DatabasePtr database = Database::Create(move(sqlite_mock)); 
   database->Open("sqlite.db");
   type::BashLogs logs;
-  logs.push_back({"hostname", MY_DEFAULT_TIME1(), 11, "command"});
+  logs.push_back({"agentname", MY_DEFAULT_TIME1(), 11, "command"});
 
   EXPECT_FALSE(database->AddBashLogs(logs));
 }
@@ -373,7 +373,7 @@ TEST(DatabaseTest, AddBashLogsOneLogEntryWhenFinalizeFailed) {
   MY_EXPECT_OPEN(sqlite_mock);
   EXPECT_CALL(*sqlite_mock, Exec(DB_HANDLE_EXAMPLE_PTR_VALUE, NotNull(), IsNull(), IsNull(), IsNull())).Times(2).WillRepeatedly(Return(SQLITE_OK));
   MY_EXPECT_PREPARE(sqlite_mock);
-  EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("hostname"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
+  EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("agentname"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
   MY_EXPECT_DEFAULT_TIME1(sqlite_mock);
   EXPECT_CALL(*sqlite_mock, BindInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 8, 11)).WillOnce(Return(SQLITE_OK));
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 9, StrEq("command"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
@@ -383,7 +383,7 @@ TEST(DatabaseTest, AddBashLogsOneLogEntryWhenFinalizeFailed) {
   DatabasePtr database = Database::Create(move(sqlite_mock)); 
   database->Open("sqlite.db");
   type::BashLogs logs;
-  logs.push_back({"hostname", MY_DEFAULT_TIME1(), 11, "command"});
+  logs.push_back({"agentname", MY_DEFAULT_TIME1(), 11, "command"});
 
   EXPECT_THROW(database->AddBashLogs(logs), database::exception::detail::CantExecuteSqlStatementException);
 }

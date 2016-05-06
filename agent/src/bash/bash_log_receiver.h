@@ -1,6 +1,8 @@
 #ifndef BASH_LOG_RECEIVER_H
 #define BASH_LOG_RECEIVER_H
 
+
+
 #include <patlms/dbus/detail/bus_interface.h>
 
 #include "detail/system_interface.h"
@@ -28,6 +30,8 @@ class BashLogReceiver : public detail::BashLogReceiverInterface {
   void StopLoop();
 
   bool IsRunning() const;
+  
+  void SetAgentName(const std::string &agent_name);
 
  private:
   BashLogReceiver(std::shared_ptr<dbus::detail::BusInterface> bus,
@@ -40,6 +44,7 @@ class BashLogReceiver : public detail::BashLogReceiverInterface {
 
   int socket_fd_;
   bool running_;
+  std::string agent_name_;
 };
 
 }

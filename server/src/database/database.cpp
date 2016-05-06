@@ -51,7 +51,7 @@ void Database::CreateBashLogsTable() {
   const char *sql =
     "create table if not exists BASH_LOGS_TABLE("
     "  ID integer primary key, "
-    "  HOSTNAME text, "
+    "  AGENT_NAME text, "
     "  UTC_HOUR integer, "
     "  UTC_MINUTE integer, "
     "  UTC_SECOND integer, "
@@ -106,15 +106,15 @@ bool Database::AddBashLogs(const type::BashLogs &log_entries) {
   StatementCheckForError(ret, "Begin transaction error");
 
   for (const type::BashLogEntry &entry : log_entries) {
-    BOOST_LOG_TRIVIAL(debug) << "database::Database::AddBashLogs: Processing: " << entry.hostname << " ; " << entry.utc_time << " ; " << entry.user_id << " ; " << entry.command;
+    BOOST_LOG_TRIVIAL(debug) << "database::Database::AddBashLogs: Processing: " << entry.agent_name << " ; " << entry.utc_time << " ; " << entry.user_id << " ; " << entry.command;
 
-    const char *sql = "insert into BASH_LOGS_TABLE(HOSTNAME, UTC_HOUR, UTC_MINUTE, UTC_SECOND, UTC_DAY, UTC_MONTH, UTC_YEAR, USER_ID, COMMAND) values(?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    const char *sql = "insert into BASH_LOGS_TABLE(AGENT_NAME, UTC_HOUR, UTC_MINUTE, UTC_SECOND, UTC_DAY, UTC_MONTH, UTC_YEAR, USER_ID, COMMAND) values(?, ?, ?, ?, ?, ?, ?, ?, ?)";
     sqlite3_stmt *statement;
     ret = sqlite_interface_->Prepare(db_handle_, sql, -1, &statement, nullptr);
     StatementCheckForErrorAndRollback(ret, "Prepare insert error");
 
-    ret = sqlite_interface_->BindText(statement, 1, entry.hostname.c_str(), -1, nullptr);
-    StatementCheckForErrorAndRollback(ret, "Bind hostname error");
+    ret = sqlite_interface_->BindText(statement, 1, entry.agent_name.c_str(), -1, nullptr);
+    StatementCheckForErrorAndRollback(ret, "Bind agentname error");
 
     ret = sqlite_interface_->BindInt(statement, 2, entry.utc_time.GetHour());
     StatementCheckForErrorAndRollback(ret, "Bind hour error");

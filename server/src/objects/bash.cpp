@@ -54,12 +54,12 @@ DBusHandlerResult Bash::OwnMessageHandler(DBusConnection *connection, DBusMessag
   if (dbus_message_is_method_call(message, "org.chyla.patlms.bash", "AddLogEntry")) {
     BOOST_LOG_TRIVIAL(debug) << "objects:Bash:OwnMessageHandler: Received method call org.chyla.patlms.bash.AddLogEntry";
 
-    const char* hostname = nullptr;
+    const char* agent_name = nullptr;
     int hour, minute, second, day, month, year;
     unsigned user_id;
     const char* command = nullptr;
     dbus_message_get_args(message, NULL,
-                          DBUS_TYPE_STRING, &hostname,
+                          DBUS_TYPE_STRING, &agent_name,
                           DBUS_TYPE_INT32, &hour,
                           DBUS_TYPE_INT32, &minute,
                           DBUS_TYPE_INT32, &second,
@@ -71,7 +71,7 @@ DBusHandlerResult Bash::OwnMessageHandler(DBusConnection *connection, DBusMessag
                           DBUS_TYPE_INVALID);
 
     BOOST_LOG_TRIVIAL(debug) << "objects::Bash::OwnMessageHandler: Add log entry to cache: "
-      << "hostname=" << hostname << " ; "
+      << "agent_name=" << agent_name << " ; "
       << "hour=" << hour << " ; "
       << "minute=" << minute << " ; "
       << "second=" << second << " ; "
@@ -82,7 +82,7 @@ DBusHandlerResult Bash::OwnMessageHandler(DBusConnection *connection, DBusMessag
       << "command=" << command;
 
     type::BashLogEntry log_entry;
-    log_entry.hostname = hostname;
+    log_entry.agent_name = agent_name;
     log_entry.utc_time.Set(hour, minute, second, day, month, year);
     log_entry.user_id = user_id;
     log_entry.command = command;

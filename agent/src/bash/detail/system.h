@@ -34,8 +34,6 @@ class System : public SystemInterface {
   time_t Time(time_t *t);
 
   struct tm *GMTime(const time_t *timep);
-
-  int Gethostname(char *name, size_t len);
 };
 
 }
