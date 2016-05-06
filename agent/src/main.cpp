@@ -50,6 +50,7 @@ main(int argc, char *argv[]) {
     bash_log_receiver->OpenSocket(options.GetBashSocketPath());
 
     auto apache_log_receiver = apache::ApacheLogReceiver::Create(bus, dbus_thread);
+    apache_log_receiver->SetAgentName(options.GetAgentName());
     apache_log_receiver->OpenSocket(options.GetApacheSocketPath());
 
     std::thread dbus_thread_t([&dbus_thread]

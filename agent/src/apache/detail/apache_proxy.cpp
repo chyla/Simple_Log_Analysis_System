@@ -23,6 +23,7 @@ bool ApacheProxy::AddLogEntry(const type::ApacheLogEntry &log_entry) {
 
   DBusMessageIter args;
   InitArgument(message, &args);
+  AppendArgument(&args, log_entry.agent_name.c_str());
   AppendArgument(&args, log_entry.virtualhost.c_str());
   AppendArgument(&args, log_entry.client_ip.c_str());
   AppendArgument(&args, log_entry.time.GetHour());

@@ -69,6 +69,7 @@ void ApacheLogReceiver::StartLoop() {
         BOOST_LOG_TRIVIAL(debug) << "apache::ApacheLogReceiver::LogTimestampToTime: New log line match regex";
 
         type::ApacheLogEntry log_entry;
+        log_entry.agent_name = agent_name_;
         log_entry.virtualhost = match[1];
         log_entry.client_ip = match[2];
         log_entry.time = LogTimestampToTime(match[3]);
@@ -101,6 +102,10 @@ void ApacheLogReceiver::StopLoop() {
 bool ApacheLogReceiver::IsRunning() const {
 
   return running_;
+}
+
+void ApacheLogReceiver::SetAgentName(const std::string &agent_name) {
+  agent_name_ = agent_name;
 }
 
 ApacheLogReceiver::ApacheLogReceiver(std::shared_ptr<dbus::detail::BusInterface> bus,
@@ -144,7 +149,7 @@ type::Time ApacheLogReceiver::LogTimestampToTime(string timestamp) {
     h = stoi(match[4]);
     m = stoi(match[5]);
     s = stoi(match[6]);
-    
+
     BOOST_LOG_TRIVIAL(debug) << "apache::ApacheLogReceiver::LogTimestampToTime: Parsed: day=" << d << "; month=" << mo << "; year=" << y << "; hour=" << h << "; minute=" << m << "; second=" << s;
 
     time.Set(h, m, s, d, mo, y);

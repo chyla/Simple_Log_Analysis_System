@@ -27,6 +27,8 @@ class ApacheLogReceiver {
   void StopLoop();
 
   bool IsRunning() const;
+  
+  void SetAgentName(const std::string &agent_name);
 
  private:
   ApacheLogReceiver(std::shared_ptr<dbus::detail::BusInterface> bus,
@@ -43,6 +45,7 @@ class ApacheLogReceiver {
   bool running_;
   std::string logbuf;
   const std::map<std::string, int> months;
+  std::string agent_name_;
 };
 
 }

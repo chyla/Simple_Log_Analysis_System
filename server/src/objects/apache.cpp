@@ -33,6 +33,7 @@ const char* Apache::GetXmlInterface() {
     "    <method name=\"AddLogEntry\">\n"
     "      <arg direction=\"in\" type=\"s\"/>\n"
     "      <arg direction=\"in\" type=\"s\"/>\n"
+    "      <arg direction=\"in\" type=\"s\"/>\n"
     "      <arg direction=\"in\" type=\"i\"/>\n"
     "      <arg direction=\"in\" type=\"i\"/>\n"
     "      <arg direction=\"in\" type=\"i\"/>\n"
@@ -57,6 +58,7 @@ DBusHandlerResult Apache::OwnMessageHandler(DBusConnection *connection, DBusMess
   if (dbus_message_is_method_call(message, "org.chyla.patlms.apache", "AddLogEntry")) {
     BOOST_LOG_TRIVIAL(debug) << "objects:Apache:OwnMessageHandler: Received method call org.chyla.patlms.apache.AddLogEntry";
 
+    const char *agent_name = nullptr;
     const char *virtualhost = nullptr;
     const char *client_ip = nullptr;
     int hour, minute, second, day, month, year;
@@ -64,6 +66,7 @@ DBusHandlerResult Apache::OwnMessageHandler(DBusConnection *connection, DBusMess
     int status_code, bytes;
     const char *user_agent = nullptr;
     dbus_message_get_args(message, NULL,
+                          DBUS_TYPE_STRING, &agent_name,
                           DBUS_TYPE_STRING, &virtualhost,
                           DBUS_TYPE_STRING, &client_ip,
                           DBUS_TYPE_INT32, &hour,
@@ -79,6 +82,7 @@ DBusHandlerResult Apache::OwnMessageHandler(DBusConnection *connection, DBusMess
                           DBUS_TYPE_INVALID);
 
     BOOST_LOG_TRIVIAL(debug) << "objects::Apache::OwnMessageHandler: Add log entry to cache: "
+      << "agent_name=" << agent_name << " ; "
       << "virtualhost=" << virtualhost << " ; "
       << "client_ip=" << client_ip << " ; "
       << "hour=" << hour << " ; "
@@ -92,6 +96,7 @@ DBusHandlerResult Apache::OwnMessageHandler(DBusConnection *connection, DBusMess
       << "user_agent=" << user_agent;
 
     type::ApacheLogEntry log_entry;
+    log_entry.agent_name = agent_name;
     log_entry.virtualhost = virtualhost;
     log_entry.client_ip = client_ip;
     log_entry.time.Set(hour, minute, second, day, month, year);

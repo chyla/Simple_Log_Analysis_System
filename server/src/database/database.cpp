@@ -49,18 +49,18 @@ void Database::CreateBashLogsTable() {
   }
 
   const char *sql =
-    "create table if not exists BASH_LOGS_TABLE("
-    "  ID integer primary key, "
-    "  AGENT_NAME text, "
-    "  UTC_HOUR integer, "
-    "  UTC_MINUTE integer, "
-    "  UTC_SECOND integer, "
-    "  UTC_DAY integer, "
-    "  UTC_MONTH integer, "
-    "  UTC_YEAR integer, "
-    "  USER_ID integer, "
-    "  COMMAND text "
-    ");";
+      "create table if not exists BASH_LOGS_TABLE("
+      "  ID integer primary key, "
+      "  AGENT_NAME text, "
+      "  UTC_HOUR integer, "
+      "  UTC_MINUTE integer, "
+      "  UTC_SECOND integer, "
+      "  UTC_DAY integer, "
+      "  UTC_MONTH integer, "
+      "  UTC_YEAR integer, "
+      "  USER_ID integer, "
+      "  COMMAND text "
+      ");";
   int ret = sqlite_interface_->Exec(db_handle_, sql, nullptr, nullptr, nullptr);
   StatementCheckForError(ret, "Create BASH_LOGS_TABLE error");
 }
@@ -74,21 +74,22 @@ void Database::CreateApacheLogsTable() {
   }
 
   const char *sql =
-    "create table if not exists APACHE_LOGS_TABLE("
-    "  ID integer primary key, "
-    "  VIRTUALHOST text, "
-    "  CLIENT_IP text, "
-    "  UTC_HOUR integer, "
-    "  UTC_MINUTE integer, "
-    "  UTC_SECOND integer, "
-    "  UTC_DAY integer, "
-    "  UTC_MONTH integer, "
-    "  UTC_YEAR integer, "
-    "  REQUEST text, "
-    "  STATUS_CODE integer, "
-    "  BYTES integer, "
-    "  USER_AGENT text "
-    ");";
+      "create table if not exists APACHE_LOGS_TABLE("
+      "  ID integer primary key, "
+      "  AGENT_NAME text,"
+      "  VIRTUALHOST text, "
+      "  CLIENT_IP text, "
+      "  UTC_HOUR integer, "
+      "  UTC_MINUTE integer, "
+      "  UTC_SECOND integer, "
+      "  UTC_DAY integer, "
+      "  UTC_MONTH integer, "
+      "  UTC_YEAR integer, "
+      "  REQUEST text, "
+      "  STATUS_CODE integer, "
+      "  BYTES integer, "
+      "  USER_AGENT text "
+      ");";
   int ret = sqlite_interface_->Exec(db_handle_, sql, nullptr, nullptr, nullptr);
   StatementCheckForError(ret, "Create APACHE_LOGS_TABLE error");
 }
@@ -176,45 +177,48 @@ bool Database::AddApacheLogs(const type::ApacheLogs &log_entries) {
   StatementCheckForError(ret, "Begin transaction error");
 
   for (const type::ApacheLogEntry &entry : log_entries) {
-    const char *sql = "insert into APACHE_LOGS_TABLE(VIRTUALHOST, CLIENT_IP, UTC_HOUR, UTC_MINUTE, UTC_SECOND, UTC_DAY, UTC_MONTH, UTC_YEAR, REQUEST, STATUS_CODE, BYTES, USER_AGENT) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    const char *sql = "insert into APACHE_LOGS_TABLE(AGENT_NAME, VIRTUALHOST, CLIENT_IP, UTC_HOUR, UTC_MINUTE, UTC_SECOND, UTC_DAY, UTC_MONTH, UTC_YEAR, REQUEST, STATUS_CODE, BYTES, USER_AGENT) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     sqlite3_stmt *statement;
     ret = sqlite_interface_->Prepare(db_handle_, sql, -1, &statement, nullptr);
     StatementCheckForErrorAndRollback(ret, "Prepare insert error");
 
-    ret = sqlite_interface_->BindText(statement, 1, entry.virtualhost.c_str(), -1, nullptr);
+    ret = sqlite_interface_->BindText(statement, 1, entry.agent_name.c_str(), -1, nullptr);
+    StatementCheckForErrorAndRollback(ret, "Bind agent_name error");
+
+    ret = sqlite_interface_->BindText(statement, 2, entry.virtualhost.c_str(), -1, nullptr);
     StatementCheckForErrorAndRollback(ret, "Bind virtualhost error");
 
-    ret = sqlite_interface_->BindText(statement, 2, entry.client_ip.c_str(), -1, nullptr);
+    ret = sqlite_interface_->BindText(statement, 3, entry.client_ip.c_str(), -1, nullptr);
     StatementCheckForErrorAndRollback(ret, "Bind client_ip error");
 
-    ret = sqlite_interface_->BindInt(statement, 3, entry.time.GetHour());
+    ret = sqlite_interface_->BindInt(statement, 4, entry.time.GetHour());
     StatementCheckForErrorAndRollback(ret, "Bind hour error");
 
-    ret = sqlite_interface_->BindInt(statement, 4, entry.time.GetMinute());
+    ret = sqlite_interface_->BindInt(statement, 5, entry.time.GetMinute());
     StatementCheckForErrorAndRollback(ret, "Bind minute error");
 
-    ret = sqlite_interface_->BindInt(statement, 5, entry.time.GetSecond());
+    ret = sqlite_interface_->BindInt(statement, 6, entry.time.GetSecond());
     StatementCheckForErrorAndRollback(ret, "Bind second error");
 
-    ret = sqlite_interface_->BindInt(statement, 6, entry.time.GetDay());
+    ret = sqlite_interface_->BindInt(statement, 7, entry.time.GetDay());
     StatementCheckForErrorAndRollback(ret, "Bind day error");
 
-    ret = sqlite_interface_->BindInt(statement, 7, entry.time.GetMonth());
+    ret = sqlite_interface_->BindInt(statement, 8, entry.time.GetMonth());
     StatementCheckForErrorAndRollback(ret, "Bind month error");
 
-    ret = sqlite_interface_->BindInt(statement, 8, entry.time.GetYear());
+    ret = sqlite_interface_->BindInt(statement, 9, entry.time.GetYear());
     StatementCheckForErrorAndRollback(ret, "Bind year error");
 
-    ret = sqlite_interface_->BindText(statement, 9, entry.request.c_str(), -1, nullptr);
+    ret = sqlite_interface_->BindText(statement, 10, entry.request.c_str(), -1, nullptr);
     StatementCheckForErrorAndRollback(ret, "Bind request error");
-    
-    ret = sqlite_interface_->BindInt(statement, 10, entry.status_code);
+
+    ret = sqlite_interface_->BindInt(statement, 11, entry.status_code);
     StatementCheckForErrorAndRollback(ret, "Bind status_code id error");
-    
-    ret = sqlite_interface_->BindInt(statement, 11, entry.bytes);
+
+    ret = sqlite_interface_->BindInt(statement, 12, entry.bytes);
     StatementCheckForErrorAndRollback(ret, "Bind bytes error");
 
-    ret = sqlite_interface_->BindText(statement, 12, entry.user_agent.c_str(), -1, nullptr);
+    ret = sqlite_interface_->BindText(statement, 13, entry.user_agent.c_str(), -1, nullptr);
     StatementCheckForErrorAndRollback(ret, "Bind user_agent error");
 
     ret = sqlite_interface_->Step(statement);
@@ -252,16 +256,17 @@ bool Database::Close() {
 
     is_open_ = false;
     return true;
-  } else {
+  }
+  else {
     BOOST_LOG_TRIVIAL(warning) << "database::Database::Close: Database already closed";
     return false;
   }
 }
 
 Database::Database(std::unique_ptr<database::detail::SQLiteInterface> sqlite)
-  : is_open_(false),
-  db_handle_(nullptr),
-  sqlite_interface_(std::move(sqlite)) {
+: is_open_(false),
+db_handle_(nullptr),
+sqlite_interface_(std::move(sqlite)) {
 }
 
 void Database::StatementCheckForError(int return_value, const char *description) {
