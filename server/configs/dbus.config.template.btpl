@@ -29,5 +29,5 @@
       https://bugs.launchpad.net/ubuntu/+source/dbus/+bug/1252821
       https://lists.ubuntu.com/archives/apparmor/2013-November/004681.html
   -->
-  <apparmor mode="disabled"/>
+  <!-- <apparmor mode="disabled"/> -->
 </busconfig>
