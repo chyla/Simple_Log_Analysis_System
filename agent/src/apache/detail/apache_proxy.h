@@ -22,6 +22,7 @@ class ApacheProxy : public dbus::ProxyObject {
   std::shared_ptr<::dbus::detail::BusInterface> bus_;
 };
 
+typedef std::shared_ptr<ApacheProxy> ApacheProxyPtr;
 
 }
 

@@ -20,7 +20,7 @@
 namespace expr = boost::log::expressions;
 namespace keywords = boost::log::keywords;
 
-dbus::DBusThread::DBusThreadPtr dbus_thread;
+dbus::DBusThreadPtr dbus_thread;
 std::shared_ptr<bash::BashLogReceiver> bash_log_receiver;
 std::shared_ptr<apache::ApacheLogReceiver> apache_log_receiver;
 

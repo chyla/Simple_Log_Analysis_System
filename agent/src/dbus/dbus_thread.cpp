@@ -7,19 +7,19 @@ using namespace std;
 namespace dbus
 {
 
-DBusThread::DBusThreadPtr DBusThread::Create(DBusThread::BusInterfacePtr bus) {
-  SystemInterfacePtr system = make_shared<detail::System>();
+DBusThreadPtr DBusThread::Create(detail::BusInterfacePtr bus) {
+  detail::SystemInterfacePtr system = make_shared<detail::System>();
   DBusThreadPtr thread(new DBusThread(bus, system));
   return thread;
 }
 
-DBusThread::DBusThreadPtr DBusThread::Create(DBusThread::BusInterfacePtr bus,
-                                             DBusThread::SystemInterfacePtr system) {
+DBusThreadPtr DBusThread::Create(detail::BusInterfacePtr bus,
+                                 detail::SystemInterfacePtr system) {
   DBusThreadPtr thread(new DBusThread(bus, system));
   return thread;
 }
 
-void DBusThread::AddCommand(DBusThread::CommandPtr command) {
+void DBusThread::AddCommand(DBusThreadCommandPtr command) {
   lock_guard<mutex> guard(commands_mutex_);
 
   commands_.push_back(command);
@@ -30,7 +30,7 @@ void DBusThread::StartLoop() {
 
   while (loop_running_) {
     if (IsCommandAvailable()) {
-      CommandPtr command = GetCommand();
+      auto command = GetCommand();
       command->Execute();
     }
 
@@ -46,16 +46,16 @@ bool DBusThread::IsLoopRunning() {
   return loop_running_;
 }
 
-DBusThread::DBusThread(DBusThread::BusInterfacePtr bus,
-                       DBusThread::SystemInterfacePtr system)
-  : bus_(bus),
-  system_(system),
-  loop_running_(false) {
+DBusThread::DBusThread(detail::BusInterfacePtr bus,
+                       detail::SystemInterfacePtr system)
+: bus_(bus),
+system_(system),
+loop_running_(false) {
 }
 
-DBusThread::CommandPtr DBusThread::GetCommand() {
+DBusThreadCommandPtr DBusThread::GetCommand() {
   lock_guard<mutex> guard(commands_mutex_);
-  CommandPtr command = commands_.front();
+  auto command = commands_.front();
   commands_.pop_front();
 
   return command;

@@ -15,18 +15,18 @@ namespace detail
 {
 
 class DBusThreadInterface {
- public:
-  typedef std::shared_ptr<::dbus::DBusThreadCommand> CommandPtr;
-  
+ public:  
   virtual ~DBusThreadInterface();
 
-  virtual void AddCommand(CommandPtr command) = 0;
+  virtual void AddCommand(dbus::DBusThreadCommandPtr command) = 0;
 
   virtual void StartLoop() = 0;
   virtual void StopLoop() = 0;
 
   virtual bool IsLoopRunning() = 0;
 };
+
+typedef std::shared_ptr<DBusThreadInterface> DBusThreadInterfacePtr;
 
 }
 

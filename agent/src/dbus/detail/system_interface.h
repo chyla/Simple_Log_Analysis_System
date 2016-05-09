@@ -1,6 +1,8 @@
 #ifndef PATLMS_DBUS_DETAIL_SYSTEM_INTERFACE_H
 #define PATLMS_DBUS_DETAIL_SYSTEM_INTERFACE_H
 
+#include <memory>
+
 namespace dbus
 {
 
@@ -11,6 +13,8 @@ class SystemInterface {
  public:
   virtual void Sleep(unsigned seconds) = 0;
 };
+
+typedef std::shared_ptr<SystemInterface> SystemInterfacePtr;
 
 }
 

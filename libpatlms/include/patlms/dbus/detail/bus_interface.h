@@ -3,6 +3,7 @@
 
 #include <dbus/dbus.h>
 #include <string>
+#include <memory>
 
 #include <patlms/dbus/object.h>
 
@@ -29,6 +30,8 @@ class BusInterface {
 
   virtual bool SendMessage(DBusMessage *message, DBusPendingCall **reply_handle) = 0;
 };
+
+typedef std::shared_ptr<BusInterface> BusInterfacePtr;
 
 }
 

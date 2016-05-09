@@ -13,7 +13,7 @@ namespace dbus
 
 class DBusThread : public ::dbus::detail::DBusThreadInterface {
  public:
-  MOCK_METHOD1(AddCommand, void (::dbus::detail::DBusThreadInterface::CommandPtr command));
+  MOCK_METHOD1(AddCommand, void (::dbus::DBusThreadCommandPtr command));
 
   MOCK_METHOD0(StartLoop, void());
   MOCK_METHOD0(StopLoop, void());

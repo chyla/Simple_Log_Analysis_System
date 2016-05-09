@@ -20,11 +20,10 @@ using namespace network;
 namespace apache
 {
 
-shared_ptr<ApacheLogReceiver> ApacheLogReceiver::Create(shared_ptr<dbus::detail::BusInterface> bus,
-                                                        shared_ptr<dbus::detail::DBusThreadInterface> dbus_thread) {
+ApacheLogReceiverPtr ApacheLogReceiver::Create(dbus::detail::BusInterfacePtr bus,
+                                               dbus::detail::DBusThreadInterfacePtr dbus_thread) {
   NetworkPtr network = Network::Create();
-  shared_ptr<ApacheLogReceiver> receiver(new ApacheLogReceiver(bus, dbus_thread, network));
-  return receiver;
+  return ApacheLogReceiverPtr(new ApacheLogReceiver(bus, dbus_thread, network));
 }
 
 ApacheLogReceiver::~ApacheLogReceiver() {
@@ -51,7 +50,8 @@ void ApacheLogReceiver::OpenSocket(const std::string& socket_path) {
 
 void ApacheLogReceiver::StartLoop() {
   BOOST_LOG_TRIVIAL(debug) << "apache::ApacheLogReceiver::StartLoop: Function call";
-  std::shared_ptr<detail::ApacheProxy> proxy(new detail::ApacheProxy(bus_));
+
+  auto proxy = make_shared<detail::ApacheProxy>(bus_);
   WaitStatus ws;
   ConnectionData connection_data;
   string new_log;
@@ -82,7 +82,7 @@ void ApacheLogReceiver::StartLoop() {
         log_entry.bytes = stoi(match[6]);
         log_entry.user_agent = match[7];
 
-        shared_ptr<detail::ApacheDBusThreadCommand> cmdptr(new detail::ApacheDBusThreadCommand(log_entry, proxy));
+        auto cmdptr = make_shared<detail::ApacheDBusThreadCommand>(log_entry, proxy);
         dbus_thread_->AddCommand(cmdptr);
       }
       else {
@@ -120,8 +120,8 @@ void ApacheLogReceiver::SetAgentName(const std::string &agent_name) {
   agent_name_ = agent_name;
 }
 
-ApacheLogReceiver::ApacheLogReceiver(std::shared_ptr<dbus::detail::BusInterface> bus,
-                                     std::shared_ptr<dbus::detail::DBusThreadInterface> dbus_thread,
+ApacheLogReceiver::ApacheLogReceiver(dbus::detail::BusInterfacePtr bus,
+                                     dbus::detail::DBusThreadInterfacePtr dbus_thread,
                                      network::detail::NetworkInterfacePtr network)
 : bus_(bus),
 dbus_thread_(dbus_thread),

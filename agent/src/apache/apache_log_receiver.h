@@ -13,11 +13,13 @@
 namespace apache
 {
 
+class ApacheLogReceiver;
+typedef std::shared_ptr<ApacheLogReceiver> ApacheLogReceiverPtr;
+
 class ApacheLogReceiver {
  public:
-
-  static std::shared_ptr<ApacheLogReceiver> Create(std::shared_ptr<dbus::detail::BusInterface> bus,
-                                                   std::shared_ptr<dbus::detail::DBusThreadInterface> dbus_thread);
+  static ApacheLogReceiverPtr Create(dbus::detail::BusInterfacePtr bus,
+                                     dbus::detail::DBusThreadInterfacePtr dbus_thread);
 
   virtual ~ApacheLogReceiver();
 
@@ -28,18 +30,18 @@ class ApacheLogReceiver {
   void StopLoop();
 
   bool IsRunning() const;
-  
+
   void SetAgentName(const std::string &agent_name);
 
  private:
-  ApacheLogReceiver(std::shared_ptr<dbus::detail::BusInterface> bus,
-                    std::shared_ptr<dbus::detail::DBusThreadInterface> dbus_thread,
+  ApacheLogReceiver(dbus::detail::BusInterfacePtr bus,
+                    dbus::detail::DBusThreadInterfacePtr dbus_thread,
                     network::detail::NetworkInterfacePtr network);
 
   type::Time LogTimestampToTime(std::string timestamp);
-  
-  std::shared_ptr<dbus::detail::BusInterface> bus_;
-  std::shared_ptr<dbus::detail::DBusThreadInterface> dbus_thread_;
+
+  dbus::detail::BusInterfacePtr bus_;
+  dbus::detail::DBusThreadInterfacePtr dbus_thread_;
   network::detail::NetworkInterfacePtr network_;
 
   int socket_fd_;

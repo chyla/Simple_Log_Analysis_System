@@ -14,17 +14,15 @@
 namespace dbus
 {
 
+class DBusThread;
+typedef std::shared_ptr<DBusThread> DBusThreadPtr;
+
 class DBusThread : public detail::DBusThreadInterface {
  public:
-  typedef std::shared_ptr<DBusThreadCommand> CommandPtr;
-  typedef std::shared_ptr<DBusThread> DBusThreadPtr;
-  typedef std::shared_ptr<dbus::detail::BusInterface> BusInterfacePtr;
-  typedef std::shared_ptr<detail::SystemInterface> SystemInterfacePtr;
+  static DBusThreadPtr Create(detail::BusInterfacePtr bus);
+  static DBusThreadPtr Create(detail::BusInterfacePtr bus, detail::SystemInterfacePtr system);
 
-  static DBusThreadPtr Create(BusInterfacePtr bus);
-  static DBusThreadPtr Create(BusInterfacePtr bus, SystemInterfacePtr system);
-
-  void AddCommand(CommandPtr command) override;
+  void AddCommand(DBusThreadCommandPtr command) override;
 
   void StartLoop() override;
   void StopLoop() override;
@@ -32,15 +30,15 @@ class DBusThread : public detail::DBusThreadInterface {
   bool IsLoopRunning() override;
 
  private:
-  typedef std::list<CommandPtr> ThreadCommands;
+  typedef std::list<DBusThreadCommandPtr> ThreadCommands;
 
-  DBusThread(BusInterfacePtr bus, SystemInterfacePtr system);
+  DBusThread(detail::BusInterfacePtr bus, detail::SystemInterfacePtr system);
 
-  CommandPtr GetCommand();
+  DBusThreadCommandPtr GetCommand();
   bool IsCommandAvailable();
 
-  BusInterfacePtr bus_;
-  SystemInterfacePtr system_;
+  detail::BusInterfacePtr bus_;
+  detail::SystemInterfacePtr system_;
 
   ThreadCommands commands_;
   std::mutex commands_mutex_;
