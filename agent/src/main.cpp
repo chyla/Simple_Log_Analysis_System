@@ -83,6 +83,8 @@ main(int argc, char *argv[]) {
     apache_log_receiver_t.join();
     bash_log_receiver_t.join();
     dbus_thread_t.join();
+    
+    apache_log_receiver->CloseSocket();
   }
   catch (std::exception &ex) {
     std::cerr << ex.what() << '\n';

@@ -99,10 +99,15 @@ void ApacheLogReceiver::StartLoop() {
   BOOST_LOG_TRIVIAL(debug) << "apache::ApacheLogReceiver::StartLoop: Done";
 }
 
+void ApacheLogReceiver::CloseSocket() {
+  BOOST_LOG_TRIVIAL(debug) << "apache::ApacheLogReceiver::Close socket: Function call";
+  network_->Close(socket_fd_);
+  socket_fd_ = -1;
+}
+
 void ApacheLogReceiver::StopLoop() {
   BOOST_LOG_TRIVIAL(debug) << "apache::ApacheLogReceiver::StopLoop: Function call";
   running_ = false;
-  socket_fd_ = -1;
   BOOST_LOG_TRIVIAL(debug) << "apache::ApacheLogReceiver::StopLoop: Done";
 }
 

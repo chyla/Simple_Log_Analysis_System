@@ -22,6 +22,7 @@ class ApacheLogReceiver {
   virtual ~ApacheLogReceiver();
 
   void OpenSocket(const std::string &socket_path);
+  void CloseSocket();
 
   void StartLoop();
   void StopLoop();
