@@ -12,15 +12,15 @@ namespace util
 {
 
 void RemoveFile(const std::string &path, detail::SystemInterfacePtr system) {
-  BOOST_LOG_TRIVIAL(debug) << "libpatlms::util::RemovePidFile: Function call with (path=" << path << ")";
+  BOOST_LOG_TRIVIAL(debug) << "libpatlms::util::RemoveFile: Function call with (path=" << path << ")";
 
   int ret = system->unlink(path.c_str());
   if (ret < 0) {
-    BOOST_LOG_TRIVIAL(error) << "libpatlms::util::RemovePidFile: Couldn't remove pid file: " << strerror(errno);
+    BOOST_LOG_TRIVIAL(error) << "libpatlms::util::RemoveFile: Couldn't remove file: " << strerror(errno);
     throw detail::CantRemoveFileException();
   }
 
-  BOOST_LOG_TRIVIAL(debug) << "libpatlms::util::RemovePidFile: Done";
+  BOOST_LOG_TRIVIAL(debug) << "libpatlms::util::RemoveFile: Done";
 }
 
 }
