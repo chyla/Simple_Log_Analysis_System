@@ -9,13 +9,15 @@ check_PROGRAMS	= tests
 if CAN_RUN_TESTS
 tests_SOURCES	= main.cpp \
 			network/network.cpp \
-			util/path.cpp
+			util/path.cpp \
+			util/pidfile.cpp
 
 OBJECT_FILES	= ../src/network/network.o \
 			../src/network/detail/network_interface.o \
 			../src/network/detail/system.o \
 			../src/network/detail/system_interface.o \
-			../src/util/path.o
+			../src/util/path.o \
+			../src/util/pidfile.o
 
 tests_LDADD	= $(OBJECT_FILES) \
 			@GTEST_LIBS@ \
