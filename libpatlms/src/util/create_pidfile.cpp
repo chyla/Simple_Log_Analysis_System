@@ -1,6 +1,5 @@
-#include <patlms/util/pidfile.h>
+#include <patlms/util/create_pidfile.h>
 #include <patlms/util/detail/cant_create_pidfile_exception.h>
-#include <patlms/util/detail/cant_remove_pidfile_exception.h>
 
 #include <string>
 #include <cstring>
@@ -51,18 +50,6 @@ void CreatePidFile(const std::string &pidfile_path, detail::SystemInterfacePtr s
   }
 
   BOOST_LOG_TRIVIAL(debug) << "libpatlms::util::CreatePidFile: Done";
-}
-
-void RemovePidFile(const std::string &pidfile_path, detail::SystemInterfacePtr system) {
-  BOOST_LOG_TRIVIAL(debug) << "libpatlms::util::RemovePidFile: Function call with (pidfile_path=" << pidfile_path << ")";
-
-  int ret = system->unlink(pidfile_path.c_str());
-  if (ret < 0) {
-    BOOST_LOG_TRIVIAL(error) << "libpatlms::util::RemovePidFile: Couldn't remove pid file: " << strerror(errno);
-    throw detail::CantRemovePidfileException();
-  }
-
-  BOOST_LOG_TRIVIAL(debug) << "libpatlms::util::RemovePidFile: Done";
 }
 
 }

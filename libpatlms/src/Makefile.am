@@ -21,7 +21,8 @@ lib_libpatlms_la_SOURCES  = \
 					util/path.cpp \
 					util/demonize.cpp \
 					util/configure_logger.cpp \
-					util/pidfile.cpp \
+					util/create_pidfile.cpp \
+					util/remove_file.cpp \
 					util/detail/system.cpp
 
 pkginclude_dbusdir = $(pkgincludedir)/dbus
@@ -89,7 +90,8 @@ pkginclude_util_HEADERS = \
 					$(top_srcdir)/include/patlms/util/path.h \
 					$(top_srcdir)/include/patlms/util/demonize.h \
 					$(top_srcdir)/include/patlms/util/configure_logger.h \
-					$(top_srcdir)/include/patlms/util/pidfile.h
+					$(top_srcdir)/include/patlms/util/create_pidfile.h \
+					$(top_srcdir)/include/patlms/util/remove_file.h
 
 pkginclude_util_detaildir = $(pkgincludedir)/util/detail
 pkginclude_util_detail_HEADERS = \
@@ -97,4 +99,4 @@ pkginclude_util_detail_HEADERS = \
 					$(top_srcdir)/include/patlms/util/detail/system_interface.h \
 					$(top_srcdir)/include/patlms/util/detail/system.h \
 					$(top_srcdir)/include/patlms/util/detail/cant_create_pidfile_exception.h \
-					$(top_srcdir)/include/patlms/util/detail/cant_remove_pidfile_exception.h
+					$(top_srcdir)/include/patlms/util/detail/cant_remove_file_exception.h

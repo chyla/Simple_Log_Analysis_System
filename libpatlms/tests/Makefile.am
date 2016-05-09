@@ -10,14 +10,16 @@ if CAN_RUN_TESTS
 tests_SOURCES	= main.cpp \
 			network/network.cpp \
 			util/path.cpp \
-			util/pidfile.cpp
+			util/create_pidfile.cpp \
+			util/remove_file.cpp
 
 OBJECT_FILES	= ../src/network/network.o \
 			../src/network/detail/network_interface.o \
 			../src/network/detail/system.o \
 			../src/network/detail/system_interface.o \
 			../src/util/path.o \
-			../src/util/pidfile.o
+			../src/util/create_pidfile.o \
+			../src/util/remove_file.o
 
 tests_LDADD	= $(OBJECT_FILES) \
 			@GTEST_LIBS@ \
