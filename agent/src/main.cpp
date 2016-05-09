@@ -8,6 +8,8 @@
 #include <patlms/dbus/bus.h>
 #include <patlms/util/demonize.h>
 #include <patlms/util/configure_logger.h>
+#include <patlms/util/create_pidfile.h>
+#include <patlms/util/remove_file.h>
 
 #include "bash/bash_log_receiver.h"
 #include "apache/apache_log_receiver.h"
@@ -47,6 +49,8 @@ main(int argc, char *argv[]) {
 
     util::Demonize(options.IsDaemon());
 
+    util::CreatePidFile(options.GetPidfilePath());
+
     auto bus = std::make_shared<dbus::Bus>(dbus::Bus::Options(options.GetDbusAddress(),
                                                               options.GetDbusPort(),
                                                               options.GetDbusFamily()));
@@ -83,8 +87,12 @@ main(int argc, char *argv[]) {
     apache_log_receiver_t.join();
     bash_log_receiver_t.join();
     dbus_thread_t.join();
-    
+
     apache_log_receiver->CloseSocket();
+
+    util::RemoveFile(options.GetBashSocketPath());
+    util::RemoveFile(options.GetApacheSocketPath());
+    util::RemoveFile(options.GetPidfilePath());
   }
   catch (std::exception &ex) {
     std::cerr << ex.what() << '\n';

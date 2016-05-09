@@ -49,8 +49,6 @@ void BashLogReceiver::OpenSocket(const std::string& socket_path) {
   saddr.sun_path[107] = '\0';
   strncpy(saddr.sun_path, socket_path.c_str(), 107);
 
-  ret = system_->Unlink(socket_path.c_str());
-
   socket_fd_ = system_->Socket(PF_UNIX, SOCK_STREAM, 0);
   if (socket_fd_ < 0) {
     throw exception::detail::CantOpenSocketException();

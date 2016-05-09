@@ -33,11 +33,6 @@ void ApacheLogReceiver::OpenSocket(const std::string& socket_path) {
   BOOST_LOG_TRIVIAL(debug) << "apache::ApacheLogReceiver::OpenSocket: Function call with (socket_path=" << socket_path << ")";
   int ret;
 
-  ret = unlink(socket_path.c_str());
-  if (ret < 0) {
-    BOOST_LOG_TRIVIAL(warning) << "apache::ApacheLogReceiver::OpenSocket: Cant unlink file: " << strerror(errno);
-  }
-
   socket_fd_ = network_->OpenUnixSocket(socket_path);
 
   ret = chmod(socket_path.c_str(), 0622);
