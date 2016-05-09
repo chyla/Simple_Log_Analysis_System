@@ -1,5 +1,7 @@
 #include <iostream>
 #include <boost/log/trivial.hpp>
+#include <memory>
+#include <signal.h>
 
 #include <patlms/dbus/bus.h>
 #include <patlms/util/demonize.h>
@@ -18,6 +20,21 @@
 namespace expr = boost::log::expressions;
 namespace keywords = boost::log::keywords;
 
+std::shared_ptr<dbus::Bus> bus;
+
+void sigterm_handler(int sig) {
+  bus->StopLoop();
+}
+
+database::DatabasePtr CreateDatabase(const program_options::Options &options) {
+  database::DatabasePtr database = database::Database::Create();
+  database->Open(options.GetDatabasefilePath());
+  database->CreateBashLogsTable();
+  database->CreateApacheLogsTable();
+
+  return database;
+}
+
 int
 main(int argc, char *argv[]) {
   try {
@@ -32,30 +49,30 @@ main(int argc, char *argv[]) {
 #ifdef HAVE_CONFIG_H
     BOOST_LOG_TRIVIAL(info) << "Version: " << VERSION;
 #endif
-    
+
     util::Demonize(options.IsDaemon());
 
-    database::DatabasePtr database = database::Database::Create();
-    database->Open(options.GetDatabasefilePath());
-    database->CreateBashLogsTable();
-    database->CreateApacheLogsTable();
+    signal(SIGTERM, sigterm_handler);
+    signal(SIGINT, sigterm_handler);
+    signal(SIGKILL, sigterm_handler);
+    signal(SIGQUIT, sigterm_handler);
 
-    dbus::Bus::Options dbus_options(options.GetDbusAddress(),
-                                    options.GetDbusPort(),
-                                    options.GetDbusFamily());
-    dbus::Bus bus(dbus_options);
-    bus.Connect();
-    bus.RequestConnectionName("org.chyla.patlms.server");
+    auto database = CreateDatabase(options);
+    bus = std::make_shared<dbus::Bus>(dbus::Bus::Options(options.GetDbusAddress(),
+                                                         options.GetDbusPort(),
+                                                         options.GetDbusFamily()));
+    bus->Connect();
+    bus->RequestConnectionName("org.chyla.patlms.server");
 
     objects::Bash bash(database);
-    bus.RegisterObject(&bash);
+    bus->RegisterObject(&bash);
 
     objects::Apache apache(database);
-    bus.RegisterObject(&apache);
-    
-    bus.Loop();
+    bus->RegisterObject(&apache);
 
-  } catch (std::exception &ex) {
+    bus->Loop();
+  }
+  catch (std::exception &ex) {
     std::cerr << ex.what() << '\n';
     BOOST_LOG_TRIVIAL(fatal) << ex.what();
     return 1;
