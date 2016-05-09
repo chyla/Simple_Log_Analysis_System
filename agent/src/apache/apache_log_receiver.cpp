@@ -31,6 +31,7 @@ ApacheLogReceiver::~ApacheLogReceiver() {
 }
 
 void ApacheLogReceiver::OpenSocket(const std::string& socket_path) {
+  BOOST_LOG_TRIVIAL(debug) << "apache::ApacheLogReceiver::OpenSocket: Function call with (socket_path=" << socket_path << ")";
   int ret;
 
   ret = unlink(socket_path.c_str());
@@ -44,9 +45,12 @@ void ApacheLogReceiver::OpenSocket(const std::string& socket_path) {
   if (ret < 0) {
     BOOST_LOG_TRIVIAL(warning) << "apache::ApacheLogReceiver::OpenSocket: Cant change chmod: " << strerror(errno);
   }
+
+  BOOST_LOG_TRIVIAL(debug) << "apache::ApacheLogReceiver::OpenSocket: Done";
 }
 
 void ApacheLogReceiver::StartLoop() {
+  BOOST_LOG_TRIVIAL(debug) << "apache::ApacheLogReceiver::StartLoop: Function call";
   std::shared_ptr<detail::ApacheProxy> proxy(new detail::ApacheProxy(bus_));
   WaitStatus ws;
   ConnectionData connection_data;
@@ -91,16 +95,19 @@ void ApacheLogReceiver::StartLoop() {
       BOOST_LOG_TRIVIAL(debug) << "apache::ApacheLogReceiver::StartLoop: Timeout";
     }
   }
+
+  BOOST_LOG_TRIVIAL(debug) << "apache::ApacheLogReceiver::StartLoop: Done";
 }
 
 void ApacheLogReceiver::StopLoop() {
-
+  BOOST_LOG_TRIVIAL(debug) << "apache::ApacheLogReceiver::StopLoop: Function call";
   running_ = false;
   socket_fd_ = -1;
+  BOOST_LOG_TRIVIAL(debug) << "apache::ApacheLogReceiver::StopLoop: Done";
 }
 
 bool ApacheLogReceiver::IsRunning() const {
-
+  BOOST_LOG_TRIVIAL(debug) << "apache::ApacheLogReceiver::IsRunning: Function call";
   return running_;
 }
 
