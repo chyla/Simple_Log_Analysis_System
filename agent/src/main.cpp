@@ -1,6 +1,7 @@
 #include <iostream>
 #include <thread>
 #include <boost/log/trivial.hpp>
+#include <signal.h>
 
 #include "program_options/parser.h"
 
@@ -19,6 +20,16 @@
 namespace expr = boost::log::expressions;
 namespace keywords = boost::log::keywords;
 
+dbus::DBusThread::DBusThreadPtr dbus_thread;
+std::shared_ptr<bash::BashLogReceiver> bash_log_receiver;
+std::shared_ptr<apache::ApacheLogReceiver> apache_log_receiver;
+
+void sigterm_handler(int sig) {
+  apache_log_receiver->StopLoop();
+  bash_log_receiver->StopLoop();
+  dbus_thread->StopLoop();
+}
+
 int
 main(int argc, char *argv[]) {
   try {
@@ -33,45 +44,47 @@ main(int argc, char *argv[]) {
 #ifdef HAVE_CONFIG_H
     BOOST_LOG_TRIVIAL(info) << "Version: " << VERSION;
 #endif
-    
+
     util::Demonize(options.IsDaemon());
 
-    dbus::Bus::Options dbus_options(options.GetDbusAddress(),
-                                    options.GetDbusPort(),
-                                    options.GetDbusFamily());
-    std::shared_ptr<dbus::Bus> bus = std::make_shared<dbus::Bus>(dbus_options);
+    auto bus = std::make_shared<dbus::Bus>(dbus::Bus::Options(options.GetDbusAddress(),
+                                                              options.GetDbusPort(),
+                                                              options.GetDbusFamily()));
     bus->Connect();
     bus->RequestConnectionName("org.chyla.patlms." + options.GetAgentName());
 
-    auto dbus_thread = dbus::DBusThread::Create(bus);
+    dbus_thread = dbus::DBusThread::Create(bus);
 
-    auto bash_log_receiver = bash::BashLogReceiver::Create(bus, dbus_thread);
+    bash_log_receiver = bash::BashLogReceiver::Create(bus, dbus_thread);
     bash_log_receiver->SetAgentName(options.GetAgentName());
     bash_log_receiver->OpenSocket(options.GetBashSocketPath());
 
-    auto apache_log_receiver = apache::ApacheLogReceiver::Create(bus, dbus_thread);
+    apache_log_receiver = apache::ApacheLogReceiver::Create(bus, dbus_thread);
     apache_log_receiver->SetAgentName(options.GetAgentName());
     apache_log_receiver->OpenSocket(options.GetApacheSocketPath());
 
-    std::thread dbus_thread_t([&dbus_thread]
-    {
+    signal(SIGTERM, sigterm_handler);
+    signal(SIGINT, sigterm_handler);
+    signal(SIGKILL, sigterm_handler);
+    signal(SIGQUIT, sigterm_handler);
+
+    std::thread dbus_thread_t([] {
       dbus_thread->StartLoop();
     });
 
-    std::thread bash_log_receiver_t([&bash_log_receiver]
-    {
+    std::thread bash_log_receiver_t([] {
       bash_log_receiver->StartLoop();
     });
 
-    std::thread apache_log_receiver_t([&apache_log_receiver]
-    {
+    std::thread apache_log_receiver_t([] {
       apache_log_receiver->StartLoop();
     });
 
     apache_log_receiver_t.join();
     bash_log_receiver_t.join();
     dbus_thread_t.join();
-  } catch (std::exception &ex) {
+  }
+  catch (std::exception &ex) {
     std::cerr << ex.what() << '\n';
     BOOST_LOG_TRIVIAL(fatal) << ex.what();
     return 1;
@@ -79,4 +92,3 @@ main(int argc, char *argv[]) {
 
   return 0;
 }
-
