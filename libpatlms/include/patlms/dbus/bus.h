@@ -42,12 +42,14 @@ class Bus : public detail::BusInterface
   void UnregisterAllObjects();
 
   void Loop();
+  void StopLoop();
 
   bool SendMessage(DBusMessage *message, DBusPendingCall **reply_handle);
 
  private:
   const Options options_;
   DBusConnection *connection_;
+  bool loop_running_;
 
   static DBusHandlerResult StaticMessageHandler(DBusConnection *connection, DBusMessage *message, void *user_data);
 

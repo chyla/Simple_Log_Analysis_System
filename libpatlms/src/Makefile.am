@@ -35,6 +35,10 @@ pkginclude_dbus_detail_HEADERS = \
  					$(top_srcdir)/include/patlms/dbus/detail/dbus_error_guard.h \
 					$(top_srcdir)/include/patlms/dbus/detail/bus_interface.h
 
+pkginclude_dbus_exceptiondir = $(pkgincludedir)/dbus/exception
+pkginclude_dbus_exception_HEADERS = \
+ 					$(top_srcdir)/include/patlms/dbus/exception/dbus_loop_exception.h
+
 pkginclude_typedir = $(pkgincludedir)/type
 pkginclude_type_HEADERS = \
 					$(top_srcdir)/include/patlms/type/time.h \
