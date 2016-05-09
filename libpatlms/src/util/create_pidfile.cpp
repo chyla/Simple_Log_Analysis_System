@@ -30,7 +30,7 @@ void CreatePidFile(const std::string &pidfile_path, detail::SystemInterfacePtr s
     string pid_str = to_string(system->getpid());
 
     BOOST_LOG_TRIVIAL(debug) << "libpatlms::util::CreatePidFile: Writing pid: " << pid_str;
-    ret = system->fwrite(pid_str.c_str(), pid_str.length(), 1, f);
+    ret = system->fwrite(pid_str.c_str(), 1, pid_str.length(), f);
     if (ret != pid_str.length()) {
       failed = true;
       BOOST_LOG_TRIVIAL(error) << "libpatlms::util::CreatePidFile: Written count: " << ret;
