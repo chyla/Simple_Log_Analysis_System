@@ -25,7 +25,7 @@ test -f $DAEMON || exit 0
 set -e
 
 sleep_until_stop () {
-	PID=`cat //var/run/patlms//patlms-agent.pid`
+	PID=`cat $PIDFILE`
 
 	while [ `ps h $PID | wc -l` -eq 1 ] ; do
 		sleep 1
