@@ -7,6 +7,6 @@ dbus_port=1032
 dbus_family=ipv4
 
 # PAT LMS specific options
-pidfile=%localstatedir%/run/%package%/patlms.pid
+pidfile=%localstatedir%/run/%package%/patlms-server.pid
 logfile=%localstatedir%/log/%package%/server.log
 databasefile=%localstatedir%/lib/%package%/server.db
