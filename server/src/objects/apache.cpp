@@ -8,7 +8,7 @@ namespace objects
 {
 
 Apache::Apache(database::DatabasePtr database)
-  : database_(database) {
+: database_(database) {
   log_entry_cache_.reserve(CACHE_CAPACITY);
 }
 
@@ -21,33 +21,33 @@ const char* Apache::GetPath() {
 
 const char* Apache::GetXmlInterface() {
   const char *xml =
-    "<!DOCTYPE node PUBLIC \"-//freedesktop//DTD D-BUS Object Introspection 1.0//EN\"\n"
-    "\"http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd\">\n"
-    "<node>\n"
-    "  <interface name=\"org.freedesktop.DBus.Introspectable\">\n"
-    "    <method name=\"Introspect\">\n"
-    "      <arg name=\"data\" direction=\"out\" type=\"s\"/>\n"
-    "    </method>\n"
-    "  </interface>\n"
-    "  <interface name=\"org.chyla.patlms.apache\">\n"
-    "    <method name=\"AddLogEntry\">\n"
-    "      <arg direction=\"in\" type=\"s\"/>\n"
-    "      <arg direction=\"in\" type=\"s\"/>\n"
-    "      <arg direction=\"in\" type=\"s\"/>\n"
-    "      <arg direction=\"in\" type=\"i\"/>\n"
-    "      <arg direction=\"in\" type=\"i\"/>\n"
-    "      <arg direction=\"in\" type=\"i\"/>\n"
-    "      <arg direction=\"in\" type=\"i\"/>\n"
-    "      <arg direction=\"in\" type=\"i\"/>\n"
-    "      <arg direction=\"in\" type=\"i\"/>\n"
-    "      <arg direction=\"in\" type=\"s\"/>\n"
-    "      <arg direction=\"in\" type=\"i\"/>\n"
-    "      <arg direction=\"in\" type=\"i\"/>\n"
-    "      <arg direction=\"in\" type=\"s\"/>\n"
-    "      <arg direction=\"out\" type=\"v\"/>\n"
-    "    </method>\n"
-    "  </interface>\n"
-    "</node>\n";
+      "<!DOCTYPE node PUBLIC \"-//freedesktop//DTD D-BUS Object Introspection 1.0//EN\"\n"
+      "\"http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd\">\n"
+      "<node>\n"
+      "  <interface name=\"org.freedesktop.DBus.Introspectable\">\n"
+      "    <method name=\"Introspect\">\n"
+      "      <arg name=\"data\" direction=\"out\" type=\"s\"/>\n"
+      "    </method>\n"
+      "  </interface>\n"
+      "  <interface name=\"org.chyla.patlms.apache\">\n"
+      "    <method name=\"AddLogEntry\">\n"
+      "      <arg direction=\"in\" type=\"s\"/>\n"
+      "      <arg direction=\"in\" type=\"s\"/>\n"
+      "      <arg direction=\"in\" type=\"s\"/>\n"
+      "      <arg direction=\"in\" type=\"i\"/>\n"
+      "      <arg direction=\"in\" type=\"i\"/>\n"
+      "      <arg direction=\"in\" type=\"i\"/>\n"
+      "      <arg direction=\"in\" type=\"i\"/>\n"
+      "      <arg direction=\"in\" type=\"i\"/>\n"
+      "      <arg direction=\"in\" type=\"i\"/>\n"
+      "      <arg direction=\"in\" type=\"s\"/>\n"
+      "      <arg direction=\"in\" type=\"i\"/>\n"
+      "      <arg direction=\"in\" type=\"i\"/>\n"
+      "      <arg direction=\"in\" type=\"s\"/>\n"
+      "      <arg direction=\"out\" type=\"v\"/>\n"
+      "    </method>\n"
+      "  </interface>\n"
+      "</node>\n";
 
   return xml;
 }
@@ -82,18 +82,18 @@ DBusHandlerResult Apache::OwnMessageHandler(DBusConnection *connection, DBusMess
                           DBUS_TYPE_INVALID);
 
     BOOST_LOG_TRIVIAL(debug) << "objects::Apache::OwnMessageHandler: Add log entry to cache: "
-      << "agent_name=" << agent_name << " ; "
-      << "virtualhost=" << virtualhost << " ; "
-      << "client_ip=" << client_ip << " ; "
-      << "hour=" << hour << " ; "
-      << "minute=" << minute << " ; "
-      << "second=" << second << " ; "
-      << "day=" << day << " ; "
-      << "month=" << month << " ; "
-      << "year=" << year << " ; "
-      << "request=" << request << " ; "
-      << "bytes=" << bytes << " ; "
-      << "user_agent=" << user_agent;
+        << "agent_name=" << agent_name << " ; "
+        << "virtualhost=" << virtualhost << " ; "
+        << "client_ip=" << client_ip << " ; "
+        << "hour=" << hour << " ; "
+        << "minute=" << minute << " ; "
+        << "second=" << second << " ; "
+        << "day=" << day << " ; "
+        << "month=" << month << " ; "
+        << "year=" << year << " ; "
+        << "request=" << request << " ; "
+        << "bytes=" << bytes << " ; "
+        << "user_agent=" << user_agent;
 
     type::ApacheLogEntry log_entry;
     log_entry.agent_name = agent_name;
@@ -110,8 +110,7 @@ DBusHandlerResult Apache::OwnMessageHandler(DBusConnection *connection, DBusMess
     BOOST_LOG_TRIVIAL(debug) << "objects::Apache::OwnMessageHandler: Now, elements in cache: " << log_entry_cache_.size();
     if (log_entry_cache_.size() >= CACHE_CAPACITY) {
       BOOST_LOG_TRIVIAL(debug) << "objects::Apache::OwnMessageHandler: Cache is full, flushing.";
-      database_->AddApacheLogs(log_entry_cache_);
-      log_entry_cache_.clear();
+      FlushCache();
     }
 
     DBusMessage *reply_msg = dbus_message_new_method_return(message);
@@ -129,6 +128,12 @@ DBusHandlerResult Apache::OwnMessageHandler(DBusConnection *connection, DBusMess
   BOOST_LOG_TRIVIAL(warning) << "objects::Apache::OwnMessageHandler: Possible bug: DBUS_HANDLER_RESULT_NOT_YET_HANDLED";
 
   return DBUS_HANDLER_RESULT_NOT_YET_HANDLED;
+}
+
+void Apache::FlushCache() {
+  BOOST_LOG_TRIVIAL(debug) << "objects::Apache::FlushCache: Function call";
+  database_->AddApacheLogs(log_entry_cache_);
+  log_entry_cache_.clear();
 }
 
 }

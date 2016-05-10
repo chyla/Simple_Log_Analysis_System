@@ -18,6 +18,8 @@ class Apache : public dbus::Object {
 
   const char* GetPath();
 
+  void FlushCache();
+
  protected:
   const char* GetXmlInterface();
 
