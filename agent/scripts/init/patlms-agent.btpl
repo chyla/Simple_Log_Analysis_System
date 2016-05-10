@@ -24,12 +24,21 @@ test -f $DAEMON || exit 0
 
 set -e
 
+sleep_until_stop () {
+	PID=`cat //var/run/patlms//patlms-agent.pid`
+
+	while [ `ps h $PID | wc -l` -eq 1 ] ; do
+		sleep 1
+	done
+}
+
 start_service () {
         start-stop-daemon --start --oknodo --pidfile $PIDFILE --exec $DAEMON
 }
 
 stop_service () {
         start-stop-daemon --stop --oknodo --pidfile $PIDFILE
+        sleep_until_stop
 }
 
 case "$1" in
