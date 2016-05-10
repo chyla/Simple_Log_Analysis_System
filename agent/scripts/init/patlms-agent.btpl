@@ -16,7 +16,7 @@ DAEMON="%bindir%/patlms-agent"
 NAME=patlms-agent
 SNAME=patlms-agent
 DESC="PAT LMS agent service"
-PIDFILE="%apprundir%/patlms-agent.pid"
+PIDFILE=`sed -n 's/pidfile=//p' %appconfdir%/agent.config`
 
 . /lib/lsb/init-functions
 
