@@ -1,0 +1,52 @@
+body {
+  padding-top: 50px;
+  background-color: #fafafa;
+}
+
+.template {
+  padding: 40px 15px;
+}
+
+.navbar-inverse {
+  border-color: #f1f1f1;
+  background-image: linear-gradient(to bottom, #f1f1f1 0px, #dedede 100%);
+  background-repeat: repeat-x;
+}
+
+.navbar-inverse .navbar-brand, .navbar-inverse .navbar-nav > li > a {
+  text-shadow: none;
+}
+
+.navbar-inverse .navbar-brand {
+  color: #4b4b4b;
+}
+
+.navbar-inverse .navbar-nav > li > a {
+  color: #4b4b4b;
+}
+
+.navbar-inverse .navbar-nav > .active > a, .navbar-inverse .navbar-nav > .active > a:focus, .navbar-inverse .navbar-nav > .active > a:hover {
+  color: #FFF;
+  background-color: #a1a1a1;
+}
+
+.navbar-inverse .navbar-nav > .active > a, .navbar-inverse .navbar-nav > .open > a {
+  background-image: none;
+  background-repeat: repeat-x;
+  box-shadow: 0px 3px 9px rgba(0, 0, 0, 0.25) inset;
+}
+
+.navbar > .container .navbar-brand, .navbar > .container-fluid .navbar-brand {
+    margin-right: 30px;
+}
+
+.navbar-inverse .navbar-brand:focus, .navbar-inverse .navbar-brand:hover {
+  color: #000;
+  background-color: transparent;
+}
+
+.navbar-inverse .navbar-nav > li > a:focus, .navbar-inverse .navbar-nav > li > a:hover {
+  color: #000;
+  background-color: transparent;
+}
+
