@@ -75,7 +75,8 @@ main(int argc, char *argv[]) {
     bus->RegisterObject(&apache);
 
     bus->Loop();
-    
+
+    bus->Disconnect();
     bash.FlushCache();
     apache.FlushCache();
     database->Close();

@@ -89,6 +89,7 @@ main(int argc, char *argv[]) {
     dbus_thread_t.join();
 
     apache_log_receiver->CloseSocket();
+    bus->Disconnect();
 
     util::RemoveFile(options.GetBashSocketPath());
     util::RemoveFile(options.GetApacheSocketPath());
