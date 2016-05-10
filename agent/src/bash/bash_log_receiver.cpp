@@ -85,9 +85,9 @@ void BashLogReceiver::StartLoop() {
   running_ = true;
   while (running_) {
     ret = system_->Poll(&descriptors, 1, timeout);
-    BOOST_LOG_TRIVIAL(debug) << "bash:BashLogReceiver: New client";
 
     if (ret == 1) { // new event
+      BOOST_LOG_TRIVIAL(debug) << "bash:BashLogReceiver: New client";
       struct sockaddr_storage their_addr;
       socklen_t len = sizeof (struct sockaddr_storage);
       new_fd = system_->Accept(socket_fd_, (struct sockaddr*) &their_addr, &len);
@@ -147,7 +147,7 @@ void BashLogReceiver::StartLoop() {
       }
     }
     else if (ret == 0) { // timeout
-      // do nothing
+      BOOST_LOG_TRIVIAL(debug) << "bash:BashLogReceiver: Timeout";
     }
     else { // error
       throw exception::detail::LoopPollException();
