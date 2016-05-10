@@ -78,6 +78,7 @@ main(int argc, char *argv[]) {
     
     bash.FlushCache();
     apache.FlushCache();
+    database->Close();
     util::RemoveFile(options.GetPidfilePath());
   }
   catch (std::exception &ex) {
