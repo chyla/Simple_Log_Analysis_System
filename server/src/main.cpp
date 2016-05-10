@@ -76,6 +76,8 @@ main(int argc, char *argv[]) {
 
     bus->Loop();
     
+    bash.FlushCache();
+    apache.FlushCache();
     util::RemoveFile(options.GetPidfilePath());
   }
   catch (std::exception &ex) {
