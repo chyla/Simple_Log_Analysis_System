@@ -56,18 +56,6 @@ TEST_F(BashLogReceiverTest, LoopNotRunningWhenObjectIsCreated) {
 
 TEST_F(BashLogReceiverTest, OpenSocket) {
   shared_ptr<BashLogReceiver> receiver = BashLogReceiver::Create(bus, dbus_thread, system);
-  EXPECT_CALL(*system, Unlink(StrEq(socket_path))).WillOnce(Return(0));
-  EXPECT_CALL(*system, Socket(PF_UNIX, SOCK_STREAM, 0)).WillOnce(Return(SOCKET_FD));
-  EXPECT_CALL(*system, Bind(SOCKET_FD, _, _)).WillOnce(Return(0));
-  EXPECT_CALL(*system, Listen(SOCKET_FD, 20)).WillOnce(Return(0));
-  EXPECT_CALL(*system, Chmod(StrEq(socket_path), 0622)).WillOnce(Return(0));
-
-  receiver->OpenSocket(socket_path);
-}
-
-TEST_F(BashLogReceiverTest, OpenSocketWhenUnlinkFailed) {
-  shared_ptr<BashLogReceiver> receiver = BashLogReceiver::Create(bus, dbus_thread, system);
-  EXPECT_CALL(*system, Unlink(StrEq(socket_path))).WillOnce(Return(-1));
   EXPECT_CALL(*system, Socket(PF_UNIX, SOCK_STREAM, 0)).WillOnce(Return(SOCKET_FD));
   EXPECT_CALL(*system, Bind(SOCKET_FD, _, _)).WillOnce(Return(0));
   EXPECT_CALL(*system, Listen(SOCKET_FD, 20)).WillOnce(Return(0));
@@ -78,7 +66,6 @@ TEST_F(BashLogReceiverTest, OpenSocketWhenUnlinkFailed) {
 
 TEST_F(BashLogReceiverTest, OpenSocketWhenSocketFailed) {
   shared_ptr<BashLogReceiver> receiver = BashLogReceiver::Create(bus, dbus_thread, system);
-  EXPECT_CALL(*system, Unlink(StrEq(socket_path))).WillOnce(Return(0));
   EXPECT_CALL(*system, Socket(PF_UNIX, SOCK_STREAM, 0)).WillOnce(Return(-1));
 
   EXPECT_THROW(receiver->OpenSocket(socket_path), exception::detail::CantOpenSocketException);
@@ -86,7 +73,6 @@ TEST_F(BashLogReceiverTest, OpenSocketWhenSocketFailed) {
 
 TEST_F(BashLogReceiverTest, OpenSocketWhenBindFailed) {
   shared_ptr<BashLogReceiver> receiver = BashLogReceiver::Create(bus, dbus_thread, system);
-  EXPECT_CALL(*system, Unlink(StrEq(socket_path))).WillOnce(Return(0));
   EXPECT_CALL(*system, Socket(PF_UNIX, SOCK_STREAM, 0)).WillOnce(Return(SOCKET_FD));
   EXPECT_CALL(*system, Bind(SOCKET_FD, _, _)).WillOnce(Return(-1));
 
@@ -95,7 +81,6 @@ TEST_F(BashLogReceiverTest, OpenSocketWhenBindFailed) {
 
 TEST_F(BashLogReceiverTest, OpenSocketWhenListenFailed) {
   shared_ptr<BashLogReceiver> receiver = BashLogReceiver::Create(bus, dbus_thread, system);
-  EXPECT_CALL(*system, Unlink(StrEq(socket_path))).WillOnce(Return(0));
   EXPECT_CALL(*system, Socket(PF_UNIX, SOCK_STREAM, 0)).WillOnce(Return(SOCKET_FD));
   EXPECT_CALL(*system, Bind(SOCKET_FD, _, _)).WillOnce(Return(0));
   EXPECT_CALL(*system, Listen(SOCKET_FD, 20)).WillOnce(Return(-1));
@@ -105,7 +90,6 @@ TEST_F(BashLogReceiverTest, OpenSocketWhenListenFailed) {
 
 TEST_F(BashLogReceiverTest, OpenSocketWhenChmodFailed) {
   shared_ptr<BashLogReceiver> receiver = BashLogReceiver::Create(bus, dbus_thread, system);
-  EXPECT_CALL(*system, Unlink(StrEq(socket_path))).WillOnce(Return(0));
   EXPECT_CALL(*system, Socket(PF_UNIX, SOCK_STREAM, 0)).WillOnce(Return(SOCKET_FD));
   EXPECT_CALL(*system, Bind(SOCKET_FD, _, _)).WillOnce(Return(0));
   EXPECT_CALL(*system, Listen(SOCKET_FD, 20)).WillOnce(Return(0));
@@ -124,7 +108,6 @@ TEST_F(BashLogReceiverTest, StartLoopWithoutOpenSocket) {
 
 TEST_F(BashLogReceiverTest, StartLoopWhenPollFailed) {
   shared_ptr<BashLogReceiver> receiver = BashLogReceiver::Create(bus, dbus_thread, system);
-  EXPECT_CALL(*system, Unlink(StrEq(socket_path))).WillOnce(Return(0));
   EXPECT_CALL(*system, Socket(PF_UNIX, SOCK_STREAM, 0)).WillOnce(Return(SOCKET_FD));
   EXPECT_CALL(*system, Bind(SOCKET_FD, _, _)).WillOnce(Return(0));
   EXPECT_CALL(*system, Listen(SOCKET_FD, 20)).WillOnce(Return(0));
@@ -138,7 +121,6 @@ TEST_F(BashLogReceiverTest, StartLoopWhenPollFailed) {
 
 TEST_F(BashLogReceiverTest, StartLoopWhenAcceptFailed) {
   shared_ptr<BashLogReceiver> receiver = BashLogReceiver::Create(bus, dbus_thread, system);
-  EXPECT_CALL(*system, Unlink(StrEq(socket_path))).WillOnce(Return(0));
   EXPECT_CALL(*system, Socket(PF_UNIX, SOCK_STREAM, 0)).WillOnce(Return(SOCKET_FD));
   EXPECT_CALL(*system, Bind(SOCKET_FD, _, _)).WillOnce(Return(0));
   EXPECT_CALL(*system, Listen(SOCKET_FD, 20)).WillOnce(Return(0));
@@ -155,7 +137,6 @@ TEST_F(BashLogReceiverTest, StartLoopWhenGetsockoptFailed) {
   constexpr int new_fd = 95;
 
   shared_ptr<BashLogReceiver> receiver = BashLogReceiver::Create(bus, dbus_thread, system);
-  EXPECT_CALL(*system, Unlink(StrEq(socket_path))).WillOnce(Return(0));
   EXPECT_CALL(*system, Socket(PF_UNIX, SOCK_STREAM, 0)).WillOnce(Return(SOCKET_FD));
   EXPECT_CALL(*system, Bind(SOCKET_FD, _, _)).WillOnce(Return(0));
   EXPECT_CALL(*system, Listen(SOCKET_FD, 20)).WillOnce(Return(0));
@@ -173,7 +154,6 @@ TEST_F(BashLogReceiverTest, StartLoopWhenRecvFailed) {
   constexpr int new_fd = 95;
 
   shared_ptr<BashLogReceiver> receiver = BashLogReceiver::Create(bus, dbus_thread, system);
-  EXPECT_CALL(*system, Unlink(StrEq(socket_path))).WillOnce(Return(0));
   EXPECT_CALL(*system, Socket(PF_UNIX, SOCK_STREAM, 0)).WillOnce(Return(SOCKET_FD));
   EXPECT_CALL(*system, Bind(SOCKET_FD, _, _)).WillOnce(Return(0));
   EXPECT_CALL(*system, Listen(SOCKET_FD, 20)).WillOnce(Return(0));
@@ -192,7 +172,6 @@ TEST_F(BashLogReceiverTest, StartLoopWhenTimeFailed) {
   constexpr int new_fd = 95;
 
   shared_ptr<BashLogReceiver> receiver = BashLogReceiver::Create(bus, dbus_thread, system);
-  EXPECT_CALL(*system, Unlink(StrEq(socket_path))).WillOnce(Return(0));
   EXPECT_CALL(*system, Socket(PF_UNIX, SOCK_STREAM, 0)).WillOnce(Return(SOCKET_FD));
   EXPECT_CALL(*system, Bind(SOCKET_FD, _, _)).WillOnce(Return(0));
   EXPECT_CALL(*system, Listen(SOCKET_FD, 20)).WillOnce(Return(0));
@@ -212,7 +191,6 @@ TEST_F(BashLogReceiverTest, StartLoopWhenGMTimeFailed) {
   constexpr int new_fd = 95;
 
   shared_ptr<BashLogReceiver> receiver = BashLogReceiver::Create(bus, dbus_thread, system);
-  EXPECT_CALL(*system, Unlink(StrEq(socket_path))).WillOnce(Return(0));
   EXPECT_CALL(*system, Socket(PF_UNIX, SOCK_STREAM, 0)).WillOnce(Return(SOCKET_FD));
   EXPECT_CALL(*system, Bind(SOCKET_FD, _, _)).WillOnce(Return(0));
   EXPECT_CALL(*system, Listen(SOCKET_FD, 20)).WillOnce(Return(0));
