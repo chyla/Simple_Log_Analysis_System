@@ -6,6 +6,8 @@
 #include <patlms/dbus/bus.h>
 #include <patlms/util/demonize.h>
 #include <patlms/util/configure_logger.h>
+#include <patlms/util/create_pidfile.h>
+#include <patlms/util/remove_file.h>
 
 #include "program_options/parser.h"
 #include "database/database.h"
@@ -52,6 +54,8 @@ main(int argc, char *argv[]) {
 
     util::Demonize(options.IsDaemon());
 
+    util::CreatePidFile(options.GetPidfilePath());
+
     signal(SIGTERM, sigterm_handler);
     signal(SIGINT, sigterm_handler);
     signal(SIGKILL, sigterm_handler);
@@ -71,6 +75,8 @@ main(int argc, char *argv[]) {
     bus->RegisterObject(&apache);
 
     bus->Loop();
+    
+    util::RemoveFile(options.GetPidfilePath());
   }
   catch (std::exception &ex) {
     std::cerr << ex.what() << '\n';
