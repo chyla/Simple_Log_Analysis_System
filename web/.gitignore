@@ -4,6 +4,7 @@
 *.egg
 .tox/
 .cache/
+.eggs/
 
 db.sqlite3
 
