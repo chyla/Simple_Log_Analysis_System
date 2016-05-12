@@ -1,5 +1,9 @@
 *.pyc
 *.pyo
+*.egg-info/
+*.egg
+.tox/
+.cache/
 
 db.sqlite3
 
