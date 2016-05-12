@@ -15,11 +15,12 @@ setup(
     url='https://github.com/chyla/pat-lms',
     packages=find_packages(exclude=['tests.*', 'tests', 'test.*', 'test*']),
 
-    install_requires=['Django>=1.8.0',
+    install_requires=['Django==1.8.13',
                       ],
     setup_requires=['pytest-runner',
                     ],
     tests_require=['pytest',
+                   'mock',
                    ],
     classifiers=[
         'Environment :: Web Environment',
