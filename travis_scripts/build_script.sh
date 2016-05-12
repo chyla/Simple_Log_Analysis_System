@@ -49,3 +49,7 @@ make
 make install
 make check
 
+# check web server
+cd ${START_DIR}/web
+tox
+
