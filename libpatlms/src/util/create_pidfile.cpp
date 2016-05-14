@@ -31,7 +31,7 @@ void CreatePidFile(const std::string &pidfile_path, detail::SystemInterfacePtr s
 
     BOOST_LOG_TRIVIAL(debug) << "libpatlms::util::CreatePidFile: Writing pid: " << pid_str;
     ret = system->fwrite(pid_str.c_str(), 1, pid_str.length(), f);
-    if (ret != pid_str.length()) {
+    if (ret != static_cast<int>(pid_str.length())) {
       failed = true;
       BOOST_LOG_TRIVIAL(error) << "libpatlms::util::CreatePidFile: Written count: " << ret;
       BOOST_LOG_TRIVIAL(error) << "libpatlms::util::CreatePidFile: Failed to write pid: " << strerror(errno);
