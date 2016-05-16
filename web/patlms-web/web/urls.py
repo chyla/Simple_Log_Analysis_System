@@ -17,6 +17,7 @@ from django.contrib import admin
 
 urlpatterns = [
     url(r'^general/', include('general.urls', namespace='general')),
+    url(r'^apache/', include('apache.urls', namespace='apache')),
     url(r'^admin/', include(admin.site.urls)),
 
     # index
