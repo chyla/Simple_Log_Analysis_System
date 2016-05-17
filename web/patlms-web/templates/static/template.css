@@ -54,3 +54,40 @@ body {
 .input-picker .ws-picker-header > select {
     display: none;
 }
+
+/* other */
+h1, h2, h3 {
+  padding-bottom: .2em;
+}
+
+h1 {
+  font-size: 3em;
+  border-bottom: 2px solid #4b4b4b;
+}
+
+h2 {
+  font-size: 2em;
+}
+
+h3 {
+  font-size: 1.5em;
+}
+
+table {
+  width: 100%;
+}
+
+.action-buttons {
+  float: right;
+  padding: 1em;
+  line-height: 2.5em;
+}
+
+.input-max-width {
+  width: 100%;
+}
+
+.page-content {
+  padding-top: 1em;
+  padding-bottom: .2em;
+}  
