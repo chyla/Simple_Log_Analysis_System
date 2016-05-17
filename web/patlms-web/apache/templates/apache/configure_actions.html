@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+<h1>Apache Logs</h1>
+
+<h2>Actions Configuration</h2>
+
+<div class="page-content">
+
+    <p>
+        <form class="pure-form" method="post">
+            <div class="col-sm-12">
+                <label for="execute-command" class="control-label">Type command to execute on anomaly detection:</label>
+                <input type="text" name="execute-command" id='execute-command' class='input-max-width'>
+            </div>
+
+            <p class="action-buttons">
+                <button type="submit" class="pure-button pure-button-primary">Apply</button>
+            </p>
+        </form>
+    </p>
+
+</div>
+
+{% endblock %}
