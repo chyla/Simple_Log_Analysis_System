@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+<h1>Apache Logs</h1>
+
+<h2>Configure anomaly detection</h2>
+
+<h3>Step 1/2 - Select date range</h3>
+
+<div class="page-content">
+
+    <p>
+        Please select date range to analyze:
+    </p>
+    
+    <p>
+        <form class="pure-form ws-validate">
+            <div class="col-sm-6 ws-success">
+                <label for="begin-date" class="control-label">Begin date:</label>
+                <input type="date" name="begin-date" id='begin-date' class='input-max-width'>
+            </div>
+                                                      
+        
+            <div class="col-sm-6 ws-success">
+                <label for="end-date" class="control-label">End date:</label>
+                <input type="date" name="end-date" id='end-date' class='input-max-width'>
+            </div>
+            
+            <p class="action-buttons">
+                <button type="submit" class="pure-button pure-button-primary">Next</button>
+            </p>
+        </form>
+    </p>
+
+</div>
+
+{% endblock %}
