@@ -72,5 +72,12 @@
     <script src="{% static "jquery/jquery.min.js" %}"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="{% static "bootstrap/js/bootstrap.min.js" %}"></script>
+    <!-- webshims -->
+    <script src="{% static "webshim/polyfiller.js" %}"></script>
+    <script>
+          webshims.setOptions('waitReady', false);
+          webshims.setOptions('forms-ext', {types: 'date'});
+          webshims.polyfill('forms forms-ext');
+    </script>
   </body>
 </html>
