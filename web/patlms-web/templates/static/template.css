@@ -50,3 +50,7 @@ body {
   background-color: transparent;
 }
 
+/* Calendar - Picker */
+.input-picker .ws-picker-header > select {
+    display: none;
+}
