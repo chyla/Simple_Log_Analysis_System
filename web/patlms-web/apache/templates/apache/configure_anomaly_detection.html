@@ -16,7 +16,7 @@
     </p>
     
     <p>
-        <form class="pure-form ws-validate" method="get">
+        <form class="pure-form ws-validate" method="get" action="{% url 'apache:configure_anomaly_detection_step2' %}">
             <div class="col-sm-6 ws-success">
                 <label for="begin-date" class="control-label">Begin date:</label>
                 <input type="date" name="begin-date" id='begin-date' class='input-max-width'>

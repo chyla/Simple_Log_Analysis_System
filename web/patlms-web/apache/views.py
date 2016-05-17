@@ -8,3 +8,6 @@ def status(request):
 
 def configure_anomaly_detection(request):
     return render_to_response('apache/configure_anomaly_detection.html')
+
+def configure_anomaly_detection_step2(request):
+    return render_to_response('apache/configure_anomaly_detection_step2.html')
