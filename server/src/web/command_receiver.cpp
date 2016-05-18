@@ -56,7 +56,7 @@ void CommandReceiver::StartListen() {
     wait_status = network_->WaitForData(socket_, 3);
 
     if (wait_status != network::WaitStatus::NEW_DATA) {
-      BOOST_LOG_TRIVIAL(error) << "web::CommandReceiver::StartListen: New data on socket";
+      BOOST_LOG_TRIVIAL(debug) << "web::CommandReceiver::StartListen: New data on socket";
       client_connection = network_->Accept(socket_);
 
       ReadAndExecuteCommand(client_connection.socket);
@@ -64,13 +64,13 @@ void CommandReceiver::StartListen() {
       network_->Close(client_connection.socket);
     }
     else {
-      BOOST_LOG_TRIVIAL(error) << "web::CommandReceiver::StartListen: Timedout";
+      BOOST_LOG_TRIVIAL(debug) << "web::CommandReceiver::StartListen: Timedout";
     }
   }
 }
 
 void CommandReceiver::StopListen() {
-  BOOST_LOG_TRIVIAL(error) << "web::CommandReceiver::StopListen: Function call";
+  BOOST_LOG_TRIVIAL(debug) << "web::CommandReceiver::StopListen: Function call";
   is_listen_ = false;
 }
 
@@ -87,13 +87,13 @@ is_listen_(false) {
 }
 
 void CommandReceiver::ReadAndExecuteCommand(int client_socket) {
-  BOOST_LOG_TRIVIAL(error) << "web::CommandReceiver::ReadAndExecuteCommand: Function call";
+  BOOST_LOG_TRIVIAL(debug) << "web::CommandReceiver::ReadAndExecuteCommand: Function call";
   network::WaitStatus wait_status;
   wait_status = network_->WaitForData(client_socket, 3);
 
   string command_text, command_result;
   if (wait_status == network::WaitStatus::NEW_DATA) {
-    BOOST_LOG_TRIVIAL(error) << "web::CommandReceiver::StartListen: New data on socket";
+    BOOST_LOG_TRIVIAL(debug) << "web::CommandReceiver::ReadAndExecuteCommand: New data on socket";
     command_text = network_->ReceiveText(client_socket);
 
     command_result = command_executor_->Execute(command_text);
@@ -101,7 +101,7 @@ void CommandReceiver::ReadAndExecuteCommand(int client_socket) {
     network_->SendText(client_socket, command_result);
   }
   else {
-    BOOST_LOG_TRIVIAL(error) << "web::CommandReceiver::StartListen: Timedout";
+    BOOST_LOG_TRIVIAL(debug) << "web::CommandReceiver::ReadAndExecuteCommand: Timedout";
   }
 }
 
