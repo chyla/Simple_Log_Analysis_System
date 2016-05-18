@@ -7,10 +7,14 @@ AM_LDFLAGS		= @BOOST_LDFLAGS@
 check_PROGRAMS	= tests
 if CAN_RUN_TESTS
 tests_SOURCES	= main.cpp \
-		    database/database.cpp
+		    database/database.cpp \
+		    web/command_executor.cpp \
+		    web/command_receiver.cpp
 
 OBJECT_FILES	= ../src/database/database.o \
-		    ../src/database/detail/sqlite.o
+		    ../src/database/detail/sqlite.o \
+		    ../src/web/command_executor.o \
+		    ../src/web/command_receiver.o
 
 tests_LDADD	= $(OBJECT_FILES) \
 			@GTEST_LIBS@ \

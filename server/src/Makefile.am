@@ -11,7 +11,8 @@ patlms_server_SOURCES	= main.cpp \
 				program_options/options.cpp \
 				program_options/parser.cpp \
 				objects/bash.cpp \
-				objects/apache.cpp
+				objects/apache.cpp \
+				web/command_receiver.cpp
 
 patlms_server_LDADD	= @BOOST_PROGRAM_OPTIONS_LIB@ \
 				@BOOST_LOG_LIB@ \
