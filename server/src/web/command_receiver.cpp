@@ -1,6 +1,7 @@
 #include "command_receiver.h"
 
 #include <boost/log/trivial.hpp>
+#include <patlms/network/network.h>
 
 #include "exception/detail/connection_is_already_open_exception.h"
 #include "exception/detail/port_is_closed_exception.h"
@@ -9,6 +10,11 @@ using namespace std;
 
 namespace web
 {
+
+CommandReceiverPtr CommandReceiver::Create(detail::CommandExecutorInterfacePtr command_executor) {
+  auto n = network::Network::Create();
+  return Create(command_executor, n);
+}
 
 CommandReceiverPtr CommandReceiver::Create(detail::CommandExecutorInterfacePtr command_executor,
                                            network::detail::NetworkInterfacePtr network) {

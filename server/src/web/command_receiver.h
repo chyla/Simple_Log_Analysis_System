@@ -18,6 +18,7 @@ class CommandReceiver : public detail::CommandReceiverInterface {
  public:
   virtual ~CommandReceiver() = default;
 
+  static CommandReceiverPtr Create(detail::CommandExecutorInterfacePtr command_executor);
   static CommandReceiverPtr Create(detail::CommandExecutorInterfacePtr command_executor,
                                    network::detail::NetworkInterfacePtr network);
 
