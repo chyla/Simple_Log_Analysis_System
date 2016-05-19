@@ -91,14 +91,14 @@ TEST_F(CommandReceiverTest, StartListen) {
   string example_command_result = "example command result";
 
   EXPECT_CALL(*network_mock, OpenIpv4Socket(StrEq(ADDRESS), PORT)).WillOnce(Return(SOCKET));
-  EXPECT_CALL(*network_mock, Accept(SOCKET)).WillRepeatedly(Return(new_client));
-  EXPECT_CALL(*network_mock, WaitForData(SOCKET, TIMEOUT)).WillRepeatedly(Return(network::WaitStatus::NEW_DATA));
-  EXPECT_CALL(*network_mock, WaitForData(CLIENT_SOCKET, TIMEOUT)).WillRepeatedly(Return(network::WaitStatus::NEW_DATA));
-  EXPECT_CALL(*network_mock, ReceiveText(CLIENT_SOCKET)).WillRepeatedly(Return(example_command_text));
-  EXPECT_CALL(*network_mock, SendText(CLIENT_SOCKET, example_command_result)).WillRepeatedly(Return());
-  EXPECT_CALL(*network_mock, Close(CLIENT_SOCKET)).WillRepeatedly(Return());
+  EXPECT_CALL(*network_mock, Accept(SOCKET)).Times(AtLeast(1)).WillRepeatedly(Return(new_client));
+  EXPECT_CALL(*network_mock, WaitForData(SOCKET, TIMEOUT)).Times(AtLeast(1)).WillRepeatedly(Return(network::WaitStatus::NEW_DATA));
+  EXPECT_CALL(*network_mock, WaitForData(CLIENT_SOCKET, TIMEOUT)).Times(AtLeast(1)).WillRepeatedly(Return(network::WaitStatus::NEW_DATA));
+  EXPECT_CALL(*network_mock, ReceiveText(CLIENT_SOCKET)).Times(AtLeast(1)).WillRepeatedly(Return(example_command_text));
+  EXPECT_CALL(*network_mock, SendText(CLIENT_SOCKET, example_command_result)).Times(AtLeast(1)).WillRepeatedly(Return());
+  EXPECT_CALL(*network_mock, Close(CLIENT_SOCKET)).Times(AtLeast(1)).WillRepeatedly(Return());
 
-  EXPECT_CALL(*command_executor_mock, Execute(example_command_text)).WillRepeatedly(Return(example_command_result));
+  EXPECT_CALL(*command_executor_mock, Execute(example_command_text)).Times(AtLeast(1)).WillRepeatedly(Return(example_command_result));
 
   command_receiver->OpenPort(ADDRESS, PORT);
 

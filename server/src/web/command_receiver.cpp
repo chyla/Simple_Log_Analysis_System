@@ -61,7 +61,7 @@ void CommandReceiver::StartListen() {
   while (is_listen_) {
     wait_status = network_->WaitForData(socket_, 3);
 
-    if (wait_status != network::WaitStatus::NEW_DATA) {
+    if (wait_status == network::WaitStatus::NEW_DATA) {
       BOOST_LOG_TRIVIAL(debug) << "web::CommandReceiver::StartListen: New data on socket";
       client_connection = network_->Accept(socket_);
 
