@@ -10,6 +10,7 @@ patlms_server_SOURCES	= main.cpp \
 				database/detail/sqlite.cpp \
 				program_options/options.cpp \
 				program_options/parser.cpp \
+				program_options/program_options_command_executor_object.cpp \
 				objects/bash.cpp \
 				objects/apache.cpp \
 				web/command_receiver.cpp \
