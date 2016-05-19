@@ -22,7 +22,9 @@ class ProgramOptionsCommandExecutorObjectTest : public ::testing::Test {
                             "ipv4",
                             false,
                             false,
-                            "/var/lib/database_file")) {
+                            "/var/lib/database_file",
+                            "127.0.0.1",
+                            8124)) {
   }
 
   void SetUp() {

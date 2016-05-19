@@ -11,7 +11,9 @@ const Options Options::Create(const std::string &run_as_user,
                               const std::string &dbus_family,
                               bool help_message,
                               bool daemon,
-                              const std::string &databasefile_path) {
+                              const std::string &databasefile_path,
+                              const std::string &web_address,
+                              unsigned web_port) {
   Options options;
   options.run_as_user_ = run_as_user;
   options.pidfile_path_ = pidfile_path;
@@ -22,6 +24,8 @@ const Options Options::Create(const std::string &run_as_user,
   options.show_help_message_ = help_message;
   options.daemon_ = daemon;
   options.databasefile_path_ = databasefile_path;
+  options.web_address_ = web_address;
+  options.web_port_ = web_port;
 
   return options;
 }
@@ -56,6 +60,14 @@ bool Options::IsDaemon() const {
 
 const std::string& Options::GetDatabasefilePath() const {
   return databasefile_path_;
+}
+
+const std::string& Options::GetWebAddress() const {
+  return web_address_;
+}
+
+const unsigned& Options::GetWebPort() const {
+  return web_port_;
 }
 
 }

@@ -17,7 +17,9 @@ class Options {
                               const std::string &dbus_family,
                               bool help_message,
                               bool daemon,
-                              const std::string &databasefile_path);
+                              const std::string &databasefile_path,
+                              const std::string &web_address,
+                              unsigned web_port);
 
   const std::string& GetRunAsUser() const;
   const std::string& GetPidfilePath() const;
@@ -31,6 +33,9 @@ class Options {
   bool IsDaemon() const;
 
   const std::string& GetDatabasefilePath() const;
+  
+  const std::string& GetWebAddress() const;
+  const unsigned& GetWebPort() const;
 
  private:
   Options() = default;
@@ -39,6 +44,9 @@ class Options {
   std::string pidfile_path_;
   std::string logfile_path_;
   std::string databasefile_path_;
+  
+  std::string web_address_;
+  unsigned web_port_;
 
   std::string dbus_address_;
   unsigned dbus_port_;
