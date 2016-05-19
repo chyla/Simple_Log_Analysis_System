@@ -13,7 +13,7 @@ namespace web
 class CommandExecutor;
 typedef std::shared_ptr<CommandExecutor> CommandExecutorPtr;
 
-class CommandExecutor : detail::CommandExecutorInterface {
+class CommandExecutor : public detail::CommandExecutorInterface {
  public:
   virtual ~CommandExecutor() = default;
 
