@@ -4,6 +4,8 @@
 #include <memory>
 #include <string>
 
+#include "command_executor_object.h"
+
 namespace web
 {
 
@@ -15,6 +17,8 @@ class CommandExecutorInterface {
   virtual ~CommandExecutorInterface() = default;
 
   virtual std::string Execute(std::string command) = 0;
+
+  virtual void RegisterCommandObject(CommandExecutorObjectPtr object) = 0;
 };
 
 typedef std::shared_ptr<CommandExecutorInterface> CommandExecutorInterfacePtr;

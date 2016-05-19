@@ -14,7 +14,8 @@ tests_SOURCES	= main.cpp \
 OBJECT_FILES	= ../src/database/database.o \
 		    ../src/database/detail/sqlite.o \
 		    ../src/web/command_executor.o \
-		    ../src/web/command_receiver.o
+		    ../src/web/command_receiver.o \
+		    ../src/program_options/options.o
 
 tests_LDADD	= $(OBJECT_FILES) \
 			@GTEST_LIBS@ \

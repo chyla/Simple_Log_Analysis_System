@@ -14,6 +14,8 @@ namespace web
 class CommandExecutor : public ::web::detail::CommandExecutorInterface {
  public:
   MOCK_METHOD1(Execute, std::string(std::string command));
+
+  MOCK_METHOD1(RegisterCommandObject, void(::web::detail::CommandExecutorObjectPtr object));
 };
 
 }
