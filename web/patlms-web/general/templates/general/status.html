@@ -11,12 +11,24 @@
     <tbody>
         <tr>
             <td>Process ID:</td>
-            <td></td>
+            <td>
+            {% if process_id %}
+                {{ process_id }}
+            {% else %}
+                unknown
+            {% endif %}
+            </td>
         </tr>
 
         <tr>
             <td>Pidfile location:</td>
-            <td></td>
+            <td>
+            {% if process_id %}
+                {{ process_pidfile }}
+            {% else %}
+                unknown
+            {% endif %}
+            </td>
         </tr>
     </tbody>
 </table>
