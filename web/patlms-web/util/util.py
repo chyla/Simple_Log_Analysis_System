@@ -2,7 +2,7 @@ import json
 import copy
 
 from network import Network
-from config import SERVER_ADDRESS, SERVER_PORT
+from server_config import SERVER_ADDRESS, SERVER_PORT
 
 def connect_and_get_result_from_command(command):
     n = Network.connect_ipv4(SERVER_ADDRESS, SERVER_PORT)
