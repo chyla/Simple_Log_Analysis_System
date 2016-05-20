@@ -10,8 +10,6 @@
 #include "src/database/exception/detail/cant_close_database_exception.h"
 #include "src/database/exception/detail/cant_execute_sql_statement_exception.h"
 
-#include <iostream>
-
 using namespace std;
 
 namespace database
