@@ -61,6 +61,10 @@ const std::string& Options::GetDbusFamily() const {
   return dbus_family_;
 }
 
+bool Options::IsShowHelpMessage() const {
+  return show_help_message_;
+}
+
 bool Options::IsDaemon() const {
   return daemon_;
 }
