@@ -268,6 +268,71 @@ bool Database::AddApacheLogs(const type::ApacheLogs &log_entries) {
   return true;
 }
 
+bool Database::AddApacheSessionStatistics(const analyzer::ApacheSessions &sessions) {
+  BOOST_LOG_TRIVIAL(debug) << "database::Database::AddApacheSessionStatistics: Function call";
+
+  if (is_open_ == false) {
+    BOOST_LOG_TRIVIAL(error) << "database::Database::AddApacheSessionStatistics: Database is not open.";
+    throw exception::detail::CantExecuteSqlStatementException();
+  }
+
+  int ret;
+  ret = sqlite_interface_->Exec(db_handle_, "begin transaction", nullptr, nullptr, nullptr);
+  StatementCheckForError(ret, "Begin transaction error");
+
+  for (const analyzer::ApacheSessionEntry &entry : sessions) {
+    const char *sql = "insert into APACHE_SESSION_TABLE(AGENT_NAME, VIRTUALHOST, CLIENT_IP, SESSION_LENGTH, BANDWIDTH_USAGE, REQUESTS_COUNT, ERROR_PERCENTAGE, USER_AGENT) values(?, ?, ?, ?, ?, ?, ?, ?)";
+    sqlite3_stmt *statement;
+    ret = sqlite_interface_->Prepare(db_handle_, sql, -1, &statement, nullptr);
+    StatementCheckForErrorAndRollback(ret, "Prepare insert error");
+
+    ret = sqlite_interface_->BindText(statement, 1, entry.agent_name.c_str(), -1, nullptr);
+    StatementCheckForErrorAndRollback(ret, "Bind agent_name error");
+
+    ret = sqlite_interface_->BindText(statement, 2, entry.virtualhost.c_str(), -1, nullptr);
+    StatementCheckForErrorAndRollback(ret, "Bind virtualhost error");
+
+    ret = sqlite_interface_->BindText(statement, 3, entry.client_ip.c_str(), -1, nullptr);
+    StatementCheckForErrorAndRollback(ret, "Bind client_ip error");
+
+    ret = sqlite_interface_->BindInt64(statement, 4, entry.session_length);
+    StatementCheckForErrorAndRollback(ret, "Bind session_length error");
+    
+    ret = sqlite_interface_->BindInt64(statement, 5, entry.bandwidth_usage);
+    StatementCheckForErrorAndRollback(ret, "Bind bandwidth_usage error");
+    
+    ret = sqlite_interface_->BindInt64(statement, 6, entry.requests_count);
+    StatementCheckForErrorAndRollback(ret, "Bind requests_count error");
+    
+    ret = sqlite_interface_->BindInt(statement, 7, entry.error_percentage);
+    StatementCheckForErrorAndRollback(ret, "Bind error_percentage error");
+
+    ret = sqlite_interface_->BindText(statement, 8, entry.useragent.c_str(), -1, nullptr);
+    StatementCheckForErrorAndRollback(ret, "Bind useragent error");
+
+    ret = sqlite_interface_->Step(statement);
+    if (ret == SQLITE_BUSY) {
+      BOOST_LOG_TRIVIAL(error) << "database::Database::AddApacheSessionStatistics: Step error - SQLite is busy";
+      Rollback();
+      return false;
+    }
+    StatementCheckForErrorAndRollback(ret, "Step error");
+
+    ret = sqlite_interface_->Finalize(statement);
+    StatementCheckForErrorAndRollback(ret, "Finalize error");
+  }
+
+  ret = sqlite_interface_->Exec(db_handle_, "end transaction", nullptr, nullptr, nullptr);
+  if (ret == SQLITE_BUSY) {
+    BOOST_LOG_TRIVIAL(error) << "database::Database::AddBashLogs: End transaction error - SQLite is busy";
+    Rollback();
+    return false;
+  }
+  StatementCheckForErrorAndRollback(ret, "End transaction error");
+
+  return true;
+}
+
 bool Database::Close() {
   BOOST_LOG_TRIVIAL(debug) << "database::Database::Close: Function call";
 

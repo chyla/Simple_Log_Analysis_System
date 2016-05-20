@@ -7,7 +7,7 @@
 
 #include "detail/sqlite_interface.h"
 #include "src/type/all.h"
-
+#include "src/analyzer/apache_session_entry.h"
 
 namespace database
 {
@@ -33,6 +33,8 @@ class Database {
   bool AddBashLogs(const type::BashLogs &log_entries);
   
   bool AddApacheLogs(const type::ApacheLogs &log_entries);
+
+  bool AddApacheSessionStatistics(const analyzer::ApacheSessions &sessions);
 
   bool Close();
 
