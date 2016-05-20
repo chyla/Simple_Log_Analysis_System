@@ -10,6 +10,9 @@
 #include "src/database/exception/detail/cant_close_database_exception.h"
 #include "src/database/exception/detail/cant_execute_sql_statement_exception.h"
 
+#include <iostream>
+
+using namespace std;
 
 namespace database
 {
@@ -297,13 +300,13 @@ bool Database::AddApacheSessionStatistics(const analyzer::ApacheSessions &sessio
 
     ret = sqlite_interface_->BindInt64(statement, 4, entry.session_length);
     StatementCheckForErrorAndRollback(ret, "Bind session_length error");
-    
+
     ret = sqlite_interface_->BindInt64(statement, 5, entry.bandwidth_usage);
     StatementCheckForErrorAndRollback(ret, "Bind bandwidth_usage error");
-    
+
     ret = sqlite_interface_->BindInt64(statement, 6, entry.requests_count);
     StatementCheckForErrorAndRollback(ret, "Bind requests_count error");
-    
+
     ret = sqlite_interface_->BindInt(statement, 7, entry.error_percentage);
     StatementCheckForErrorAndRollback(ret, "Bind error_percentage error");
 
@@ -333,6 +336,88 @@ bool Database::AddApacheSessionStatistics(const analyzer::ApacheSessions &sessio
   return true;
 }
 
+long long Database::GetApacheLogsCount(string agent_name, string virtualhost_name, type::Time from, type::Time to) {
+  BOOST_LOG_TRIVIAL(debug) << "database::Database::GetApacheLogsCount: Function call";
+  int ret;
+  long long count = 0;
+
+  if (is_open_ == false) {
+    BOOST_LOG_TRIVIAL(error) << "database::Database::GetApacheLogsCount: Database is not open";
+    throw exception::detail::CantExecuteSqlStatementException();
+  }
+
+  string from_day = to_string(from.GetDay()),
+      from_month = to_string(from.GetMonth()),
+      from_year = to_string(from.GetYear()),
+      from_hour = to_string(from.GetHour()),
+      from_minute = to_string(from.GetMinute()),
+      from_second = to_string(from.GetSecond()),
+      to_day = to_string(to.GetDay()),
+      to_month = to_string(to.GetMonth()),
+      to_year = to_string(to.GetYear()),
+      to_hour = to_string(to.GetHour()),
+      to_minute = to_string(to.GetMinute()),
+      to_second = to_string(to.GetSecond());
+
+  string sql =
+      "select * from APACHE_LOGS_TABLE"
+      "  where"
+      "    ("
+      "      AGENT_NAME=?"
+      "      and"
+      "      VIRTUALHOST=?"
+      "    )"
+      "  and"
+      "    ("
+      "      ("
+      "        (UTC_HOUR > " + from_hour + ")"
+      "        or (UTC_HOUR = " + from_hour + " and UTC_MINUTE > " + from_minute + ")"
+      "        or (UTC_HOUR = " + from_hour + " and UTC_MINUTE = " + from_minute + " and UTC_SECOND >= " + from_second + ")"
+      "      )"
+      "      and"
+      "      ("
+      "        (UTC_YEAR > " + from_year + ")"
+      "        or (UTC_YEAR = " + from_year + " and UTC_MONTH > " + from_month + ")"
+      "        or (UTC_YEAR = " + from_year + " and UTC_MONTH = " + from_month + " and UTC_DAY >= " + from_day + ")"
+      "      )"
+      "    )"
+      "  and"
+      "    ("
+      "      ("
+      "        (UTC_HOUR < " + to_hour + ")"
+      "        or (UTC_HOUR = " + to_hour + " and UTC_MINUTE < " + to_minute + ")"
+      "        or (UTC_HOUR = " + to_hour + " and UTC_MINUTE = " + to_minute + " and UTC_SECOND <= " + to_second + ")"
+      "      )"
+      "      and"
+      "      ("
+      "        (UTC_YEAR < " + to_year + ")"
+      "        or (UTC_YEAR = " + to_year + " and UTC_MONTH < " + to_month + ")"
+      "        or (UTC_YEAR = " + to_year + " and UTC_MONTH = " + to_month + " and UTC_DAY <= " + to_day + ")"
+      "      )"
+      "    )"
+      ";";
+
+  sqlite3_stmt *statement;
+  ret = sqlite_interface_->Prepare(db_handle_, sql.c_str(), -1, &statement, nullptr);
+  StatementCheckForError(ret, "Prepare insert error");
+
+  ret = sqlite_interface_->BindText(statement, 1, agent_name.c_str(), -1, nullptr);
+  StatementCheckForError(ret, "Bind useragent error");
+
+  ret = sqlite_interface_->BindText(statement, 2, virtualhost_name.c_str(), -1, nullptr);
+  StatementCheckForError(ret, "Bind useragent error");
+
+  ret = sqlite_interface_->Step(statement);
+  StatementCheckForError(ret, "Step error");
+
+  count = sqlite_interface_->ColumnInt64(statement, 0);
+
+  ret = sqlite_interface_->Finalize(statement);
+  StatementCheckForError(ret, "Finalize error");
+
+  return count;
+}
+
 bool Database::Close() {
   BOOST_LOG_TRIVIAL(debug) << "database::Database::Close: Function call";
 
@@ -359,14 +444,14 @@ sqlite_interface_(std::move(sqlite)) {
 }
 
 void Database::StatementCheckForError(int return_value, const char *description) {
-  if (return_value != SQLITE_OK && return_value != SQLITE_DONE) {
+  if (return_value != SQLITE_OK && return_value != SQLITE_DONE && return_value != SQLITE_ROW) {
     BOOST_LOG_TRIVIAL(error) << "database::Database: " << description << ": " << return_value;
     throw exception::detail::CantExecuteSqlStatementException();
   }
 }
 
 void Database::StatementCheckForErrorAndRollback(int return_value, const char *description) {
-  if (return_value != SQLITE_OK && return_value != SQLITE_DONE) {
+  if (return_value != SQLITE_OK && return_value != SQLITE_DONE && return_value != SQLITE_ROW) {
     BOOST_LOG_TRIVIAL(error) << "database::Database: " << description << ": " << return_value;
     Rollback();
     throw exception::detail::CantExecuteSqlStatementException();

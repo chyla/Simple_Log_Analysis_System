@@ -5,6 +5,8 @@
 #include <memory>
 #include <vector>
 
+#include <patlms/type/time.h>
+
 #include "detail/sqlite_interface.h"
 #include "src/type/all.h"
 #include "src/analyzer/apache_session_entry.h"
@@ -25,16 +27,18 @@ class Database {
   bool IsOpen() const;
 
   void CreateBashLogsTable();
-  
+
   void CreateApacheLogsTable();
-  
+
   void CreateApacheSessionTable();
 
   bool AddBashLogs(const type::BashLogs &log_entries);
-  
+
   bool AddApacheLogs(const type::ApacheLogs &log_entries);
 
   bool AddApacheSessionStatistics(const analyzer::ApacheSessions &sessions);
+
+  long long GetApacheLogsCount(std::string agent_name, std::string virtualhost_name, type::Time from, type::Time to);
 
   bool Close();
 
@@ -44,7 +48,7 @@ class Database {
   std::unique_ptr<detail::SQLiteInterface> sqlite_interface_;
 
   Database(std::unique_ptr<detail::SQLiteInterface> sqlite);
-  
+
   void StatementCheckForError(int return_value, const char *description);
   void StatementCheckForErrorAndRollback(int return_value, const char *description);
   void Rollback();
