@@ -16,7 +16,8 @@ void CreatePidFile(const std::string &pidfile_path, detail::SystemInterfacePtr s
   BOOST_LOG_TRIVIAL(debug) << "libpatlms::util::CreatePidFile: Function call with (pidfile_path=" << pidfile_path << ")";
 
   if (system->access(pidfile_path.c_str(), F_OK) != -1) {
-    BOOST_LOG_TRIVIAL(error) << "libpatlms::util::CreatePidFile: File exists: " << strerror(errno);
+    BOOST_LOG_TRIVIAL(error) << "libpatlms::util::CreatePidFile: File exists! Can't create new pidfile!";
+    BOOST_LOG_TRIVIAL(error) << "libpatlms::util::CreatePidFile: access function errno: " << strerror(errno);
     throw detail::CantCreatePidfileException();
   }
 
