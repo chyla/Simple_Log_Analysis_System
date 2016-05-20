@@ -16,7 +16,7 @@ struct ApacheSessionEntry
   long bandwidth_usage;
   long requests_count;
   int error_percentage;
-  std::string error_percentage;
+  std::string useragent;
 };
 
 typedef std::vector<ApacheSessionEntry> ApacheSessions;
