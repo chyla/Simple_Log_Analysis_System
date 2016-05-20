@@ -31,7 +31,7 @@ class Options {
   const unsigned& GetDbusPort() const;
   const std::string& GetDbusFamily() const;
 
-  const bool IsShowHelpMessage() const;
+  bool IsShowHelpMessage() const;
   bool IsDaemon() const;
 
   const std::string& GetDatabasefilePath() const;
