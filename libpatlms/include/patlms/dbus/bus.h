@@ -4,6 +4,7 @@
 #include <string>
 #include <list>
 #include <dbus/dbus.h>
+#include <memory>
 
 #include <patlms/dbus/object.h>
 #include <patlms/dbus/detail/bus_interface.h>
@@ -37,8 +38,8 @@ class Bus : public detail::BusInterface
 
   bool RequestConnectionName(const std::string &method_name);
 
-  void RegisterObject(Object *object);
-  void UnregisterObject(Object *object);
+  void RegisterObject(ObjectPtr object);
+  void UnregisterObject(ObjectPtr object);
   void UnregisterAllObjects();
 
   void Loop();
@@ -53,10 +54,12 @@ class Bus : public detail::BusInterface
 
   static DBusHandlerResult StaticMessageHandler(DBusConnection *connection, DBusMessage *message, void *user_data);
 
-  std::list<Object*> registered_objects_;
+  std::list<ObjectPtr> registered_objects_;
 
-  void DBusUnregisterObject(Object *object);
+  void DBusUnregisterObject(ObjectPtr object);
 };
+
+typedef std::shared_ptr<Bus> BusPtr;
 
 }
 

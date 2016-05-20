@@ -1,14 +1,13 @@
 #ifndef LIBPATLMS_DBUS_OBJECT_H
 #define LIBPATLMS_DBUS_OBJECT_H
 
+#include <memory>
 #include <dbus/dbus.h>
-
 
 namespace dbus
 {
 
-class Object
-{
+class Object {
  public:
   virtual ~Object();
 
@@ -22,6 +21,8 @@ class Object
   virtual DBusHandlerResult OwnMessageHandler(DBusConnection *connection, DBusMessage *message) = 0;
 
 };
+
+typedef std::shared_ptr<Object> ObjectPtr;
 
 }
 

@@ -107,10 +107,10 @@ bool Bus::RequestConnectionName(const std::string &method_name) {
   return true;
 }
 
-void Bus::RegisterObject(Object *object) {
+void Bus::RegisterObject(ObjectPtr object) {
   BOOST_LOG_TRIVIAL(debug) << "dbus::Bus::RegisterObject: Function call";
 
-  void *vobject = static_cast<void*> (object);
+  void *vobject = static_cast<void*> (object.get());
 
   const DBusObjectPathVTable dbus_vtable = {
     NULL, StaticMessageHandler, NULL, NULL, NULL, NULL
@@ -123,7 +123,7 @@ void Bus::RegisterObject(Object *object) {
   registered_objects_.push_back(object);
 }
 
-void Bus::UnregisterObject(Object *object) {
+void Bus::UnregisterObject(ObjectPtr object) {
   BOOST_LOG_TRIVIAL(debug) << "dbus::Bus::UnregisterObject: Function call";
 
   DBusUnregisterObject(object);
@@ -137,7 +137,7 @@ void Bus::UnregisterObject(Object *object) {
 void Bus::UnregisterAllObjects() {
   BOOST_LOG_TRIVIAL(debug) << "dbus::Bus::UnregisterAllObject: Function call";
 
-  for (Object *o : registered_objects_)
+  for (auto o : registered_objects_)
     DBusUnregisterObject(o);
 
   registered_objects_.clear();
@@ -212,7 +212,7 @@ DBusHandlerResult Bus::StaticMessageHandler(DBusConnection *connection, DBusMess
   return object->MessageHandler(connection, message);
 }
 
-void Bus::DBusUnregisterObject(Object *object) {
+void Bus::DBusUnregisterObject(ObjectPtr object) {
   BOOST_LOG_TRIVIAL(debug) << "dbus::Bus::DBusUnregisterObject: Function call";
 
   bool ret = dbus_connection_unregister_object_path(connection_,

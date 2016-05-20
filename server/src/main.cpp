@@ -28,8 +28,9 @@
 namespace expr = boost::log::expressions;
 namespace keywords = boost::log::keywords;
 
-std::shared_ptr<dbus::Bus> bus;
+dbus::BusPtr bus;
 web::CommandReceiverPtr command_receiver;
+std::thread command_receiver_thread;
 
 void sigterm_handler(int sig) {
   bus->StopLoop();
@@ -50,6 +51,9 @@ int
 main(int argc, char *argv[]) {
   program_options::Parser p;
   program_options::Options options;
+  objects::BashPtr bash_object;
+  objects::ApachePtr apache_object;
+  database::DatabasePtr database;
 
   try {
     p.SetCommandLineOptions(argc, argv);
@@ -75,7 +79,13 @@ main(int argc, char *argv[]) {
 
   try {
     util::ConfigureLogger(options.GetLogfilePath());
+  }
+  catch (std::exception &ex) {
+    std::cerr << "Error: Can't configure logger: " << ex.what() << '\n';
+    return 1;
+  }
 
+  try {
     BOOST_LOG_TRIVIAL(info) << "Server";
 #ifdef HAVE_CONFIG_H
     BOOST_LOG_TRIVIAL(info) << "Version: " << VERSION;
@@ -89,9 +99,18 @@ main(int argc, char *argv[]) {
     command_receiver = web::CommandReceiver::Create(command_executor);
     command_receiver->OpenPort(options.GetWebAddress(), options.GetWebPort());
 
-    std::thread command_receiver_thread([]() {
-      command_receiver->StartListen();
-    });
+    database = CreateDatabase(options);
+    bus = std::make_shared<dbus::Bus>(dbus::Bus::Options(options.GetDbusAddress(),
+                                                         options.GetDbusPort(),
+                                                         options.GetDbusFamily()));
+    bus->Connect();
+    bus->RequestConnectionName("org.chyla.patlms.server");
+
+    bash_object = std::make_shared<objects::Bash>(database);
+    bus->RegisterObject(bash_object);
+
+    apache_object = std::make_shared<objects::Apache>(database);
+    bus->RegisterObject(apache_object);
 
     util::CreatePidFile(options.GetPidfilePath());
 
@@ -100,32 +119,42 @@ main(int argc, char *argv[]) {
     signal(SIGKILL, sigterm_handler);
     signal(SIGQUIT, sigterm_handler);
 
-    auto database = CreateDatabase(options);
-    bus = std::make_shared<dbus::Bus>(dbus::Bus::Options(options.GetDbusAddress(),
-                                                         options.GetDbusPort(),
-                                                         options.GetDbusFamily()));
-    bus->Connect();
-    bus->RequestConnectionName("org.chyla.patlms.server");
-
-    objects::Bash bash(database);
-    bus->RegisterObject(&bash);
-
-    objects::Apache apache(database);
-    bus->RegisterObject(&apache);
+    command_receiver_thread = std::thread([]() {
+      command_receiver->StartListen();
+    });
 
     bus->Loop();
+  }
+  catch (std::exception &ex) {
+    BOOST_LOG_TRIVIAL(fatal) << ex.what();
+    return 1;
+  }
 
-    bus->Disconnect();
-    bash.FlushCache();
-    apache.FlushCache();
-    database->Close();
-    command_receiver_thread.join();
-    command_receiver->ClosePort();
+  try {
+    if (command_receiver)
+      command_receiver->StopListen();
+
+    if (bus)
+      bus->Disconnect();
+
+    if (bash_object)
+      bash_object->FlushCache();
+
+    if (apache_object)
+      apache_object->FlushCache();
+
+    if (database)
+      database->Close();
+
+    if (command_receiver_thread.joinable())
+      command_receiver_thread.join();
+
+    if (command_receiver)
+      command_receiver->ClosePort();
 
     util::RemoveFile(options.GetPidfilePath());
   }
   catch (std::exception &ex) {
-    std::cerr << ex.what() << '\n';
     BOOST_LOG_TRIVIAL(fatal) << ex.what();
     return 1;
   }

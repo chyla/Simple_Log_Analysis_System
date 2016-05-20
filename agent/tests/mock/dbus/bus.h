@@ -18,8 +18,8 @@ class Bus : public ::dbus::detail::BusInterface {
 
   MOCK_METHOD1(RequestConnectionName, bool(const std::string &method_name));
 
-  MOCK_METHOD1(RegisterObject, void(::dbus::Object *object));
-  MOCK_METHOD1(UnregisterObject, void(::dbus::Object *object));
+  MOCK_METHOD1(RegisterObject, void(::dbus::ObjectPtr object));
+  MOCK_METHOD1(UnregisterObject, void(::dbus::ObjectPtr object));
   MOCK_METHOD0(UnregisterAllObjects, void());
 
   MOCK_METHOD0(Loop, void());

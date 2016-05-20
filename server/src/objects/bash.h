@@ -2,6 +2,7 @@
 #define PATLMS_OBJECTS_BASH_H
 
 #include <vector>
+#include <memory>
 #include <patlms/dbus/object.h>
 #include <patlms/type/bash_log_entry.h>
 
@@ -28,6 +29,8 @@ class Bash : public dbus::Object {
   database::DatabasePtr database_;
   type::BashLogs log_entry_cache_;
 };
+
+typedef std::shared_ptr<Bash> BashPtr;
 
 }
 

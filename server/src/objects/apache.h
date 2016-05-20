@@ -29,6 +29,8 @@ class Apache : public dbus::Object {
   type::ApacheLogs log_entry_cache_;
 };
 
+typedef std::shared_ptr<Apache> ApachePtr;
+
 }
 
 #endif /* APACHE_H */

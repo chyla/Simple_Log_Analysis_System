@@ -22,8 +22,8 @@ class BusInterface {
 
   virtual bool RequestConnectionName(const std::string &method_name) = 0;
 
-  virtual void RegisterObject(Object *object) = 0;
-  virtual void UnregisterObject(Object *object) = 0;
+  virtual void RegisterObject(ObjectPtr object) = 0;
+  virtual void UnregisterObject(ObjectPtr object) = 0;
   virtual void UnregisterAllObjects() = 0;
 
   virtual void Loop() = 0;
