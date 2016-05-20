@@ -7,8 +7,8 @@
 namespace analyzer
 {
 
-struct ApacheSessionEntry
-{
+struct ApacheSessionEntry {
+  long long id;
   std::string agent_name;
   std::string virtualhost;
   std::string client_ip;

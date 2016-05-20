@@ -7,6 +7,7 @@ namespace type
 {
 
 struct ApacheLogEntry {
+  long long id;
   std::string agent_name;
   std::string virtualhost;
   std::string client_ip;

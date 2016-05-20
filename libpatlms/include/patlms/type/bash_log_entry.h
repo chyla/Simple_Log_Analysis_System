@@ -7,6 +7,7 @@ namespace type
 {
 
 struct BashLogEntry {
+  long long id;
   std::string agent_name;
   Time utc_time;
   unsigned user_id;
