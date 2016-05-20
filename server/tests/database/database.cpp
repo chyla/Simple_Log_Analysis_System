@@ -177,6 +177,35 @@ TEST(DatabaseTest, CreateBashLogsTableWhenFailed) {
   EXPECT_THROW(database->CreateBashLogsTable(), database::exception::detail::CantExecuteSqlStatementException);
 }
 
+TEST(DatabaseTest, CreateApacheSessionTable) {
+  unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
+  MY_EXPECT_OPEN(sqlite_mock);
+  EXPECT_CALL(*sqlite_mock, Exec(DB_HANDLE_EXAMPLE_PTR_VALUE, NotNull(), IsNull(), IsNull(), IsNull())).WillOnce(Return(SQLITE_OK));
+
+  DatabasePtr database = Database::Create(move(sqlite_mock)); 
+  database->Open("sqlite.db");
+  database->CreateApacheSessionTable();
+}
+
+TEST(DatabaseTest, CreateApacheSessionTable_WhenDatabaseIsClosed) {
+  unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
+
+  DatabasePtr database = Database::Create(move(sqlite_mock)); 
+
+  EXPECT_FALSE(database->IsOpen());
+  EXPECT_THROW(database->CreateApacheSessionTable(), database::exception::detail::CantExecuteSqlStatementException);
+}
+
+TEST(DatabaseTest, CreateApacheSessionTable_WhenFailed) {
+  unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
+  MY_EXPECT_OPEN(sqlite_mock);
+  EXPECT_CALL(*sqlite_mock, Exec(DB_HANDLE_EXAMPLE_PTR_VALUE, NotNull(), IsNull(), IsNull(), IsNull())).WillOnce(Return(SQLITE_NOMEM));
+
+  DatabasePtr database = Database::Create(move(sqlite_mock)); 
+  database->Open("sqlite.db");
+  EXPECT_THROW(database->CreateApacheSessionTable(), database::exception::detail::CantExecuteSqlStatementException);
+}
+
 TEST(DatabaseTest, CreateApacheLogsTable) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
   MY_EXPECT_OPEN(sqlite_mock);

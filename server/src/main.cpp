@@ -39,6 +39,7 @@ database::DatabasePtr CreateDatabase(const program_options::Options &options) {
   database->Open(options.GetDatabasefilePath());
   database->CreateBashLogsTable();
   database->CreateApacheLogsTable();
+  database->CreateApacheSessionTable();
 
   return database;
 }

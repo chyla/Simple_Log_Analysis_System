@@ -94,6 +94,30 @@ void Database::CreateApacheLogsTable() {
   StatementCheckForError(ret, "Create APACHE_LOGS_TABLE error");
 }
 
+void Database::CreateApacheSessionTable() {
+  BOOST_LOG_TRIVIAL(debug) << "database::Database::CreateApacheSessionTable: Function call";
+
+  if (is_open_ == false) {
+    BOOST_LOG_TRIVIAL(error) << "database::Database::CreateApacheSessionTable: Database is not open.";
+    throw exception::detail::CantExecuteSqlStatementException();
+  }
+
+  const char *sql =
+      "create table if not exists APACHE_SESSION_TABLE("
+      "  ID integer primary key, "
+      "  AGENT_NAME text,"
+      "  VIRTUALHOST text, "
+      "  CLIENT_IP text, "
+      "  SESSION_LENGTH integer, "
+      "  BANDWIDTH_USAGE integer, "
+      "  REQUESTS_COUNT integer, "
+      "  ERROR_PERCENTAGE integer, "
+      "  USER_AGENT text "
+      ");";
+  int ret = sqlite_interface_->Exec(db_handle_, sql, nullptr, nullptr, nullptr);
+  StatementCheckForError(ret, "Create APACHE_SESSION_TABLE error");
+}
+
 bool Database::AddBashLogs(const type::BashLogs &log_entries) {
   BOOST_LOG_TRIVIAL(debug) << "database::Database::AddBashLogs: Function call";
 
