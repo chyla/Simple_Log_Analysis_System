@@ -9,6 +9,8 @@ namespace program_options
 
 class Options {
  public:
+  Options();
+
   static const Options Create(const std::string &run_as_user,
                               const std::string &pidfile_path,
                               const std::string &logfile_path,
@@ -33,18 +35,16 @@ class Options {
   bool IsDaemon() const;
 
   const std::string& GetDatabasefilePath() const;
-  
+
   const std::string& GetWebAddress() const;
   const unsigned& GetWebPort() const;
 
  private:
-  Options() = default;
-
   std::string run_as_user_;
   std::string pidfile_path_;
   std::string logfile_path_;
   std::string databasefile_path_;
-  
+
   std::string web_address_;
   unsigned web_port_;
 

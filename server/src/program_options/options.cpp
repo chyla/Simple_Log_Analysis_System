@@ -3,6 +3,13 @@
 namespace program_options
 {
 
+Options::Options()
+: web_port_(0),
+dbus_port_(0),
+show_help_message_(false),
+daemon_(false) {
+}
+
 const Options Options::Create(const std::string &run_as_user,
                               const std::string &pidfile_path,
                               const std::string &logfile_path,
