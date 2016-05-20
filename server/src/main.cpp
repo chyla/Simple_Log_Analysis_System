@@ -2,9 +2,11 @@
 #include <boost/log/trivial.hpp>
 #include <memory>
 #include <signal.h>
+#include <iostream>
 #include <thread>
 
 #include <patlms/dbus/bus.h>
+#include <patlms/type/exception/exception.h>
 #include <patlms/util/demonize.h>
 #include <patlms/util/configure_logger.h>
 #include <patlms/util/create_pidfile.h>
@@ -46,12 +48,32 @@ database::DatabasePtr CreateDatabase(const program_options::Options &options) {
 
 int
 main(int argc, char *argv[]) {
+  program_options::Parser p;
+  program_options::Options options;
+
   try {
-    program_options::Parser p;
     p.SetCommandLineOptions(argc, argv);
     p.SetConfigFilePath(SYSCONFFILE);
-    program_options::Options options = p.Parse();
+    options = p.Parse();
 
+    if (options.IsShowHelpMessage()) {
+      std::cout << "Usage: " << argv[0] << " " << "[options]\n";
+      std::cout << p.GetHelpMessage() << '\n';
+      return 0;
+    }
+  }
+  catch (interface::Exception &ex) {
+    std::cerr << "Error: Wrong option: " << ex.what() << '\n';
+    return 1;
+  }
+  catch (std::exception &ex) {
+    std::cerr << "Error: Missing or wrong program option.\n\n";
+    std::cout << "Usage: " << argv[0] << " " << "[options]\n";
+    std::cerr << p.GetHelpMessage() << "\n";
+    return 1;
+  }
+
+  try {
     util::ConfigureLogger(options.GetLogfilePath());
 
     BOOST_LOG_TRIVIAL(info) << "Server";
@@ -66,7 +88,7 @@ main(int argc, char *argv[]) {
     command_executor->RegisterCommandObject(options_command_object);
     command_receiver = web::CommandReceiver::Create(command_executor);
     command_receiver->OpenPort(options.GetWebAddress(), options.GetWebPort());
-    
+
     std::thread command_receiver_thread([]() {
       command_receiver->StartListen();
     });
