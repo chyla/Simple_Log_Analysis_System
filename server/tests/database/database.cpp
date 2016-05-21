@@ -1056,7 +1056,7 @@ TEST(DatabaseTest, GetApacheLogs) {
   type::Time from, to;
   from.Set(10, 0, 0, 1, 1, 2015);
   to.Set(10, 0, 0, 1, 1, 2017);
-  auto names = database->GetApacheLogs("agentname", "vh1", from, to);
+  auto names = database->GetApacheLogs("agentname", "vh1", from, to, 100, 0);
   EXPECT_EQ(1, names.size());
 
   auto log_entry = names.at(0);
@@ -1109,7 +1109,7 @@ TEST(DatabaseTest, GetApacheLogs_WhenFinalizeFail) {
   type::Time from, to;
   from.Set(10, 0, 0, 1, 1, 2015);
   to.Set(10, 0, 0, 1, 1, 2017);
-  EXPECT_THROW(database->GetApacheLogs("agentname", "vh1", from, to), database::exception::detail::CantExecuteSqlStatementException);
+  EXPECT_THROW(database->GetApacheLogs("agentname", "vh1", from, to, 100, 0), database::exception::detail::CantExecuteSqlStatementException);
 }
 
 TEST(DatabaseTest, GetApacheLogs_WhenUserAgentReturnsNull) {
@@ -1145,7 +1145,7 @@ TEST(DatabaseTest, GetApacheLogs_WhenUserAgentReturnsNull) {
   type::Time from, to;
   from.Set(10, 0, 0, 1, 1, 2015);
   to.Set(10, 0, 0, 1, 1, 2017);
-  auto names = database->GetApacheLogs("agentname", "vh1", from, to);
+  auto names = database->GetApacheLogs("agentname", "vh1", from, to, 100, 0);
   EXPECT_EQ(1, names.size());
 
   auto log_entry = names.at(0);
@@ -1198,7 +1198,7 @@ TEST(DatabaseTest, GetApacheLogs_WhenRequestReturnsNull) {
   type::Time from, to;
   from.Set(10, 0, 0, 1, 1, 2015);
   to.Set(10, 0, 0, 1, 1, 2017);
-  auto names = database->GetApacheLogs("agentname", "vh1", from, to);
+  auto names = database->GetApacheLogs("agentname", "vh1", from, to, 100, 0);
   EXPECT_EQ(1, names.size());
 
   auto log_entry = names.at(0);
@@ -1251,7 +1251,7 @@ TEST(DatabaseTest, GetApacheLogs_WhenClientIPReturnsNull) {
   type::Time from, to;
   from.Set(10, 0, 0, 1, 1, 2015);
   to.Set(10, 0, 0, 1, 1, 2017);
-  auto names = database->GetApacheLogs("agentname", "vh1", from, to);
+  auto names = database->GetApacheLogs("agentname", "vh1", from, to, 100, 0);
   EXPECT_EQ(1, names.size());
 
   auto log_entry = names.at(0);
@@ -1304,7 +1304,7 @@ TEST(DatabaseTest, GetApacheLogs_WhenVirtualhostReturnsNull) {
   type::Time from, to;
   from.Set(10, 0, 0, 1, 1, 2015);
   to.Set(10, 0, 0, 1, 1, 2017);
-  auto names = database->GetApacheLogs("agentname", "vh1", from, to);
+  auto names = database->GetApacheLogs("agentname", "vh1", from, to, 100, 0);
   EXPECT_EQ(1, names.size());
 
   auto log_entry = names.at(0);
@@ -1357,7 +1357,7 @@ TEST(DatabaseTest, GetApacheLogs_WhenAgentNameReturnsNull) {
   type::Time from, to;
   from.Set(10, 0, 0, 1, 1, 2015);
   to.Set(10, 0, 0, 1, 1, 2017);
-  auto names = database->GetApacheLogs("agentname", "vh1", from, to);
+  auto names = database->GetApacheLogs("agentname", "vh1", from, to, 100, 0);
   EXPECT_EQ(1, names.size());
 
   auto log_entry = names.at(0);
@@ -1392,7 +1392,7 @@ TEST(DatabaseTest, GetApacheLogs_WhenStepFail) {
   type::Time from, to;
   from.Set(10, 0, 0, 1, 1, 2015);
   to.Set(10, 0, 0, 1, 1, 2017);
-  EXPECT_THROW(database->GetApacheLogs("agentname", "vh1", from, to), database::exception::detail::CantExecuteSqlStatementException);
+  EXPECT_THROW(database->GetApacheLogs("agentname", "vh1", from, to, 100, 0), database::exception::detail::CantExecuteSqlStatementException);
 }
 
 TEST(DatabaseTest, GetApacheLogs_WhenBindVirtualhostFail) {
@@ -1408,7 +1408,7 @@ TEST(DatabaseTest, GetApacheLogs_WhenBindVirtualhostFail) {
   type::Time from, to;
   from.Set(10, 0, 0, 1, 1, 2015);
   to.Set(10, 0, 0, 1, 1, 2017);
-  EXPECT_THROW(database->GetApacheLogs("agentname", "vh1", from, to), database::exception::detail::CantExecuteSqlStatementException);
+  EXPECT_THROW(database->GetApacheLogs("agentname", "vh1", from, to, 100, 0), database::exception::detail::CantExecuteSqlStatementException);
 }
 
 TEST(DatabaseTest, GetApacheLogs_WhenBindAgentNameFail) {
@@ -1423,7 +1423,7 @@ TEST(DatabaseTest, GetApacheLogs_WhenBindAgentNameFail) {
   type::Time from, to;
   from.Set(10, 0, 0, 1, 1, 2015);
   to.Set(10, 0, 0, 1, 1, 2017);
-  EXPECT_THROW(database->GetApacheLogs("agentname", "vh1", from, to), database::exception::detail::CantExecuteSqlStatementException);
+  EXPECT_THROW(database->GetApacheLogs("agentname", "vh1", from, to, 100, 0), database::exception::detail::CantExecuteSqlStatementException);
 }
 
 TEST(DatabaseTest, GetApacheLogs_WhenBindPrepareFail) {
@@ -1437,5 +1437,5 @@ TEST(DatabaseTest, GetApacheLogs_WhenBindPrepareFail) {
   type::Time from, to;
   from.Set(10, 0, 0, 1, 1, 2015);
   to.Set(10, 0, 0, 1, 1, 2017);
-  EXPECT_THROW(database->GetApacheLogs("agentname", "vh1", from, to), database::exception::detail::CantExecuteSqlStatementException);
+  EXPECT_THROW(database->GetApacheLogs("agentname", "vh1", from, to, 100, 0), database::exception::detail::CantExecuteSqlStatementException);
 }

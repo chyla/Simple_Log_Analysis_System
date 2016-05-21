@@ -377,7 +377,7 @@ long long Database::GetApacheLogsCount(string agent_name, string virtualhost_nam
   return count;
 }
 
-type::ApacheLogs Database::GetApacheLogs(std::string agent_name, std::string virtualhost_name, type::Time from, type::Time to) {
+type::ApacheLogs Database::GetApacheLogs(std::string agent_name, std::string virtualhost_name, type::Time from, type::Time to, unsigned limit, long long offset) {
   BOOST_LOG_TRIVIAL(debug) << "database::Database::GetApacheLogs: Function call";
   int ret, hour, minute, second, day, month, year;
   type::ApacheLogs logs;
@@ -397,6 +397,7 @@ type::ApacheLogs Database::GetApacheLogs(std::string agent_name, std::string vir
       "    )"
       "  and" +
       GetTimeRule(from, to) +
+      "   limit " + to_string(limit) + " offset " + to_string(offset) +
       ";";
 
   sqlite3_stmt *statement;
