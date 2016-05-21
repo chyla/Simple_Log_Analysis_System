@@ -109,6 +109,12 @@ void Database::CreateApacheSessionTable() {
       "  AGENT_NAME text,"
       "  VIRTUALHOST text, "
       "  CLIENT_IP text, "
+      "  UTC_HOUR integer, "
+      "  UTC_MINUTE integer, "
+      "  UTC_SECOND integer, "
+      "  UTC_DAY integer, "
+      "  UTC_MONTH integer, "
+      "  UTC_YEAR integer, "
       "  SESSION_LENGTH integer, "
       "  BANDWIDTH_USAGE integer, "
       "  REQUESTS_COUNT integer, "
@@ -282,7 +288,7 @@ bool Database::AddApacheSessionStatistics(const analyzer::ApacheSessions &sessio
   StatementCheckForError(ret, "Begin transaction error");
 
   for (const analyzer::ApacheSessionEntry &entry : sessions) {
-    const char *sql = "insert into APACHE_SESSION_TABLE(AGENT_NAME, VIRTUALHOST, CLIENT_IP, SESSION_LENGTH, BANDWIDTH_USAGE, REQUESTS_COUNT, ERROR_PERCENTAGE, USER_AGENT) values(?, ?, ?, ?, ?, ?, ?, ?)";
+    const char *sql = "insert into APACHE_SESSION_TABLE(AGENT_NAME, VIRTUALHOST, CLIENT_IP, UTC_HOUR, UTC_MINUTE, UTC_SECOND, UTC_DAY, UTC_MONTH, UTC_YEAR, SESSION_LENGTH, BANDWIDTH_USAGE, REQUESTS_COUNT, ERROR_PERCENTAGE, USER_AGENT) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     sqlite3_stmt *statement;
     ret = sqlite_interface_->Prepare(db_handle_, sql, -1, &statement, nullptr);
     StatementCheckForErrorAndRollback(ret, "Prepare insert error");
@@ -296,19 +302,37 @@ bool Database::AddApacheSessionStatistics(const analyzer::ApacheSessions &sessio
     ret = sqlite_interface_->BindText(statement, 3, entry.client_ip.c_str(), -1, nullptr);
     StatementCheckForErrorAndRollback(ret, "Bind client_ip error");
 
-    ret = sqlite_interface_->BindInt64(statement, 4, entry.session_length);
+    ret = sqlite_interface_->BindInt(statement, 4, entry.session_start.GetHour());
+    StatementCheckForErrorAndRollback(ret, "Bind hour error");
+
+    ret = sqlite_interface_->BindInt(statement, 5, entry.session_start.GetMinute());
+    StatementCheckForErrorAndRollback(ret, "Bind minute error");
+
+    ret = sqlite_interface_->BindInt(statement, 6, entry.session_start.GetSecond());
+    StatementCheckForErrorAndRollback(ret, "Bind second error");
+
+    ret = sqlite_interface_->BindInt(statement, 7, entry.session_start.GetDay());
+    StatementCheckForErrorAndRollback(ret, "Bind day error");
+
+    ret = sqlite_interface_->BindInt(statement, 8, entry.session_start.GetMonth());
+    StatementCheckForErrorAndRollback(ret, "Bind month error");
+
+    ret = sqlite_interface_->BindInt(statement, 9, entry.session_start.GetYear());
+    StatementCheckForErrorAndRollback(ret, "Bind year error");
+
+    ret = sqlite_interface_->BindInt64(statement, 10, entry.session_length);
     StatementCheckForErrorAndRollback(ret, "Bind session_length error");
 
-    ret = sqlite_interface_->BindInt64(statement, 5, entry.bandwidth_usage);
+    ret = sqlite_interface_->BindInt64(statement, 11, entry.bandwidth_usage);
     StatementCheckForErrorAndRollback(ret, "Bind bandwidth_usage error");
 
-    ret = sqlite_interface_->BindInt64(statement, 6, entry.requests_count);
+    ret = sqlite_interface_->BindInt64(statement, 12, entry.requests_count);
     StatementCheckForErrorAndRollback(ret, "Bind requests_count error");
 
-    ret = sqlite_interface_->BindInt(statement, 7, entry.error_percentage);
+    ret = sqlite_interface_->BindInt(statement, 13, entry.error_percentage);
     StatementCheckForErrorAndRollback(ret, "Bind error_percentage error");
 
-    ret = sqlite_interface_->BindText(statement, 8, entry.useragent.c_str(), -1, nullptr);
+    ret = sqlite_interface_->BindText(statement, 14, entry.useragent.c_str(), -1, nullptr);
     StatementCheckForErrorAndRollback(ret, "Bind useragent error");
 
     ret = sqlite_interface_->Step(statement);
