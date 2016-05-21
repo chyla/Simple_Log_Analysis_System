@@ -891,3 +891,26 @@ TEST(DatabaseTest, GetApacheLogsCount_WhenPrepareFailed) {
 
   EXPECT_THROW(database->GetApacheLogsCount("agentname", "vh1", from, to), database::exception::detail::CantExecuteSqlStatementException);
 }
+
+TEST(DatabaseTest, GetApacheAgentNames) {
+  unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
+  MY_EXPECT_OPEN(sqlite_mock);
+  EXPECT_CALL(*sqlite_mock, Exec(DB_HANDLE_EXAMPLE_PTR_VALUE, NotNull(), NotNull(), NotNull(), IsNull())).Times(1).WillRepeatedly(Return(SQLITE_OK));
+
+  DatabasePtr database = Database::Create(move(sqlite_mock));
+  database->Open("sqlite.db");
+
+  auto names = database->GetApacheAgentNames();
+  EXPECT_EQ(0, names.size());
+}
+
+TEST(DatabaseTest, GetApacheAgentNames_WhenExecFail) {
+  unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
+  MY_EXPECT_OPEN(sqlite_mock);
+  EXPECT_CALL(*sqlite_mock, Exec(DB_HANDLE_EXAMPLE_PTR_VALUE, NotNull(), NotNull(), NotNull(), IsNull())).Times(1).WillRepeatedly(Return(SQLITE_NOMEM));
+
+  DatabasePtr database = Database::Create(move(sqlite_mock));
+  database->Open("sqlite.db");
+
+  EXPECT_THROW(database->GetApacheAgentNames(), database::exception::detail::CantExecuteSqlStatementException);
+}

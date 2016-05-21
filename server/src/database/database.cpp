@@ -416,6 +416,23 @@ long long Database::GetApacheLogsCount(string agent_name, string virtualhost_nam
   return count;
 }
 
+Database::AgentNames Database::GetApacheAgentNames() {
+  BOOST_LOG_TRIVIAL(debug) << "database::Database::GetApacheAgentNames: Function call";
+
+  int ret;
+  AgentNames names;
+
+  const char *sql = "select DISTINCT AGENT_NAME from APACHE_SESSION_TABLE;";
+
+  sqlite3_stmt *statement;
+  ret = sqlite_interface_->Exec(db_handle_, sql, GetApacheAgentNamesCallback, static_cast<void*> (&names), nullptr);
+  StatementCheckForError(ret, "Exec error");
+
+  BOOST_LOG_TRIVIAL(debug) << "database::Database::GetApacheAgentNames: Found " << names.size() << " names";
+  
+  return names;
+}
+
 bool Database::Close() {
   BOOST_LOG_TRIVIAL(debug) << "database::Database::Close: Function call";
 
@@ -462,6 +479,18 @@ void Database::Rollback() {
     BOOST_LOG_TRIVIAL(error) << "database::Database: Rollback error: " << ret;
     throw exception::detail::CantExecuteSqlStatementException();
   }
+}
+
+int Database::GetApacheAgentNamesCallback(void *names_vptr, int argc, char **argv, char **azColName) {
+  AgentNames *names_ptr = static_cast<AgentNames*> (names_vptr);
+
+  for (int i = 0; i < argc; i++) {
+    if (argv[i] != nullptr) {
+      names_ptr->push_back(argv[i]);
+    }
+  }
+
+  return 0;
 }
 
 }

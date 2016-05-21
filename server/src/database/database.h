@@ -19,6 +19,8 @@ typedef std::shared_ptr<Database> DatabasePtr;
 
 class Database {
  public:
+  typedef std::vector<std::string> AgentNames;
+
   static DatabasePtr Create();
   static DatabasePtr Create(std::unique_ptr<detail::SQLiteInterface> sqlite);
 
@@ -40,6 +42,8 @@ class Database {
 
   long long GetApacheLogsCount(std::string agent_name, std::string virtualhost_name, type::Time from, type::Time to);
 
+  AgentNames GetApacheAgentNames();
+
   bool Close();
 
  private:
@@ -52,6 +56,7 @@ class Database {
   void StatementCheckForError(int return_value, const char *description);
   void StatementCheckForErrorAndRollback(int return_value, const char *description);
   void Rollback();
+  static int GetApacheAgentNamesCallback(void *names_vptr, int argc, char **argv, char **azColName);
 };
 
 }
