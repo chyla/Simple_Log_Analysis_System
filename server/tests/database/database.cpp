@@ -3,6 +3,7 @@
 
 #include <patlms/type/time.h>
 #include <patlms/type/bash_log_entry.h>
+#include <patlms/type/apache_log_entry.h>
 
 #include "src/database/database.h"
 #include "src/database/exception/detail/cant_open_database_exception.h"
@@ -1020,4 +1021,421 @@ TEST(DatabaseTest, GetApacheVirtualhostNames_WhenPrepareFailed) {
   database->Open("sqlite.db");
 
   EXPECT_THROW(database->GetApacheVirtualhostNames("agentname2"), database::exception::detail::CantExecuteSqlStatementException);
+}
+
+TEST(DatabaseTest, GetApacheLogs) {
+  unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
+  MY_EXPECT_OPEN(sqlite_mock);
+  MY_EXPECT_PREPARE(sqlite_mock);
+  EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("agentname"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
+  EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 2, StrEq("vh1"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
+
+  EXPECT_CALL(*sqlite_mock, Step(DB_STATEMENT_EXAMPLE_PTR_VALUE)).Times(2).WillOnce(Return(SQLITE_ROW)).WillOnce(Return(SQLITE_DONE));
+
+  EXPECT_CALL(*sqlite_mock, ColumnInt64(DB_STATEMENT_EXAMPLE_PTR_VALUE, 0)).WillOnce(Return(1));
+  EXPECT_CALL(*sqlite_mock, ColumnText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1)).WillOnce(Return(reinterpret_cast<unsigned const char *> ("agentname")));
+  EXPECT_CALL(*sqlite_mock, ColumnText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 2)).WillOnce(Return(reinterpret_cast<unsigned const char *> ("vh1")));
+  EXPECT_CALL(*sqlite_mock, ColumnText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 3)).WillOnce(Return(reinterpret_cast<unsigned const char *> ("127.0.0.1")));
+  EXPECT_CALL(*sqlite_mock, ColumnInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 4)).WillOnce(Return(10));
+  EXPECT_CALL(*sqlite_mock, ColumnInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 5)).WillOnce(Return(6));
+  EXPECT_CALL(*sqlite_mock, ColumnInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 6)).WillOnce(Return(7));
+  EXPECT_CALL(*sqlite_mock, ColumnInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 7)).WillOnce(Return(2));
+  EXPECT_CALL(*sqlite_mock, ColumnInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 8)).WillOnce(Return(9));
+  EXPECT_CALL(*sqlite_mock, ColumnInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 9)).WillOnce(Return(2013));
+
+  EXPECT_CALL(*sqlite_mock, ColumnText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 10)).WillOnce(Return(reinterpret_cast<unsigned const char *> ("request")));
+  EXPECT_CALL(*sqlite_mock, ColumnInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 11)).WillOnce(Return(402));
+  EXPECT_CALL(*sqlite_mock, ColumnInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 12)).WillOnce(Return(23));
+  EXPECT_CALL(*sqlite_mock, ColumnText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 13)).WillOnce(Return(reinterpret_cast<unsigned const char *> ("useragent")));
+
+  EXPECT_CALL(*sqlite_mock, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_OK));
+
+  DatabasePtr database = Database::Create(move(sqlite_mock));
+  database->Open("sqlite.db");
+
+  type::Time from, to;
+  from.Set(10, 0, 0, 1, 1, 2015);
+  to.Set(10, 0, 0, 1, 1, 2017);
+  auto names = database->GetApacheLogs("agentname", "vh1", from, to);
+  EXPECT_EQ(1, names.size());
+
+  auto log_entry = names.at(0);
+  EXPECT_EQ(1, log_entry.id);
+  EXPECT_STREQ("agentname", log_entry.agent_name.c_str());
+  EXPECT_STREQ("vh1", log_entry.virtualhost.c_str());
+  EXPECT_STREQ("127.0.0.1", log_entry.client_ip.c_str());
+  EXPECT_EQ(10, log_entry.time.GetHour());
+  EXPECT_EQ(6, log_entry.time.GetMinute());
+  EXPECT_EQ(7, log_entry.time.GetSecond());
+  EXPECT_EQ(2, log_entry.time.GetDay());
+  EXPECT_EQ(9, log_entry.time.GetMonth());
+  EXPECT_EQ(2013, log_entry.time.GetYear());
+  EXPECT_STREQ("request", log_entry.request.c_str());
+  EXPECT_EQ(402, log_entry.status_code);
+  EXPECT_EQ(23, log_entry.bytes);
+  EXPECT_STREQ("useragent", log_entry.user_agent.c_str());
+}
+
+TEST(DatabaseTest, GetApacheLogs_WhenFinalizeFail) {
+  unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
+  MY_EXPECT_OPEN(sqlite_mock);
+  MY_EXPECT_PREPARE(sqlite_mock);
+  EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("agentname"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
+  EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 2, StrEq("vh1"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
+
+  EXPECT_CALL(*sqlite_mock, Step(DB_STATEMENT_EXAMPLE_PTR_VALUE)).Times(2).WillOnce(Return(SQLITE_ROW)).WillOnce(Return(SQLITE_DONE));
+
+  EXPECT_CALL(*sqlite_mock, ColumnInt64(DB_STATEMENT_EXAMPLE_PTR_VALUE, 0)).WillOnce(Return(1));
+  EXPECT_CALL(*sqlite_mock, ColumnText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1)).WillOnce(Return(reinterpret_cast<unsigned const char *> ("agentname")));
+  EXPECT_CALL(*sqlite_mock, ColumnText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 2)).WillOnce(Return(reinterpret_cast<unsigned const char *> ("vh1")));
+  EXPECT_CALL(*sqlite_mock, ColumnText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 3)).WillOnce(Return(reinterpret_cast<unsigned const char *> ("127.0.0.1")));
+  EXPECT_CALL(*sqlite_mock, ColumnInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 4)).WillOnce(Return(10));
+  EXPECT_CALL(*sqlite_mock, ColumnInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 5)).WillOnce(Return(6));
+  EXPECT_CALL(*sqlite_mock, ColumnInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 6)).WillOnce(Return(7));
+  EXPECT_CALL(*sqlite_mock, ColumnInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 7)).WillOnce(Return(2));
+  EXPECT_CALL(*sqlite_mock, ColumnInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 8)).WillOnce(Return(9));
+  EXPECT_CALL(*sqlite_mock, ColumnInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 9)).WillOnce(Return(2013));
+
+  EXPECT_CALL(*sqlite_mock, ColumnText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 10)).WillOnce(Return(reinterpret_cast<unsigned const char *> ("request")));
+  EXPECT_CALL(*sqlite_mock, ColumnInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 11)).WillOnce(Return(402));
+  EXPECT_CALL(*sqlite_mock, ColumnInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 12)).WillOnce(Return(23));
+  EXPECT_CALL(*sqlite_mock, ColumnText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 13)).WillOnce(Return(reinterpret_cast<unsigned const char *> ("useragent")));
+
+  EXPECT_CALL(*sqlite_mock, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_NOMEM));
+
+  DatabasePtr database = Database::Create(move(sqlite_mock));
+  database->Open("sqlite.db");
+
+  type::Time from, to;
+  from.Set(10, 0, 0, 1, 1, 2015);
+  to.Set(10, 0, 0, 1, 1, 2017);
+  EXPECT_THROW(database->GetApacheLogs("agentname", "vh1", from, to), database::exception::detail::CantExecuteSqlStatementException);
+}
+
+TEST(DatabaseTest, GetApacheLogs_WhenUserAgentReturnsNull) {
+  unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
+  MY_EXPECT_OPEN(sqlite_mock);
+  MY_EXPECT_PREPARE(sqlite_mock);
+  EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("agentname"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
+  EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 2, StrEq("vh1"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
+
+  EXPECT_CALL(*sqlite_mock, Step(DB_STATEMENT_EXAMPLE_PTR_VALUE)).Times(2).WillOnce(Return(SQLITE_ROW)).WillOnce(Return(SQLITE_DONE));
+
+  EXPECT_CALL(*sqlite_mock, ColumnInt64(DB_STATEMENT_EXAMPLE_PTR_VALUE, 0)).WillOnce(Return(1));
+  EXPECT_CALL(*sqlite_mock, ColumnText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1)).WillOnce(Return(reinterpret_cast<unsigned const char *> ("agentname")));
+  EXPECT_CALL(*sqlite_mock, ColumnText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 2)).WillOnce(Return(reinterpret_cast<unsigned const char *> ("vh1")));
+  EXPECT_CALL(*sqlite_mock, ColumnText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 3)).WillOnce(Return(reinterpret_cast<unsigned const char *> ("127.0.0.1")));
+  EXPECT_CALL(*sqlite_mock, ColumnInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 4)).WillOnce(Return(10));
+  EXPECT_CALL(*sqlite_mock, ColumnInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 5)).WillOnce(Return(6));
+  EXPECT_CALL(*sqlite_mock, ColumnInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 6)).WillOnce(Return(7));
+  EXPECT_CALL(*sqlite_mock, ColumnInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 7)).WillOnce(Return(2));
+  EXPECT_CALL(*sqlite_mock, ColumnInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 8)).WillOnce(Return(9));
+  EXPECT_CALL(*sqlite_mock, ColumnInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 9)).WillOnce(Return(2013));
+
+  EXPECT_CALL(*sqlite_mock, ColumnText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 10)).WillOnce(Return(reinterpret_cast<unsigned const char *> ("request")));
+  EXPECT_CALL(*sqlite_mock, ColumnInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 11)).WillOnce(Return(402));
+  EXPECT_CALL(*sqlite_mock, ColumnInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 12)).WillOnce(Return(23));
+  EXPECT_CALL(*sqlite_mock, ColumnText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 13)).WillOnce(Return(nullptr));
+
+  EXPECT_CALL(*sqlite_mock, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_OK));
+
+  DatabasePtr database = Database::Create(move(sqlite_mock));
+  database->Open("sqlite.db");
+
+  type::Time from, to;
+  from.Set(10, 0, 0, 1, 1, 2015);
+  to.Set(10, 0, 0, 1, 1, 2017);
+  auto names = database->GetApacheLogs("agentname", "vh1", from, to);
+  EXPECT_EQ(1, names.size());
+
+  auto log_entry = names.at(0);
+  EXPECT_EQ(1, log_entry.id);
+  EXPECT_STREQ("agentname", log_entry.agent_name.c_str());
+  EXPECT_STREQ("vh1", log_entry.virtualhost.c_str());
+  EXPECT_STREQ("127.0.0.1", log_entry.client_ip.c_str());
+  EXPECT_EQ(10, log_entry.time.GetHour());
+  EXPECT_EQ(6, log_entry.time.GetMinute());
+  EXPECT_EQ(7, log_entry.time.GetSecond());
+  EXPECT_EQ(2, log_entry.time.GetDay());
+  EXPECT_EQ(9, log_entry.time.GetMonth());
+  EXPECT_EQ(2013, log_entry.time.GetYear());
+  EXPECT_STREQ("request", log_entry.request.c_str());
+  EXPECT_EQ(402, log_entry.status_code);
+  EXPECT_EQ(23, log_entry.bytes);
+  EXPECT_STREQ("", log_entry.user_agent.c_str());
+}
+
+TEST(DatabaseTest, GetApacheLogs_WhenRequestReturnsNull) {
+  unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
+  MY_EXPECT_OPEN(sqlite_mock);
+  MY_EXPECT_PREPARE(sqlite_mock);
+  EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("agentname"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
+  EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 2, StrEq("vh1"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
+
+  EXPECT_CALL(*sqlite_mock, Step(DB_STATEMENT_EXAMPLE_PTR_VALUE)).Times(2).WillOnce(Return(SQLITE_ROW)).WillOnce(Return(SQLITE_DONE));
+
+  EXPECT_CALL(*sqlite_mock, ColumnInt64(DB_STATEMENT_EXAMPLE_PTR_VALUE, 0)).WillOnce(Return(1));
+  EXPECT_CALL(*sqlite_mock, ColumnText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1)).WillOnce(Return(reinterpret_cast<unsigned const char *> ("agentname")));
+  EXPECT_CALL(*sqlite_mock, ColumnText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 2)).WillOnce(Return(reinterpret_cast<unsigned const char *> ("vh1")));
+  EXPECT_CALL(*sqlite_mock, ColumnText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 3)).WillOnce(Return(reinterpret_cast<unsigned const char *> ("127.0.0.1")));
+  EXPECT_CALL(*sqlite_mock, ColumnInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 4)).WillOnce(Return(10));
+  EXPECT_CALL(*sqlite_mock, ColumnInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 5)).WillOnce(Return(6));
+  EXPECT_CALL(*sqlite_mock, ColumnInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 6)).WillOnce(Return(7));
+  EXPECT_CALL(*sqlite_mock, ColumnInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 7)).WillOnce(Return(2));
+  EXPECT_CALL(*sqlite_mock, ColumnInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 8)).WillOnce(Return(9));
+  EXPECT_CALL(*sqlite_mock, ColumnInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 9)).WillOnce(Return(2013));
+
+  EXPECT_CALL(*sqlite_mock, ColumnText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 10)).WillOnce(Return(nullptr));
+  EXPECT_CALL(*sqlite_mock, ColumnInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 11)).WillOnce(Return(402));
+  EXPECT_CALL(*sqlite_mock, ColumnInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 12)).WillOnce(Return(23));
+  EXPECT_CALL(*sqlite_mock, ColumnText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 13)).WillOnce(Return(reinterpret_cast<unsigned const char *> ("useragent")));
+
+  EXPECT_CALL(*sqlite_mock, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_OK));
+
+  DatabasePtr database = Database::Create(move(sqlite_mock));
+  database->Open("sqlite.db");
+
+  type::Time from, to;
+  from.Set(10, 0, 0, 1, 1, 2015);
+  to.Set(10, 0, 0, 1, 1, 2017);
+  auto names = database->GetApacheLogs("agentname", "vh1", from, to);
+  EXPECT_EQ(1, names.size());
+
+  auto log_entry = names.at(0);
+  EXPECT_EQ(1, log_entry.id);
+  EXPECT_STREQ("agentname", log_entry.agent_name.c_str());
+  EXPECT_STREQ("vh1", log_entry.virtualhost.c_str());
+  EXPECT_STREQ("127.0.0.1", log_entry.client_ip.c_str());
+  EXPECT_EQ(10, log_entry.time.GetHour());
+  EXPECT_EQ(6, log_entry.time.GetMinute());
+  EXPECT_EQ(7, log_entry.time.GetSecond());
+  EXPECT_EQ(2, log_entry.time.GetDay());
+  EXPECT_EQ(9, log_entry.time.GetMonth());
+  EXPECT_EQ(2013, log_entry.time.GetYear());
+  EXPECT_STREQ("", log_entry.request.c_str());
+  EXPECT_EQ(402, log_entry.status_code);
+  EXPECT_EQ(23, log_entry.bytes);
+  EXPECT_STREQ("useragent", log_entry.user_agent.c_str());
+}
+
+TEST(DatabaseTest, GetApacheLogs_WhenClientIPReturnsNull) {
+  unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
+  MY_EXPECT_OPEN(sqlite_mock);
+  MY_EXPECT_PREPARE(sqlite_mock);
+  EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("agentname"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
+  EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 2, StrEq("vh1"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
+
+  EXPECT_CALL(*sqlite_mock, Step(DB_STATEMENT_EXAMPLE_PTR_VALUE)).Times(2).WillOnce(Return(SQLITE_ROW)).WillOnce(Return(SQLITE_DONE));
+
+  EXPECT_CALL(*sqlite_mock, ColumnInt64(DB_STATEMENT_EXAMPLE_PTR_VALUE, 0)).WillOnce(Return(1));
+  EXPECT_CALL(*sqlite_mock, ColumnText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1)).WillOnce(Return(reinterpret_cast<unsigned const char *> ("agentname")));
+  EXPECT_CALL(*sqlite_mock, ColumnText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 2)).WillOnce(Return(reinterpret_cast<unsigned const char *> ("vh1")));
+  EXPECT_CALL(*sqlite_mock, ColumnText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 3)).WillOnce(Return(nullptr));
+  EXPECT_CALL(*sqlite_mock, ColumnInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 4)).WillOnce(Return(10));
+  EXPECT_CALL(*sqlite_mock, ColumnInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 5)).WillOnce(Return(6));
+  EXPECT_CALL(*sqlite_mock, ColumnInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 6)).WillOnce(Return(7));
+  EXPECT_CALL(*sqlite_mock, ColumnInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 7)).WillOnce(Return(2));
+  EXPECT_CALL(*sqlite_mock, ColumnInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 8)).WillOnce(Return(9));
+  EXPECT_CALL(*sqlite_mock, ColumnInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 9)).WillOnce(Return(2013));
+
+  EXPECT_CALL(*sqlite_mock, ColumnText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 10)).WillOnce(Return(reinterpret_cast<unsigned const char *> ("request")));
+  EXPECT_CALL(*sqlite_mock, ColumnInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 11)).WillOnce(Return(402));
+  EXPECT_CALL(*sqlite_mock, ColumnInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 12)).WillOnce(Return(23));
+  EXPECT_CALL(*sqlite_mock, ColumnText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 13)).WillOnce(Return(reinterpret_cast<unsigned const char *> ("useragent")));
+
+  EXPECT_CALL(*sqlite_mock, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_OK));
+
+  DatabasePtr database = Database::Create(move(sqlite_mock));
+  database->Open("sqlite.db");
+
+  type::Time from, to;
+  from.Set(10, 0, 0, 1, 1, 2015);
+  to.Set(10, 0, 0, 1, 1, 2017);
+  auto names = database->GetApacheLogs("agentname", "vh1", from, to);
+  EXPECT_EQ(1, names.size());
+
+  auto log_entry = names.at(0);
+  EXPECT_EQ(1, log_entry.id);
+  EXPECT_STREQ("agentname", log_entry.agent_name.c_str());
+  EXPECT_STREQ("vh1", log_entry.virtualhost.c_str());
+  EXPECT_STREQ("", log_entry.client_ip.c_str());
+  EXPECT_EQ(10, log_entry.time.GetHour());
+  EXPECT_EQ(6, log_entry.time.GetMinute());
+  EXPECT_EQ(7, log_entry.time.GetSecond());
+  EXPECT_EQ(2, log_entry.time.GetDay());
+  EXPECT_EQ(9, log_entry.time.GetMonth());
+  EXPECT_EQ(2013, log_entry.time.GetYear());
+  EXPECT_STREQ("request", log_entry.request.c_str());
+  EXPECT_EQ(402, log_entry.status_code);
+  EXPECT_EQ(23, log_entry.bytes);
+  EXPECT_STREQ("useragent", log_entry.user_agent.c_str());
+}
+
+TEST(DatabaseTest, GetApacheLogs_WhenVirtualhostReturnsNull) {
+  unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
+  MY_EXPECT_OPEN(sqlite_mock);
+  MY_EXPECT_PREPARE(sqlite_mock);
+  EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("agentname"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
+  EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 2, StrEq("vh1"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
+
+  EXPECT_CALL(*sqlite_mock, Step(DB_STATEMENT_EXAMPLE_PTR_VALUE)).Times(2).WillOnce(Return(SQLITE_ROW)).WillOnce(Return(SQLITE_DONE));
+
+  EXPECT_CALL(*sqlite_mock, ColumnInt64(DB_STATEMENT_EXAMPLE_PTR_VALUE, 0)).WillOnce(Return(1));
+  EXPECT_CALL(*sqlite_mock, ColumnText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1)).WillOnce(Return(reinterpret_cast<unsigned const char *> ("agentname")));
+  EXPECT_CALL(*sqlite_mock, ColumnText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 2)).WillOnce(Return(nullptr));
+  EXPECT_CALL(*sqlite_mock, ColumnText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 3)).WillOnce(Return(reinterpret_cast<unsigned const char *> ("127.0.0.1")));
+  EXPECT_CALL(*sqlite_mock, ColumnInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 4)).WillOnce(Return(10));
+  EXPECT_CALL(*sqlite_mock, ColumnInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 5)).WillOnce(Return(6));
+  EXPECT_CALL(*sqlite_mock, ColumnInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 6)).WillOnce(Return(7));
+  EXPECT_CALL(*sqlite_mock, ColumnInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 7)).WillOnce(Return(2));
+  EXPECT_CALL(*sqlite_mock, ColumnInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 8)).WillOnce(Return(9));
+  EXPECT_CALL(*sqlite_mock, ColumnInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 9)).WillOnce(Return(2013));
+
+  EXPECT_CALL(*sqlite_mock, ColumnText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 10)).WillOnce(Return(reinterpret_cast<unsigned const char *> ("request")));
+  EXPECT_CALL(*sqlite_mock, ColumnInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 11)).WillOnce(Return(402));
+  EXPECT_CALL(*sqlite_mock, ColumnInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 12)).WillOnce(Return(23));
+  EXPECT_CALL(*sqlite_mock, ColumnText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 13)).WillOnce(Return(reinterpret_cast<unsigned const char *> ("useragent")));
+
+  EXPECT_CALL(*sqlite_mock, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_OK));
+
+  DatabasePtr database = Database::Create(move(sqlite_mock));
+  database->Open("sqlite.db");
+
+  type::Time from, to;
+  from.Set(10, 0, 0, 1, 1, 2015);
+  to.Set(10, 0, 0, 1, 1, 2017);
+  auto names = database->GetApacheLogs("agentname", "vh1", from, to);
+  EXPECT_EQ(1, names.size());
+
+  auto log_entry = names.at(0);
+  EXPECT_EQ(1, log_entry.id);
+  EXPECT_STREQ("agentname", log_entry.agent_name.c_str());
+  EXPECT_STREQ("", log_entry.virtualhost.c_str());
+  EXPECT_STREQ("127.0.0.1", log_entry.client_ip.c_str());
+  EXPECT_EQ(10, log_entry.time.GetHour());
+  EXPECT_EQ(6, log_entry.time.GetMinute());
+  EXPECT_EQ(7, log_entry.time.GetSecond());
+  EXPECT_EQ(2, log_entry.time.GetDay());
+  EXPECT_EQ(9, log_entry.time.GetMonth());
+  EXPECT_EQ(2013, log_entry.time.GetYear());
+  EXPECT_STREQ("request", log_entry.request.c_str());
+  EXPECT_EQ(402, log_entry.status_code);
+  EXPECT_EQ(23, log_entry.bytes);
+  EXPECT_STREQ("useragent", log_entry.user_agent.c_str());
+}
+
+TEST(DatabaseTest, GetApacheLogs_WhenAgentNameReturnsNull) {
+  unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
+  MY_EXPECT_OPEN(sqlite_mock);
+  MY_EXPECT_PREPARE(sqlite_mock);
+  EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("agentname"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
+  EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 2, StrEq("vh1"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
+
+  EXPECT_CALL(*sqlite_mock, Step(DB_STATEMENT_EXAMPLE_PTR_VALUE)).Times(2).WillOnce(Return(SQLITE_ROW)).WillOnce(Return(SQLITE_DONE));
+
+  EXPECT_CALL(*sqlite_mock, ColumnInt64(DB_STATEMENT_EXAMPLE_PTR_VALUE, 0)).WillOnce(Return(1));
+  EXPECT_CALL(*sqlite_mock, ColumnText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1)).WillOnce(Return(nullptr));
+  EXPECT_CALL(*sqlite_mock, ColumnText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 2)).WillOnce(Return(reinterpret_cast<unsigned const char *> ("vh1")));
+  EXPECT_CALL(*sqlite_mock, ColumnText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 3)).WillOnce(Return(reinterpret_cast<unsigned const char *> ("127.0.0.1")));
+  EXPECT_CALL(*sqlite_mock, ColumnInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 4)).WillOnce(Return(10));
+  EXPECT_CALL(*sqlite_mock, ColumnInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 5)).WillOnce(Return(6));
+  EXPECT_CALL(*sqlite_mock, ColumnInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 6)).WillOnce(Return(7));
+  EXPECT_CALL(*sqlite_mock, ColumnInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 7)).WillOnce(Return(2));
+  EXPECT_CALL(*sqlite_mock, ColumnInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 8)).WillOnce(Return(9));
+  EXPECT_CALL(*sqlite_mock, ColumnInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 9)).WillOnce(Return(2013));
+
+  EXPECT_CALL(*sqlite_mock, ColumnText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 10)).WillOnce(Return(reinterpret_cast<unsigned const char *> ("request")));
+  EXPECT_CALL(*sqlite_mock, ColumnInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 11)).WillOnce(Return(402));
+  EXPECT_CALL(*sqlite_mock, ColumnInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 12)).WillOnce(Return(23));
+  EXPECT_CALL(*sqlite_mock, ColumnText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 13)).WillOnce(Return(reinterpret_cast<unsigned const char *> ("useragent")));
+
+  EXPECT_CALL(*sqlite_mock, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_OK));
+
+  DatabasePtr database = Database::Create(move(sqlite_mock));
+  database->Open("sqlite.db");
+
+  type::Time from, to;
+  from.Set(10, 0, 0, 1, 1, 2015);
+  to.Set(10, 0, 0, 1, 1, 2017);
+  auto names = database->GetApacheLogs("agentname", "vh1", from, to);
+  EXPECT_EQ(1, names.size());
+
+  auto log_entry = names.at(0);
+  EXPECT_EQ(1, log_entry.id);
+  EXPECT_STREQ("", log_entry.agent_name.c_str());
+  EXPECT_STREQ("vh1", log_entry.virtualhost.c_str());
+  EXPECT_STREQ("127.0.0.1", log_entry.client_ip.c_str());
+  EXPECT_EQ(10, log_entry.time.GetHour());
+  EXPECT_EQ(6, log_entry.time.GetMinute());
+  EXPECT_EQ(7, log_entry.time.GetSecond());
+  EXPECT_EQ(2, log_entry.time.GetDay());
+  EXPECT_EQ(9, log_entry.time.GetMonth());
+  EXPECT_EQ(2013, log_entry.time.GetYear());
+  EXPECT_STREQ("request", log_entry.request.c_str());
+  EXPECT_EQ(402, log_entry.status_code);
+  EXPECT_EQ(23, log_entry.bytes);
+  EXPECT_STREQ("useragent", log_entry.user_agent.c_str());
+}
+
+TEST(DatabaseTest, GetApacheLogs_WhenStepFail) {
+  unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
+  MY_EXPECT_OPEN(sqlite_mock);
+  MY_EXPECT_PREPARE(sqlite_mock);
+  EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("agentname"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
+  EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 2, StrEq("vh1"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
+
+  EXPECT_CALL(*sqlite_mock, Step(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_NOMEM));
+
+  DatabasePtr database = Database::Create(move(sqlite_mock));
+  database->Open("sqlite.db");
+
+  type::Time from, to;
+  from.Set(10, 0, 0, 1, 1, 2015);
+  to.Set(10, 0, 0, 1, 1, 2017);
+  EXPECT_THROW(database->GetApacheLogs("agentname", "vh1", from, to), database::exception::detail::CantExecuteSqlStatementException);
+}
+
+TEST(DatabaseTest, GetApacheLogs_WhenBindVirtualhostFail) {
+  unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
+  MY_EXPECT_OPEN(sqlite_mock);
+  MY_EXPECT_PREPARE(sqlite_mock);
+  EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("agentname"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
+  EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 2, StrEq("vh1"), -1, nullptr)).WillOnce(Return(SQLITE_NOMEM));
+
+  DatabasePtr database = Database::Create(move(sqlite_mock));
+  database->Open("sqlite.db");
+
+  type::Time from, to;
+  from.Set(10, 0, 0, 1, 1, 2015);
+  to.Set(10, 0, 0, 1, 1, 2017);
+  EXPECT_THROW(database->GetApacheLogs("agentname", "vh1", from, to), database::exception::detail::CantExecuteSqlStatementException);
+}
+
+TEST(DatabaseTest, GetApacheLogs_WhenBindAgentNameFail) {
+  unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
+  MY_EXPECT_OPEN(sqlite_mock);
+  MY_EXPECT_PREPARE(sqlite_mock);
+  EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("agentname"), -1, nullptr)).WillOnce(Return(SQLITE_NOMEM));
+
+  DatabasePtr database = Database::Create(move(sqlite_mock));
+  database->Open("sqlite.db");
+
+  type::Time from, to;
+  from.Set(10, 0, 0, 1, 1, 2015);
+  to.Set(10, 0, 0, 1, 1, 2017);
+  EXPECT_THROW(database->GetApacheLogs("agentname", "vh1", from, to), database::exception::detail::CantExecuteSqlStatementException);
+}
+
+TEST(DatabaseTest, GetApacheLogs_WhenBindPrepareFail) {
+  unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
+  MY_EXPECT_OPEN(sqlite_mock);
+  MY_EXPECT_PREPARE(sqlite_mock, 1, SQLITE_NOMEM);
+
+  DatabasePtr database = Database::Create(move(sqlite_mock));
+  database->Open("sqlite.db");
+
+  type::Time from, to;
+  from.Set(10, 0, 0, 1, 1, 2015);
+  to.Set(10, 0, 0, 1, 1, 2017);
+  EXPECT_THROW(database->GetApacheLogs("agentname", "vh1", from, to), database::exception::detail::CantExecuteSqlStatementException);
 }

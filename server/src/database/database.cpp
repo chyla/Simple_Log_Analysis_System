@@ -344,19 +344,6 @@ long long Database::GetApacheLogsCount(string agent_name, string virtualhost_nam
     throw exception::detail::CantExecuteSqlStatementException();
   }
 
-  string from_day = to_string(from.GetDay()),
-      from_month = to_string(from.GetMonth()),
-      from_year = to_string(from.GetYear()),
-      from_hour = to_string(from.GetHour()),
-      from_minute = to_string(from.GetMinute()),
-      from_second = to_string(from.GetSecond()),
-      to_day = to_string(to.GetDay()),
-      to_month = to_string(to.GetMonth()),
-      to_year = to_string(to.GetYear()),
-      to_hour = to_string(to.GetHour()),
-      to_minute = to_string(to.GetMinute()),
-      to_second = to_string(to.GetSecond());
-
   string sql =
       "select * from APACHE_LOGS_TABLE"
       "  where"
@@ -365,34 +352,8 @@ long long Database::GetApacheLogsCount(string agent_name, string virtualhost_nam
       "      and"
       "      VIRTUALHOST=?"
       "    )"
-      "  and"
-      "    ("
-      "      ("
-      "        (UTC_HOUR > " + from_hour + ")"
-      "        or (UTC_HOUR = " + from_hour + " and UTC_MINUTE > " + from_minute + ")"
-      "        or (UTC_HOUR = " + from_hour + " and UTC_MINUTE = " + from_minute + " and UTC_SECOND >= " + from_second + ")"
-      "      )"
-      "      and"
-      "      ("
-      "        (UTC_YEAR > " + from_year + ")"
-      "        or (UTC_YEAR = " + from_year + " and UTC_MONTH > " + from_month + ")"
-      "        or (UTC_YEAR = " + from_year + " and UTC_MONTH = " + from_month + " and UTC_DAY >= " + from_day + ")"
-      "      )"
-      "    )"
-      "  and"
-      "    ("
-      "      ("
-      "        (UTC_HOUR < " + to_hour + ")"
-      "        or (UTC_HOUR = " + to_hour + " and UTC_MINUTE < " + to_minute + ")"
-      "        or (UTC_HOUR = " + to_hour + " and UTC_MINUTE = " + to_minute + " and UTC_SECOND <= " + to_second + ")"
-      "      )"
-      "      and"
-      "      ("
-      "        (UTC_YEAR < " + to_year + ")"
-      "        or (UTC_YEAR = " + to_year + " and UTC_MONTH < " + to_month + ")"
-      "        or (UTC_YEAR = " + to_year + " and UTC_MONTH = " + to_month + " and UTC_DAY <= " + to_day + ")"
-      "      )"
-      "    )"
+      "  and" +
+      GetTimeRule(from, to) +
       ";";
 
   sqlite3_stmt *statement;
@@ -414,6 +375,78 @@ long long Database::GetApacheLogsCount(string agent_name, string virtualhost_nam
   StatementCheckForError(ret, "Finalize error");
 
   return count;
+}
+
+type::ApacheLogs Database::GetApacheLogs(std::string agent_name, std::string virtualhost_name, type::Time from, type::Time to) {
+  BOOST_LOG_TRIVIAL(debug) << "database::Database::GetApacheLogs: Function call";
+  int ret, hour, minute, second, day, month, year;
+  type::ApacheLogs logs;
+
+  if (is_open_ == false) {
+    BOOST_LOG_TRIVIAL(error) << "database::Database::GetApacheLogs: Database is not open";
+    throw exception::detail::CantExecuteSqlStatementException();
+  }
+
+  string sql =
+      "select ID, AGENT_NAME, VIRTUALHOST, CLIENT_IP, UTC_HOUR, UTC_MINUTE, UTC_SECOND, UTC_DAY, UTC_MONTH, UTC_YEAR, REQUEST, STATUS_CODE, BYTES, USER_AGENT from APACHE_LOGS_TABLE"
+      "  where"
+      "    ("
+      "      AGENT_NAME=?"
+      "      and"
+      "      VIRTUALHOST=?"
+      "    )"
+      "  and" +
+      GetTimeRule(from, to) +
+      ";";
+
+  sqlite3_stmt *statement;
+  ret = sqlite_interface_->Prepare(db_handle_, sql.c_str(), -1, &statement, nullptr);
+  StatementCheckForError(ret, "Prepare insert error");
+
+  ret = sqlite_interface_->BindText(statement, 1, agent_name.c_str(), -1, nullptr);
+  StatementCheckForError(ret, "Bind useragent error");
+
+  ret = sqlite_interface_->BindText(statement, 2, virtualhost_name.c_str(), -1, nullptr);
+  StatementCheckForError(ret, "Bind useragent error");
+
+  do {
+    ret = sqlite_interface_->Step(statement);
+    StatementCheckForError(ret, "Step error");
+
+    if (ret == SQLITE_ROW) {
+      BOOST_LOG_TRIVIAL(debug) << "database::Database::GetApacheLogs: Found new log entry in database";
+      type::ApacheLogEntry log_entry;
+
+      log_entry.id = sqlite_interface_->ColumnInt64(statement, 0);
+      log_entry.agent_name = TextHelper(sqlite_interface_->ColumnText(statement, 1));
+      log_entry.virtualhost = TextHelper(sqlite_interface_->ColumnText(statement, 2));
+      log_entry.client_ip = TextHelper(sqlite_interface_->ColumnText(statement, 3));
+
+      hour = sqlite_interface_->ColumnInt(statement, 4);
+      minute = sqlite_interface_->ColumnInt(statement, 5);
+      second = sqlite_interface_->ColumnInt(statement, 6);
+      day = sqlite_interface_->ColumnInt(statement, 7);
+      month = sqlite_interface_->ColumnInt(statement, 8);
+      year = sqlite_interface_->ColumnInt(statement, 9);
+
+      type::Time t;
+      t.Set(hour, minute, second, day, month, year);
+
+      log_entry.time = t;
+      log_entry.request = TextHelper(sqlite_interface_->ColumnText(statement, 10));
+      log_entry.status_code = sqlite_interface_->ColumnInt(statement, 11);
+      log_entry.bytes = sqlite_interface_->ColumnInt(statement, 12);
+      log_entry.user_agent = TextHelper(sqlite_interface_->ColumnText(statement, 13));
+
+      logs.push_back(log_entry);
+    }
+  }
+  while (ret != SQLITE_DONE);
+
+  ret = sqlite_interface_->Finalize(statement);
+  StatementCheckForError(ret, "Finalize error");
+
+  return logs;
 }
 
 Database::AgentNames Database::GetApacheAgentNames() {
@@ -523,6 +556,65 @@ int Database::GetApacheAgentNamesCallback(void *names_vptr, int argc, char **arg
   }
 
   return 0;
+}
+
+string Database::GetTimeRule(type::Time from, type::Time to) const {
+  string from_day = to_string(from.GetDay()),
+      from_month = to_string(from.GetMonth()),
+      from_year = to_string(from.GetYear()),
+      from_hour = to_string(from.GetHour()),
+      from_minute = to_string(from.GetMinute()),
+      from_second = to_string(from.GetSecond()),
+      to_day = to_string(to.GetDay()),
+      to_month = to_string(to.GetMonth()),
+      to_year = to_string(to.GetYear()),
+      to_hour = to_string(to.GetHour()),
+      to_minute = to_string(to.GetMinute()),
+      to_second = to_string(to.GetSecond());
+
+  string rule =
+      "  ("
+      "    ("
+      "      ("
+      "        (UTC_HOUR > " + from_hour + ")"
+      "        or (UTC_HOUR = " + from_hour + " and UTC_MINUTE > " + from_minute + ")"
+      "        or (UTC_HOUR = " + from_hour + " and UTC_MINUTE = " + from_minute + " and UTC_SECOND >= " + from_second + ")"
+      "      )"
+      "      and"
+      "      ("
+      "        (UTC_YEAR > " + from_year + ")"
+      "        or (UTC_YEAR = " + from_year + " and UTC_MONTH > " + from_month + ")"
+      "        or (UTC_YEAR = " + from_year + " and UTC_MONTH = " + from_month + " and UTC_DAY >= " + from_day + ")"
+      "      )"
+      "    )"
+      "  and"
+      "    ("
+      "      ("
+      "        (UTC_HOUR < " + to_hour + ")"
+      "        or (UTC_HOUR = " + to_hour + " and UTC_MINUTE < " + to_minute + ")"
+      "        or (UTC_HOUR = " + to_hour + " and UTC_MINUTE = " + to_minute + " and UTC_SECOND <= " + to_second + ")"
+      "      )"
+      "      and"
+      "      ("
+      "        (UTC_YEAR < " + to_year + ")"
+      "        or (UTC_YEAR = " + to_year + " and UTC_MONTH < " + to_month + ")"
+      "        or (UTC_YEAR = " + to_year + " and UTC_MONTH = " + to_month + " and UTC_DAY <= " + to_day + ")"
+      "      )"
+      "    )"
+      "  )"
+      ;
+
+  return rule;
+}
+
+std::string Database::TextHelper(unsigned const char *text) const {
+  std::string result;
+
+  const char *cctext = reinterpret_cast<const char*> (text);
+  if (cctext)
+    result = cctext;
+
+  return result;
 }
 
 }

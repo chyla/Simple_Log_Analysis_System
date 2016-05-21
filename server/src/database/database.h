@@ -43,6 +43,8 @@ class Database {
 
   long long GetApacheLogsCount(std::string agent_name, std::string virtualhost_name, type::Time from, type::Time to);
 
+  type::ApacheLogs GetApacheLogs(std::string agent_name, std::string virtualhost_name, type::Time from, type::Time to);
+
   AgentNames GetApacheAgentNames();
 
   VirtualhostNames GetApacheVirtualhostNames(std::string agent_name);
@@ -60,6 +62,8 @@ class Database {
   void StatementCheckForErrorAndRollback(int return_value, const char *description);
   void Rollback();
   static int GetApacheAgentNamesCallback(void *names_vptr, int argc, char **argv, char **azColName);
+  std::string GetTimeRule(type::Time from, type::Time to) const;
+  std::string TextHelper(unsigned const char *text) const;
 };
 
 }
