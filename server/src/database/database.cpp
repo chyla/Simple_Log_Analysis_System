@@ -457,7 +457,6 @@ Database::AgentNames Database::GetApacheAgentNames() {
 
   const char *sql = "select DISTINCT AGENT_NAME from APACHE_SESSION_TABLE;";
 
-  sqlite3_stmt *statement;
   ret = sqlite_interface_->Exec(db_handle_, sql, GetApacheAgentNamesCallback, static_cast<void*> (&names), nullptr);
   StatementCheckForError(ret, "Exec error");
 
