@@ -914,3 +914,110 @@ TEST(DatabaseTest, GetApacheAgentNames_WhenExecFail) {
 
   EXPECT_THROW(database->GetApacheAgentNames(), database::exception::detail::CantExecuteSqlStatementException);
 }
+
+TEST(DatabaseTest, GetApacheVirtualhostNames) {
+  unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
+  MY_EXPECT_OPEN(sqlite_mock);
+  MY_EXPECT_PREPARE(sqlite_mock);
+  EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("agentname2"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
+  EXPECT_CALL(*sqlite_mock, Step(DB_STATEMENT_EXAMPLE_PTR_VALUE)).Times(2).WillOnce(Return(SQLITE_ROW)).WillOnce(Return(SQLITE_DONE));
+  EXPECT_CALL(*sqlite_mock, ColumnText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 0)).WillOnce(Return(reinterpret_cast<unsigned const char *> ("virtualhost2")));
+  EXPECT_CALL(*sqlite_mock, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_OK));
+
+  DatabasePtr database = Database::Create(move(sqlite_mock));
+  database->Open("sqlite.db");
+
+  auto names = database->GetApacheVirtualhostNames("agentname2");
+  EXPECT_EQ(1, names.size());
+  EXPECT_STREQ("virtualhost2", names.at(0).c_str());
+}
+
+TEST(DatabaseTest, GetApacheVirtualhostNames_WhenTwoNamesAreAvailable) {
+  unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
+  MY_EXPECT_OPEN(sqlite_mock);
+  MY_EXPECT_PREPARE(sqlite_mock);
+  EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("agentname2"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
+  EXPECT_CALL(*sqlite_mock, Step(DB_STATEMENT_EXAMPLE_PTR_VALUE)).Times(3).WillOnce(Return(SQLITE_ROW)).WillOnce(Return(SQLITE_ROW)).WillOnce(Return(SQLITE_DONE));
+  EXPECT_CALL(*sqlite_mock, ColumnText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 0)).Times(2)
+      .WillOnce(Return(reinterpret_cast<unsigned const char *> ("virtualhost2")))
+      .WillOnce(Return(reinterpret_cast<unsigned const char *> ("virtualhost1")));
+  EXPECT_CALL(*sqlite_mock, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_OK));
+
+  DatabasePtr database = Database::Create(move(sqlite_mock));
+  database->Open("sqlite.db");
+
+  auto names = database->GetApacheVirtualhostNames("agentname2");
+  EXPECT_EQ(2, names.size());
+  EXPECT_STREQ("virtualhost2", names.at(0).c_str());
+  EXPECT_STREQ("virtualhost1", names.at(1).c_str());
+}
+
+TEST(DatabaseTest, GetApacheVirtualhostNames_WhenColumnTextReturnsNull) {
+  unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
+  MY_EXPECT_OPEN(sqlite_mock);
+  MY_EXPECT_PREPARE(sqlite_mock);
+  EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("agentname2"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
+  EXPECT_CALL(*sqlite_mock, Step(DB_STATEMENT_EXAMPLE_PTR_VALUE)).Times(3).WillOnce(Return(SQLITE_ROW)).WillOnce(Return(SQLITE_ROW)).WillOnce(Return(SQLITE_DONE));
+  EXPECT_CALL(*sqlite_mock, ColumnText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 0)).Times(2)
+      .WillOnce(Return(reinterpret_cast<unsigned const char *> ("virtualhost2")))
+      .WillOnce(Return(nullptr));
+  EXPECT_CALL(*sqlite_mock, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_OK));
+
+  DatabasePtr database = Database::Create(move(sqlite_mock));
+  database->Open("sqlite.db");
+
+  auto names = database->GetApacheVirtualhostNames("agentname2");
+  EXPECT_EQ(1, names.size());
+  EXPECT_STREQ("virtualhost2", names.at(0).c_str());
+}
+
+TEST(DatabaseTest, GetApacheVirtualhostNames_WhenFinalizeFailed) {
+  unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
+  MY_EXPECT_OPEN(sqlite_mock);
+  MY_EXPECT_PREPARE(sqlite_mock);
+  EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("agentname2"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
+  EXPECT_CALL(*sqlite_mock, Step(DB_STATEMENT_EXAMPLE_PTR_VALUE)).Times(2).WillOnce(Return(SQLITE_ROW)).WillOnce(Return(SQLITE_DONE));
+  EXPECT_CALL(*sqlite_mock, ColumnText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 0)).WillOnce(Return(reinterpret_cast<unsigned const char *> ("virtualhost2")));
+  EXPECT_CALL(*sqlite_mock, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_NOMEM));
+
+  DatabasePtr database = Database::Create(move(sqlite_mock));
+  database->Open("sqlite.db");
+
+  EXPECT_THROW(database->GetApacheVirtualhostNames("agentname2"), database::exception::detail::CantExecuteSqlStatementException);
+}
+
+TEST(DatabaseTest, GetApacheVirtualhostNames_WhenStepFailed) {
+  unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
+  MY_EXPECT_OPEN(sqlite_mock);
+  MY_EXPECT_PREPARE(sqlite_mock);
+  EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("agentname2"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
+  EXPECT_CALL(*sqlite_mock, Step(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_NOMEM));
+
+  DatabasePtr database = Database::Create(move(sqlite_mock));
+  database->Open("sqlite.db");
+
+  EXPECT_THROW(database->GetApacheVirtualhostNames("agentname2"), database::exception::detail::CantExecuteSqlStatementException);
+}
+
+TEST(DatabaseTest, GetApacheVirtualhostNames_WhenBindAgentNameFailed) {
+  unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
+  MY_EXPECT_OPEN(sqlite_mock);
+  MY_EXPECT_PREPARE(sqlite_mock);
+  EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("agentname2"), -1, nullptr)).WillOnce(Return(SQLITE_NOMEM));
+
+  DatabasePtr database = Database::Create(move(sqlite_mock));
+  database->Open("sqlite.db");
+
+  EXPECT_THROW(database->GetApacheVirtualhostNames("agentname2"), database::exception::detail::CantExecuteSqlStatementException);
+}
+
+TEST(DatabaseTest, GetApacheVirtualhostNames_WhenPrepareFailed) {
+  unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
+  MY_EXPECT_OPEN(sqlite_mock);
+  MY_EXPECT_PREPARE(sqlite_mock, 1, SQLITE_NOMEM);
+
+  DatabasePtr database = Database::Create(move(sqlite_mock));
+  database->Open("sqlite.db");
+
+  EXPECT_THROW(database->GetApacheVirtualhostNames("agentname2"), database::exception::detail::CantExecuteSqlStatementException);
+}

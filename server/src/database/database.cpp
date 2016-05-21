@@ -429,7 +429,39 @@ Database::AgentNames Database::GetApacheAgentNames() {
   StatementCheckForError(ret, "Exec error");
 
   BOOST_LOG_TRIVIAL(debug) << "database::Database::GetApacheAgentNames: Found " << names.size() << " names";
-  
+
+  return names;
+}
+
+Database::VirtualhostNames Database::GetApacheVirtualhostNames(std::string agent_name) {
+  BOOST_LOG_TRIVIAL(debug) << "database::Database::GetApacheVirtualhostNames: Function call";
+
+  VirtualhostNames names;
+  int ret;
+  const char *sql = "select distinct VIRTUALHOST from APACHE_SESSION_TABLE where AGENT_NAME = ?;";
+  sqlite3_stmt *statement;
+
+  ret = sqlite_interface_->Prepare(db_handle_, sql, -1, &statement, nullptr);
+  StatementCheckForError(ret, "Prepare insert error");
+
+  ret = sqlite_interface_->BindText(statement, 1, agent_name.c_str(), -1, nullptr);
+  StatementCheckForError(ret, "Bind useragent error");
+
+  do {
+    ret = sqlite_interface_->Step(statement);
+    StatementCheckForError(ret, "Step error");
+
+    if (ret == SQLITE_ROW) {
+      const char *pname = reinterpret_cast<const char*> (sqlite_interface_->ColumnText(statement, 0));
+      if (pname)
+        names.push_back(pname);
+    }
+  }
+  while (ret != SQLITE_DONE);
+
+  ret = sqlite_interface_->Finalize(statement);
+  StatementCheckForError(ret, "Finalize error");
+
   return names;
 }
 
