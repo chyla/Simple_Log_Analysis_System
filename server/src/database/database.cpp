@@ -345,7 +345,7 @@ long long Database::GetApacheLogsCount(string agent_name, string virtualhost_nam
   }
 
   string sql =
-      "select * from APACHE_LOGS_TABLE"
+      "select count(*) from APACHE_LOGS_TABLE"
       "  where"
       "    ("
       "      AGENT_NAME=?"
