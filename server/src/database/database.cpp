@@ -358,47 +358,15 @@ bool Database::AddApacheSessionStatistics(const analyzer::ApacheSessions &sessio
   return true;
 }
 
+long long Database::GetApacheSessionStatisticsCount(const std::string &agent_name, const std::string &virtualhost_name,
+                                                    const type::Time &from, const type::Time &to) {
+  BOOST_LOG_TRIVIAL(debug) << "database::Database::GetApacheSessionStatisticsCount: Function call";
+  return GetApacheCount("APACHE_SESSION_TABLE", agent_name, virtualhost_name, from, to);
+}
+
 long long Database::GetApacheLogsCount(string agent_name, string virtualhost_name, type::Time from, type::Time to) {
   BOOST_LOG_TRIVIAL(debug) << "database::Database::GetApacheLogsCount: Function call";
-  int ret;
-  long long count = 0;
-
-  if (is_open_ == false) {
-    BOOST_LOG_TRIVIAL(error) << "database::Database::GetApacheLogsCount: Database is not open";
-    throw exception::detail::CantExecuteSqlStatementException();
-  }
-
-  string sql =
-      "select count(*) from APACHE_LOGS_TABLE"
-      "  where"
-      "    ("
-      "      AGENT_NAME=?"
-      "      and"
-      "      VIRTUALHOST=?"
-      "    )"
-      "  and" +
-      GetTimeRule(from, to) +
-      ";";
-
-  sqlite3_stmt *statement;
-  ret = sqlite_interface_->Prepare(db_handle_, sql.c_str(), -1, &statement, nullptr);
-  StatementCheckForError(ret, "Prepare insert error");
-
-  ret = sqlite_interface_->BindText(statement, 1, agent_name.c_str(), -1, nullptr);
-  StatementCheckForError(ret, "Bind useragent error");
-
-  ret = sqlite_interface_->BindText(statement, 2, virtualhost_name.c_str(), -1, nullptr);
-  StatementCheckForError(ret, "Bind useragent error");
-
-  ret = sqlite_interface_->Step(statement);
-  StatementCheckForError(ret, "Step error");
-
-  count = sqlite_interface_->ColumnInt64(statement, 0);
-
-  ret = sqlite_interface_->Finalize(statement);
-  StatementCheckForError(ret, "Finalize error");
-
-  return count;
+  return GetApacheCount("APACHE_LOGS_TABLE", agent_name, virtualhost_name, from, to);
 }
 
 type::ApacheLogs Database::GetApacheLogs(std::string agent_name, std::string virtualhost_name, type::Time from, type::Time to, unsigned limit, long long offset) {
@@ -582,7 +550,7 @@ int Database::GetApacheAgentNamesCallback(void *names_vptr, int argc, char **arg
   return 0;
 }
 
-string Database::GetTimeRule(type::Time from, type::Time to) const {
+string Database::GetTimeRule(const type::Time &from, const type::Time &to) const {
   string from_day = to_string(from.GetDay()),
       from_month = to_string(from.GetMonth()),
       from_year = to_string(from.GetYear()),
@@ -629,6 +597,51 @@ std::string Database::TextHelper(unsigned const char *text) const {
     result = cctext;
 
   return result;
+}
+
+long long Database::GetApacheCount(const std::string &table, const std::string &agent_name,
+                                   const std::string &virtualhost_name, const type::Time &from,
+                                   const type::Time &to) {
+  BOOST_LOG_TRIVIAL(debug) << "database::Database::GetApacheCount: Function call";
+  int ret;
+  long long count = 0;
+
+  if (is_open_ == false) {
+    BOOST_LOG_TRIVIAL(error) << "database::Database::GetApacheCount: Database is not open";
+    throw exception::detail::CantExecuteSqlStatementException();
+  }
+
+  string sql =
+      "select count(*) from " + table +
+      "  where"
+      "    ("
+      "      AGENT_NAME=?"
+      "      and"
+      "      VIRTUALHOST=?"
+      "    )"
+      "  and" +
+      GetTimeRule(from, to) +
+      ";";
+
+  sqlite3_stmt *statement;
+  ret = sqlite_interface_->Prepare(db_handle_, sql.c_str(), -1, &statement, nullptr);
+  StatementCheckForError(ret, "Prepare insert error");
+
+  ret = sqlite_interface_->BindText(statement, 1, agent_name.c_str(), -1, nullptr);
+  StatementCheckForError(ret, "Bind useragent error");
+
+  ret = sqlite_interface_->BindText(statement, 2, virtualhost_name.c_str(), -1, nullptr);
+  StatementCheckForError(ret, "Bind useragent error");
+
+  ret = sqlite_interface_->Step(statement);
+  StatementCheckForError(ret, "Step error");
+
+  count = sqlite_interface_->ColumnInt64(statement, 0);
+
+  ret = sqlite_interface_->Finalize(statement);
+  StatementCheckForError(ret, "Finalize error");
+
+  return count;
 }
 
 }
