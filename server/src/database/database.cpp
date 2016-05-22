@@ -531,6 +531,25 @@ analyzer::ApacheSessions Database::GetApacheSessionStatistics(const std::string 
   return sessions;
 }
 
+void Database::MarkApacheStatisticsAsCreatedFor(int day, int month, int year) {
+    BOOST_LOG_TRIVIAL(debug) << "database::Database::MarkApacheStatisticsAsCreatedFor: Function call";
+
+  if (is_open_ == false) {
+    BOOST_LOG_TRIVIAL(error) << "database::Database::MarkApacheStatisticsAsCreatedFor: Database is not open.";
+    throw exception::detail::CantExecuteSqlStatementException();
+  }
+
+  string sql =
+      "insert or replace into APACHE_SESSION_EXISTS_TABLE (DATE_ID, EXIST) "
+      "values ("
+      "  ( select ID from DATE_TABLE where DAY=" + to_string(day) + " and MONTH=" + to_string(month) + " and YEAR=" + to_string(year) + "),"
+      "  1 "
+      ");";
+
+  int ret = sqlite_interface_->Exec(db_handle_, sql.c_str(), nullptr, nullptr, nullptr);
+  StatementCheckForError(ret, "Create BASH_LOGS_TABLE error");
+}
+
 long long Database::GetApacheLogsCount(string agent_name, string virtualhost_name, type::Time from, type::Time to) {
   BOOST_LOG_TRIVIAL(debug) << "database::Database::GetApacheLogsCount: Function call";
   return GetApacheCount("APACHE_LOGS_TABLE", agent_name, virtualhost_name, from, to);

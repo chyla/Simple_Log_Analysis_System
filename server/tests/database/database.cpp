@@ -2003,3 +2003,23 @@ TEST(DatabaseTest, CreateApacheSessionExistsTable_WhenExecFail) {
   database->Open("sqlite.db");
   EXPECT_THROW(database->CreateApacheSessionExistsTable(), database::exception::detail::CantExecuteSqlStatementException);
 }
+
+TEST(DatabaseTest, MarkApacheStatisticsAsCreatedFor) {
+  unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
+  MY_EXPECT_OPEN(sqlite_mock);
+  EXPECT_CALL(*sqlite_mock, Exec(DB_HANDLE_EXAMPLE_PTR_VALUE, NotNull(), IsNull(), IsNull(), IsNull())).WillOnce(Return(SQLITE_OK));
+
+  DatabasePtr database = Database::Create(move(sqlite_mock));
+  database->Open("sqlite.db");
+  database->MarkApacheStatisticsAsCreatedFor(10, 10, 2016);
+}
+
+TEST(DatabaseTest, MarkApacheStatisticsAsCreatedFor_WhenExecFail) {
+  unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
+  MY_EXPECT_OPEN(sqlite_mock);
+  EXPECT_CALL(*sqlite_mock, Exec(DB_HANDLE_EXAMPLE_PTR_VALUE, NotNull(), IsNull(), IsNull(), IsNull())).WillOnce(Return(SQLITE_NOMEM));
+
+  DatabasePtr database = Database::Create(move(sqlite_mock));
+  database->Open("sqlite.db");
+  EXPECT_THROW(database->MarkApacheStatisticsAsCreatedFor(10, 10, 2016), database::exception::detail::CantExecuteSqlStatementException);
+}
