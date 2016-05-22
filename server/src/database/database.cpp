@@ -146,6 +146,25 @@ void Database::CreateApacheSessionTable() {
   StatementCheckForError(ret, "Create APACHE_SESSION_TABLE error");
 }
 
+void Database::CreateApacheSessionExistsTable() {
+  BOOST_LOG_TRIVIAL(debug) << "database::Database::CreateApacheSessionTable: Function call";
+
+  if (is_open_ == false) {
+    BOOST_LOG_TRIVIAL(error) << "database::Database::CreateApacheSessionTable: Database is not open.";
+    throw exception::detail::CantExecuteSqlStatementException();
+  }
+
+  const char *sql =
+      "create table if not exists APACHE_SESSION_EXISTS_TABLE("
+      "  ID integer primary key, "
+      "  DATE_ID integer, "
+      "  EXIST integer, "
+      "  foreign key(DATE_ID) references DATE_TABLE(ID) "
+      ");";
+  int ret = sqlite_interface_->Exec(db_handle_, sql, nullptr, nullptr, nullptr);
+  StatementCheckForError(ret, "Create APACHE_SESSION_EXISTS_TABLE error");
+}
+
 void Database::AddDate(int day, int month, int year) {
   BOOST_LOG_TRIVIAL(debug) << "database::Database::AddDate: Function call";
 

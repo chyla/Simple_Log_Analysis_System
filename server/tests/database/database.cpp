@@ -1983,3 +1983,23 @@ TEST(DatabaseTest, GetDateId_WhenPrepareFail) {
   database->Open("sqlite.db");
   EXPECT_THROW(database->GetDateId(1, 1, 2016), database::exception::detail::CantExecuteSqlStatementException);
 }
+
+TEST(DatabaseTest, CreateApacheSessionExistsTable) {
+  unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
+  MY_EXPECT_OPEN(sqlite_mock);
+  EXPECT_CALL(*sqlite_mock, Exec(DB_HANDLE_EXAMPLE_PTR_VALUE, NotNull(), IsNull(), IsNull(), IsNull())).WillOnce(Return(SQLITE_OK));
+
+  DatabasePtr database = Database::Create(move(sqlite_mock));
+  database->Open("sqlite.db");
+  database->CreateApacheSessionExistsTable();
+}
+
+TEST(DatabaseTest, CreateApacheSessionExistsTable_WhenExecFail) {
+  unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
+  MY_EXPECT_OPEN(sqlite_mock);
+  EXPECT_CALL(*sqlite_mock, Exec(DB_HANDLE_EXAMPLE_PTR_VALUE, NotNull(), IsNull(), IsNull(), IsNull())).WillOnce(Return(SQLITE_NOMEM));
+
+  DatabasePtr database = Database::Create(move(sqlite_mock));
+  database->Open("sqlite.db");
+  EXPECT_THROW(database->CreateApacheSessionExistsTable(), database::exception::detail::CantExecuteSqlStatementException);
+}

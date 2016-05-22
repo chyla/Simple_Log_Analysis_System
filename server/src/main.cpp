@@ -44,6 +44,7 @@ database::DatabasePtr CreateDatabase(const program_options::Options &options) {
   database->CreateApacheLogsTable();
   database->CreateApacheSessionTable();
   database->CreateDateTable();
+  database->CreateApacheSessionExistsTable();
 
   return database;
 }

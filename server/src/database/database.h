@@ -37,6 +37,8 @@ class Database {
 
   void CreateApacheSessionTable();
 
+  void CreateApacheSessionExistsTable();
+
   void AddDate(int day, int month, int year);
 
   long long GetDateId(int day, int month, int year);
