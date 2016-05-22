@@ -174,12 +174,12 @@ void Database::AddDate(int day, int month, int year) {
   }
 
   string sql =
-      " insert or ignore into DATA_TABLE (DAY, MONTH, YEAR) "
+      " insert or ignore into DATE_TABLE (DAY, MONTH, YEAR) "
       " values ( "
       + to_string(day) + ", " + to_string(month) + ", " + to_string(year)
       + " );";
   int ret = sqlite_interface_->Exec(db_handle_, sql.c_str(), nullptr, nullptr, nullptr);
-  StatementCheckForError(ret, "Create APACHE_SESSION_TABLE error");
+  StatementCheckForError(ret, "Insert or ignore date error");
 }
 
 long long Database::GetDateId(int day, int month, int year) {
