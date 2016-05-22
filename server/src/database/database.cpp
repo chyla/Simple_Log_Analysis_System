@@ -157,8 +157,8 @@ void Database::CreateApacheSessionExistsTable() {
   const char *sql =
       "create table if not exists APACHE_SESSION_EXISTS_TABLE("
       "  ID integer primary key, "
-      "  DATE_ID integer, "
-      "  EXIST integer, "
+      "  DATE_ID integer not null unique, "
+      "  EXIST integer not null unique, "
       "  foreign key(DATE_ID) references DATE_TABLE(ID) "
       ");";
   int ret = sqlite_interface_->Exec(db_handle_, sql, nullptr, nullptr, nullptr);
