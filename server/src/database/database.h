@@ -44,6 +44,10 @@ class Database {
   long long GetApacheSessionStatisticsCount(const std::string &agent_name, const std::string &virtualhost_name,
                                             const type::Time &from, const type::Time &to);
 
+  analyzer::ApacheSessions GetApacheSessionStatistics(const std::string &agent_name, const std::string &virtualhost_name,
+                                                      const type::Time &from, const type::Time &to,
+                                                      unsigned limit, long long offset);
+
   long long GetApacheLogsCount(std::string agent_name, std::string virtualhost_name, type::Time from, type::Time to);
 
   type::ApacheLogs GetApacheLogs(std::string agent_name, std::string virtualhost_name, type::Time from, type::Time to, unsigned limit, long long offset);
