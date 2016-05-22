@@ -56,6 +56,8 @@ class Database {
                                                       const type::Time &from, const type::Time &to,
                                                       unsigned limit, long long offset);
 
+  analyzer::ApacheSessionEntry GetApacheOneSessionStatistic(long long id);
+
   void MarkApacheStatisticsAsCreatedFor(int day, int month, int year);
 
   bool IsApacheStatisticsCreatedFor(int day, int month, int year);

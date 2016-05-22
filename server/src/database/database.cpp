@@ -531,6 +531,62 @@ analyzer::ApacheSessions Database::GetApacheSessionStatistics(const std::string 
   return sessions;
 }
 
+analyzer::ApacheSessionEntry Database::GetApacheOneSessionStatistic(long long id) {
+  BOOST_LOG_TRIVIAL(debug) << "database::Database::GetApacheOneSessionStatistic: Function call";
+  analyzer::ApacheSessionEntry entry;
+  int ret, hour, minute, second, day, month, year;
+
+  if (is_open_ == false) {
+    BOOST_LOG_TRIVIAL(error) << "database::Database::GetApacheOneSessionStatistic: Database is not open";
+    throw exception::detail::CantExecuteSqlStatementException();
+  }
+
+  string sql =
+      "select ID, AGENT_NAME, VIRTUALHOST, CLIENT_IP, UTC_HOUR, UTC_MINUTE, UTC_SECOND, UTC_DAY, UTC_MONTH, UTC_YEAR, SESSION_LENGTH, BANDWIDTH_USAGE, REQUESTS_COUNT, ERROR_PERCENTAGE, USER_AGENT "
+      " from APACHE_SESSION_TABLE "
+      "  where"
+      "    ID=" + to_string(id) +
+      ";";
+
+  sqlite3_stmt *statement;
+  ret = sqlite_interface_->Prepare(db_handle_, sql.c_str(), -1, &statement, nullptr);
+  StatementCheckForError(ret, "Prepare insert error");
+
+  ret = sqlite_interface_->Step(statement);
+  StatementCheckForError(ret, "Step error");
+
+  if (ret == SQLITE_ROW) {
+    BOOST_LOG_TRIVIAL(debug) << "database::Database::GetApacheOneSessionStatistic: Found new log entry in database";
+
+    entry.id = id;
+    entry.agent_name = TextHelper(sqlite_interface_->ColumnText(statement, 1));
+    entry.virtualhost = TextHelper(sqlite_interface_->ColumnText(statement, 2));
+    entry.client_ip = TextHelper(sqlite_interface_->ColumnText(statement, 3));
+
+    hour = sqlite_interface_->ColumnInt(statement, 4);
+    minute = sqlite_interface_->ColumnInt(statement, 5);
+    second = sqlite_interface_->ColumnInt(statement, 6);
+    day = sqlite_interface_->ColumnInt(statement, 7);
+    month = sqlite_interface_->ColumnInt(statement, 8);
+    year = sqlite_interface_->ColumnInt(statement, 9);
+
+    type::Time t;
+    t.Set(hour, minute, second, day, month, year);
+
+    entry.session_start = t;
+    entry.session_length = sqlite_interface_->ColumnInt(statement, 10);
+    entry.bandwidth_usage = sqlite_interface_->ColumnInt(statement, 11);
+    entry.requests_count = sqlite_interface_->ColumnInt(statement, 12);
+    entry.error_percentage = sqlite_interface_->ColumnInt(statement, 13);
+    entry.useragent = TextHelper(sqlite_interface_->ColumnText(statement, 14));
+  }
+
+  ret = sqlite_interface_->Finalize(statement);
+  StatementCheckForError(ret, "Finalize error");
+
+  return entry;
+}
+
 void Database::MarkApacheStatisticsAsCreatedFor(int day, int month, int year) {
   BOOST_LOG_TRIVIAL(debug) << "database::Database::MarkApacheStatisticsAsCreatedFor: Function call";
 
