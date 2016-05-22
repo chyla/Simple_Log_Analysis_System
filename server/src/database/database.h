@@ -58,6 +58,8 @@ class Database {
 
   void MarkApacheStatisticsAsCreatedFor(int day, int month, int year);
 
+  bool IsApacheStatisticsCreatedFor(int day, int month, int year);
+
   long long GetApacheLogsCount(std::string agent_name, std::string virtualhost_name, type::Time from, type::Time to);
 
   type::ApacheLogs GetApacheLogs(std::string agent_name, std::string virtualhost_name, type::Time from, type::Time to, unsigned limit, long long offset);

@@ -532,7 +532,7 @@ analyzer::ApacheSessions Database::GetApacheSessionStatistics(const std::string 
 }
 
 void Database::MarkApacheStatisticsAsCreatedFor(int day, int month, int year) {
-    BOOST_LOG_TRIVIAL(debug) << "database::Database::MarkApacheStatisticsAsCreatedFor: Function call";
+  BOOST_LOG_TRIVIAL(debug) << "database::Database::MarkApacheStatisticsAsCreatedFor: Function call";
 
   if (is_open_ == false) {
     BOOST_LOG_TRIVIAL(error) << "database::Database::MarkApacheStatisticsAsCreatedFor: Database is not open.";
@@ -548,6 +548,38 @@ void Database::MarkApacheStatisticsAsCreatedFor(int day, int month, int year) {
 
   int ret = sqlite_interface_->Exec(db_handle_, sql.c_str(), nullptr, nullptr, nullptr);
   StatementCheckForError(ret, "Create BASH_LOGS_TABLE error");
+}
+
+bool Database::IsApacheStatisticsCreatedFor(int day, int month, int year) {
+  BOOST_LOG_TRIVIAL(debug) << "database::Database::IsApacheStatisticsCreatedFor: Function call";
+  int ret;
+  bool created = false;
+
+  if (is_open_ == false) {
+    BOOST_LOG_TRIVIAL(error) << "database::Database::IsApacheStatisticsCreatedFor: Database is not open";
+    throw exception::detail::CantExecuteSqlStatementException();
+  }
+
+  string sql =
+      "select EXIST from APACHE_SESSION_EXISTS_TABLE "
+      "  where"
+      "    DATE_ID=( select ID from DATE_TABLE where DAY=" + to_string(day) + " and MONTH=" + to_string(month) + " and YEAR=" + to_string(year) + " )"
+      ";";
+
+  sqlite3_stmt *statement;
+  ret = sqlite_interface_->Prepare(db_handle_, sql.c_str(), -1, &statement, nullptr);
+  StatementCheckForError(ret, "Prepare insert error");
+
+  ret = sqlite_interface_->Step(statement);
+  StatementCheckForError(ret, "Step error");
+
+  if (ret == SQLITE_ROW)
+    created = static_cast<bool> (sqlite_interface_->ColumnInt(statement, 0));
+
+  ret = sqlite_interface_->Finalize(statement);
+  StatementCheckForError(ret, "Finalize error");
+
+  return created;
 }
 
 long long Database::GetApacheLogsCount(string agent_name, string virtualhost_name, type::Time from, type::Time to) {
