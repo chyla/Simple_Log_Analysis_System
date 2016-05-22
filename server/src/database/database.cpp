@@ -41,6 +41,27 @@ bool Database::IsOpen() const {
   return is_open_;
 }
 
+void Database::CreateDateTable() {
+  BOOST_LOG_TRIVIAL(debug) << "database::Database::CreateDateTable: Function call";
+
+  if (is_open_ == false) {
+    BOOST_LOG_TRIVIAL(error) << "database::Database::CreateDateTable: Database is not open.";
+    throw exception::detail::CantExecuteSqlStatementException();
+  }
+
+  const char *sql =
+      " create table if not exists DATE_TABLE("
+      "   ID integer primary key, "
+      "   DAY integer, "
+      "   MONTH integer, "
+      "   YEAR integer, "
+      "   unique(DAY, MONTH, YEAR) "
+      " );";
+
+  int ret = sqlite_interface_->Exec(db_handle_, sql, nullptr, nullptr, nullptr);
+  StatementCheckForError(ret, "Create BASH_LOGS_TABLE error");
+}
+
 void Database::CreateBashLogsTable() {
   BOOST_LOG_TRIVIAL(debug) << "database::Database::CreateBashLogsTable: Function call";
 
@@ -123,6 +144,57 @@ void Database::CreateApacheSessionTable() {
       ");";
   int ret = sqlite_interface_->Exec(db_handle_, sql, nullptr, nullptr, nullptr);
   StatementCheckForError(ret, "Create APACHE_SESSION_TABLE error");
+}
+
+void Database::AddDate(int day, int month, int year) {
+  BOOST_LOG_TRIVIAL(debug) << "database::Database::AddDate: Function call";
+
+  if (is_open_ == false) {
+    BOOST_LOG_TRIVIAL(error) << "database::Database::AddDate: Database is not open.";
+    throw exception::detail::CantExecuteSqlStatementException();
+  }
+
+  string sql =
+      " insert or ignore into DATA_TABLE (DAY, MONTH, YEAR) "
+      " values ( "
+      + to_string(day) + ", " + to_string(month) + ", " + to_string(year)
+      + " );";
+  int ret = sqlite_interface_->Exec(db_handle_, sql.c_str(), nullptr, nullptr, nullptr);
+  StatementCheckForError(ret, "Create APACHE_SESSION_TABLE error");
+}
+
+long long Database::GetDateId(int day, int month, int year) {
+  BOOST_LOG_TRIVIAL(debug) << "database::Database::GetDateId: Function call";
+  int ret;
+  long long id = -1;
+
+  if (is_open_ == false) {
+    BOOST_LOG_TRIVIAL(error) << "database::Database::GetDateId: Database is not open";
+    throw exception::detail::CantExecuteSqlStatementException();
+  }
+
+  string sql =
+      "select id from DATE_TABLE "
+      "  where"
+      "    DAY=" + to_string(day) + " and "
+      "    MONTH=" + to_string(month) + " and "
+      "    YEAR=" + to_string(year) +
+      ";";
+
+  sqlite3_stmt *statement;
+  ret = sqlite_interface_->Prepare(db_handle_, sql.c_str(), -1, &statement, nullptr);
+  StatementCheckForError(ret, "Prepare error");
+
+  ret = sqlite_interface_->Step(statement);
+  StatementCheckForError(ret, "Step error");
+
+  if (ret == SQLITE_ROW)
+    id = sqlite_interface_->ColumnInt64(statement, 0);
+
+  ret = sqlite_interface_->Finalize(statement);
+  StatementCheckForError(ret, "Finalize error");
+
+  return id;
 }
 
 bool Database::AddBashLogs(const type::BashLogs &log_entries) {

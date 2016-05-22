@@ -29,11 +29,17 @@ class Database {
 
   bool IsOpen() const;
 
+  void CreateDateTable();
+
   void CreateBashLogsTable();
 
   void CreateApacheLogsTable();
 
   void CreateApacheSessionTable();
+
+  void AddDate(int day, int month, int year);
+
+  long long GetDateId(int day, int month, int year);
 
   bool AddBashLogs(const type::BashLogs &log_entries);
 
