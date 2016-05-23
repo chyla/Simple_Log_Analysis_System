@@ -54,14 +54,14 @@
 
       <div class="template">
 
-        <div class="error">
         {% if exception %}
+        <div class="error">        
             Ohhh, {{ exception }}!
-        {% endif %}
         </div>
-
-        {% block content %}
-        {% endblock %}
+        {% else %}
+            {% block content %}
+            {% endblock %}
+        {% endif %}
 
       </div>
 
