@@ -3,6 +3,7 @@ import copy
 
 from network import Network
 from server_config import SERVER_ADDRESS, SERVER_PORT
+from exception import CommandException
 
 
 def connect_and_get_result_from_command(command, args=[]):
@@ -19,8 +20,10 @@ def connect_and_get_result_from_command(command, args=[]):
     response = Network.receive_text(n)
 
     json_response = json.loads(response)
-
-    return json_response['result']
+    if json_response['status'] == "ok":
+        return json_response['result']
+    else:
+        raise CommandException(json_response['message'])
 
 def get_process_id_from_server():
     return connect_and_get_result_from_command('get_server_process_pid')
