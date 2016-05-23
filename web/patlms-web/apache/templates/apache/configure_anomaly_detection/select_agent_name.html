@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+<h1>Apache Logs</h1>
+
+<h2>Anomaly Detection Configuration</h2>
+
+<h3>Step 1/4 - Select host to analyze</h3>
+
+<div class="page-content">
+
+    <p>
+        Please select host to analyze:
+    </p>
+    
+    <p>
+        <form class="pure-form ws-validate" method="get" action="{% url 'apache:configure_anomaly_detection_select_virtualhost' %}">
+            <div class="col-sm-12 ws-success">
+                <label for="agent_name" class="control-label">Agent name:</label>
+                <select name="agent_name" class='input-max-width'>
+                    {% for name in agent_names %}
+                        <option value="{{ name }}">{{ name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="col-sm-12">
+                <p class="action-buttons">
+                    <button type="submit" class="pure-button pure-button-primary">Next</button>
+                </p>
+            </div>
+        </form>
+    </p>
+
+</div>
+
+{% endblock %}

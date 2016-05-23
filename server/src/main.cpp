@@ -18,6 +18,7 @@
 #include "web/command_executor.h"
 #include "program_options/program_options_command_executor_object.h"
 
+#include "apache/web/command_executor_object.h"
 #include "objects/apache.h"
 #include "objects/bash.h"
 
@@ -95,13 +96,16 @@ main(int argc, char *argv[]) {
 
     util::Demonize(options.IsDaemon());
 
+    database = CreateDatabase(options);
+
     auto options_command_object = program_options::ProgramOptionsCommandExecutorObject::Create(options);
     auto command_executor = web::CommandExecutor::Create();
+    auto apache_web_command_executor = apache::web::CommandExecutorObject::Create(database);
     command_executor->RegisterCommandObject(options_command_object);
+    command_executor->RegisterCommandObject(apache_web_command_executor);
     command_receiver = web::CommandReceiver::Create(command_executor);
     command_receiver->OpenPort(options.GetWebAddress(), options.GetWebPort());
 
-    database = CreateDatabase(options);
     bus = std::make_shared<dbus::Bus>(dbus::Bus::Options(options.GetDbusAddress(),
                                                          options.GetDbusPort(),
                                                          options.GetDbusFamily()));

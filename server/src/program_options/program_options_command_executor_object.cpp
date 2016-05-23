@@ -17,7 +17,7 @@ ProgramOptionsCommandExecutorObjectPtr ProgramOptionsCommandExecutorObject::Crea
 std::string ProgramOptionsCommandExecutorObject::Execute(std::string json_command) {
   auto json_object = json::parse(json_command);
   Command command = json_object["command"];
-  string result = "{ \"status\" : \"unknown_command\" }";
+  auto result = GetUnknownCommandErrorJson();
 
   if (command == "get_server_process_pid") {
     result = GetServerProcessPid();

@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+<h1>Apache Logs</h1>
+
+<h2>Anomaly Detection Configuration</h2>
+
+<h3>Step 2/4 - Select virtualhost</h3>
+
+<div class="page-content">
+
+    <p>
+        Please select virtualhost to configure:
+    </p>
+
+    <p>
+        <form class="pure-form ws-validate" method="get" action="{% url 'apache:configure_anomaly_detection_select_data_range' %}">
+            <div class="col-sm-12 ws-success">
+                <label for="virtualhost" class="control-label">Virtualhost:</label>
+                <select name="virtualhost" class='input-max-width'>
+                    {% for name in virtualhosts_names %}
+                        <option value="{{ name }}">{{ name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <input type="hidden" name="agent_name" value="{{ agent_name }}">
+            
+            <div class="col-sm-12">
+                <p class="action-buttons">
+                    <button type="submit" class="pure-button pure-button-primary">Next</button>
+                </p>
+            </div>
+        </form>
+    </p>
+
+</div>
+
+{% endblock %}

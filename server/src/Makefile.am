@@ -14,7 +14,8 @@ patlms_server_SOURCES	= main.cpp \
 				objects/bash.cpp \
 				objects/apache.cpp \
 				web/command_receiver.cpp \
-				web/command_executor.cpp
+				web/command_executor.cpp \
+				apache/web/command_executor_object.cpp
 
 patlms_server_LDADD	= @BOOST_PROGRAM_OPTIONS_LIB@ \
 				@BOOST_LOG_LIB@ \

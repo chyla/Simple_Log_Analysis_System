@@ -46,7 +46,7 @@ TEST_F(ProgramOptionsCommandExecutorObjectTest, Execute_UnknownCommand) {
 
   string result = program_options_object->Execute(command);
 
-  string expected_result = "{ \"status\" : \"unknown_command\" }";
+  string expected_result = ::web::detail::CommandExecutorObject::GetUnknownCommandErrorJson();
   EXPECT_EQ(expected_result, result);
 }
 
