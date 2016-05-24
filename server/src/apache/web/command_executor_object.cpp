@@ -4,6 +4,8 @@
 #include <json/json.hpp>
 #include <algorithm>
 
+#include <patlms/type/time.h>
+
 using namespace std;
 using namespace nlohmann;
 
@@ -22,15 +24,15 @@ CommandExecutorObjectPtr CommandExecutorObject::Create(::database::DatabasePtr d
 std::string CommandExecutorObject::Execute(std::string json_command) {
   BOOST_LOG_TRIVIAL(debug) << "apache::web::CommandExecutorObject::Execute: Function call";
   auto json_object = json::parse(json_command);
-  auto command = json_object["command"];
+  const std::string command = json_object["command"];
   auto result = GetUnknownCommandErrorJson();
 
   if (command == "get_apache_agent_names") {
-    BOOST_LOG_TRIVIAL(warning) << "apache::web::CommandExecutorObject::Execute: Found 'get_apache_agent_names' command";
+    BOOST_LOG_TRIVIAL(info) << "apache::web::CommandExecutorObject::Execute: Found 'get_apache_agent_names' command";
     result = GetHostnames();
   }
   else if (command == "get_apache_virtualhosts_names") {
-    BOOST_LOG_TRIVIAL(warning) << "apache::web::CommandExecutorObject::Execute: Found 'get_apache_virtualhosts_names' command";
+    BOOST_LOG_TRIVIAL(info) << "apache::web::CommandExecutorObject::Execute: Found 'get_apache_virtualhosts_names' command";
 
     auto args = json_object["args"];
     if (args.size() != 1) {
@@ -41,6 +43,17 @@ std::string CommandExecutorObject::Execute(std::string json_command) {
     auto agent_name = args.at(0);
     result = GetVirtualhostsNames(agent_name);
   }
+  else if (command == "get_apache_sessions") {
+    BOOST_LOG_TRIVIAL(info) << "apache::web::CommandExecutorObject::Execute: Found 'get_apache_sessions' command";
+
+    auto args = json_object["args"];
+    if (args.size() != 4) {
+      BOOST_LOG_TRIVIAL(warning) << "apache::web::CommandExecutorObject::Execute: get_apache_sessions require four arguments";
+      return GetInvalidArgumentErrorJson();
+    }
+
+    result = GetSessions(args.at(0), args.at(1), args.at(2), args.at(3));
+  }
 
   return result;
 }
@@ -48,7 +61,8 @@ std::string CommandExecutorObject::Execute(std::string json_command) {
 bool CommandExecutorObject::IsCommandSupported(std::string command) {
   BOOST_LOG_TRIVIAL(debug) << "apache::web::CommandExecutorObject::IsCommandSupported: Function call";
   return (command == "get_apache_agent_names")
-      || (command == "get_apache_virtualhosts_names");
+      || (command == "get_apache_virtualhosts_names")
+      || (command == "get_apache_sessions");
 }
 
 CommandExecutorObject::CommandExecutorObject(::database::DatabasePtr database)
@@ -71,6 +85,45 @@ std::string CommandExecutorObject::GetVirtualhostsNames(const std::string &agent
   json j;
   j["status"] = "ok";
   j["result"] = database_->GetApacheVirtualhostNames(agent_name);
+
+  return j.dump();
+}
+
+std::string CommandExecutorObject::GetSessions(const std::string &agent_name,
+                                               const std::string &virtualhost_name,
+                                               const std::string &begin_date,
+                                               const std::string &end_date) {
+  BOOST_LOG_TRIVIAL(debug) << "apache::web::CommandExecutorObject::GetSessions: Function call";
+
+  auto tbegin = type::Time::FromString(begin_date);
+  auto tend = type::Time::FromString(end_date);
+  auto count = database_->GetApacheSessionStatisticsCount(agent_name, virtualhost_name,
+                                                          tbegin, tend);
+
+  analyzer::ApacheSessions sessions = database_->GetApacheSessionStatistics(agent_name, virtualhost_name,
+                                                                            tbegin, tend,
+                                                                            count, 0);
+
+  json j, r = json::array();
+  for (analyzer::ApacheSessionEntry s : sessions) {
+    json t;
+    t["id"] = s.id;
+    t["agent_name"] = s.agent_name;
+    t["virtualhost"] = s.virtualhost;
+    t["client_ip"] = s.client_ip;
+    t["session_start"] = s.session_start.ToString();
+    t["session_length"] = s.session_length;
+    t["bandwidth_usage"] = s.bandwidth_usage;
+    t["requests_count"] = s.requests_count;
+    t["error_percentage"] = s.error_percentage;
+    t["useragent"] = s.useragent;
+    t["is_anomaly"] = s.is_anomaly;
+
+    r.push_back(t);
+  }
+
+  j["status"] = "ok";
+  j["result"] = r;
 
   return j.dump();
 }

@@ -36,3 +36,6 @@ def get_apache_agent_names():
 
 def get_apache_virtualhost_names(agent_name):
     return connect_and_get_result_from_command('get_apache_virtualhosts_names', [agent_name, ])
+
+def get_apache_sessions(agent_name, virtualhost_name, begin_date, end_date):
+    return connect_and_get_result_from_command('get_apache_sessions', [agent_name, virtualhost_name, begin_date, end_date])

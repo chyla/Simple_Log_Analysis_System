@@ -19,19 +19,21 @@ def configure_anomaly_detection_select_agent_name(request):
     except IOError as e:
         exception = e.strerror
 
-    return render_to_response('apache/configure_anomaly_detection/select_agent_name.html', {'exception' : exception,
-                                                                                            'agent_names' : agent_names,
-                                                                                            })
+    return render_to_response('apache/configure_anomaly_detection/select_agent_name.html',
+                              {'exception' : exception,
+                               'agent_names' : agent_names,
+                               })
 
 def configure_anomaly_detection_select_data_range(request):
     agent_name = request.GET.get('agent_name', '')
     virtualhost_name = request.GET.get('virtualhost_name', '')
     exception = None
 
-    return render_to_response('apache/configure_anomaly_detection/select_data_range.html', {'exception' : exception,
-                                                                                            'agent_name' : agent_name,
-                                                                                            'virtualhost_name' : virtualhost_name,
-                                                                                            })
+    return render_to_response('apache/configure_anomaly_detection/select_data_range.html',
+                              {'exception' : exception,
+                               'agent_name' : agent_name,
+                               'virtualhost_name' : virtualhost_name,
+                               })
 
 def configure_anomaly_detection_select_virtualhost(request):
     agent_name = request.GET.get('agent_name', '')
@@ -43,10 +45,28 @@ def configure_anomaly_detection_select_virtualhost(request):
     except IOError as e:
         exception = e.strerror
 
-    return render_to_response('apache/configure_anomaly_detection/select_virtualhost.html', {'exception' : exception,
-                                                                                             'agent_name' : agent_name,
-                                                                                             'virtualhosts_names' : virtualhosts_names,
-                                                                                             })
+    return render_to_response('apache/configure_anomaly_detection/select_virtualhost.html',
+                              {'exception' : exception,
+                               'agent_name' : agent_name,
+                               'virtualhosts_names' : virtualhosts_names,
+                               })
 
 def configure_anomaly_detection_correct_sessions_marks(request):
-    return render_to_response('apache/configure_anomaly_detection/correct_sessions_marks.html')
+    exception = None
+    sessions = []
+    agent_name = request.GET.get('agent_name', '')
+    virtualhost_name = request.GET.get('virtualhost_name', '')
+    begin_date = request.GET.get('begin-date', '')
+    end_date = request.GET.get('end-date', '')
+
+    try:
+        sessions = util.get_apache_sessions(agent_name, virtualhost_name, begin_date, end_date)
+    except IOError as e:
+        exception = e.strerror
+
+    return render_to_response('apache/configure_anomaly_detection/correct_sessions_marks.html',
+                              {'exception' : exception,
+                               'agent_name' : agent_name,
+                               'virtualhost_name' : virtualhost_name,
+                               'sessions' : sessions,
+                               })

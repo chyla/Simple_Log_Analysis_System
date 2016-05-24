@@ -20,44 +20,38 @@
             <table class="pure-table">
                 <thead>
                     <tr>
-                        <th>#</th>
+                        <th>ID</th>
                         <th>IP</th>
-                        <th>User-Agent</th>
+                        <th>Session start</th>
                         <th>Session length (s)</th>
                         <th>Bandwidth usage (bytes)</th>
+                        <th>Requests count</th>
                         <th>Error requests (%)</th>
-                        <th>Is correct</th>
+                        <th>User-Agent</th>
+                        <th>Is anomaly</th>
                     </tr>
                 </thead>
             
                 <tbody>
-                    <tr class="pure-table-odd">
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td><input type="checkbox"></td>
+                {% for s in sessions %}
+                    <tr {% cycle '' 'class="pure-table-odd"' %}>
+                        <td>{{ s.id }}</td>
+                        <td>{{ s.client_ip }}</td>
+                        <td>{{ s.session_start }}</td>
+                        <td>{{ s.session_length }}</td>
+                        <td>{{ s.bandwidth_usage }}</td>
+                        <td>{{ s.requests_count }}</td>
+                        <td>{{ s.error_percentage }}</td>
+                        <td>{{ s.useragent }}</td>
+                        <td>
+                            <input type="checkbox"
+                             {% if s.is_anomaly %}
+                                checked="checked" 
+                            {% endif %}
+                             >
+                        </td>
                     </tr>
-                    <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td><input type="checkbox"></td>
-                    </tr>
-                    <tr class="pure-table-odd">
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td><input type="checkbox"></td>
-                    </tr>
+                {% endfor %}
                 </tbody>
             </table>
 

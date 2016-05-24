@@ -32,6 +32,10 @@ class CommandExecutorObject : public ::web::detail::CommandExecutorObject {
 
   std::string GetHostnames();
   std::string GetVirtualhostsNames(const std::string &agent_name);
+  std::string GetSessions(const std::string &agent_name,
+                          const std::string &virtualhost_name,
+                          const std::string &begin_date,
+                          const std::string &end_date);
 };
 
 }
