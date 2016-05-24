@@ -21,6 +21,7 @@ class Database {
  public:
   typedef std::vector<std::string> AgentNames;
   typedef std::vector<std::string> VirtualhostNames;
+  typedef std::vector<long long> RowIds;
 
   static DatabasePtr Create();
   static DatabasePtr Create(std::unique_ptr<detail::SQLiteInterface> sqlite);
@@ -55,6 +56,8 @@ class Database {
   analyzer::ApacheSessions GetApacheSessionStatistics(const std::string &agent_name, const std::string &virtualhost_name,
                                                       const type::Time &from, const type::Time &to,
                                                       unsigned limit, long long offset);
+
+  void SetApacheSessionAsAnomaly(RowIds all, RowIds anomaly);
 
   analyzer::ApacheSessionEntry GetApacheOneSessionStatistic(long long id);
 

@@ -536,6 +536,27 @@ analyzer::ApacheSessions Database::GetApacheSessionStatistics(const std::string 
   return sessions;
 }
 
+void Database::SetApacheSessionAsAnomaly(RowIds all, RowIds anomalies) {
+  BOOST_LOG_TRIVIAL(debug) << "database::Database::GetApacheOneSessionStatistic: Function call";
+
+  if (is_open_ == false) {
+    BOOST_LOG_TRIVIAL(error) << "database::Database::GetApacheOneSessionStatistic: Database is not open";
+    throw exception::detail::CantExecuteSqlStatementException();
+  }
+
+  string sql = "begin transaction; ";
+  for (auto id : all)
+    sql += "update APACHE_SESSION_TABLE set IS_ANOMALY=0 where ID=" + to_string(id) + "; ";
+  
+  for (auto id : anomalies)
+    sql += "update APACHE_SESSION_TABLE set IS_ANOMALY=1 where ID=" + to_string(id) + "; ";
+  
+  sql += "end transaction; ";
+
+  int ret = sqlite_interface_->Exec(db_handle_, sql.c_str(), nullptr, nullptr, nullptr);
+  StatementCheckForError(ret, "Exec error");
+}
+
 analyzer::ApacheSessionEntry Database::GetApacheOneSessionStatistic(long long id) {
   BOOST_LOG_TRIVIAL(debug) << "database::Database::GetApacheOneSessionStatistic: Function call";
   analyzer::ApacheSessionEntry entry;

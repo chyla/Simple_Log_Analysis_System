@@ -2210,3 +2210,25 @@ TEST(DatabaseTest, GetApacheOneSessionStatistic_WhenPrepareFailed) {
   to.Set(10, 0, 0, 1, 1, 2017);
   EXPECT_THROW(database->GetApacheOneSessionStatistic(1), database::exception::detail::CantExecuteSqlStatementException);
 }
+
+TEST(DatabaseTest, SetApacheSessionAsAnomaly) {
+  unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
+  MY_EXPECT_OPEN(sqlite_mock);
+  EXPECT_CALL(*sqlite_mock, Exec(DB_HANDLE_EXAMPLE_PTR_VALUE, NotNull(), IsNull(), IsNull(), IsNull())).WillOnce(Return(SQLITE_OK));
+
+  DatabasePtr database = Database::Create(move(sqlite_mock));
+  database->Open("sqlite.db");
+  Database::RowIds ids{1};
+  database->SetApacheSessionAsAnomaly(ids, ids);
+}
+
+TEST(DatabaseTest, SetApacheSessionAsAnomaly_WhenExecFail) {
+  unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
+  MY_EXPECT_OPEN(sqlite_mock);
+  EXPECT_CALL(*sqlite_mock, Exec(DB_HANDLE_EXAMPLE_PTR_VALUE, NotNull(), IsNull(), IsNull(), IsNull())).WillOnce(Return(SQLITE_NOMEM));
+
+  DatabasePtr database = Database::Create(move(sqlite_mock));
+  database->Open("sqlite.db");
+  Database::RowIds ids{1};
+  EXPECT_THROW(database->SetApacheSessionAsAnomaly(ids, ids), database::exception::detail::CantExecuteSqlStatementException);
+}
