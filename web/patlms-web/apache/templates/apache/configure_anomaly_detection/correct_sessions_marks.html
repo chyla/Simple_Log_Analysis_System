@@ -23,7 +23,7 @@
             <input type="hidden" name="virtualhost_name" value="{{ virtualhost_name }}">
             <input type="hidden" name="begin_date" value="{{ begin_date }}">
             <input type="hidden" name="end_date" value="{{ end_date }}">
-        
+
             <table class="pure-table">
                 <thead>
                     <tr>
@@ -38,7 +38,7 @@
                         <th>Is anomaly</th>
                     </tr>
                 </thead>
-            
+
                 <tbody>
                 {% for s in sessions %}
                     <tr {% cycle '' 'class="pure-table-odd"' %}>
@@ -51,10 +51,11 @@
                         <td>{{ s.error_percentage }}</td>
                         <td>{{ s.useragent }}</td>
                         <td>
+                            <input type="hidden" name="rows_ids" value="{{ s.id }}">
                             <input type="checkbox" name="checks" value="{{ s.id }}"
                              {% if s.is_anomaly %}
                                 checked="checked" 
-                            {% endif %}
+                             {% endif %}
                              >
                         </td>
                     </tr>

@@ -80,6 +80,7 @@ def configure_anomaly_detection_save_settings(request):
     virtualhost_name = request.POST.get('virtualhost_name', '')
     begin_date = request.POST.get('begin-date', '')
     end_date = request.POST.get('end-date', '')
+    all_rows_ids = request.POST.getlist('rows_ids')
     checks = request.POST.getlist('checks')
 
     return redirect('apache:status', permanent=False)
