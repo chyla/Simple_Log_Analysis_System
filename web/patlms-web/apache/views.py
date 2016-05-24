@@ -75,5 +75,11 @@ def configure_anomaly_detection_correct_sessions_marks(request):
                    })
 
 def configure_anomaly_detection_save_settings(request):
+    exception = None
+    agent_name = request.POST.get('agent_name', '')
+    virtualhost_name = request.POST.get('virtualhost_name', '')
+    begin_date = request.POST.get('begin-date', '')
+    end_date = request.POST.get('end-date', '')
+    checks = request.POST.getlist('checks')
 
     return redirect('apache:status', permanent=False)

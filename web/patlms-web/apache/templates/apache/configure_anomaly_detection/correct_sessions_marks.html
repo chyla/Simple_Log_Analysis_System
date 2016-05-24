@@ -51,7 +51,7 @@
                         <td>{{ s.error_percentage }}</td>
                         <td>{{ s.useragent }}</td>
                         <td>
-                            <input type="checkbox"
+                            <input type="checkbox" name="checks" value="{{ s.id }}"
                              {% if s.is_anomaly %}
                                 checked="checked" 
                             {% endif %}
