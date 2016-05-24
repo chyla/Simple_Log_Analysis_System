@@ -13,6 +13,10 @@ class Time {
   void Set(int hour, int minute, int second,
            int day, int month, int year);
 
+  static const Time Create(int hour, int minute, int second,
+                           int day, int month, int year);
+  static const Time FromString(const std::string &time);
+
   inline int GetMinute() const;
   inline int GetHour() const;
   inline int GetSecond() const;
