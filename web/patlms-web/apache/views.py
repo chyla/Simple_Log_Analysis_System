@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, render, redirect
 import util
 
 
@@ -64,9 +64,16 @@ def configure_anomaly_detection_correct_sessions_marks(request):
     except IOError as e:
         exception = e.strerror
 
-    return render_to_response('apache/configure_anomaly_detection/correct_sessions_marks.html',
-                              {'exception' : exception,
-                               'agent_name' : agent_name,
-                               'virtualhost_name' : virtualhost_name,
-                               'sessions' : sessions,
-                               })
+    return render(request,
+                  'apache/configure_anomaly_detection/correct_sessions_marks.html',
+                  {'exception' : exception,
+                   'agent_name' : agent_name,
+                   'virtualhost_name' : virtualhost_name,
+                   'begin_date' : begin_date,
+                   'end_date' : end_date,
+                   'sessions' : sessions,
+                   })
+
+def configure_anomaly_detection_save_settings(request):
+
+    return redirect('apache:status', permanent=False)
