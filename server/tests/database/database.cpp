@@ -1125,7 +1125,7 @@ TEST(DatabaseTest, GetApacheAgentNames) {
   database->Open("sqlite.db");
 
   auto names = database->GetApacheAgentNames();
-  EXPECT_EQ(0, names.size());
+  EXPECT_EQ(static_cast<unsigned>(0), names.size());
 }
 
 TEST(DatabaseTest, GetApacheAgentNames_WhenExecFail) {
@@ -1152,7 +1152,7 @@ TEST(DatabaseTest, GetApacheVirtualhostNames) {
   database->Open("sqlite.db");
 
   auto names = database->GetApacheVirtualhostNames("agentname2");
-  EXPECT_EQ(1, names.size());
+  EXPECT_EQ(static_cast<unsigned>(1), names.size());
   EXPECT_STREQ("virtualhost2", names.at(0).c_str());
 }
 
@@ -1171,7 +1171,7 @@ TEST(DatabaseTest, GetApacheVirtualhostNames_WhenTwoNamesAreAvailable) {
   database->Open("sqlite.db");
 
   auto names = database->GetApacheVirtualhostNames("agentname2");
-  EXPECT_EQ(2, names.size());
+  EXPECT_EQ(static_cast<unsigned>(2), names.size());
   EXPECT_STREQ("virtualhost2", names.at(0).c_str());
   EXPECT_STREQ("virtualhost1", names.at(1).c_str());
 }
@@ -1191,7 +1191,7 @@ TEST(DatabaseTest, GetApacheVirtualhostNames_WhenColumnTextReturnsNull) {
   database->Open("sqlite.db");
 
   auto names = database->GetApacheVirtualhostNames("agentname2");
-  EXPECT_EQ(1, names.size());
+  EXPECT_EQ(static_cast<unsigned>(1), names.size());
   EXPECT_STREQ("virtualhost2", names.at(0).c_str());
 }
 
@@ -1280,7 +1280,7 @@ TEST(DatabaseTest, GetApacheLogs) {
   from.Set(10, 0, 0, 1, 1, 2015);
   to.Set(10, 0, 0, 1, 1, 2017);
   auto names = database->GetApacheLogs("agentname", "vh1", from, to, 100, 0);
-  EXPECT_EQ(1, names.size());
+  EXPECT_EQ(static_cast<unsigned>(1), names.size());
 
   auto log_entry = names.at(0);
   EXPECT_EQ(1, log_entry.id);
@@ -1369,7 +1369,7 @@ TEST(DatabaseTest, GetApacheLogs_WhenUserAgentReturnsNull) {
   from.Set(10, 0, 0, 1, 1, 2015);
   to.Set(10, 0, 0, 1, 1, 2017);
   auto names = database->GetApacheLogs("agentname", "vh1", from, to, 100, 0);
-  EXPECT_EQ(1, names.size());
+  EXPECT_EQ(static_cast<unsigned>(1), names.size());
 
   auto log_entry = names.at(0);
   EXPECT_EQ(1, log_entry.id);
@@ -1422,7 +1422,7 @@ TEST(DatabaseTest, GetApacheLogs_WhenRequestReturnsNull) {
   from.Set(10, 0, 0, 1, 1, 2015);
   to.Set(10, 0, 0, 1, 1, 2017);
   auto names = database->GetApacheLogs("agentname", "vh1", from, to, 100, 0);
-  EXPECT_EQ(1, names.size());
+  EXPECT_EQ(static_cast<unsigned>(1), names.size());
 
   auto log_entry = names.at(0);
   EXPECT_EQ(1, log_entry.id);
@@ -1475,7 +1475,7 @@ TEST(DatabaseTest, GetApacheLogs_WhenClientIPReturnsNull) {
   from.Set(10, 0, 0, 1, 1, 2015);
   to.Set(10, 0, 0, 1, 1, 2017);
   auto names = database->GetApacheLogs("agentname", "vh1", from, to, 100, 0);
-  EXPECT_EQ(1, names.size());
+  EXPECT_EQ(static_cast<unsigned>(1), names.size());
 
   auto log_entry = names.at(0);
   EXPECT_EQ(1, log_entry.id);
@@ -1528,7 +1528,7 @@ TEST(DatabaseTest, GetApacheLogs_WhenVirtualhostReturnsNull) {
   from.Set(10, 0, 0, 1, 1, 2015);
   to.Set(10, 0, 0, 1, 1, 2017);
   auto names = database->GetApacheLogs("agentname", "vh1", from, to, 100, 0);
-  EXPECT_EQ(1, names.size());
+  EXPECT_EQ(static_cast<unsigned>(1), names.size());
 
   auto log_entry = names.at(0);
   EXPECT_EQ(1, log_entry.id);
@@ -1581,7 +1581,7 @@ TEST(DatabaseTest, GetApacheLogs_WhenAgentNameReturnsNull) {
   from.Set(10, 0, 0, 1, 1, 2015);
   to.Set(10, 0, 0, 1, 1, 2017);
   auto names = database->GetApacheLogs("agentname", "vh1", from, to, 100, 0);
-  EXPECT_EQ(1, names.size());
+  EXPECT_EQ(static_cast<unsigned>(1), names.size());
 
   auto log_entry = names.at(0);
   EXPECT_EQ(1, log_entry.id);
@@ -1787,7 +1787,7 @@ TEST(DatabaseTest, GetApacheSessionStatistics) {
   from.Set(10, 0, 0, 1, 1, 2015);
   to.Set(10, 0, 0, 1, 1, 2017);
   auto names = database->GetApacheSessionStatistics("agentname", "vh1", from, to, 100, 0);
-  EXPECT_EQ(1, names.size());
+  EXPECT_EQ(static_cast<unsigned>(1), names.size());
 
   auto session = names.at(0);
   EXPECT_EQ(1, session.id);
@@ -1955,6 +1955,7 @@ TEST(DatabaseTest, GetDateId) {
   MY_EXPECT_PREPARE(sqlite_mock);
   EXPECT_CALL(*sqlite_mock, Step(DB_STATEMENT_EXAMPLE_PTR_VALUE)).Times(1).WillOnce(Return(SQLITE_ROW));
   EXPECT_CALL(*sqlite_mock, ColumnInt64(DB_STATEMENT_EXAMPLE_PTR_VALUE, 0)).WillOnce(Return(7));
+  EXPECT_CALL(*sqlite_mock, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_OK));
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
@@ -1966,10 +1967,24 @@ TEST(DatabaseTest, GetDateId_WhenItemNotExist) {
   MY_EXPECT_OPEN(sqlite_mock);
   MY_EXPECT_PREPARE(sqlite_mock);
   EXPECT_CALL(*sqlite_mock, Step(DB_STATEMENT_EXAMPLE_PTR_VALUE)).Times(1).WillOnce(Return(SQLITE_DONE));
+  EXPECT_CALL(*sqlite_mock, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_OK));
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
   EXPECT_EQ(-1, database->GetDateId(1, 1, 2016));
+}
+
+TEST(DatabaseTest, GetDateId_WhenFinalizeFail) {
+  unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
+  MY_EXPECT_OPEN(sqlite_mock);
+  MY_EXPECT_PREPARE(sqlite_mock);
+  EXPECT_CALL(*sqlite_mock, Step(DB_STATEMENT_EXAMPLE_PTR_VALUE)).Times(1).WillOnce(Return(SQLITE_ROW));
+  EXPECT_CALL(*sqlite_mock, ColumnInt64(DB_STATEMENT_EXAMPLE_PTR_VALUE, 0)).WillOnce(Return(7));
+  EXPECT_CALL(*sqlite_mock, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_NOMEM));
+
+  DatabasePtr database = Database::Create(move(sqlite_mock));
+  database->Open("sqlite.db");
+  EXPECT_THROW(database->GetDateId(1, 1, 2016), database::exception::detail::CantExecuteSqlStatementException);
 }
 
 TEST(DatabaseTest, GetDateId_WhenStepFail) {
@@ -2058,7 +2073,7 @@ TEST(DatabaseTest, IsApacheStatisticsCreatedFor_WhenNotExist) {
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
 
-  EXPECT_EQ(false, database->IsApacheStatisticsCreatedFor(1, 1, 2016));
+  EXPECT_FALSE(database->IsApacheStatisticsCreatedFor(1, 1, 2016));
 }
 
 TEST(DatabaseTest, IsApacheStatisticsCreatedFor_WhenFinalizeFail) {
