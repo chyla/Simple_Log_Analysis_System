@@ -19,6 +19,7 @@ struct ApacheSessionEntry {
   long requests_count;
   int error_percentage;
   std::string useragent;
+  bool is_anomaly;
 };
 
 typedef std::vector<ApacheSessionEntry> ApacheSessions;

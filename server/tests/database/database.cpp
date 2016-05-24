@@ -534,13 +534,14 @@ TEST(DatabaseTest, AddApacheSessionStatistics_WithOneEntry) {
   EXPECT_CALL(*sqlite_mock, BindInt64(DB_STATEMENT_EXAMPLE_PTR_VALUE, 12, 13)).WillOnce(Return(SQLITE_OK));
   EXPECT_CALL(*sqlite_mock, BindInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 13, 44)).WillOnce(Return(SQLITE_OK));
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 14, StrEq("User-Agent Example"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
+  EXPECT_CALL(*sqlite_mock, BindInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 15, 1)).WillOnce(Return(SQLITE_OK));
   EXPECT_CALL(*sqlite_mock, Step(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_DONE));
   EXPECT_CALL(*sqlite_mock, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_OK));
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
   analyzer::ApacheSessions sessions;
-  sessions.push_back({0, "agentname", "vh1", "127.0.0.1", MY_DEFAULT_TIME1(), 23, 941, 13, 44, "User-Agent Example"});
+  sessions.push_back({0, "agentname", "vh1", "127.0.0.1", MY_DEFAULT_TIME1(), 23, 941, 13, 44, "User-Agent Example", true});
 
   EXPECT_TRUE(database->AddApacheSessionStatistics(sessions));
 }
@@ -567,6 +568,7 @@ TEST(DatabaseTest, AddApacheSessionStatistics_WithTwoEntries) {
   EXPECT_CALL(*sqlite_mock, BindInt64(DB_STATEMENT_EXAMPLE_PTR_VALUE, 12, 13)).WillOnce(Return(SQLITE_OK));
   EXPECT_CALL(*sqlite_mock, BindInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 13, 44)).WillOnce(Return(SQLITE_OK));
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 14, StrEq("User-Agent Example"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
+  EXPECT_CALL(*sqlite_mock, BindInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 15, 0)).WillOnce(Return(SQLITE_OK));
 
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("agentname2"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 2, StrEq("vh2"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
@@ -584,6 +586,7 @@ TEST(DatabaseTest, AddApacheSessionStatistics_WithTwoEntries) {
   EXPECT_CALL(*sqlite_mock, BindInt64(DB_STATEMENT_EXAMPLE_PTR_VALUE, 12, 132)).WillOnce(Return(SQLITE_OK));
   EXPECT_CALL(*sqlite_mock, BindInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 13, 442)).WillOnce(Return(SQLITE_OK));
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 14, StrEq("User-Agent Example 2"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
+  EXPECT_CALL(*sqlite_mock, BindInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 15, 1)).WillOnce(Return(SQLITE_OK));
 
   EXPECT_CALL(*sqlite_mock, Step(DB_STATEMENT_EXAMPLE_PTR_VALUE)).Times(2).WillRepeatedly(Return(SQLITE_DONE));
   EXPECT_CALL(*sqlite_mock, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE)).Times(2).WillRepeatedly(Return(SQLITE_OK));
@@ -591,8 +594,8 @@ TEST(DatabaseTest, AddApacheSessionStatistics_WithTwoEntries) {
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
   analyzer::ApacheSessions sessions;
-  sessions.push_back({0, "agentname", "vh1", "127.0.0.1", MY_DEFAULT_TIME1(), 23, 941, 13, 44, "User-Agent Example"});
-  sessions.push_back({0, "agentname2", "vh2", "127.0.0.12", MY_DEFAULT_TIME2(), 232, 9412, 132, 442, "User-Agent Example 2"});
+  sessions.push_back({0, "agentname", "vh1", "127.0.0.1", MY_DEFAULT_TIME1(), 23, 941, 13, 44, "User-Agent Example", false});
+  sessions.push_back({0, "agentname2", "vh2", "127.0.0.12", MY_DEFAULT_TIME2(), 232, 9412, 132, 442, "User-Agent Example 2", true});
 
   EXPECT_TRUE(database->AddApacheSessionStatistics(sessions));
 }
@@ -632,13 +635,14 @@ TEST(DatabaseTest, AddApacheSessionStatistics_WhenFinalizeFailed) {
   EXPECT_CALL(*sqlite_mock, BindInt64(DB_STATEMENT_EXAMPLE_PTR_VALUE, 12, 13)).WillOnce(Return(SQLITE_OK));
   EXPECT_CALL(*sqlite_mock, BindInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 13, 44)).WillOnce(Return(SQLITE_OK));
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 14, StrEq("User-Agent Example"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
+  EXPECT_CALL(*sqlite_mock, BindInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 15, 0)).WillOnce(Return(SQLITE_OK));
   EXPECT_CALL(*sqlite_mock, Step(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_DONE));
   EXPECT_CALL(*sqlite_mock, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_NOMEM));
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
   analyzer::ApacheSessions sessions;
-  sessions.push_back({0, "agentname", "vh1", "127.0.0.1", MY_DEFAULT_TIME1(), 23, 941, 13, 44, "User-Agent Example"});
+  sessions.push_back({0, "agentname", "vh1", "127.0.0.1", MY_DEFAULT_TIME1(), 23, 941, 13, 44, "User-Agent Example", false});
 
   EXPECT_THROW(database->AddApacheSessionStatistics(sessions), database::exception::detail::CantExecuteSqlStatementException);
 }
@@ -664,12 +668,13 @@ TEST(DatabaseTest, AddApacheSessionStatistics_WhenStepFailed) {
   EXPECT_CALL(*sqlite_mock, BindInt64(DB_STATEMENT_EXAMPLE_PTR_VALUE, 12, 13)).WillOnce(Return(SQLITE_OK));
   EXPECT_CALL(*sqlite_mock, BindInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 13, 44)).WillOnce(Return(SQLITE_OK));
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 14, StrEq("User-Agent Example"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
+  EXPECT_CALL(*sqlite_mock, BindInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 15, 1)).WillOnce(Return(SQLITE_OK));
   EXPECT_CALL(*sqlite_mock, Step(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_NOMEM));
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
   analyzer::ApacheSessions sessions;
-  sessions.push_back({0, "agentname", "vh1", "127.0.0.1", MY_DEFAULT_TIME1(), 23, 941, 13, 44, "User-Agent Example"});
+  sessions.push_back({0, "agentname", "vh1", "127.0.0.1", MY_DEFAULT_TIME1(), 23, 941, 13, 44, "User-Agent Example", true});
 
   EXPECT_THROW(database->AddApacheSessionStatistics(sessions), database::exception::detail::CantExecuteSqlStatementException);
 }
@@ -695,12 +700,13 @@ TEST(DatabaseTest, AddApacheSessionStatistics_StepWhenDatabaseIsBusy) {
   EXPECT_CALL(*sqlite_mock, BindInt64(DB_STATEMENT_EXAMPLE_PTR_VALUE, 12, 13)).WillOnce(Return(SQLITE_OK));
   EXPECT_CALL(*sqlite_mock, BindInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 13, 44)).WillOnce(Return(SQLITE_OK));
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 14, StrEq("User-Agent Example"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
+  EXPECT_CALL(*sqlite_mock, BindInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 15, 1)).WillOnce(Return(SQLITE_OK));
   EXPECT_CALL(*sqlite_mock, Step(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_BUSY));
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
   analyzer::ApacheSessions sessions;
-  sessions.push_back({0, "agentname", "vh1", "127.0.0.1", MY_DEFAULT_TIME1(), 23, 941, 13, 44, "User-Agent Example"});
+  sessions.push_back({0, "agentname", "vh1", "127.0.0.1", MY_DEFAULT_TIME1(), 23, 941, 13, 44, "User-Agent Example", true});
 
   EXPECT_FALSE(database->AddApacheSessionStatistics(sessions));
 }
@@ -1770,6 +1776,7 @@ TEST(DatabaseTest, GetApacheSessionStatistics) {
   EXPECT_CALL(*sqlite_mock, ColumnInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 12)).WillOnce(Return(4));
   EXPECT_CALL(*sqlite_mock, ColumnInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 13)).WillOnce(Return(5));
   EXPECT_CALL(*sqlite_mock, ColumnText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 14)).WillOnce(Return(reinterpret_cast<unsigned const char *> ("useragent")));
+  EXPECT_CALL(*sqlite_mock, ColumnInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 15)).WillOnce(Return(1));
 
   EXPECT_CALL(*sqlite_mock, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_OK));
 
@@ -1798,6 +1805,7 @@ TEST(DatabaseTest, GetApacheSessionStatistics) {
   EXPECT_EQ(4, session.requests_count);
   EXPECT_EQ(5, session.error_percentage);
   EXPECT_STREQ("useragent", session.useragent.c_str());
+  EXPECT_EQ(true, session.is_anomaly);
 }
 
 TEST(DatabaseTest, GetApacheSessionStatistics_WhenFinalizeFail) {
@@ -1825,6 +1833,7 @@ TEST(DatabaseTest, GetApacheSessionStatistics_WhenFinalizeFail) {
   EXPECT_CALL(*sqlite_mock, ColumnInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 12)).WillOnce(Return(4));
   EXPECT_CALL(*sqlite_mock, ColumnInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 13)).WillOnce(Return(5));
   EXPECT_CALL(*sqlite_mock, ColumnText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 14)).WillOnce(Return(reinterpret_cast<unsigned const char *> ("useragent")));
+  EXPECT_CALL(*sqlite_mock, ColumnInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 15)).WillOnce(Return(1));
 
   EXPECT_CALL(*sqlite_mock, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_NOMEM));
 
@@ -2110,6 +2119,7 @@ TEST(DatabaseTest, GetApacheOneSessionStatistic) {
   EXPECT_CALL(*sqlite_mock, ColumnInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 12)).WillOnce(Return(4));
   EXPECT_CALL(*sqlite_mock, ColumnInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 13)).WillOnce(Return(5));
   EXPECT_CALL(*sqlite_mock, ColumnText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 14)).WillOnce(Return(reinterpret_cast<unsigned const char *> ("useragent")));
+  EXPECT_CALL(*sqlite_mock, ColumnInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 15)).WillOnce(Return(1));
 
   EXPECT_CALL(*sqlite_mock, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_OK));
 
@@ -2135,6 +2145,7 @@ TEST(DatabaseTest, GetApacheOneSessionStatistic) {
   EXPECT_EQ(4, session.requests_count);
   EXPECT_EQ(5, session.error_percentage);
   EXPECT_STREQ("useragent", session.useragent.c_str());
+  EXPECT_EQ(true, session.is_anomaly);
 }
 
 TEST(DatabaseTest, GetApacheOneSessionStatistic_WhenFinalizeFailed) {
@@ -2158,6 +2169,7 @@ TEST(DatabaseTest, GetApacheOneSessionStatistic_WhenFinalizeFailed) {
   EXPECT_CALL(*sqlite_mock, ColumnInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 12)).WillOnce(Return(4));
   EXPECT_CALL(*sqlite_mock, ColumnInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 13)).WillOnce(Return(5));
   EXPECT_CALL(*sqlite_mock, ColumnText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 14)).WillOnce(Return(reinterpret_cast<unsigned const char *> ("useragent")));
+  EXPECT_CALL(*sqlite_mock, ColumnInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 15)).WillOnce(Return(1));
 
   EXPECT_CALL(*sqlite_mock, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_NOMEM));
 

@@ -140,7 +140,8 @@ void Database::CreateApacheSessionTable() {
       "  BANDWIDTH_USAGE integer, "
       "  REQUESTS_COUNT integer, "
       "  ERROR_PERCENTAGE integer, "
-      "  USER_AGENT text "
+      "  USER_AGENT text, "
+      "  IS_ANOMALY integer "
       ");";
   int ret = sqlite_interface_->Exec(db_handle_, sql, nullptr, nullptr, nullptr);
   StatementCheckForError(ret, "Create APACHE_SESSION_TABLE error");
@@ -379,7 +380,7 @@ bool Database::AddApacheSessionStatistics(const analyzer::ApacheSessions &sessio
   StatementCheckForError(ret, "Begin transaction error");
 
   for (const analyzer::ApacheSessionEntry &entry : sessions) {
-    const char *sql = "insert into APACHE_SESSION_TABLE(AGENT_NAME, VIRTUALHOST, CLIENT_IP, UTC_HOUR, UTC_MINUTE, UTC_SECOND, UTC_DAY, UTC_MONTH, UTC_YEAR, SESSION_LENGTH, BANDWIDTH_USAGE, REQUESTS_COUNT, ERROR_PERCENTAGE, USER_AGENT) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    const char *sql = "insert into APACHE_SESSION_TABLE(AGENT_NAME, VIRTUALHOST, CLIENT_IP, UTC_HOUR, UTC_MINUTE, UTC_SECOND, UTC_DAY, UTC_MONTH, UTC_YEAR, SESSION_LENGTH, BANDWIDTH_USAGE, REQUESTS_COUNT, ERROR_PERCENTAGE, USER_AGENT, IS_ANOMALY) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     sqlite3_stmt *statement;
     ret = sqlite_interface_->Prepare(db_handle_, sql, -1, &statement, nullptr);
     StatementCheckForErrorAndRollback(ret, "Prepare insert error");
@@ -426,6 +427,9 @@ bool Database::AddApacheSessionStatistics(const analyzer::ApacheSessions &sessio
     ret = sqlite_interface_->BindText(statement, 14, entry.useragent.c_str(), -1, nullptr);
     StatementCheckForErrorAndRollback(ret, "Bind useragent error");
 
+    ret = sqlite_interface_->BindInt(statement, 15, static_cast<int> (entry.is_anomaly));
+    StatementCheckForErrorAndRollback(ret, "Bind is_anomaly error");
+
     ret = sqlite_interface_->Step(statement);
     if (ret == SQLITE_BUSY) {
       BOOST_LOG_TRIVIAL(error) << "database::Database::AddApacheSessionStatistics: Step error - SQLite is busy";
@@ -467,7 +471,7 @@ analyzer::ApacheSessions Database::GetApacheSessionStatistics(const std::string 
   }
 
   string sql =
-      "select ID, AGENT_NAME, VIRTUALHOST, CLIENT_IP, UTC_HOUR, UTC_MINUTE, UTC_SECOND, UTC_DAY, UTC_MONTH, UTC_YEAR, SESSION_LENGTH, BANDWIDTH_USAGE, REQUESTS_COUNT, ERROR_PERCENTAGE, USER_AGENT "
+      "select ID, AGENT_NAME, VIRTUALHOST, CLIENT_IP, UTC_HOUR, UTC_MINUTE, UTC_SECOND, UTC_DAY, UTC_MONTH, UTC_YEAR, SESSION_LENGTH, BANDWIDTH_USAGE, REQUESTS_COUNT, ERROR_PERCENTAGE, USER_AGENT, IS_ANOMALY "
       " from APACHE_SESSION_TABLE "
       "  where"
       "    ("
@@ -519,6 +523,7 @@ analyzer::ApacheSessions Database::GetApacheSessionStatistics(const std::string 
       entry.requests_count = sqlite_interface_->ColumnInt(statement, 12);
       entry.error_percentage = sqlite_interface_->ColumnInt(statement, 13);
       entry.useragent = TextHelper(sqlite_interface_->ColumnText(statement, 14));
+      entry.is_anomaly = static_cast<bool> (sqlite_interface_->ColumnInt(statement, 15));
 
       sessions.push_back(entry);
     }
@@ -542,7 +547,7 @@ analyzer::ApacheSessionEntry Database::GetApacheOneSessionStatistic(long long id
   }
 
   string sql =
-      "select ID, AGENT_NAME, VIRTUALHOST, CLIENT_IP, UTC_HOUR, UTC_MINUTE, UTC_SECOND, UTC_DAY, UTC_MONTH, UTC_YEAR, SESSION_LENGTH, BANDWIDTH_USAGE, REQUESTS_COUNT, ERROR_PERCENTAGE, USER_AGENT "
+      "select ID, AGENT_NAME, VIRTUALHOST, CLIENT_IP, UTC_HOUR, UTC_MINUTE, UTC_SECOND, UTC_DAY, UTC_MONTH, UTC_YEAR, SESSION_LENGTH, BANDWIDTH_USAGE, REQUESTS_COUNT, ERROR_PERCENTAGE, USER_AGENT, IS_ANOMALY "
       " from APACHE_SESSION_TABLE "
       "  where"
       "    ID=" + to_string(id) +
@@ -579,6 +584,7 @@ analyzer::ApacheSessionEntry Database::GetApacheOneSessionStatistic(long long id
     entry.requests_count = sqlite_interface_->ColumnInt(statement, 12);
     entry.error_percentage = sqlite_interface_->ColumnInt(statement, 13);
     entry.useragent = TextHelper(sqlite_interface_->ColumnText(statement, 14));
+    entry.is_anomaly = static_cast<bool> (sqlite_interface_->ColumnInt(statement, 15));
   }
 
   ret = sqlite_interface_->Finalize(statement);
