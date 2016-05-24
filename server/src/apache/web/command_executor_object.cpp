@@ -54,6 +54,17 @@ std::string CommandExecutorObject::Execute(std::string json_command) {
 
     result = GetSessions(args.at(0), args.at(1), args.at(2), args.at(3));
   }
+  else if (command == "set_apache_sessions_as_anomaly") {
+    BOOST_LOG_TRIVIAL(info) << "apache::web::CommandExecutorObject::Execute: Found 'set_apache_sessions_as_anomaly' command";
+
+    auto args = json_object["args"];
+    if (args.size() != 2) {
+      BOOST_LOG_TRIVIAL(warning) << "apache::web::CommandExecutorObject::Execute: set_apache_sessions_as_anomaly require two arguments";
+      return GetInvalidArgumentErrorJson();
+    }
+
+    result = SetApacheSessionsAsAnomaly(args.at(0), args.at(1));
+  }
 
   return result;
 }
@@ -62,7 +73,8 @@ bool CommandExecutorObject::IsCommandSupported(std::string command) {
   BOOST_LOG_TRIVIAL(debug) << "apache::web::CommandExecutorObject::IsCommandSupported: Function call";
   return (command == "get_apache_agent_names")
       || (command == "get_apache_virtualhosts_names")
-      || (command == "get_apache_sessions");
+      || (command == "get_apache_sessions")
+      || (command == "set_apache_sessions_as_anomaly");
 }
 
 CommandExecutorObject::CommandExecutorObject(::database::DatabasePtr database)
@@ -124,6 +136,18 @@ std::string CommandExecutorObject::GetSessions(const std::string &agent_name,
 
   j["status"] = "ok";
   j["result"] = r;
+
+  return j.dump();
+}
+
+const std::string CommandExecutorObject::SetApacheSessionsAsAnomaly(const std::vector<long long> &all,
+                                                                    const std::vector<long long> &anomalies) {
+  BOOST_LOG_TRIVIAL(debug) << "apache::web::CommandExecutorObject::SetApacheSessionsAsAnomaly: Function call";
+
+  database_->SetApacheSessionAsAnomaly(all, anomalies);
+
+  json j;
+  j["status"] = "ok";
 
   return j.dump();
 }

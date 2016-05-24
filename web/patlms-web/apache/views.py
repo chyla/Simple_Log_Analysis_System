@@ -81,6 +81,17 @@ def configure_anomaly_detection_save_settings(request):
     begin_date = request.POST.get('begin-date', '')
     end_date = request.POST.get('end-date', '')
     all_rows_ids = request.POST.getlist('rows_ids')
-    checks = request.POST.getlist('checks')
+    anomalies = request.POST.getlist('checks')
 
-    return redirect('apache:status', permanent=False)
+    try:
+        util.set_apache_sessions_as_anomaly([int(i) for i in all_rows_ids],
+                                            [int(i) for i in anomalies])
+    except IOError as e:
+        exception = e.strerror
+
+    if exception:
+        return redirect('apache:configure_anomaly_detection_correct_sessions_marks',
+                        permanent=False,
+                        args=(agent_name, virtualhost_name, begin_date, end_date, exception))
+    else:
+        return redirect('apache:status', permanent=False)

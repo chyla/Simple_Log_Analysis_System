@@ -30,7 +30,6 @@ class TestUtil(object):
         assert connect_ipv4.call_count == 1
         json_object = {}
         json_object["command"] = "my_test_command"
-        json_object["args"] = []
         send_text.assert_called_once_with(TestUtil.SOCKET_TEST, json.dumps(json_object))
         receive_text.assert_called_once_with(TestUtil.SOCKET_TEST)
         assert result == "my_test_answer"
@@ -72,6 +71,21 @@ class TestUtil(object):
     @patch('network.Network.connect_ipv4')
     @patch('network.Network.send_text')
     @patch('network.Network.receive_text')
+    def test_connect_and_command_without_result(self, receive_text, send_text, connect_ipv4):
+        connect_ipv4.return_value = TestUtil.SOCKET_TEST
+        receive_text.return_value = ' { "status" : "ok" } '
+
+        util.connect_and_get_result_from_command("my_test_command")
+
+        assert connect_ipv4.call_count == 1
+        json_object = {}
+        json_object["command"] = "my_test_command"
+        send_text.assert_called_once_with(TestUtil.SOCKET_TEST, json.dumps(json_object))
+        receive_text.assert_called_once_with(TestUtil.SOCKET_TEST)
+
+    @patch('network.Network.connect_ipv4')
+    @patch('network.Network.send_text')
+    @patch('network.Network.receive_text')
     def test_connect_and_get_result_from_command_when_error_returned(self, receive_text, send_text, connect_ipv4):
         connect_ipv4.return_value = TestUtil.SOCKET_TEST
         receive_text.return_value = ' { "status" : "error", "message" : "My error." } '
@@ -82,7 +96,6 @@ class TestUtil(object):
         assert connect_ipv4.call_count == 1
         json_object = {}
         json_object["command"] = "my_test_command"
-        json_object["args"] = []
         send_text.assert_called_once_with(TestUtil.SOCKET_TEST, json.dumps(json_object))
         receive_text.assert_called_once_with(TestUtil.SOCKET_TEST)
         assert ex_info.value.message == "My error."

@@ -6,12 +6,13 @@ from server_config import SERVER_ADDRESS, SERVER_PORT
 from exception import CommandException
 
 
-def connect_and_get_result_from_command(command, args=[]):
+def connect_and_get_result_from_command(command, args=None):
     n = Network.connect_ipv4(SERVER_ADDRESS, SERVER_PORT)
 
     json_object = {}
     json_object["command"] = command
-    json_object["args"] = args
+    if args:
+        json_object["args"] = args
 
     json_string = json.dumps(json_object)
 
@@ -21,7 +22,8 @@ def connect_and_get_result_from_command(command, args=[]):
 
     json_response = json.loads(response)
     if json_response['status'] == "ok":
-        return json_response['result']
+        if 'result' in json_response:
+            return json_response['result']
     else:
         raise CommandException(json_response['message'])
 
@@ -39,3 +41,6 @@ def get_apache_virtualhost_names(agent_name):
 
 def get_apache_sessions(agent_name, virtualhost_name, begin_date, end_date):
     return connect_and_get_result_from_command('get_apache_sessions', [agent_name, virtualhost_name, begin_date, end_date])
+
+def set_apache_sessions_as_anomaly(all_rows_ids, anomalies_ids):
+    return connect_and_get_result_from_command('set_apache_sessions_as_anomaly', [all_rows_ids, anomalies_ids])
