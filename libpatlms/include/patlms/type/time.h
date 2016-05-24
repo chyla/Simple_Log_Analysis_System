@@ -17,6 +17,8 @@ class Time {
                            int day, int month, int year);
   static const Time FromString(const std::string &time);
 
+  const std::string ToString() const;
+
   inline int GetMinute() const;
   inline int GetHour() const;
   inline int GetSecond() const;

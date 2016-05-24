@@ -84,3 +84,10 @@ TEST(Time, FromString_WrongDateAndTimeWithAdditionalChar) {
 
   ASSERT_THROW(Time::FromString(date), ::type::exception::detail::TimeParseException);
 }
+
+TEST(Time, ToString) {
+  Time t;
+  t.Set(9, 3, 1, 2, 5, 2015);
+
+  ASSERT_STREQ("2015-05-02 09:03:01", t.ToString().c_str());
+}

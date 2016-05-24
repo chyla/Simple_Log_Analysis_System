@@ -59,6 +59,17 @@ const Time Time::FromString(const std::string &time) {
   return Time::Create(hour, minute, second, day, month, year);
 }
 
+const std::string Time::ToString() const {
+  auto helper = [](int i) {
+    return (i < 10 ? "0" : "") +std::to_string(i);
+  };
+
+  const std::string time_string = std::to_string(year_) + "-" + helper(month_) + "-" + helper(day_)
+      + " " + helper(hour_) + ":" + helper(minute_) + ":" + helper(second_);
+
+  return time_string;
+}
+
 std::ostream& operator<<(std::ostream& os, const type::Time &time) {
   os << time.GetYear() << "-" << time.GetMonth() << "-" << time.GetDay() << " "
       << time.GetHour() << ":" << time.GetMinute() << ":" << time.GetSecond();
