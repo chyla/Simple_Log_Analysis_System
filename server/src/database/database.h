@@ -7,9 +7,11 @@
 
 #include <patlms/type/time.h>
 
+#include "types.h"
 #include "detail/sqlite_interface.h"
 #include "src/type/all.h"
 #include "src/analyzer/apache_session_entry.h"
+#include "src/apache/database/anomaly_detection_configuration_entry.h"
 
 namespace database
 {
@@ -40,9 +42,13 @@ class Database {
 
   void CreateApacheSessionExistsTable();
 
+  void CreateApacheAnomalyDetectionConfigurationTable();
+
   void AddDate(int day, int month, int year);
 
   long long GetDateId(int day, int month, int year);
+
+  type::Time GetDateById(RowId id);
 
   bool AddBashLogs(const type::BashLogs &log_entries);
 
@@ -60,6 +66,10 @@ class Database {
   void SetApacheSessionAsAnomaly(RowIds all, RowIds anomaly);
 
   analyzer::ApacheSessionEntry GetApacheOneSessionStatistic(long long id);
+
+  void SetApacheAnomalyDetectionConfiguration(const ::apache::database::AnomalyDetectionConfigurationEntry &configuration);
+
+  const ::apache::database::AnomalyDetectionConfiguration GetApacheAnomalyDetectionConfiguration();
 
   void MarkApacheStatisticsAsCreatedFor(int day, int month, int year);
 

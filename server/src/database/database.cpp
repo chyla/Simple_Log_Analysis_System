@@ -166,6 +166,29 @@ void Database::CreateApacheSessionExistsTable() {
   StatementCheckForError(ret, "Create APACHE_SESSION_EXISTS_TABLE error");
 }
 
+void Database::CreateApacheAnomalyDetectionConfigurationTable() {
+  BOOST_LOG_TRIVIAL(debug) << "database::Database::CreateApacheAnomalyDetectionConfigurationTable: Function call";
+
+  if (is_open_ == false) {
+    BOOST_LOG_TRIVIAL(error) << "database::Database::CreateApacheAnomalyDetectionConfigurationTable: Database is not open.";
+    throw exception::detail::CantExecuteSqlStatementException();
+  }
+
+  const char *sql =
+      "create table if not exists APACHE_ANOMALY_DETECTION_CONFIGURATION_TABLE("
+      "  ID integer primary key, "
+      "  AGENT_NAME text not null, "
+      "  VIRTUALHOST_NAME text not null, "
+      "  BEGIN_DATE_ID integer not null, "
+      "  END_DATE_ID integer not null, "
+      "  foreign key(BEGIN_DATE_ID) references DATE_TABLE(ID), "
+      "  foreign key(BEGIN_DATE_ID) references DATE_TABLE(ID),"
+      "  unique (AGENT_NAME, VIRTUALHOST_NAME) "
+      ");";
+  int ret = sqlite_interface_->Exec(db_handle_, sql, nullptr, nullptr, nullptr);
+  StatementCheckForError(ret, "Create APACHE_ANOMALY_DETECTION_CONFIGURATION_TABLE error");
+}
+
 void Database::AddDate(int day, int month, int year) {
   BOOST_LOG_TRIVIAL(debug) << "database::Database::AddDate: Function call";
 
@@ -215,6 +238,48 @@ long long Database::GetDateId(int day, int month, int year) {
   StatementCheckForError(ret, "Finalize error");
 
   return id;
+}
+
+type::Time Database::GetDateById(RowId id) {
+  BOOST_LOG_TRIVIAL(debug) << "database::Database::GetDateById: Function call";
+  int ret, day, month, year;
+  type::Time time;
+  bool found = false;
+
+  if (is_open_ == false) {
+    BOOST_LOG_TRIVIAL(error) << "database::Database::GetDateById: Database is not open";
+    throw exception::detail::CantExecuteSqlStatementException();
+  }
+
+  string sql =
+      "select DAY, MONTH, YEAR from DATE_TABLE "
+      "  where"
+      "    ID=" + to_string(id) + ";";
+
+  sqlite3_stmt *statement;
+  ret = sqlite_interface_->Prepare(db_handle_, sql.c_str(), -1, &statement, nullptr);
+  StatementCheckForError(ret, "Prepare error");
+
+  ret = sqlite_interface_->Step(statement);
+  StatementCheckForError(ret, "Step error");
+
+  if (ret == SQLITE_ROW) {
+    found = true;
+    day = sqlite_interface_->ColumnInt(statement, 0);
+    month = sqlite_interface_->ColumnInt(statement, 1);
+    year = sqlite_interface_->ColumnInt(statement, 2);
+    time.Set(0, 0, 0, day, month, year);
+  }
+
+  ret = sqlite_interface_->Finalize(statement);
+  StatementCheckForError(ret, "Finalize error");
+
+  if (!found) {
+    BOOST_LOG_TRIVIAL(error) << "database::Database::GetDateById: Date not found";
+    throw exception::detail::CantExecuteSqlStatementException();
+  }
+
+  return time;
 }
 
 bool Database::AddBashLogs(const type::BashLogs &log_entries) {
@@ -537,20 +602,20 @@ analyzer::ApacheSessions Database::GetApacheSessionStatistics(const std::string 
 }
 
 void Database::SetApacheSessionAsAnomaly(RowIds all, RowIds anomalies) {
-  BOOST_LOG_TRIVIAL(debug) << "database::Database::GetApacheOneSessionStatistic: Function call";
+  BOOST_LOG_TRIVIAL(debug) << "database::Database::SetApacheSessionAsAnomaly: Function call";
 
   if (is_open_ == false) {
-    BOOST_LOG_TRIVIAL(error) << "database::Database::GetApacheOneSessionStatistic: Database is not open";
+    BOOST_LOG_TRIVIAL(error) << "database::Database::SetApacheSessionAsAnomaly: Database is not open";
     throw exception::detail::CantExecuteSqlStatementException();
   }
 
   string sql = "begin transaction; ";
   for (auto id : all)
     sql += "update APACHE_SESSION_TABLE set IS_ANOMALY=0 where ID=" + to_string(id) + "; ";
-  
+
   for (auto id : anomalies)
     sql += "update APACHE_SESSION_TABLE set IS_ANOMALY=1 where ID=" + to_string(id) + "; ";
-  
+
   sql += "end transaction; ";
 
   int ret = sqlite_interface_->Exec(db_handle_, sql.c_str(), nullptr, nullptr, nullptr);
@@ -612,6 +677,94 @@ analyzer::ApacheSessionEntry Database::GetApacheOneSessionStatistic(long long id
   StatementCheckForError(ret, "Finalize error");
 
   return entry;
+}
+
+void Database::SetApacheAnomalyDetectionConfiguration(const ::apache::database::AnomalyDetectionConfigurationEntry &configuration) {
+  BOOST_LOG_TRIVIAL(debug) << "database::Database::SetApacheAnomalyDetectionConfiguration: Function call";
+  int ret;
+
+  if (is_open_ == false) {
+    BOOST_LOG_TRIVIAL(error) << "database::Database::SetApacheAnomalyDetectionConfiguration: Database is not open.";
+    throw exception::detail::CantExecuteSqlStatementException();
+  }
+
+  string sql =
+      "insert or replace into APACHE_ANOMALY_DETECTION_CONFIGURATION_TABLE (ID, AGENT_NAME, VIRTUALHOST_NAME, BEGIN_DATE_ID, END_DATE_ID) "
+      "values ("
+      "  ( select ID from  APACHE_ANOMALY_DETECTION_CONFIGURATION_TABLE where AGENT_NAME=? and VIRTUALHOST_NAME=? ), "
+      "  ?, "
+      "  ?, "
+      "  ( select ID from DATE_TABLE where DAY=" + to_string(configuration.begin_date.GetDay()) + " and MONTH=" + to_string(configuration.begin_date.GetMonth()) + " and YEAR=" + to_string(configuration.begin_date.GetYear()) + " ),"
+      "  ( select ID from DATE_TABLE where DAY=" + to_string(configuration.end_date.GetDay()) + " and MONTH=" + to_string(configuration.end_date.GetMonth()) + " and YEAR=" + to_string(configuration.end_date.GetYear()) + " )"
+      ");";
+
+  sqlite3_stmt *statement;
+  ret = sqlite_interface_->Prepare(db_handle_, sql.c_str(), -1, &statement, nullptr);
+  StatementCheckForError(ret, "Prepare insert error");
+
+  ret = sqlite_interface_->BindText(statement, 1, configuration.agent_name.c_str(), -1, nullptr);
+  StatementCheckForError(ret, "Bind useragent error");
+
+  ret = sqlite_interface_->BindText(statement, 2, configuration.virtualhost_name.c_str(), -1, nullptr);
+  StatementCheckForError(ret, "Bind useragent error");
+
+  ret = sqlite_interface_->BindText(statement, 3, configuration.agent_name.c_str(), -1, nullptr);
+  StatementCheckForError(ret, "Bind useragent error");
+
+  ret = sqlite_interface_->BindText(statement, 4, configuration.virtualhost_name.c_str(), -1, nullptr);
+  StatementCheckForError(ret, "Bind useragent error");
+
+  ret = sqlite_interface_->Step(statement);
+  StatementCheckForError(ret, "Step error");
+
+  ret = sqlite_interface_->Finalize(statement);
+  StatementCheckForError(ret, "Finalize error");
+}
+
+const ::apache::database::AnomalyDetectionConfiguration Database::GetApacheAnomalyDetectionConfiguration() {
+  BOOST_LOG_TRIVIAL(debug) << "database::Database::GetApacheAnomalyDetectionConfiguration: Function call";
+  int ret;
+  RowId date_id;
+  ::apache::database::AnomalyDetectionConfiguration configuration;
+
+  if (is_open_ == false) {
+    BOOST_LOG_TRIVIAL(error) << "database::Database::GetApacheAnomalyDetectionConfiguration: Database is not open.";
+    throw exception::detail::CantExecuteSqlStatementException();
+  }
+
+  string sql = "select ID, AGENT_NAME, VIRTUALHOST_NAME, BEGIN_DATE_ID, END_DATE_ID from APACHE_ANOMALY_DETECTION_CONFIGURATION_TABLE; ";
+
+  sqlite3_stmt *statement;
+  ret = sqlite_interface_->Prepare(db_handle_, sql.c_str(), -1, &statement, nullptr);
+  StatementCheckForError(ret, "Prepare insert error");
+
+  do {
+    ret = sqlite_interface_->Step(statement);
+    StatementCheckForError(ret, "Step error");
+
+    if (ret == SQLITE_ROW) {
+      BOOST_LOG_TRIVIAL(debug) << "database::Database::GetApacheAnomalyDetectionConfiguration: Found new entry in database";
+      ::apache::database::AnomalyDetectionConfigurationEntry entry;
+
+      entry.id = sqlite_interface_->ColumnInt64(statement, 0);
+      entry.agent_name = TextHelper(sqlite_interface_->ColumnText(statement, 1));
+      entry.virtualhost_name = TextHelper(sqlite_interface_->ColumnText(statement, 2));
+
+      date_id = sqlite_interface_->ColumnInt64(statement, 3);
+      entry.begin_date = GetDateById(date_id);
+
+      date_id = sqlite_interface_->ColumnInt64(statement, 4);
+      entry.end_date = GetDateById(date_id);
+
+      configuration.push_back(entry);
+    }
+  }
+  while (ret != SQLITE_DONE);
+
+  ret = sqlite_interface_->Finalize(statement);
+  StatementCheckForError(ret, "Finalize error");
+
+  return configuration;
 }
 
 void Database::MarkApacheStatisticsAsCreatedFor(int day, int month, int year) {

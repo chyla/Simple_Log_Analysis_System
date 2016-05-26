@@ -46,6 +46,7 @@ database::DatabasePtr CreateDatabase(const program_options::Options &options) {
   database->CreateApacheSessionTable();
   database->CreateDateTable();
   database->CreateApacheSessionExistsTable();
+  database->CreateApacheAnomalyDetectionConfigurationTable();
 
   return database;
 }
