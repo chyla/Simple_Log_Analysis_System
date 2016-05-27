@@ -10,14 +10,14 @@ tests_SOURCES	= main.cpp \
 		    database/database.cpp \
 		    web/command_executor.cpp \
 		    web/command_receiver.cpp \
-		    program_options/program_options_command_executor_object.cpp
+		    program_options/web/command_executor_object.cpp
 
 OBJECT_FILES	= ../src/database/database.o \
 		    ../src/database/detail/sqlite.o \
 		    ../src/web/command_executor.o \
 		    ../src/web/command_receiver.o \
 		    ../src/program_options/options.o \
-		    ../src/program_options/program_options_command_executor_object.o
+		    ../src/program_options/web/command_executor_object.o
 
 tests_LDADD	= $(OBJECT_FILES) \
 			@GTEST_LIBS@ \

@@ -3,7 +3,7 @@
 #include <memory>
 #include <unistd.h>
 
-#include "src/program_options/program_options_command_executor_object.h"
+#include "src/program_options/web/command_executor_object.h"
 
 using namespace nlohmann;
 using namespace testing;
@@ -28,7 +28,7 @@ class ProgramOptionsCommandExecutorObjectTest : public ::testing::Test {
   }
 
   void SetUp() {
-    program_options_object = ProgramOptionsCommandExecutorObject::Create(options);
+    program_options_object = program_options::web::CommandExecutorObject::Create(options);
   }
 
   void TearDown() {
@@ -38,7 +38,7 @@ class ProgramOptionsCommandExecutorObjectTest : public ::testing::Test {
   }
 
   const Options options;
-  ProgramOptionsCommandExecutorObjectPtr program_options_object;
+  program_options::web::CommandExecutorObjectPtr program_options_object;
 };
 
 TEST_F(ProgramOptionsCommandExecutorObjectTest, Execute_UnknownCommand) {

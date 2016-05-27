@@ -16,7 +16,7 @@
 #include "database/database.h"
 #include "web/command_receiver.h"
 #include "web/command_executor.h"
-#include "program_options/program_options_command_executor_object.h"
+#include "program_options/web/command_executor_object.h"
 
 #include "apache/web/command_executor_object.h"
 #include "src/apache/dbus/object/apache.h"
@@ -99,7 +99,7 @@ main(int argc, char *argv[]) {
 
     database = CreateDatabase(options);
 
-    auto options_command_object = program_options::ProgramOptionsCommandExecutorObject::Create(options);
+    auto options_command_object = program_options::web::CommandExecutorObject::Create(options);
     auto command_executor = web::CommandExecutor::Create();
     auto apache_web_command_executor = apache::web::CommandExecutorObject::Create(database);
     command_executor->RegisterCommandObject(options_command_object);
