@@ -8,7 +8,18 @@ def configure_actions(request):
     return render_to_response('apache/configure_actions.html')
 
 def status(request):
-    return render_to_response("apache/status.html")
+    exception = None
+    configuration = None
+
+    try:
+        configuration = util.get_apache_anomaly_detection_configuration()
+    except IOError as e:
+        exception = e.strerror
+
+    return render_to_response("apache/status.html",
+                              {'exception' : exception,
+                               'configuration' : configuration,
+                               })
 
 def configure_anomaly_detection_select_agent_name(request):
     exception = None
@@ -61,6 +72,7 @@ def configure_anomaly_detection_correct_sessions_marks(request):
 
     try:
         sessions = util.get_apache_sessions(agent_name, virtualhost_name, begin_date, end_date)
+        util.set_apache_anomaly_detection_configuration(agent_name, virtualhost_name, begin_date, end_date)
     except IOError as e:
         exception = e.strerror
 

@@ -38,6 +38,11 @@ class CommandExecutorObject : public ::web::detail::CommandExecutorObject {
                           const std::string &end_date);
   const std::string SetApacheSessionsAsAnomaly(const std::vector<long long> &all,
                                                const std::vector<long long> &anomalies);
+  const std::string GetApacheAnomalyDetectionConfiguration();
+  const std::string SetApacheAnomalyDetectionConfiguration(const std::string &agent_name,
+                                                           const std::string &virtualhost_name,
+                                                           const std::string &begin_date,
+                                                           const std::string &end_date);
 };
 
 }

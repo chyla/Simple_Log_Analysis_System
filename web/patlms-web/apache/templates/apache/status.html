@@ -7,21 +7,27 @@
 
 <p>
 
-<table class="pure-table pure-table-bordered">
-    <thead>
-        <tr>
-            <th>Configured</th>
-            <th>Data range</th>
-        </tr>
-    </thead>
-
-    <tbody>
-        <tr>
-            <td> no </td>
-            <td> - </td>
-        </tr>
-    </tbody>
-</table>
+{% if configuration %}
+    <table class="pure-table pure-table-bordered">
+        <thead>
+            <tr>
+                <th>Configured</th>
+                <th>Data range</th>
+            </tr>
+        </thead>
+    
+        <tbody>
+            {% for c in configuration %}
+            <tr {% cycle '' 'class="pure-table-odd"' %}>
+                <td> {{ c.agent_name }}/{{ c.virtualhost_name }} </td>
+                <td> {{ c.begin_date }} - {{ c.end_date }} </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    No configuration found.
+{% endif %}
 
 </p>
 

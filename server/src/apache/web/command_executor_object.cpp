@@ -65,6 +65,22 @@ std::string CommandExecutorObject::Execute(std::string json_command) {
 
     result = SetApacheSessionsAsAnomaly(args.at(0), args.at(1));
   }
+  else if (command == "get_apache_anomaly_detection_configuration") {
+    BOOST_LOG_TRIVIAL(info) << "apache::web::CommandExecutorObject::Execute: Found 'get_apache_anomaly_detection_configuration' command";
+
+    result = GetApacheAnomalyDetectionConfiguration();
+  }
+  else if (command == "set_apache_anomaly_detection_configuration") {
+    BOOST_LOG_TRIVIAL(info) << "apache::web::CommandExecutorObject::Execute: Found 'set_apache_anomaly_detection_configuration' command";
+
+    auto args = json_object["args"];
+    if (args.size() != 4) {
+      BOOST_LOG_TRIVIAL(warning) << "apache::web::CommandExecutorObject::Execute: set_apache_anomaly_detection_configuration require four arguments";
+      return GetInvalidArgumentErrorJson();
+    }
+
+    result = SetApacheAnomalyDetectionConfiguration(args.at(0), args.at(1), args.at(2), args.at(3));
+  }
 
   return result;
 }
@@ -74,7 +90,9 @@ bool CommandExecutorObject::IsCommandSupported(std::string command) {
   return (command == "get_apache_agent_names")
       || (command == "get_apache_virtualhosts_names")
       || (command == "get_apache_sessions")
-      || (command == "set_apache_sessions_as_anomaly");
+      || (command == "set_apache_sessions_as_anomaly")
+      || (command == "get_apache_anomaly_detection_configuration")
+      || (command == "set_apache_anomaly_detection_configuration");
 }
 
 CommandExecutorObject::CommandExecutorObject(::database::DatabasePtr database)
@@ -145,6 +163,50 @@ const std::string CommandExecutorObject::SetApacheSessionsAsAnomaly(const std::v
   BOOST_LOG_TRIVIAL(debug) << "apache::web::CommandExecutorObject::SetApacheSessionsAsAnomaly: Function call";
 
   database_->SetApacheSessionAsAnomaly(all, anomalies);
+
+  json j;
+  j["status"] = "ok";
+
+  return j.dump();
+}
+
+const std::string CommandExecutorObject::GetApacheAnomalyDetectionConfiguration() {
+  BOOST_LOG_TRIVIAL(debug) << "apache::web::CommandExecutorObject::GetApacheAnomalyDetectionConfiguration: Function call";
+
+  auto conf = database_->GetApacheAnomalyDetectionConfiguration();
+
+  json r = json::array();
+  for (auto c : conf) {
+    json t;
+    t["id"] = c.id;
+    t["agent_name"] = c.agent_name;
+    t["virtualhost_name"] = c.virtualhost_name;
+    t["begin_date"] = to_string(c.begin_date.GetYear()) + "-" + to_string(c.begin_date.GetMonth()) + "-" + to_string(c.begin_date.GetDay());
+    t["end_date"] = to_string(c.end_date.GetYear()) + "-" + to_string(c.end_date.GetMonth()) + "-" + to_string(c.end_date.GetDay());
+
+    r.push_back(t);
+  }
+
+  json j;
+  j["status"] = "ok";
+  j["result"] = r;
+
+  return j.dump();
+}
+
+const std::string CommandExecutorObject::SetApacheAnomalyDetectionConfiguration(const std::string &agent_name,
+                                                                                const std::string &virtualhost_name,
+                                                                                const std::string &begin_date,
+                                                                                const std::string &end_date) {
+  ::apache::database::AnomalyDetectionConfigurationEntry c;
+  c.agent_name = agent_name;
+  c.virtualhost_name = virtualhost_name;
+  c.begin_date = ::type::Time::FromString(begin_date);
+  c.end_date = ::type::Time::FromString(end_date);
+
+  database_->AddDate(c.begin_date.GetDay(), c.begin_date.GetMonth(), c.begin_date.GetYear());
+  database_->AddDate(c.end_date.GetDay(), c.end_date.GetMonth(), c.end_date.GetYear());
+  database_->SetApacheAnomalyDetectionConfiguration(c);
 
   json j;
   j["status"] = "ok";
