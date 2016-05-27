@@ -4,7 +4,13 @@
 
 #define CACHE_CAPACITY 5
 
-namespace objects
+namespace bash
+{
+
+namespace dbus
+{
+
+namespace object
 {
 
 Bash::Bash(database::DatabasePtr database)
@@ -116,6 +122,10 @@ void Bash::FlushCache() {
   BOOST_LOG_TRIVIAL(debug) << "objects::Bash::FlushCache: Function call";
   database_->AddBashLogs(log_entry_cache_);
   log_entry_cache_.clear();
+}
+
+}
+
 }
 
 }

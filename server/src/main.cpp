@@ -20,7 +20,7 @@
 
 #include "apache/web/command_executor_object.h"
 #include "src/apache/dbus/object/apache.h"
-#include "objects/bash.h"
+#include "src/bash/dbus/object/bash.h"
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -55,7 +55,7 @@ int
 main(int argc, char *argv[]) {
   program_options::Parser p;
   program_options::Options options;
-  objects::BashPtr bash_object;
+  bash::dbus::object::BashPtr bash_object;
   apache::dbus::object::ApachePtr apache_object;
   database::DatabasePtr database;
 
@@ -113,7 +113,7 @@ main(int argc, char *argv[]) {
     bus->Connect();
     bus->RequestConnectionName("org.chyla.patlms.server");
 
-    bash_object = std::make_shared<objects::Bash>(database);
+    bash_object = std::make_shared<bash::dbus::object::Bash>(database);
     bus->RegisterObject(bash_object);
 
     apache_object = std::make_shared<apache::dbus::object::Apache>(database);

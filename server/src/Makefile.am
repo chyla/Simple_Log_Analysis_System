@@ -11,7 +11,7 @@ patlms_server_SOURCES	= main.cpp \
 				program_options/options.cpp \
 				program_options/parser.cpp \
 				program_options/program_options_command_executor_object.cpp \
-				objects/bash.cpp \
+				bash/dbus/object/bash.cpp \
 				apache/dbus/object/apache.cpp \
 				web/command_receiver.cpp \
 				web/command_executor.cpp \
