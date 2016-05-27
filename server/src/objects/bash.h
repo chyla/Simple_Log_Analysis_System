@@ -7,7 +7,6 @@
 #include <patlms/type/bash_log_entry.h>
 
 #include "src/database/database.h"
-#include "src/type/typedefs.h"
 
 namespace objects
 {

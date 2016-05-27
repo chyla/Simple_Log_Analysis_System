@@ -1,6 +1,8 @@
 #ifndef APACHE_LOG_ENTRY_H
 #define APACHE_LOG_ENTRY_H
 
+#include <vector>
+
 #include <patlms/type/time.h>
 
 namespace type
@@ -17,6 +19,8 @@ struct ApacheLogEntry {
   int bytes;
   std::string user_agent;
 };
+
+typedef std::vector<ApacheLogEntry> ApacheLogs;
 
 }
 

@@ -9,7 +9,6 @@
 #include "src/database/exception/detail/cant_open_database_exception.h"
 #include "src/database/exception/detail/cant_close_database_exception.h"
 #include "src/database/exception/detail/cant_execute_sql_statement_exception.h"
-#include "src/type/all.h"
 
 #include "mock/database/sqlite.h"
 #include "src/apache/database/anomaly_detection_configuration_entry.h"

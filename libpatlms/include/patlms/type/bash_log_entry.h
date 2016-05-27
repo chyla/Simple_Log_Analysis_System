@@ -1,6 +1,8 @@
 #ifndef PATLMS_TYPE_BASH_LOG_ENTRY_H
 #define PATLMS_TYPE_BASH_LOG_ENTRY_H
 
+#include <vector>
+
 #include <patlms/type/time.h>
 
 namespace type
@@ -13,6 +15,8 @@ struct BashLogEntry {
   unsigned user_id;
   std::string command;
 };
+
+typedef std::vector<BashLogEntry> BashLogs;
 
 }
 

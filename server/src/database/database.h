@@ -6,10 +6,11 @@
 #include <vector>
 
 #include <patlms/type/time.h>
+#include <patlms/type/apache_log_entry.h>
+#include <patlms/type/bash_log_entry.h>
 
 #include "types.h"
 #include "detail/sqlite_interface.h"
-#include "src/type/all.h"
 #include "src/analyzer/apache_session_entry.h"
 #include "src/apache/database/anomaly_detection_configuration_entry.h"
 
