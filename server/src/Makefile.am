@@ -8,8 +8,8 @@ bin_PROGRAMS		= patlms-server
 patlms_server_SOURCES	= main.cpp \
 				database/database.cpp \
 				database/detail/sqlite.cpp \
-				program_options/options.cpp \
 				program_options/parser.cpp \
+				program_options/type/options.cpp \
 				program_options/web/command_executor_object.cpp \
 				bash/dbus/object/bash.cpp \
 				apache/dbus/object/apache.cpp \

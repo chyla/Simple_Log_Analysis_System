@@ -4,6 +4,7 @@
 
 using namespace std;
 using namespace boost::program_options;
+using namespace program_options::type;
 
 
 namespace program_options
@@ -24,7 +25,7 @@ help_options_("Help options") {
       ("databasefile", value<string>(), "database file path")
       ("web_address", value<string>(), "web listen address")
       ("web_port", value<unsigned>(), "web listen port")
-  ;
+      ;
 
   help_options_.add_options()
       ("help,h", "print help message and exit");

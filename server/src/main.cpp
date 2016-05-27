@@ -38,7 +38,7 @@ void sigterm_handler(int sig) {
   command_receiver->StopListen();
 }
 
-database::DatabasePtr CreateDatabase(const program_options::Options &options) {
+database::DatabasePtr CreateDatabase(const program_options::type::Options &options) {
   database::DatabasePtr database = database::Database::Create();
   database->Open(options.GetDatabasefilePath());
   database->CreateBashLogsTable();
@@ -54,7 +54,7 @@ database::DatabasePtr CreateDatabase(const program_options::Options &options) {
 int
 main(int argc, char *argv[]) {
   program_options::Parser p;
-  program_options::Options options;
+  program_options::type::Options options;
   bash::dbus::object::BashPtr bash_object;
   apache::dbus::object::ApachePtr apache_object;
   database::DatabasePtr database;

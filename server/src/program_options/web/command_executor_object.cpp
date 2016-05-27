@@ -5,6 +5,7 @@
 
 using namespace std;
 using namespace nlohmann;
+using namespace program_options::type;
 
 namespace program_options
 {

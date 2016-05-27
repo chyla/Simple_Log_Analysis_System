@@ -3,6 +3,9 @@
 namespace program_options
 {
 
+namespace type
+{
+
 Options::Options()
 : web_port_(0),
 dbus_port_(0),
@@ -79,6 +82,8 @@ const std::string& Options::GetWebAddress() const {
 
 const unsigned& Options::GetWebPort() const {
   return web_port_;
+}
+
 }
 
 }

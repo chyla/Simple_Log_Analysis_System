@@ -3,7 +3,7 @@
 
 #include <memory>
 
-#include "src/program_options/options.h"
+#include "src/program_options/type/options.h"
 #include "src/web/detail/command_executor_object.h"
 
 namespace program_options
@@ -19,7 +19,7 @@ class CommandExecutorObject : public ::web::detail::CommandExecutorObject {
  public:
   virtual ~CommandExecutorObject() = default;
 
-  static CommandExecutorObjectPtr Create(const Options &options);
+  static CommandExecutorObjectPtr Create(const type::Options &options);
 
   std::string Execute(std::string command);
 
@@ -27,9 +27,9 @@ class CommandExecutorObject : public ::web::detail::CommandExecutorObject {
 
  private:
   typedef std::string Command;
-  const Options &options_;
+  const type::Options &options_;
 
-  CommandExecutorObject(const Options &options);
+  CommandExecutorObject(const type::Options &options);
   std::string GetServerProcessPid() const;
   std::string GetServerProcessPidfile() const;
 };

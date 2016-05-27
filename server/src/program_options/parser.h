@@ -5,23 +5,22 @@
 #include <utility>
 #include <string>
 
-#include "options.h"
+#include "src/program_options/type/options.h"
 
 
 namespace program_options
 {
 
-class Parser
-{
+class Parser {
  public:
   Parser();
 
   std::string GetHelpMessage() const;
-    
+
   void SetCommandLineOptions(const int &argc, char **argv);
   void SetConfigFilePath(const std::string &path);
 
-  Options Parse();
+  type::Options Parse();
 
  private:
   typedef boost::program_options::options_description options_description;
@@ -31,7 +30,7 @@ class Parser
 
   options_description general_options_, help_options_, all_options_;
 };
-  
+
 }
 
 #endif // PATLMS_PROGRAM_OPTIONS_PARSER_H

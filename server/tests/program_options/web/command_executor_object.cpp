@@ -9,6 +9,7 @@ using namespace nlohmann;
 using namespace testing;
 using namespace std;
 using namespace program_options;
+using namespace program_options::type;
 
 class ProgramOptionsCommandExecutorObjectTest : public ::testing::Test {
  public:

@@ -1,10 +1,12 @@
-#ifndef PATLMS_PROGRAM_OPTIONS_OPTIONS_H
-#define PATLMS_PROGRAM_OPTIONS_OPTIONS_H
+#ifndef SRC_PROGRAM_OPTIONS_TYPE_OPTIONS_H
+#define SRC_PROGRAM_OPTIONS_TYPE_OPTIONS_H
 
 #include <string>
 
-
 namespace program_options
+{
+
+namespace type
 {
 
 class Options {
@@ -58,4 +60,6 @@ class Options {
 
 }
 
-#endif // PATLMS_PROGRAM_OPTIONS_OPTIONS_H
+}
+
+#endif // SRC_PROGRAM_OPTIONS_TYPE_OPTIONS_H

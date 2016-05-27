@@ -2,7 +2,6 @@
 #define COMMAND_EXECUTOR_H
 
 #include "detail/command_executor_interface.h"
-#include "src/program_options/options.h"
 
 #include <set>
 #include <memory>
