@@ -4,7 +4,7 @@
 #include <memory>
 
 #include "src/program_options/type/options.h"
-#include "src/web/detail/command_executor_object.h"
+#include "src/web/type/command_executor_object_interface.h"
 
 namespace program_options
 {
@@ -15,7 +15,7 @@ namespace web
 class CommandExecutorObject;
 typedef std::shared_ptr<CommandExecutorObject> CommandExecutorObjectPtr;
 
-class CommandExecutorObject : public ::web::detail::CommandExecutorObject {
+class CommandExecutorObject : public ::web::type::CommandExecutorObjectInterface {
  public:
   virtual ~CommandExecutorObject() = default;
 

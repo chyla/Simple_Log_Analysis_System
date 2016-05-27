@@ -1,5 +1,5 @@
-#ifndef COMMAND_EXECUTOR_H
-#define COMMAND_EXECUTOR_H
+#ifndef SRC_WEB_COMMAND_EXECUTOR_H
+#define SRC_WEB_COMMAND_EXECUTOR_H
 
 #include "detail/command_executor_interface.h"
 
@@ -20,14 +20,14 @@ class CommandExecutor : public detail::CommandExecutorInterface {
 
   std::string Execute(std::string command) override;
 
-  void RegisterCommandObject(detail::CommandExecutorObjectPtr object) override;
+  void RegisterCommandObject(type::CommandExecutorObjectInterfacePtr object) override;
 
  private:
   CommandExecutor();
 
-  std::set<detail::CommandExecutorObjectPtr> command_objects_;
+  std::set<type::CommandExecutorObjectInterfacePtr> command_objects_;
 };
 
 }
 
-#endif /* COMMAND_EXECUTOR_H */
+#endif /* SRC_WEB_COMMAND_EXECUTOR_H */

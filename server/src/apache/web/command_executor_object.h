@@ -2,7 +2,7 @@
 #define SRC_APACHE_WEB_COMMAND_EXECUTOR_OBJECT_H
 
 #include "src/database/database.h"
-#include "src/web/detail/command_executor_object.h"
+#include "src/web/type/command_executor_object_interface.h"
 
 #include <memory>
 
@@ -15,7 +15,7 @@ namespace web
 class CommandExecutorObject;
 typedef std::shared_ptr<CommandExecutorObject> CommandExecutorObjectPtr;
 
-class CommandExecutorObject : public ::web::detail::CommandExecutorObject {
+class CommandExecutorObject : public ::web::type::CommandExecutorObjectInterface {
  public:
   virtual ~CommandExecutorObject() = default;
 

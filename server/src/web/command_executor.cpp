@@ -35,7 +35,7 @@ std::string CommandExecutor::Execute(std::string json_command) {
   return result;
 }
 
-void CommandExecutor::RegisterCommandObject(detail::CommandExecutorObjectPtr object) {
+void CommandExecutor::RegisterCommandObject(type::CommandExecutorObjectInterfacePtr object) {
   BOOST_LOG_TRIVIAL(debug) << "web::CommandExecutor::RegisterCommandObject: Function call";
   command_objects_.insert(object);
 }

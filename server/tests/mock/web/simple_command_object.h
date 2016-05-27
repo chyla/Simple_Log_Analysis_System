@@ -3,7 +3,7 @@
 
 #include <gmock/gmock.h>
 
-#include "src/web/detail/command_executor_object.h"
+#include "src/web/type/command_executor_object_interface.h"
 
 namespace mock
 {
@@ -11,7 +11,7 @@ namespace mock
 namespace web
 {
 
-class SimpleCommandObject : public ::web::detail::CommandExecutorObject {
+class SimpleCommandObject : public ::web::type::CommandExecutorObjectInterface {
  public:
   MOCK_METHOD1(Execute, std::string(std::string command));
   MOCK_METHOD1(IsCommandSupported, bool(std::string command));
