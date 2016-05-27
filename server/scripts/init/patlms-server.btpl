@@ -20,8 +20,6 @@ PIDFILE=`sed -n 's/pidfile=//p' %appconfdir%/server.config`
 
 . /lib/lsb/init-functions
 
-OPTIONS="--daemon"
-
 test -f $DAEMON || exit 0
 
 set -e
