@@ -1,15 +1,32 @@
-# General configuration (for D-Bus and PAT LMS)
+#
+# This is the server and D-Bus configuration file.
+#
+# This file provides default settings, the values can be overwritten
+# when running from the command line. You can also change D-Bus specific values
+# in 'dbus.config.template' file.
+#
+# Configuration settings are parsed as follows:
+#  1. command line options
+#  2. config file options
+#
+
+#
+# General configuration (for use by D-Bus and server)
+#
 run_as_user=root
 
-# D-Bus configuration
 dbus_address=127.0.0.1
 dbus_port=1032
 dbus_family=ipv4
 
-# PAT LMS specific options
+#
+# Server only configuration
+#
+# Web interface commands listener configuration
 web_address=127.0.0.1
 web_port=1033
 
+# Files configuration
 pidfile=%localstatedir%/run/%package%/patlms-server.pid
 logfile=%localstatedir%/log/%package%/server.log
 databasefile=%localstatedir%/lib/%package%/server.db
