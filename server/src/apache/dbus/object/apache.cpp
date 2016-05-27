@@ -4,10 +4,16 @@
 
 #define CACHE_CAPACITY 5
 
-namespace objects
+namespace apache
 {
 
-Apache::Apache(database::DatabasePtr database)
+namespace dbus
+{
+
+namespace object
+{
+
+Apache::Apache(::database::DatabasePtr database)
 : database_(database) {
   log_entry_cache_.reserve(CACHE_CAPACITY);
 }
@@ -134,6 +140,10 @@ void Apache::FlushCache() {
   BOOST_LOG_TRIVIAL(debug) << "objects::Apache::FlushCache: Function call";
   database_->AddApacheLogs(log_entry_cache_);
   log_entry_cache_.clear();
+}
+
+}
+
 }
 
 }

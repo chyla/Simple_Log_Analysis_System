@@ -1,18 +1,25 @@
-#ifndef APACHE_H
-#define APACHE_H
+#ifndef SRC_APACHE_DBUS_OBJECT_APACHE_H
+#define SRC_APACHE_DBUS_OBJECT_APACHE_H
 
 #include <vector>
+
 #include <patlms/dbus/object.h>
 #include <patlms/type/apache_log_entry.h>
 
 #include "src/database/database.h"
 
-namespace objects
+namespace apache
 {
 
-class Apache : public dbus::Object {
+namespace dbus
+{
+
+namespace object
+{
+
+class Apache : public ::dbus::Object {
  public:
-  Apache(database::DatabasePtr database);
+  Apache(::database::DatabasePtr database);
   virtual ~Apache();
 
   const char* GetPath();
@@ -24,12 +31,16 @@ class Apache : public dbus::Object {
 
   DBusHandlerResult OwnMessageHandler(DBusConnection *connection, DBusMessage *message);
 
-  database::DatabasePtr database_;
-  type::ApacheLogs log_entry_cache_;
+  ::database::DatabasePtr database_;
+  ::type::ApacheLogs log_entry_cache_;
 };
 
 typedef std::shared_ptr<Apache> ApachePtr;
 
 }
 
-#endif /* APACHE_H */
+}
+
+}
+
+#endif /* SRC_APACHE_DBUS_OBJECT_APACHE_H */

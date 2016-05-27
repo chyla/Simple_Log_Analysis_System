@@ -19,7 +19,7 @@
 #include "program_options/program_options_command_executor_object.h"
 
 #include "apache/web/command_executor_object.h"
-#include "objects/apache.h"
+#include "src/apache/dbus/object/apache.h"
 #include "objects/bash.h"
 
 #ifdef HAVE_CONFIG_H
@@ -56,7 +56,7 @@ main(int argc, char *argv[]) {
   program_options::Parser p;
   program_options::Options options;
   objects::BashPtr bash_object;
-  objects::ApachePtr apache_object;
+  apache::dbus::object::ApachePtr apache_object;
   database::DatabasePtr database;
 
   try {
@@ -116,7 +116,7 @@ main(int argc, char *argv[]) {
     bash_object = std::make_shared<objects::Bash>(database);
     bus->RegisterObject(bash_object);
 
-    apache_object = std::make_shared<objects::Apache>(database);
+    apache_object = std::make_shared<apache::dbus::object::Apache>(database);
     bus->RegisterObject(apache_object);
 
     util::CreatePidFile(options.GetPidfilePath());
