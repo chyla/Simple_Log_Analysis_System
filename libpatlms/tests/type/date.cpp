@@ -83,3 +83,21 @@ TEST(Date, Create_FromString_WhenYearIs1969) {
 
   ASSERT_THROW(Date::Create(date), ::type::exception::detail::WrongDateValueException);
 }
+
+TEST(Date, Create_FromString_WhenYearContainsThreeDigits) {
+  string date = "170-5-1";
+
+  ASSERT_THROW(Date::Create(date), ::type::exception::detail::DateParseException);
+}
+
+TEST(Date, Create_FromString_WhenYearContainsTwoDigits) {
+  string date = "70-5-1";
+
+  ASSERT_THROW(Date::Create(date), ::type::exception::detail::DateParseException);
+}
+
+TEST(Date, Create_FromString_WhenYearContainsOneDigit) {
+  string date = "1-5-1";
+
+  ASSERT_THROW(Date::Create(date), ::type::exception::detail::DateParseException);
+}
