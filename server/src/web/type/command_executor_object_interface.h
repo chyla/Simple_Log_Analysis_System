@@ -4,6 +4,9 @@
 #include <string>
 #include <memory>
 
+#include "json_message.h"
+#include "command.h"
+
 namespace web
 {
 
@@ -14,19 +17,19 @@ class CommandExecutorObjectInterface {
  public:
   virtual ~CommandExecutorObjectInterface() = default;
 
-  virtual std::string Execute(std::string command) = 0;
+  virtual const JsonMessage Execute(const JsonMessage &message) = 0;
 
-  virtual bool IsCommandSupported(std::string command) = 0;
+  virtual bool IsCommandSupported(const Command &command) = 0;
 
-  inline static const std::string GetUnknownCommandErrorJson();
-  inline static const std::string GetInvalidArgumentErrorJson();
+  inline static const JsonMessage GetUnknownCommandErrorJson();
+  inline static const JsonMessage GetInvalidArgumentErrorJson();
 };
 
-inline const std::string CommandExecutorObjectInterface::GetUnknownCommandErrorJson() {
+inline const JsonMessage CommandExecutorObjectInterface::GetUnknownCommandErrorJson() {
   return "{ \"status\" : \"error\", \"message\" : \"Unknown command\" }";
 }
 
-inline const std::string CommandExecutorObjectInterface::GetInvalidArgumentErrorJson() {
+inline const JsonMessage CommandExecutorObjectInterface::GetInvalidArgumentErrorJson() {
   return "{ \"status\" : \"error\", \"message\" : \"Invalid argument\" }";
 }
 

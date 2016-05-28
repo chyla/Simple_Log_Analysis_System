@@ -97,14 +97,14 @@ void CommandReceiver::ReadAndExecuteCommand(int client_socket) {
   network::WaitStatus wait_status;
   wait_status = network_->WaitForData(client_socket, 3);
 
-  string command_text, command_result;
+  ::web::type::JsonMessage new_message, message_result;
   if (wait_status == network::WaitStatus::NEW_DATA) {
     BOOST_LOG_TRIVIAL(debug) << "web::CommandReceiver::ReadAndExecuteCommand: New data on socket";
-    command_text = network_->ReceiveText(client_socket);
+    new_message = network_->ReceiveText(client_socket);
 
-    command_result = command_executor_->Execute(command_text);
+    message_result = command_executor_->Execute(new_message);
 
-    network_->SendText(client_socket, command_result);
+    network_->SendText(client_socket, message_result);
   }
   else {
     BOOST_LOG_TRIVIAL(debug) << "web::CommandReceiver::ReadAndExecuteCommand: Timedout";

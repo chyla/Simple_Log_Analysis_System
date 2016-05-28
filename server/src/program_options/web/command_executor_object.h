@@ -21,17 +21,16 @@ class CommandExecutorObject : public ::web::type::CommandExecutorObjectInterface
 
   static CommandExecutorObjectPtr Create(const type::Options &options);
 
-  std::string Execute(std::string command);
+  const ::web::type::JsonMessage Execute(const ::web::type::JsonMessage &message);
 
-  bool IsCommandSupported(std::string command);
+  bool IsCommandSupported(const ::web::type::Command &command);
 
  private:
-  typedef std::string Command;
   const type::Options &options_;
 
   CommandExecutorObject(const type::Options &options);
-  std::string GetServerProcessPid() const;
-  std::string GetServerProcessPidfile() const;
+  const ::web::type::JsonMessage GetServerProcessPid() const;
+  const ::web::type::JsonMessage GetServerProcessPidfile() const;
 };
 
 }

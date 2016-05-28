@@ -15,19 +15,19 @@ CommandExecutorPtr CommandExecutor::Create() {
   return p;
 }
 
-std::string CommandExecutor::Execute(std::string json_command) {
+const type::JsonMessage CommandExecutor::Execute(const type::JsonMessage &message) {
   BOOST_LOG_TRIVIAL(debug) << "web::CommandExecutor::Execute: Function call";
 
-  auto json_object = json::parse(json_command);
-  string command = json_object["command"];
-  string result = "{ \"status\" : \"unknown_command\" }";
+  auto json_object = json::parse(message);
+  type::Command command = json_object["command"];
+  type::JsonMessage result = type::CommandExecutorObjectInterface::GetUnknownCommandErrorJson();
 
-  BOOST_LOG_TRIVIAL(debug) << "web::CommandExecutor::Execute: json_command='" << json_command << "', command='" << command << "'";
+  BOOST_LOG_TRIVIAL(debug) << "web::CommandExecutor::Execute: json_command='" << message << "', command='" << command << "'";
 
   for (auto ptr : command_objects_) {
     if (ptr->IsCommandSupported(command)) {
       BOOST_LOG_TRIVIAL(debug) << "web::CommandExecutor::Execute: Found object";
-      result = ptr->Execute(json_command);
+      result = ptr->Execute(message);
     }
   }
 

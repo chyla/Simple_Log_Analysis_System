@@ -21,28 +21,28 @@ class CommandExecutorObject : public ::web::type::CommandExecutorObjectInterface
 
   static CommandExecutorObjectPtr Create(::database::DatabasePtr database);
 
-  std::string Execute(std::string command);
+  const ::web::type::JsonMessage Execute(const ::web::type::JsonMessage &message);
 
-  bool IsCommandSupported(std::string command);
+  bool IsCommandSupported(const ::web::type::Command &command);
 
  private:
   CommandExecutorObject(::database::DatabasePtr database);
 
   ::database::DatabasePtr database_;
 
-  std::string GetHostnames();
-  std::string GetVirtualhostsNames(const std::string &agent_name);
-  std::string GetSessions(const std::string &agent_name,
-                          const std::string &virtualhost_name,
-                          const std::string &begin_date,
-                          const std::string &end_date);
-  const std::string SetApacheSessionsAsAnomaly(const std::vector<long long> &all,
-                                               const std::vector<long long> &anomalies);
-  const std::string GetApacheAnomalyDetectionConfiguration();
-  const std::string SetApacheAnomalyDetectionConfiguration(const std::string &agent_name,
-                                                           const std::string &virtualhost_name,
-                                                           const std::string &begin_date,
-                                                           const std::string &end_date);
+  const ::web::type::JsonMessage GetHostnames();
+  const ::web::type::JsonMessage GetVirtualhostsNames(const std::string &agent_name);
+  const ::web::type::JsonMessage GetSessions(const std::string &agent_name,
+                                             const std::string &virtualhost_name,
+                                             const std::string &begin_date,
+                                             const std::string &end_date);
+  const ::web::type::JsonMessage SetApacheSessionsAsAnomaly(const std::vector<long long> &all,
+                                                            const std::vector<long long> &anomalies);
+  const ::web::type::JsonMessage GetApacheAnomalyDetectionConfiguration();
+  const ::web::type::JsonMessage SetApacheAnomalyDetectionConfiguration(const std::string &agent_name,
+                                                                        const std::string &virtualhost_name,
+                                                                        const std::string &begin_date,
+                                                                        const std::string &end_date);
 };
 
 }

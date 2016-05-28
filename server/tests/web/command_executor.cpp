@@ -28,39 +28,40 @@ class CommandExecutorTest : public ::testing::Test {
 };
 
 TEST_F(CommandExecutorTest, Execute_UnknownCommand) {
-  string command = "{ \"command\" : \"random_unknown_command\" }";
-  string result = command_executor->Execute(command);
+  const ::web::type::JsonMessage message = "{ \"command\" : \"random_unknown_command\" }";
 
-  string expected_result = "{ \"status\" : \"unknown_command\" }";
+  const ::web::type::JsonMessage result = command_executor->Execute(message);
+
+  auto expected_result = ::web::type::CommandExecutorObjectInterface::GetUnknownCommandErrorJson();
   EXPECT_EQ(expected_result, result);
 }
 
 TEST_F(CommandExecutorTest, Execute_SimpleCommand) {
-  string command = "{ \"command\" : \"simple_command\" }";
-  string expected_result = "{ \"status\" : \"ok\", \"result\" : \"\" }";
+  const ::web::type::JsonMessage message = "{ \"command\" : \"simple_command\" }";
+  const ::web::type::JsonMessage expected_result = "{ \"status\" : \"ok\", \"result\" : \"\" }";
 
-  EXPECT_CALL(*simple_command_object, Execute(StrEq(command))).WillOnce(Return(expected_result));
+  EXPECT_CALL(*simple_command_object, Execute(StrEq(message))).WillOnce(Return(expected_result));
   EXPECT_CALL(*simple_command_object, IsCommandSupported(StrEq("simple_command"))).WillOnce(Return(true));
 
   command_executor->RegisterCommandObject(simple_command_object);
 
-  string result = command_executor->Execute(command);
+  auto result = command_executor->Execute(message);
 
   EXPECT_EQ(expected_result, result);
 }
 
 TEST_F(CommandExecutorTest, Execute_SimpleCommand_WhenRegisterobjectCalledTwoTimes) {
-  string command = "{ \"command\" : \"simple_command\" }";
-  string expected_result = "{ \"status\" : \"ok\", \"result\" : \"\" }";
+  const ::web::type::JsonMessage message = "{ \"command\" : \"simple_command\" }";
+  const ::web::type::JsonMessage expected_result = "{ \"status\" : \"ok\", \"result\" : \"\" }";
 
-  EXPECT_CALL(*simple_command_object, Execute(StrEq(command))).WillOnce(Return(expected_result));
+  EXPECT_CALL(*simple_command_object, Execute(StrEq(message))).WillOnce(Return(expected_result));
   EXPECT_CALL(*simple_command_object, IsCommandSupported(StrEq("simple_command"))).WillOnce(Return(true));
 
   command_executor->RegisterCommandObject(simple_command_object);
 
   command_executor->RegisterCommandObject(simple_command_object);
 
-  string result = command_executor->Execute(command);
+  auto result = command_executor->Execute(message);
 
   EXPECT_EQ(expected_result, result);
 }

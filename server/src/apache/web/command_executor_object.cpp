@@ -21,10 +21,10 @@ CommandExecutorObjectPtr CommandExecutorObject::Create(::database::DatabasePtr d
   return p;
 }
 
-std::string CommandExecutorObject::Execute(std::string json_command) {
+const ::web::type::JsonMessage CommandExecutorObject::Execute(const ::web::type::JsonMessage &message) {
   BOOST_LOG_TRIVIAL(debug) << "apache::web::CommandExecutorObject::Execute: Function call";
-  auto json_object = json::parse(json_command);
-  const std::string command = json_object["command"];
+  auto json_object = json::parse(message);
+  auto command = json_object["command"];
   auto result = GetUnknownCommandErrorJson();
 
   if (command == "get_apache_agent_names") {
@@ -85,7 +85,7 @@ std::string CommandExecutorObject::Execute(std::string json_command) {
   return result;
 }
 
-bool CommandExecutorObject::IsCommandSupported(std::string command) {
+bool CommandExecutorObject::IsCommandSupported(const ::web::type::Command &command) {
   BOOST_LOG_TRIVIAL(debug) << "apache::web::CommandExecutorObject::IsCommandSupported: Function call";
   return (command == "get_apache_agent_names")
       || (command == "get_apache_virtualhosts_names")
@@ -99,7 +99,7 @@ CommandExecutorObject::CommandExecutorObject(::database::DatabasePtr database)
 : database_(database) {
 }
 
-std::string CommandExecutorObject::GetHostnames() {
+const ::web::type::JsonMessage CommandExecutorObject::GetHostnames() {
   BOOST_LOG_TRIVIAL(debug) << "apache::web::CommandExecutorObject::GetHostnames: Function call";
 
   json j;
@@ -109,7 +109,7 @@ std::string CommandExecutorObject::GetHostnames() {
   return j.dump();
 }
 
-std::string CommandExecutorObject::GetVirtualhostsNames(const std::string &agent_name) {
+const ::web::type::JsonMessage CommandExecutorObject::GetVirtualhostsNames(const std::string &agent_name) {
   BOOST_LOG_TRIVIAL(debug) << "apache::web::CommandExecutorObject::GetVirtualhostsNames: Function call";
 
   json j;
@@ -119,10 +119,10 @@ std::string CommandExecutorObject::GetVirtualhostsNames(const std::string &agent
   return j.dump();
 }
 
-std::string CommandExecutorObject::GetSessions(const std::string &agent_name,
-                                               const std::string &virtualhost_name,
-                                               const std::string &begin_date,
-                                               const std::string &end_date) {
+const ::web::type::JsonMessage CommandExecutorObject::GetSessions(const std::string &agent_name,
+                                                                  const std::string &virtualhost_name,
+                                                                  const std::string &begin_date,
+                                                                  const std::string &end_date) {
   BOOST_LOG_TRIVIAL(debug) << "apache::web::CommandExecutorObject::GetSessions: Function call";
 
   auto tbegin = type::Time::FromString(begin_date);
@@ -158,8 +158,8 @@ std::string CommandExecutorObject::GetSessions(const std::string &agent_name,
   return j.dump();
 }
 
-const std::string CommandExecutorObject::SetApacheSessionsAsAnomaly(const std::vector<long long> &all,
-                                                                    const std::vector<long long> &anomalies) {
+const ::web::type::JsonMessage CommandExecutorObject::SetApacheSessionsAsAnomaly(const std::vector<long long> &all,
+                                                                                 const std::vector<long long> &anomalies) {
   BOOST_LOG_TRIVIAL(debug) << "apache::web::CommandExecutorObject::SetApacheSessionsAsAnomaly: Function call";
 
   database_->SetApacheSessionAsAnomaly(all, anomalies);
@@ -170,7 +170,7 @@ const std::string CommandExecutorObject::SetApacheSessionsAsAnomaly(const std::v
   return j.dump();
 }
 
-const std::string CommandExecutorObject::GetApacheAnomalyDetectionConfiguration() {
+const ::web::type::JsonMessage CommandExecutorObject::GetApacheAnomalyDetectionConfiguration() {
   BOOST_LOG_TRIVIAL(debug) << "apache::web::CommandExecutorObject::GetApacheAnomalyDetectionConfiguration: Function call";
 
   auto conf = database_->GetApacheAnomalyDetectionConfiguration();
@@ -194,10 +194,10 @@ const std::string CommandExecutorObject::GetApacheAnomalyDetectionConfiguration(
   return j.dump();
 }
 
-const std::string CommandExecutorObject::SetApacheAnomalyDetectionConfiguration(const std::string &agent_name,
-                                                                                const std::string &virtualhost_name,
-                                                                                const std::string &begin_date,
-                                                                                const std::string &end_date) {
+const ::web::type::JsonMessage CommandExecutorObject::SetApacheAnomalyDetectionConfiguration(const std::string &agent_name,
+                                                                                             const std::string &virtualhost_name,
+                                                                                             const std::string &begin_date,
+                                                                                             const std::string &end_date) {
   ::apache::database::AnomalyDetectionConfigurationEntry c;
   c.agent_name = agent_name;
   c.virtualhost_name = virtualhost_name;

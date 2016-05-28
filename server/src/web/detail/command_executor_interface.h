@@ -16,7 +16,7 @@ class CommandExecutorInterface {
  public:
   virtual ~CommandExecutorInterface() = default;
 
-  virtual std::string Execute(std::string command) = 0;
+  virtual const type::JsonMessage Execute(const type::JsonMessage &message) = 0;
 
   virtual void RegisterCommandObject(type::CommandExecutorObjectInterfacePtr object) = 0;
 };

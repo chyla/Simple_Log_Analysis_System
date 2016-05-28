@@ -18,7 +18,7 @@ class CommandExecutor : public detail::CommandExecutorInterface {
 
   static CommandExecutorPtr Create();
 
-  std::string Execute(std::string command) override;
+  const type::JsonMessage Execute(const type::JsonMessage &message) override;
 
   void RegisterCommandObject(type::CommandExecutorObjectInterfacePtr object) override;
 

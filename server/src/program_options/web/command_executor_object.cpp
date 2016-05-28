@@ -18,9 +18,9 @@ CommandExecutorObjectPtr CommandExecutorObject::Create(const Options &options) {
   return p;
 }
 
-std::string CommandExecutorObject::Execute(std::string json_command) {
-  auto json_object = json::parse(json_command);
-  Command command = json_object["command"];
+const ::web::type::JsonMessage CommandExecutorObject::Execute(const ::web::type::JsonMessage &message) {
+  auto json_object = json::parse(message);
+  auto command = json_object["command"];
   auto result = GetUnknownCommandErrorJson();
 
   if (command == "get_server_process_pid") {
@@ -33,7 +33,7 @@ std::string CommandExecutorObject::Execute(std::string json_command) {
   return result;
 }
 
-bool CommandExecutorObject::IsCommandSupported(std::string command) {
+bool CommandExecutorObject::IsCommandSupported(const ::web::type::Command &command) {
   return (command == "get_server_process_pid")
       || (command == "get_server_process_pidfile");
 }
@@ -42,14 +42,14 @@ CommandExecutorObject::CommandExecutorObject(const Options &options)
 : options_(options) {
 }
 
-std::string CommandExecutorObject::GetServerProcessPid() const {
+const ::web::type::JsonMessage CommandExecutorObject::GetServerProcessPid() const {
   json j;
   j["status"] = "ok";
   j["result"] = getpid();
   return j.dump();
 }
 
-std::string CommandExecutorObject::GetServerProcessPidfile() const {
+const ::web::type::JsonMessage CommandExecutorObject::GetServerProcessPidfile() const {
   json j;
   j["status"] = "ok";
   j["result"] = options_.GetPidfilePath();
