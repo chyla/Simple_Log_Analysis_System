@@ -29,12 +29,12 @@ bool BashProxy::AddLogEntry(const type::BashLogEntry &log_entry) {
   DBusMessageIter args;
   InitArgument(message, &args);
   AppendArgument(&args, log_entry.agent_name.c_str());
-  AppendArgument(&args, log_entry.utc_time.GetHour());
-  AppendArgument(&args, log_entry.utc_time.GetMinute());
-  AppendArgument(&args, log_entry.utc_time.GetSecond());
-  AppendArgument(&args, log_entry.utc_time.GetDay());
-  AppendArgument(&args, log_entry.utc_time.GetMonth());
-  AppendArgument(&args, log_entry.utc_time.GetYear());
+  AppendArgument(&args, log_entry.utc_time.GetTime().GetHour());
+  AppendArgument(&args, log_entry.utc_time.GetTime().GetMinute());
+  AppendArgument(&args, log_entry.utc_time.GetTime().GetSecond());
+  AppendArgument(&args, log_entry.utc_time.GetDate().GetDay());
+  AppendArgument(&args, log_entry.utc_time.GetDate().GetMonth());
+  AppendArgument(&args, log_entry.utc_time.GetDate().GetYear());
   AppendArgument(&args, log_entry.user_id);
   AppendArgument(&args, log_entry.command.c_str());
 

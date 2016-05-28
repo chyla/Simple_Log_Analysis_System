@@ -65,13 +65,13 @@ void ApacheLogReceiver::StartLoop() {
 
       smatch match;
       if (regex_match(new_log, match, pattern)) {
-        BOOST_LOG_TRIVIAL(debug) << "apache::ApacheLogReceiver::LogTimestampToTime: New log line match regex";
+        BOOST_LOG_TRIVIAL(debug) << "apache::ApacheLogReceiver::LogTimestampToTimestamp: New log line match regex";
 
         type::ApacheLogEntry log_entry;
         log_entry.agent_name = agent_name_;
         log_entry.virtualhost = match[1];
         log_entry.client_ip = match[2];
-        log_entry.time = LogTimestampToTime(match[3]);
+        log_entry.time = LogTimestampToTimestamp(match[3]);
         log_entry.request = match[4];
         log_entry.status_code = stoi(match[5]);
         log_entry.bytes = stoi(match[6]);
@@ -140,15 +140,15 @@ months{
 {
 }
 
-type::Time ApacheLogReceiver::LogTimestampToTime(string timestamp) {
-  BOOST_LOG_TRIVIAL(debug) << "apache::ApacheLogReceiver::LogTimestampToTime: Function call with (timestamp=" << timestamp << ")";
-  type::Time time;
+type::Timestamp ApacheLogReceiver::LogTimestampToTimestamp(string timestamp) {
+  BOOST_LOG_TRIVIAL(debug) << "apache::ApacheLogReceiver::LogTimestampToTimestamp: Function call with (timestamp=" << timestamp << ")";
+  type::Timestamp time;
   regex pattern("^\\[(\\d*)/([A-Za-z]*)/(\\d*):(\\d*):(\\d*):(\\d*).*");
   smatch match;
   int d, mo, y, h, m, s;
 
   if (regex_match(timestamp, match, pattern)) {
-    BOOST_LOG_TRIVIAL(debug) << "apache::ApacheLogReceiver::LogTimestampToTime: Timestamp match regex";
+    BOOST_LOG_TRIVIAL(debug) << "apache::ApacheLogReceiver::LogTimestampToTimestamp: Timestamp match regex";
 
     d = stoi(match[1]);
     mo = months.at(match[2]);
@@ -157,12 +157,12 @@ type::Time ApacheLogReceiver::LogTimestampToTime(string timestamp) {
     m = stoi(match[5]);
     s = stoi(match[6]);
 
-    BOOST_LOG_TRIVIAL(debug) << "apache::ApacheLogReceiver::LogTimestampToTime: Parsed: day=" << d << "; month=" << mo << "; year=" << y << "; hour=" << h << "; minute=" << m << "; second=" << s;
+    BOOST_LOG_TRIVIAL(debug) << "apache::ApacheLogReceiver::LogTimestampToTimestamp: Parsed: day=" << d << "; month=" << mo << "; year=" << y << "; hour=" << h << "; minute=" << m << "; second=" << s;
 
     time.Set(h, m, s, d, mo, y);
   }
   else {
-    BOOST_LOG_TRIVIAL(error) << "apache::ApacheLogReceiver::LogTimestampToTime: Failed to match timestamp to regex";
+    BOOST_LOG_TRIVIAL(error) << "apache::ApacheLogReceiver::LogTimestampToTimestamp: Failed to match timestamp to regex";
   }
 
   return time;

@@ -101,3 +101,83 @@ TEST(Date, Create_FromString_WhenYearContainsOneDigit) {
 
   ASSERT_THROW(Date::Create(date), ::type::exception::detail::DateParseException);
 }
+
+TEST(Date, Create_CorrectDate) {
+  Date t;
+
+  t.Set(8, 5, 2016);
+
+  ASSERT_EQ(8, t.GetDay());
+  ASSERT_EQ(5, t.GetMonth());
+  ASSERT_EQ(2016, t.GetYear());
+}
+
+TEST(Date, Create_WhenDayIs0) {
+  Date t;
+
+  ASSERT_THROW(t.Set(0, 5, 2016), ::type::exception::detail::WrongDateValueException);
+}
+
+TEST(Date, Create_WhenDayIs32) {
+  Date t;
+
+  ASSERT_THROW(t.Set(32, 5, 2016), ::type::exception::detail::WrongDateValueException);
+}
+
+TEST(Date, Create_WhenMonthIs0) {
+  Date t;
+
+  ASSERT_THROW(t.Set(1, 0, 2016), ::type::exception::detail::WrongDateValueException);
+}
+
+TEST(Date, Create_WhenMonthIs13) {
+  Date t;
+
+  ASSERT_THROW(t.Set(1, 13, 2016), ::type::exception::detail::WrongDateValueException);
+}
+
+TEST(Date, Create_WhenYearIs1969) {
+  Date t;
+
+  ASSERT_THROW(t.Set(1, 13, 1969), ::type::exception::detail::WrongDateValueException);
+}
+
+TEST(Date, Set_CorrectDate) {
+  Date t;
+
+  t.Set(8, 5, 2016);
+
+  ASSERT_EQ(8, t.GetDay());
+  ASSERT_EQ(5, t.GetMonth());
+  ASSERT_EQ(2016, t.GetYear());
+}
+
+TEST(Date, Set_WhenDayIs0) {
+  Date t;
+
+  ASSERT_THROW(t.Set(0, 5, 2016), ::type::exception::detail::WrongDateValueException);
+}
+
+TEST(Date, Set_WhenDayIs32) {
+  Date t;
+
+  ASSERT_THROW(t.Set(32, 5, 2016), ::type::exception::detail::WrongDateValueException);
+}
+
+TEST(Date, Set_WhenMonthIs0) {
+  Date t;
+
+  ASSERT_THROW(t.Set(1, 0, 2016), ::type::exception::detail::WrongDateValueException);
+}
+
+TEST(Date, Set_WhenMonthIs13) {
+  Date t;
+
+  ASSERT_THROW(t.Set(1, 13, 2016), ::type::exception::detail::WrongDateValueException);
+}
+
+TEST(Date, Set_WhenYearIs1969) {
+  Date t;
+
+  ASSERT_THROW(t.Set(1, 13, 1969), ::type::exception::detail::WrongDateValueException);
+}

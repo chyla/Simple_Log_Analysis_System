@@ -240,10 +240,10 @@ long long Database::GetDateId(int day, int month, int year) {
   return id;
 }
 
-type::Time Database::GetDateById(RowId id) {
+type::Date Database::GetDateById(RowId id) {
   BOOST_LOG_TRIVIAL(debug) << "database::Database::GetDateById: Function call";
   int ret, day, month, year;
-  type::Time time;
+  type::Date date;
   bool found = false;
 
   if (is_open_ == false) {
@@ -268,7 +268,7 @@ type::Time Database::GetDateById(RowId id) {
     day = sqlite_interface_->ColumnInt(statement, 0);
     month = sqlite_interface_->ColumnInt(statement, 1);
     year = sqlite_interface_->ColumnInt(statement, 2);
-    time.Set(0, 0, 0, day, month, year);
+    date = type::Date::Create(day, month, year);
   }
 
   ret = sqlite_interface_->Finalize(statement);
@@ -279,7 +279,7 @@ type::Time Database::GetDateById(RowId id) {
     throw exception::detail::CantExecuteSqlStatementException();
   }
 
-  return time;
+  return date;
 }
 
 bool Database::AddBashLogs(const type::BashLogs &log_entries) {
@@ -305,22 +305,22 @@ bool Database::AddBashLogs(const type::BashLogs &log_entries) {
     ret = sqlite_interface_->BindText(statement, 1, entry.agent_name.c_str(), -1, nullptr);
     StatementCheckForErrorAndRollback(ret, "Bind agentname error");
 
-    ret = sqlite_interface_->BindInt(statement, 2, entry.utc_time.GetHour());
+    ret = sqlite_interface_->BindInt(statement, 2, entry.utc_time.GetTime().GetHour());
     StatementCheckForErrorAndRollback(ret, "Bind hour error");
 
-    ret = sqlite_interface_->BindInt(statement, 3, entry.utc_time.GetMinute());
+    ret = sqlite_interface_->BindInt(statement, 3, entry.utc_time.GetTime().GetMinute());
     StatementCheckForErrorAndRollback(ret, "Bind minute error");
 
-    ret = sqlite_interface_->BindInt(statement, 4, entry.utc_time.GetSecond());
+    ret = sqlite_interface_->BindInt(statement, 4, entry.utc_time.GetTime().GetSecond());
     StatementCheckForErrorAndRollback(ret, "Bind second error");
 
-    ret = sqlite_interface_->BindInt(statement, 5, entry.utc_time.GetDay());
+    ret = sqlite_interface_->BindInt(statement, 5, entry.utc_time.GetDate().GetDay());
     StatementCheckForErrorAndRollback(ret, "Bind day error");
 
-    ret = sqlite_interface_->BindInt(statement, 6, entry.utc_time.GetMonth());
+    ret = sqlite_interface_->BindInt(statement, 6, entry.utc_time.GetDate().GetMonth());
     StatementCheckForErrorAndRollback(ret, "Bind month error");
 
-    ret = sqlite_interface_->BindInt(statement, 7, entry.utc_time.GetYear());
+    ret = sqlite_interface_->BindInt(statement, 7, entry.utc_time.GetDate().GetYear());
     StatementCheckForErrorAndRollback(ret, "Bind year error");
 
     ret = sqlite_interface_->BindInt(statement, 8, entry.user_id);
@@ -379,22 +379,22 @@ bool Database::AddApacheLogs(const type::ApacheLogs &log_entries) {
     ret = sqlite_interface_->BindText(statement, 3, entry.client_ip.c_str(), -1, nullptr);
     StatementCheckForErrorAndRollback(ret, "Bind client_ip error");
 
-    ret = sqlite_interface_->BindInt(statement, 4, entry.time.GetHour());
+    ret = sqlite_interface_->BindInt(statement, 4, entry.time.GetTime().GetHour());
     StatementCheckForErrorAndRollback(ret, "Bind hour error");
 
-    ret = sqlite_interface_->BindInt(statement, 5, entry.time.GetMinute());
+    ret = sqlite_interface_->BindInt(statement, 5, entry.time.GetTime().GetMinute());
     StatementCheckForErrorAndRollback(ret, "Bind minute error");
 
-    ret = sqlite_interface_->BindInt(statement, 6, entry.time.GetSecond());
+    ret = sqlite_interface_->BindInt(statement, 6, entry.time.GetTime().GetSecond());
     StatementCheckForErrorAndRollback(ret, "Bind second error");
 
-    ret = sqlite_interface_->BindInt(statement, 7, entry.time.GetDay());
+    ret = sqlite_interface_->BindInt(statement, 7, entry.time.GetDate().GetDay());
     StatementCheckForErrorAndRollback(ret, "Bind day error");
 
-    ret = sqlite_interface_->BindInt(statement, 8, entry.time.GetMonth());
+    ret = sqlite_interface_->BindInt(statement, 8, entry.time.GetDate().GetMonth());
     StatementCheckForErrorAndRollback(ret, "Bind month error");
 
-    ret = sqlite_interface_->BindInt(statement, 9, entry.time.GetYear());
+    ret = sqlite_interface_->BindInt(statement, 9, entry.time.GetDate().GetYear());
     StatementCheckForErrorAndRollback(ret, "Bind year error");
 
     ret = sqlite_interface_->BindText(statement, 10, entry.request.c_str(), -1, nullptr);
@@ -459,22 +459,22 @@ bool Database::AddApacheSessionStatistics(const ::apache::type::ApacheSessions &
     ret = sqlite_interface_->BindText(statement, 3, entry.client_ip.c_str(), -1, nullptr);
     StatementCheckForErrorAndRollback(ret, "Bind client_ip error");
 
-    ret = sqlite_interface_->BindInt(statement, 4, entry.session_start.GetHour());
+    ret = sqlite_interface_->BindInt(statement, 4, entry.session_start.GetTime().GetHour());
     StatementCheckForErrorAndRollback(ret, "Bind hour error");
 
-    ret = sqlite_interface_->BindInt(statement, 5, entry.session_start.GetMinute());
+    ret = sqlite_interface_->BindInt(statement, 5, entry.session_start.GetTime().GetMinute());
     StatementCheckForErrorAndRollback(ret, "Bind minute error");
 
-    ret = sqlite_interface_->BindInt(statement, 6, entry.session_start.GetSecond());
+    ret = sqlite_interface_->BindInt(statement, 6, entry.session_start.GetTime().GetSecond());
     StatementCheckForErrorAndRollback(ret, "Bind second error");
 
-    ret = sqlite_interface_->BindInt(statement, 7, entry.session_start.GetDay());
+    ret = sqlite_interface_->BindInt(statement, 7, entry.session_start.GetDate().GetDay());
     StatementCheckForErrorAndRollback(ret, "Bind day error");
 
-    ret = sqlite_interface_->BindInt(statement, 8, entry.session_start.GetMonth());
+    ret = sqlite_interface_->BindInt(statement, 8, entry.session_start.GetDate().GetMonth());
     StatementCheckForErrorAndRollback(ret, "Bind month error");
 
-    ret = sqlite_interface_->BindInt(statement, 9, entry.session_start.GetYear());
+    ret = sqlite_interface_->BindInt(statement, 9, entry.session_start.GetDate().GetYear());
     StatementCheckForErrorAndRollback(ret, "Bind year error");
 
     ret = sqlite_interface_->BindInt64(statement, 10, entry.session_length);
@@ -519,13 +519,13 @@ bool Database::AddApacheSessionStatistics(const ::apache::type::ApacheSessions &
 }
 
 long long Database::GetApacheSessionStatisticsCount(const std::string &agent_name, const std::string &virtualhost_name,
-                                                    const type::Time &from, const type::Time &to) {
+                                                    const type::Timestamp &from, const type::Timestamp &to) {
   BOOST_LOG_TRIVIAL(debug) << "database::Database::GetApacheSessionStatisticsCount: Function call";
   return GetApacheCount("APACHE_SESSION_TABLE", agent_name, virtualhost_name, from, to);
 }
 
 ::apache::type::ApacheSessions Database::GetApacheSessionStatistics(const std::string &agent_name, const std::string &virtualhost_name,
-                                                              const type::Time &from, const type::Time &to, unsigned limit, long long offset) {
+                                                                    const type::Timestamp &from, const type::Timestamp &to, unsigned limit, long long offset) {
   BOOST_LOG_TRIVIAL(debug) << "database::Database::GetApacheSessionStatistics: Function call";
   ::apache::type::ApacheSessions sessions;
   int ret, hour, minute, second, day, month, year;
@@ -579,7 +579,7 @@ long long Database::GetApacheSessionStatisticsCount(const std::string &agent_nam
       month = sqlite_interface_->ColumnInt(statement, 8);
       year = sqlite_interface_->ColumnInt(statement, 9);
 
-      type::Time t;
+      type::Timestamp t;
       t.Set(hour, minute, second, day, month, year);
 
       entry.session_start = t;
@@ -661,7 +661,7 @@ void Database::SetApacheSessionAsAnomaly(RowIds all, RowIds anomalies) {
     month = sqlite_interface_->ColumnInt(statement, 8);
     year = sqlite_interface_->ColumnInt(statement, 9);
 
-    type::Time t;
+    type::Timestamp t;
     t.Set(hour, minute, second, day, month, year);
 
     entry.session_start = t;
@@ -818,12 +818,12 @@ bool Database::IsApacheStatisticsCreatedFor(int day, int month, int year) {
   return created;
 }
 
-long long Database::GetApacheLogsCount(string agent_name, string virtualhost_name, type::Time from, type::Time to) {
+long long Database::GetApacheLogsCount(string agent_name, string virtualhost_name, type::Timestamp from, type::Timestamp to) {
   BOOST_LOG_TRIVIAL(debug) << "database::Database::GetApacheLogsCount: Function call";
   return GetApacheCount("APACHE_LOGS_TABLE", agent_name, virtualhost_name, from, to);
 }
 
-type::ApacheLogs Database::GetApacheLogs(std::string agent_name, std::string virtualhost_name, type::Time from, type::Time to, unsigned limit, long long offset) {
+type::ApacheLogs Database::GetApacheLogs(std::string agent_name, std::string virtualhost_name, type::Timestamp from, type::Timestamp to, unsigned limit, long long offset) {
   BOOST_LOG_TRIVIAL(debug) << "database::Database::GetApacheLogs: Function call";
   int ret, hour, minute, second, day, month, year;
   type::ApacheLogs logs;
@@ -876,7 +876,7 @@ type::ApacheLogs Database::GetApacheLogs(std::string agent_name, std::string vir
       month = sqlite_interface_->ColumnInt(statement, 8);
       year = sqlite_interface_->ColumnInt(statement, 9);
 
-      type::Time t;
+      type::Timestamp t;
       t.Set(hour, minute, second, day, month, year);
 
       log_entry.time = t;
@@ -1004,19 +1004,19 @@ int Database::GetApacheAgentNamesCallback(void *names_vptr, int argc, char **arg
   return 0;
 }
 
-string Database::GetTimeRule(const type::Time &from, const type::Time &to) const {
-  string from_day = to_string(from.GetDay()),
-      from_month = to_string(from.GetMonth()),
-      from_year = to_string(from.GetYear()),
-      from_hour = to_string(from.GetHour()),
-      from_minute = to_string(from.GetMinute()),
-      from_second = to_string(from.GetSecond()),
-      to_day = to_string(to.GetDay()),
-      to_month = to_string(to.GetMonth()),
-      to_year = to_string(to.GetYear()),
-      to_hour = to_string(to.GetHour()),
-      to_minute = to_string(to.GetMinute()),
-      to_second = to_string(to.GetSecond());
+string Database::GetTimeRule(const type::Timestamp &from, const type::Timestamp &to) const {
+  string from_day = to_string(from.GetDate().GetDay()),
+      from_month = to_string(from.GetDate().GetMonth()),
+      from_year = to_string(from.GetDate().GetYear()),
+      from_hour = to_string(from.GetTime().GetHour()),
+      from_minute = to_string(from.GetTime().GetMinute()),
+      from_second = to_string(from.GetTime().GetSecond()),
+      to_day = to_string(to.GetDate().GetDay()),
+      to_month = to_string(to.GetDate().GetMonth()),
+      to_year = to_string(to.GetDate().GetYear()),
+      to_hour = to_string(to.GetTime().GetHour()),
+      to_minute = to_string(to.GetTime().GetMinute()),
+      to_second = to_string(to.GetTime().GetSecond());
 
   string rule =
       "  ("
@@ -1054,8 +1054,8 @@ std::string Database::TextHelper(unsigned const char *text) const {
 }
 
 long long Database::GetApacheCount(const std::string &table, const std::string &agent_name,
-                                   const std::string &virtualhost_name, const type::Time &from,
-                                   const type::Time &to) {
+                                   const std::string &virtualhost_name, const type::Timestamp &from,
+                                   const type::Timestamp &to) {
   BOOST_LOG_TRIVIAL(debug) << "database::Database::GetApacheCount: Function call";
   int ret;
   long long count = 0;

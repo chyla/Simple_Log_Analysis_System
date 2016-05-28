@@ -3,7 +3,7 @@
 
 #include <patlms/dbus/detail/bus_interface.h>
 #include <patlms/network/detail/network_interface.h>
-#include <patlms/type/time.h>
+#include <patlms/type/timestamp.h>
 
 #include "src/dbus/detail/dbus_thread_interface.h"
 
@@ -38,7 +38,7 @@ class ApacheLogReceiver {
                     dbus::detail::DBusThreadInterfacePtr dbus_thread,
                     network::detail::NetworkInterfacePtr network);
 
-  type::Time LogTimestampToTime(std::string timestamp);
+  type::Timestamp LogTimestampToTimestamp(std::string timestamp);
 
   dbus::detail::BusInterfacePtr bus_;
   dbus::detail::DBusThreadInterfacePtr dbus_thread_;

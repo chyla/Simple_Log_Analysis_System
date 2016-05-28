@@ -19,6 +19,7 @@ lib_libpatlms_la_SOURCES  = \
 					network/detail/system_interface.cpp \
 					type/time.cpp \
 					type/date.cpp \
+					type/timestamp.cpp \
 					util/path.cpp \
 					util/demonize.cpp \
 					util/configure_logger.cpp \
@@ -44,6 +45,8 @@ pkginclude_dbus_exception_HEADERS = \
 pkginclude_typedir = $(pkgincludedir)/type
 pkginclude_type_HEADERS = \
 					$(top_srcdir)/include/patlms/type/time.h \
+					$(top_srcdir)/include/patlms/type/date.h \
+					$(top_srcdir)/include/patlms/type/timestamp.h \
 					$(top_srcdir)/include/patlms/type/bash_log_entry.h \
 					$(top_srcdir)/include/patlms/type/apache_log_entry.h
 

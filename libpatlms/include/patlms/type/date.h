@@ -1,6 +1,7 @@
 #ifndef INCLUDE_PATLMS_TYPE_DATE_H
 #define INCLUDE_PATLMS_TYPE_DATE_H
 
+#include <ostream>
 #include <string>
 
 namespace type
@@ -8,8 +9,13 @@ namespace type
 
 class Date {
  public:
+  inline Date();
+  Date(const Date&) = default;
+
   static const Date Create(int day, int month, int year);
   static const Date Create(const std::string &time);
+
+  void Set(int day, int month, int year);
 
   const std::string ToString() const;
 
@@ -18,17 +24,15 @@ class Date {
   inline int GetYear() const;
 
  private:
-  inline Date(int day, int month, int year);
-  
   static void CheckDate(int day, int month, int year);
 
   int day_, month_, year_;
 };
 
-Date::Date(int day, int month, int year)
-: day_(day),
-month_(month),
-year_(year) {
+Date::Date() :
+day_(0),
+month_(0),
+year_(0) {
 }
 
 int Date::GetDay() const {

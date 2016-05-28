@@ -6,6 +6,8 @@
 #include <vector>
 
 #include <patlms/type/time.h>
+#include <patlms/type/date.h>
+#include <patlms/type/timestamp.h>
 #include <patlms/type/apache_log_entry.h>
 #include <patlms/type/bash_log_entry.h>
 
@@ -49,7 +51,7 @@ class Database {
 
   long long GetDateId(int day, int month, int year);
 
-  type::Time GetDateById(RowId id);
+  type::Date GetDateById(RowId id);
 
   bool AddBashLogs(const type::BashLogs &log_entries);
 
@@ -58,11 +60,11 @@ class Database {
   bool AddApacheSessionStatistics(const ::apache::type::ApacheSessions &sessions);
 
   long long GetApacheSessionStatisticsCount(const std::string &agent_name, const std::string &virtualhost_name,
-                                            const type::Time &from, const type::Time &to);
+                                            const type::Timestamp &from, const type::Timestamp &to);
 
   ::apache::type::ApacheSessions GetApacheSessionStatistics(const std::string &agent_name, const std::string &virtualhost_name,
-                                                      const type::Time &from, const type::Time &to,
-                                                      unsigned limit, long long offset);
+                                                            const type::Timestamp &from, const type::Timestamp &to,
+                                                            unsigned limit, long long offset);
 
   void SetApacheSessionAsAnomaly(RowIds all, RowIds anomaly);
 
@@ -76,9 +78,9 @@ class Database {
 
   bool IsApacheStatisticsCreatedFor(int day, int month, int year);
 
-  long long GetApacheLogsCount(std::string agent_name, std::string virtualhost_name, type::Time from, type::Time to);
+  long long GetApacheLogsCount(std::string agent_name, std::string virtualhost_name, type::Timestamp from, type::Timestamp to);
 
-  type::ApacheLogs GetApacheLogs(std::string agent_name, std::string virtualhost_name, type::Time from, type::Time to, unsigned limit, long long offset);
+  type::ApacheLogs GetApacheLogs(std::string agent_name, std::string virtualhost_name, type::Timestamp from, type::Timestamp to, unsigned limit, long long offset);
 
   AgentNames GetApacheAgentNames();
 
@@ -97,11 +99,11 @@ class Database {
   void StatementCheckForErrorAndRollback(int return_value, const char *description);
   void Rollback();
   static int GetApacheAgentNamesCallback(void *names_vptr, int argc, char **argv, char **azColName);
-  std::string GetTimeRule(const type::Time &from, const type::Time &to) const;
+  std::string GetTimeRule(const type::Timestamp &from, const type::Timestamp &to) const;
   std::string TextHelper(unsigned const char *text) const;
   long long GetApacheCount(const std::string &table, const std::string &agent_name,
-                           const std::string &virtualhost_name, const type::Time &from,
-                           const type::Time &to);
+                           const std::string &virtualhost_name, const type::Timestamp &from,
+                           const type::Timestamp &to);
 };
 
 }

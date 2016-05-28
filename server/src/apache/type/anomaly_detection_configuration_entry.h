@@ -17,8 +17,8 @@ struct AnomalyDetectionConfigurationEntry {
   ::database::RowId id;
   std::string agent_name;
   std::string virtualhost_name;
-  ::type::Time begin_date;
-  ::type::Time end_date;
+  ::type::Date begin_date;
+  ::type::Date end_date;
 };
 
 typedef std::vector<AnomalyDetectionConfigurationEntry> AnomalyDetectionConfiguration;

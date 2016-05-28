@@ -3,7 +3,7 @@
 
 #include <vector>
 
-#include <patlms/type/time.h>
+#include <patlms/type/timestamp.h>
 
 namespace type
 {
@@ -13,7 +13,7 @@ struct ApacheLogEntry {
   std::string agent_name;
   std::string virtualhost;
   std::string client_ip;
-  Time time;
+  Timestamp time;
   std::string request;
   int status_code;
   int bytes;

@@ -125,14 +125,16 @@ const ::web::type::JsonMessage CommandExecutorObject::GetSessions(const std::str
                                                                   const std::string &end_date) {
   BOOST_LOG_TRIVIAL(debug) << "apache::web::CommandExecutorObject::GetSessions: Function call";
 
-  auto tbegin = ::type::Time::FromString(begin_date);
-  auto tend = ::type::Time::FromString(end_date);
+  auto tbegin = ::type::Timestamp::Create(::type::Time(),
+                                          ::type::Date::Create(begin_date));
+  auto tend = ::type::Timestamp::Create(::type::Time(),
+                                        ::type::Date::Create(end_date));
   auto count = database_->GetApacheSessionStatisticsCount(agent_name, virtualhost_name,
                                                           tbegin, tend);
 
   ::apache::type::ApacheSessions sessions = database_->GetApacheSessionStatistics(agent_name, virtualhost_name,
-                                                                            tbegin, tend,
-                                                                            count, 0);
+                                                                                  tbegin, tend,
+                                                                                  count, 0);
 
   json j, r = json::array();
   for (::apache::type::ApacheSessionEntry s : sessions) {
@@ -201,8 +203,8 @@ const ::web::type::JsonMessage CommandExecutorObject::SetApacheAnomalyDetectionC
   ::apache::type::AnomalyDetectionConfigurationEntry c;
   c.agent_name = agent_name;
   c.virtualhost_name = virtualhost_name;
-  c.begin_date = ::type::Time::FromString(begin_date);
-  c.end_date = ::type::Time::FromString(end_date);
+  c.begin_date = ::type::Date::Create(begin_date);
+  c.end_date = ::type::Date::Create(end_date);
 
   database_->AddDate(c.begin_date.GetDay(), c.begin_date.GetMonth(), c.begin_date.GetYear());
   database_->AddDate(c.end_date.GetDay(), c.end_date.GetMonth(), c.end_date.GetYear());

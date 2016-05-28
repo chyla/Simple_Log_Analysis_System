@@ -1,7 +1,7 @@
 #include <memory>
 #include <utility>
 
-#include <patlms/type/time.h>
+#include <patlms/type/timestamp.h>
 #include <patlms/type/bash_log_entry.h>
 #include <patlms/type/apache_log_entry.h>
 
@@ -21,14 +21,14 @@ using namespace database;
 #define DB_HANDLE_EXAMPLE_PTR_VALUE (reinterpret_cast<sqlite3*>(0x000001))
 #define DB_STATEMENT_EXAMPLE_PTR_VALUE (reinterpret_cast<sqlite3_stmt*>(0x000002))
 
-type::Time MY_DEFAULT_TIME1() {
-  type::Time t;
+type::Timestamp MY_DEFAULT_TIME1() {
+  type::Timestamp t;
   t.Set(21, 12, 3, 22, 4, 2011);
   return t;
 }
 
-type::Time MY_DEFAULT_TIME2() {
-  type::Time t;
+type::Timestamp MY_DEFAULT_TIME2() {
+  type::Timestamp t;
   t.Set(22, 13, 4, 23, 5, 2012);
   return t;
 }
@@ -1038,7 +1038,7 @@ TEST(DatabaseTest, GetApacheLogsCount) {
   EXPECT_CALL(*sqlite_mock, ColumnInt64(DB_STATEMENT_EXAMPLE_PTR_VALUE, 0)).WillOnce(Return(43));
   EXPECT_CALL(*sqlite_mock, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_OK));
 
-  type::Time from, to;
+  type::Timestamp from, to;
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
 
@@ -1055,7 +1055,7 @@ TEST(DatabaseTest, GetApacheLogsCount_WhenFinalizeFailed) {
   EXPECT_CALL(*sqlite_mock, ColumnInt64(DB_STATEMENT_EXAMPLE_PTR_VALUE, 0)).WillOnce(Return(43));
   EXPECT_CALL(*sqlite_mock, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_NOMEM));
 
-  type::Time from, to;
+  type::Timestamp from, to;
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
 
@@ -1070,7 +1070,7 @@ TEST(DatabaseTest, GetApacheLogsCount_WhenStepFailed) {
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 2, StrEq("vh1"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
   EXPECT_CALL(*sqlite_mock, Step(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_NOMEM));
 
-  type::Time from, to;
+  type::Timestamp from, to;
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
 
@@ -1084,7 +1084,7 @@ TEST(DatabaseTest, GetApacheLogsCount_WhenBindVirtualhostFailed) {
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("agentname"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 2, StrEq("vh1"), -1, nullptr)).WillOnce(Return(SQLITE_NOMEM));
 
-  type::Time from, to;
+  type::Timestamp from, to;
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
 
@@ -1097,7 +1097,7 @@ TEST(DatabaseTest, GetApacheLogsCount_WhenBindAgentNameFailed) {
   MY_EXPECT_PREPARE(sqlite_mock, 1);
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("agentname"), -1, nullptr)).WillOnce(Return(SQLITE_NOMEM));
 
-  type::Time from, to;
+  type::Timestamp from, to;
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
 
@@ -1109,7 +1109,7 @@ TEST(DatabaseTest, GetApacheLogsCount_WhenPrepareFailed) {
   MY_EXPECT_OPEN(sqlite_mock);
   MY_EXPECT_PREPARE(sqlite_mock, 1, SQLITE_NOMEM);
 
-  type::Time from, to;
+  type::Timestamp from, to;
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
 
@@ -1276,7 +1276,7 @@ TEST(DatabaseTest, GetApacheLogs) {
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
 
-  type::Time from, to;
+  type::Timestamp from, to;
   from.Set(10, 0, 0, 1, 1, 2015);
   to.Set(10, 0, 0, 1, 1, 2017);
   auto names = database->GetApacheLogs("agentname", "vh1", from, to, 100, 0);
@@ -1287,12 +1287,12 @@ TEST(DatabaseTest, GetApacheLogs) {
   EXPECT_STREQ("agentname", log_entry.agent_name.c_str());
   EXPECT_STREQ("vh1", log_entry.virtualhost.c_str());
   EXPECT_STREQ("127.0.0.1", log_entry.client_ip.c_str());
-  EXPECT_EQ(10, log_entry.time.GetHour());
-  EXPECT_EQ(6, log_entry.time.GetMinute());
-  EXPECT_EQ(7, log_entry.time.GetSecond());
-  EXPECT_EQ(2, log_entry.time.GetDay());
-  EXPECT_EQ(9, log_entry.time.GetMonth());
-  EXPECT_EQ(2013, log_entry.time.GetYear());
+  EXPECT_EQ(10, log_entry.time.GetTime().GetHour());
+  EXPECT_EQ(6, log_entry.time.GetTime().GetMinute());
+  EXPECT_EQ(7, log_entry.time.GetTime().GetSecond());
+  EXPECT_EQ(2, log_entry.time.GetDate().GetDay());
+  EXPECT_EQ(9, log_entry.time.GetDate().GetMonth());
+  EXPECT_EQ(2013, log_entry.time.GetDate().GetYear());
   EXPECT_STREQ("request", log_entry.request.c_str());
   EXPECT_EQ(402, log_entry.status_code);
   EXPECT_EQ(23, log_entry.bytes);
@@ -1329,7 +1329,7 @@ TEST(DatabaseTest, GetApacheLogs_WhenFinalizeFail) {
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
 
-  type::Time from, to;
+  type::Timestamp from, to;
   from.Set(10, 0, 0, 1, 1, 2015);
   to.Set(10, 0, 0, 1, 1, 2017);
   EXPECT_THROW(database->GetApacheLogs("agentname", "vh1", from, to, 100, 0), database::exception::detail::CantExecuteSqlStatementException);
@@ -1365,7 +1365,7 @@ TEST(DatabaseTest, GetApacheLogs_WhenUserAgentReturnsNull) {
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
 
-  type::Time from, to;
+  type::Timestamp from, to;
   from.Set(10, 0, 0, 1, 1, 2015);
   to.Set(10, 0, 0, 1, 1, 2017);
   auto names = database->GetApacheLogs("agentname", "vh1", from, to, 100, 0);
@@ -1376,12 +1376,12 @@ TEST(DatabaseTest, GetApacheLogs_WhenUserAgentReturnsNull) {
   EXPECT_STREQ("agentname", log_entry.agent_name.c_str());
   EXPECT_STREQ("vh1", log_entry.virtualhost.c_str());
   EXPECT_STREQ("127.0.0.1", log_entry.client_ip.c_str());
-  EXPECT_EQ(10, log_entry.time.GetHour());
-  EXPECT_EQ(6, log_entry.time.GetMinute());
-  EXPECT_EQ(7, log_entry.time.GetSecond());
-  EXPECT_EQ(2, log_entry.time.GetDay());
-  EXPECT_EQ(9, log_entry.time.GetMonth());
-  EXPECT_EQ(2013, log_entry.time.GetYear());
+  EXPECT_EQ(10, log_entry.time.GetTime().GetHour());
+  EXPECT_EQ(6, log_entry.time.GetTime().GetMinute());
+  EXPECT_EQ(7, log_entry.time.GetTime().GetSecond());
+  EXPECT_EQ(2, log_entry.time.GetDate().GetDay());
+  EXPECT_EQ(9, log_entry.time.GetDate().GetMonth());
+  EXPECT_EQ(2013, log_entry.time.GetDate().GetYear());
   EXPECT_STREQ("request", log_entry.request.c_str());
   EXPECT_EQ(402, log_entry.status_code);
   EXPECT_EQ(23, log_entry.bytes);
@@ -1418,7 +1418,7 @@ TEST(DatabaseTest, GetApacheLogs_WhenRequestReturnsNull) {
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
 
-  type::Time from, to;
+  type::Timestamp from, to;
   from.Set(10, 0, 0, 1, 1, 2015);
   to.Set(10, 0, 0, 1, 1, 2017);
   auto names = database->GetApacheLogs("agentname", "vh1", from, to, 100, 0);
@@ -1429,12 +1429,12 @@ TEST(DatabaseTest, GetApacheLogs_WhenRequestReturnsNull) {
   EXPECT_STREQ("agentname", log_entry.agent_name.c_str());
   EXPECT_STREQ("vh1", log_entry.virtualhost.c_str());
   EXPECT_STREQ("127.0.0.1", log_entry.client_ip.c_str());
-  EXPECT_EQ(10, log_entry.time.GetHour());
-  EXPECT_EQ(6, log_entry.time.GetMinute());
-  EXPECT_EQ(7, log_entry.time.GetSecond());
-  EXPECT_EQ(2, log_entry.time.GetDay());
-  EXPECT_EQ(9, log_entry.time.GetMonth());
-  EXPECT_EQ(2013, log_entry.time.GetYear());
+  EXPECT_EQ(10, log_entry.time.GetTime().GetHour());
+  EXPECT_EQ(6, log_entry.time.GetTime().GetMinute());
+  EXPECT_EQ(7, log_entry.time.GetTime().GetSecond());
+  EXPECT_EQ(2, log_entry.time.GetDate().GetDay());
+  EXPECT_EQ(9, log_entry.time.GetDate().GetMonth());
+  EXPECT_EQ(2013, log_entry.time.GetDate().GetYear());
   EXPECT_STREQ("", log_entry.request.c_str());
   EXPECT_EQ(402, log_entry.status_code);
   EXPECT_EQ(23, log_entry.bytes);
@@ -1471,7 +1471,7 @@ TEST(DatabaseTest, GetApacheLogs_WhenClientIPReturnsNull) {
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
 
-  type::Time from, to;
+  type::Timestamp from, to;
   from.Set(10, 0, 0, 1, 1, 2015);
   to.Set(10, 0, 0, 1, 1, 2017);
   auto names = database->GetApacheLogs("agentname", "vh1", from, to, 100, 0);
@@ -1482,12 +1482,12 @@ TEST(DatabaseTest, GetApacheLogs_WhenClientIPReturnsNull) {
   EXPECT_STREQ("agentname", log_entry.agent_name.c_str());
   EXPECT_STREQ("vh1", log_entry.virtualhost.c_str());
   EXPECT_STREQ("", log_entry.client_ip.c_str());
-  EXPECT_EQ(10, log_entry.time.GetHour());
-  EXPECT_EQ(6, log_entry.time.GetMinute());
-  EXPECT_EQ(7, log_entry.time.GetSecond());
-  EXPECT_EQ(2, log_entry.time.GetDay());
-  EXPECT_EQ(9, log_entry.time.GetMonth());
-  EXPECT_EQ(2013, log_entry.time.GetYear());
+  EXPECT_EQ(10, log_entry.time.GetTime().GetHour());
+  EXPECT_EQ(6, log_entry.time.GetTime().GetMinute());
+  EXPECT_EQ(7, log_entry.time.GetTime().GetSecond());
+  EXPECT_EQ(2, log_entry.time.GetDate().GetDay());
+  EXPECT_EQ(9, log_entry.time.GetDate().GetMonth());
+  EXPECT_EQ(2013, log_entry.time.GetDate().GetYear());
   EXPECT_STREQ("request", log_entry.request.c_str());
   EXPECT_EQ(402, log_entry.status_code);
   EXPECT_EQ(23, log_entry.bytes);
@@ -1524,7 +1524,7 @@ TEST(DatabaseTest, GetApacheLogs_WhenVirtualhostReturnsNull) {
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
 
-  type::Time from, to;
+  type::Timestamp from, to;
   from.Set(10, 0, 0, 1, 1, 2015);
   to.Set(10, 0, 0, 1, 1, 2017);
   auto names = database->GetApacheLogs("agentname", "vh1", from, to, 100, 0);
@@ -1535,12 +1535,12 @@ TEST(DatabaseTest, GetApacheLogs_WhenVirtualhostReturnsNull) {
   EXPECT_STREQ("agentname", log_entry.agent_name.c_str());
   EXPECT_STREQ("", log_entry.virtualhost.c_str());
   EXPECT_STREQ("127.0.0.1", log_entry.client_ip.c_str());
-  EXPECT_EQ(10, log_entry.time.GetHour());
-  EXPECT_EQ(6, log_entry.time.GetMinute());
-  EXPECT_EQ(7, log_entry.time.GetSecond());
-  EXPECT_EQ(2, log_entry.time.GetDay());
-  EXPECT_EQ(9, log_entry.time.GetMonth());
-  EXPECT_EQ(2013, log_entry.time.GetYear());
+  EXPECT_EQ(10, log_entry.time.GetTime().GetHour());
+  EXPECT_EQ(6, log_entry.time.GetTime().GetMinute());
+  EXPECT_EQ(7, log_entry.time.GetTime().GetSecond());
+  EXPECT_EQ(2, log_entry.time.GetDate().GetDay());
+  EXPECT_EQ(9, log_entry.time.GetDate().GetMonth());
+  EXPECT_EQ(2013, log_entry.time.GetDate().GetYear());
   EXPECT_STREQ("request", log_entry.request.c_str());
   EXPECT_EQ(402, log_entry.status_code);
   EXPECT_EQ(23, log_entry.bytes);
@@ -1577,7 +1577,7 @@ TEST(DatabaseTest, GetApacheLogs_WhenAgentNameReturnsNull) {
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
 
-  type::Time from, to;
+  type::Timestamp from, to;
   from.Set(10, 0, 0, 1, 1, 2015);
   to.Set(10, 0, 0, 1, 1, 2017);
   auto names = database->GetApacheLogs("agentname", "vh1", from, to, 100, 0);
@@ -1588,12 +1588,12 @@ TEST(DatabaseTest, GetApacheLogs_WhenAgentNameReturnsNull) {
   EXPECT_STREQ("", log_entry.agent_name.c_str());
   EXPECT_STREQ("vh1", log_entry.virtualhost.c_str());
   EXPECT_STREQ("127.0.0.1", log_entry.client_ip.c_str());
-  EXPECT_EQ(10, log_entry.time.GetHour());
-  EXPECT_EQ(6, log_entry.time.GetMinute());
-  EXPECT_EQ(7, log_entry.time.GetSecond());
-  EXPECT_EQ(2, log_entry.time.GetDay());
-  EXPECT_EQ(9, log_entry.time.GetMonth());
-  EXPECT_EQ(2013, log_entry.time.GetYear());
+  EXPECT_EQ(10, log_entry.time.GetTime().GetHour());
+  EXPECT_EQ(6, log_entry.time.GetTime().GetMinute());
+  EXPECT_EQ(7, log_entry.time.GetTime().GetSecond());
+  EXPECT_EQ(2, log_entry.time.GetDate().GetDay());
+  EXPECT_EQ(9, log_entry.time.GetDate().GetMonth());
+  EXPECT_EQ(2013, log_entry.time.GetDate().GetYear());
   EXPECT_STREQ("request", log_entry.request.c_str());
   EXPECT_EQ(402, log_entry.status_code);
   EXPECT_EQ(23, log_entry.bytes);
@@ -1612,7 +1612,7 @@ TEST(DatabaseTest, GetApacheLogs_WhenStepFail) {
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
 
-  type::Time from, to;
+  type::Timestamp from, to;
   from.Set(10, 0, 0, 1, 1, 2015);
   to.Set(10, 0, 0, 1, 1, 2017);
   EXPECT_THROW(database->GetApacheLogs("agentname", "vh1", from, to, 100, 0), database::exception::detail::CantExecuteSqlStatementException);
@@ -1628,7 +1628,7 @@ TEST(DatabaseTest, GetApacheLogs_WhenBindVirtualhostFail) {
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
 
-  type::Time from, to;
+  type::Timestamp from, to;
   from.Set(10, 0, 0, 1, 1, 2015);
   to.Set(10, 0, 0, 1, 1, 2017);
   EXPECT_THROW(database->GetApacheLogs("agentname", "vh1", from, to, 100, 0), database::exception::detail::CantExecuteSqlStatementException);
@@ -1643,7 +1643,7 @@ TEST(DatabaseTest, GetApacheLogs_WhenBindAgentNameFail) {
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
 
-  type::Time from, to;
+  type::Timestamp from, to;
   from.Set(10, 0, 0, 1, 1, 2015);
   to.Set(10, 0, 0, 1, 1, 2017);
   EXPECT_THROW(database->GetApacheLogs("agentname", "vh1", from, to, 100, 0), database::exception::detail::CantExecuteSqlStatementException);
@@ -1657,7 +1657,7 @@ TEST(DatabaseTest, GetApacheLogs_WhenBindPrepareFail) {
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
 
-  type::Time from, to;
+  type::Timestamp from, to;
   from.Set(10, 0, 0, 1, 1, 2015);
   to.Set(10, 0, 0, 1, 1, 2017);
   EXPECT_THROW(database->GetApacheLogs("agentname", "vh1", from, to, 100, 0), database::exception::detail::CantExecuteSqlStatementException);
@@ -1673,7 +1673,7 @@ TEST(DatabaseTest, GetApacheSessionStatisticsCount) {
   EXPECT_CALL(*sqlite_mock, ColumnInt64(DB_STATEMENT_EXAMPLE_PTR_VALUE, 0)).WillOnce(Return(43));
   EXPECT_CALL(*sqlite_mock, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_OK));
 
-  type::Time from, to;
+  type::Timestamp from, to;
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
 
@@ -1690,7 +1690,7 @@ TEST(DatabaseTest, GetApacheSessionStatisticsCount_WhenFinalizeFailed) {
   EXPECT_CALL(*sqlite_mock, ColumnInt64(DB_STATEMENT_EXAMPLE_PTR_VALUE, 0)).WillOnce(Return(43));
   EXPECT_CALL(*sqlite_mock, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_NOMEM));
 
-  type::Time from, to;
+  type::Timestamp from, to;
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
 
@@ -1705,7 +1705,7 @@ TEST(DatabaseTest, GetApacheSessionStatisticsCount_WhenStepFailed) {
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 2, StrEq("vh1"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
   EXPECT_CALL(*sqlite_mock, Step(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_NOMEM));
 
-  type::Time from, to;
+  type::Timestamp from, to;
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
 
@@ -1719,7 +1719,7 @@ TEST(DatabaseTest, GetApacheSessionStatisticsCount_WhenBindVirtualhostFailed) {
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("agentname"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 2, StrEq("vh1"), -1, nullptr)).WillOnce(Return(SQLITE_NOMEM));
 
-  type::Time from, to;
+  type::Timestamp from, to;
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
 
@@ -1732,7 +1732,7 @@ TEST(DatabaseTest, GetApacheSessionStatisticsCount_WhenBindAgentNameFailed) {
   MY_EXPECT_PREPARE(sqlite_mock, 1);
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("agentname"), -1, nullptr)).WillOnce(Return(SQLITE_NOMEM));
 
-  type::Time from, to;
+  type::Timestamp from, to;
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
 
@@ -1744,7 +1744,7 @@ TEST(DatabaseTest, GetApacheSessionStatisticsCount_WhenPrepareFailed) {
   MY_EXPECT_OPEN(sqlite_mock);
   MY_EXPECT_PREPARE(sqlite_mock, 1, SQLITE_NOMEM);
 
-  type::Time from, to;
+  type::Timestamp from, to;
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
 
@@ -1783,7 +1783,7 @@ TEST(DatabaseTest, GetApacheSessionStatistics) {
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
 
-  type::Time from, to;
+  type::Timestamp from, to;
   from.Set(10, 0, 0, 1, 1, 2015);
   to.Set(10, 0, 0, 1, 1, 2017);
   auto names = database->GetApacheSessionStatistics("agentname", "vh1", from, to, 100, 0);
@@ -1794,12 +1794,12 @@ TEST(DatabaseTest, GetApacheSessionStatistics) {
   EXPECT_STREQ("agentname", session.agent_name.c_str());
   EXPECT_STREQ("vh1", session.virtualhost.c_str());
   EXPECT_STREQ("127.0.0.1", session.client_ip.c_str());
-  EXPECT_EQ(10, session.session_start.GetHour());
-  EXPECT_EQ(6, session.session_start.GetMinute());
-  EXPECT_EQ(7, session.session_start.GetSecond());
-  EXPECT_EQ(2, session.session_start.GetDay());
-  EXPECT_EQ(9, session.session_start.GetMonth());
-  EXPECT_EQ(2013, session.session_start.GetYear());
+  EXPECT_EQ(10, session.session_start.GetTime().GetHour());
+  EXPECT_EQ(6, session.session_start.GetTime().GetMinute());
+  EXPECT_EQ(7, session.session_start.GetTime().GetSecond());
+  EXPECT_EQ(2, session.session_start.GetDate().GetDay());
+  EXPECT_EQ(9, session.session_start.GetDate().GetMonth());
+  EXPECT_EQ(2013, session.session_start.GetDate().GetYear());
   EXPECT_EQ(2, session.session_length);
   EXPECT_EQ(3, session.bandwidth_usage);
   EXPECT_EQ(4, session.requests_count);
@@ -1840,7 +1840,7 @@ TEST(DatabaseTest, GetApacheSessionStatistics_WhenFinalizeFail) {
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
 
-  type::Time from, to;
+  type::Timestamp from, to;
   from.Set(10, 0, 0, 1, 1, 2015);
   to.Set(10, 0, 0, 1, 1, 2017);
   EXPECT_THROW(database->GetApacheSessionStatistics("agentname", "vh1", from, to, 100, 0), database::exception::detail::CantExecuteSqlStatementException);
@@ -1858,7 +1858,7 @@ TEST(DatabaseTest, GetApacheSessionStatistics_WhenStepFail) {
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
 
-  type::Time from, to;
+  type::Timestamp from, to;
   from.Set(10, 0, 0, 1, 1, 2015);
   to.Set(10, 0, 0, 1, 1, 2017);
   EXPECT_THROW(database->GetApacheSessionStatistics("agentname", "vh1", from, to, 100, 0), database::exception::detail::CantExecuteSqlStatementException);
@@ -1874,7 +1874,7 @@ TEST(DatabaseTest, GetApacheSessionStatistics_WhenBindVirtualhostFail) {
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
 
-  type::Time from, to;
+  type::Timestamp from, to;
   from.Set(10, 0, 0, 1, 1, 2015);
   to.Set(10, 0, 0, 1, 1, 2017);
   EXPECT_THROW(database->GetApacheSessionStatistics("agentname", "vh1", from, to, 100, 0), database::exception::detail::CantExecuteSqlStatementException);
@@ -1889,7 +1889,7 @@ TEST(DatabaseTest, GetApacheSessionStatistics_WhenBindAgentNameFail) {
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
 
-  type::Time from, to;
+  type::Timestamp from, to;
   from.Set(10, 0, 0, 1, 1, 2015);
   to.Set(10, 0, 0, 1, 1, 2017);
   EXPECT_THROW(database->GetApacheSessionStatistics("agentname", "vh1", from, to, 100, 0), database::exception::detail::CantExecuteSqlStatementException);
@@ -1903,7 +1903,7 @@ TEST(DatabaseTest, GetApacheSessionStatistics_WhenPrepareFail) {
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
 
-  type::Time from, to;
+  type::Timestamp from, to;
   from.Set(10, 0, 0, 1, 1, 2015);
   to.Set(10, 0, 0, 1, 1, 2017);
   EXPECT_THROW(database->GetApacheSessionStatistics("agentname", "vh1", from, to, 100, 0), database::exception::detail::CantExecuteSqlStatementException);
@@ -2141,7 +2141,7 @@ TEST(DatabaseTest, GetApacheOneSessionStatistic) {
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
 
-  type::Time from, to;
+  type::Timestamp from, to;
   from.Set(10, 0, 0, 1, 1, 2015);
   to.Set(10, 0, 0, 1, 1, 2017);
   auto session = database->GetApacheOneSessionStatistic(1);
@@ -2149,12 +2149,12 @@ TEST(DatabaseTest, GetApacheOneSessionStatistic) {
   EXPECT_STREQ("agentname", session.agent_name.c_str());
   EXPECT_STREQ("vh1", session.virtualhost.c_str());
   EXPECT_STREQ("127.0.0.1", session.client_ip.c_str());
-  EXPECT_EQ(10, session.session_start.GetHour());
-  EXPECT_EQ(6, session.session_start.GetMinute());
-  EXPECT_EQ(7, session.session_start.GetSecond());
-  EXPECT_EQ(2, session.session_start.GetDay());
-  EXPECT_EQ(9, session.session_start.GetMonth());
-  EXPECT_EQ(2013, session.session_start.GetYear());
+  EXPECT_EQ(10, session.session_start.GetTime().GetHour());
+  EXPECT_EQ(6, session.session_start.GetTime().GetMinute());
+  EXPECT_EQ(7, session.session_start.GetTime().GetSecond());
+  EXPECT_EQ(2, session.session_start.GetDate().GetDay());
+  EXPECT_EQ(9, session.session_start.GetDate().GetMonth());
+  EXPECT_EQ(2013, session.session_start.GetDate().GetYear());
   EXPECT_EQ(2, session.session_length);
   EXPECT_EQ(3, session.bandwidth_usage);
   EXPECT_EQ(4, session.requests_count);
@@ -2191,7 +2191,7 @@ TEST(DatabaseTest, GetApacheOneSessionStatistic_WhenFinalizeFailed) {
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
 
-  type::Time from, to;
+  type::Timestamp from, to;
   from.Set(10, 0, 0, 1, 1, 2015);
   to.Set(10, 0, 0, 1, 1, 2017);
   EXPECT_THROW(database->GetApacheOneSessionStatistic(1), database::exception::detail::CantExecuteSqlStatementException);
@@ -2206,7 +2206,7 @@ TEST(DatabaseTest, GetApacheOneSessionStatistic_WhenStepFailed) {
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
 
-  type::Time from, to;
+  type::Timestamp from, to;
   from.Set(10, 0, 0, 1, 1, 2015);
   to.Set(10, 0, 0, 1, 1, 2017);
   EXPECT_THROW(database->GetApacheOneSessionStatistic(1), database::exception::detail::CantExecuteSqlStatementException);
@@ -2220,7 +2220,7 @@ TEST(DatabaseTest, GetApacheOneSessionStatistic_WhenPrepareFailed) {
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
 
-  type::Time from, to;
+  type::Timestamp from, to;
   from.Set(10, 0, 0, 1, 1, 2015);
   to.Set(10, 0, 0, 1, 1, 2017);
   EXPECT_THROW(database->GetApacheOneSessionStatistic(1), database::exception::detail::CantExecuteSqlStatementException);

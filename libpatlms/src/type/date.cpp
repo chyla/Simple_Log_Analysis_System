@@ -8,12 +8,10 @@ namespace type
 {
 
 const Date Date::Create(int day, int month, int year) {
-  if ((day < 1 || day > 31) ||
-      (month < 1 || month > 12) ||
-      (year < 1970))
-    throw exception::detail::WrongDateValueException();
+  Date d;
+  d.Set(day, month, year);
 
-  return Date(day, month, year);
+  return d;
 }
 
 const Date Date::Create(const std::string &date) {
@@ -32,6 +30,14 @@ const Date Date::Create(const std::string &date) {
   return Date::Create(day, month, year);
 }
 
+void Date::Set(int day, int month, int year) {
+  CheckDate(day, month, year);
+
+  day_ = day;
+  month_ = month;
+  year_ = year;
+}
+
 const std::string Date::ToString() const {
   auto helper = [](int i) {
     return (i < 10 ? "0" : "") +std::to_string(i);
@@ -40,6 +46,13 @@ const std::string Date::ToString() const {
   const std::string date_string = std::to_string(year_) + "-" + helper(month_) + "-" + helper(day_);
 
   return date_string;
+}
+
+void Date::CheckDate(int day, int month, int year) {
+  if ((day < 1 || day > 31) ||
+      (month < 1 || month > 12) ||
+      (year < 1970))
+    throw exception::detail::WrongDateValueException();
 }
 
 std::ostream& operator<<(std::ostream& os, const type::Date &date) {

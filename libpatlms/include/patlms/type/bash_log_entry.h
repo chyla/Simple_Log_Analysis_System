@@ -3,7 +3,7 @@
 
 #include <vector>
 
-#include <patlms/type/time.h>
+#include <patlms/type/timestamp.h>
 
 namespace type
 {
@@ -11,7 +11,7 @@ namespace type
 struct BashLogEntry {
   long long id;
   std::string agent_name;
-  Time utc_time;
+  Timestamp utc_time;
   unsigned user_id;
   std::string command;
 };
