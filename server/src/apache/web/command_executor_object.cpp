@@ -130,12 +130,12 @@ const ::web::type::JsonMessage CommandExecutorObject::GetSessions(const std::str
   auto count = database_->GetApacheSessionStatisticsCount(agent_name, virtualhost_name,
                                                           tbegin, tend);
 
-  analyzer::ApacheSessions sessions = database_->GetApacheSessionStatistics(agent_name, virtualhost_name,
+  ::apache::type::ApacheSessions sessions = database_->GetApacheSessionStatistics(agent_name, virtualhost_name,
                                                                             tbegin, tend,
                                                                             count, 0);
 
   json j, r = json::array();
-  for (analyzer::ApacheSessionEntry s : sessions) {
+  for (::apache::type::ApacheSessionEntry s : sessions) {
     json t;
     t["id"] = s.id;
     t["agent_name"] = s.agent_name;

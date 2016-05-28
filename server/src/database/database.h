@@ -11,7 +11,7 @@
 
 #include "types.h"
 #include "detail/sqlite_interface.h"
-#include "src/analyzer/apache_session_entry.h"
+#include "src/apache/type/apache_session_entry.h"
 #include "src/apache/type/anomaly_detection_configuration_entry.h"
 
 namespace database
@@ -55,18 +55,18 @@ class Database {
 
   bool AddApacheLogs(const type::ApacheLogs &log_entries);
 
-  bool AddApacheSessionStatistics(const analyzer::ApacheSessions &sessions);
+  bool AddApacheSessionStatistics(const ::apache::type::ApacheSessions &sessions);
 
   long long GetApacheSessionStatisticsCount(const std::string &agent_name, const std::string &virtualhost_name,
                                             const type::Time &from, const type::Time &to);
 
-  analyzer::ApacheSessions GetApacheSessionStatistics(const std::string &agent_name, const std::string &virtualhost_name,
+  ::apache::type::ApacheSessions GetApacheSessionStatistics(const std::string &agent_name, const std::string &virtualhost_name,
                                                       const type::Time &from, const type::Time &to,
                                                       unsigned limit, long long offset);
 
   void SetApacheSessionAsAnomaly(RowIds all, RowIds anomaly);
 
-  analyzer::ApacheSessionEntry GetApacheOneSessionStatistic(long long id);
+  ::apache::type::ApacheSessionEntry GetApacheOneSessionStatistic(long long id);
 
   void SetApacheAnomalyDetectionConfiguration(const ::apache::type::AnomalyDetectionConfigurationEntry &configuration);
 

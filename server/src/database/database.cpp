@@ -432,7 +432,7 @@ bool Database::AddApacheLogs(const type::ApacheLogs &log_entries) {
   return true;
 }
 
-bool Database::AddApacheSessionStatistics(const analyzer::ApacheSessions &sessions) {
+bool Database::AddApacheSessionStatistics(const ::apache::type::ApacheSessions &sessions) {
   BOOST_LOG_TRIVIAL(debug) << "database::Database::AddApacheSessionStatistics: Function call";
 
   if (is_open_ == false) {
@@ -444,7 +444,7 @@ bool Database::AddApacheSessionStatistics(const analyzer::ApacheSessions &sessio
   ret = sqlite_interface_->Exec(db_handle_, "begin transaction", nullptr, nullptr, nullptr);
   StatementCheckForError(ret, "Begin transaction error");
 
-  for (const analyzer::ApacheSessionEntry &entry : sessions) {
+  for (const ::apache::type::ApacheSessionEntry &entry : sessions) {
     const char *sql = "insert into APACHE_SESSION_TABLE(AGENT_NAME, VIRTUALHOST, CLIENT_IP, UTC_HOUR, UTC_MINUTE, UTC_SECOND, UTC_DAY, UTC_MONTH, UTC_YEAR, SESSION_LENGTH, BANDWIDTH_USAGE, REQUESTS_COUNT, ERROR_PERCENTAGE, USER_AGENT, IS_ANOMALY) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     sqlite3_stmt *statement;
     ret = sqlite_interface_->Prepare(db_handle_, sql, -1, &statement, nullptr);
@@ -524,10 +524,10 @@ long long Database::GetApacheSessionStatisticsCount(const std::string &agent_nam
   return GetApacheCount("APACHE_SESSION_TABLE", agent_name, virtualhost_name, from, to);
 }
 
-analyzer::ApacheSessions Database::GetApacheSessionStatistics(const std::string &agent_name, const std::string &virtualhost_name,
+::apache::type::ApacheSessions Database::GetApacheSessionStatistics(const std::string &agent_name, const std::string &virtualhost_name,
                                                               const type::Time &from, const type::Time &to, unsigned limit, long long offset) {
   BOOST_LOG_TRIVIAL(debug) << "database::Database::GetApacheSessionStatistics: Function call";
-  analyzer::ApacheSessions sessions;
+  ::apache::type::ApacheSessions sessions;
   int ret, hour, minute, second, day, month, year;
 
   if (is_open_ == false) {
@@ -565,7 +565,7 @@ analyzer::ApacheSessions Database::GetApacheSessionStatistics(const std::string 
 
     if (ret == SQLITE_ROW) {
       BOOST_LOG_TRIVIAL(debug) << "database::Database::GetApacheLogs: Found new log entry in database";
-      analyzer::ApacheSessionEntry entry;
+      ::apache::type::ApacheSessionEntry entry;
 
       entry.id = sqlite_interface_->ColumnInt64(statement, 0);
       entry.agent_name = TextHelper(sqlite_interface_->ColumnText(statement, 1));
@@ -622,9 +622,9 @@ void Database::SetApacheSessionAsAnomaly(RowIds all, RowIds anomalies) {
   StatementCheckForError(ret, "Exec error");
 }
 
-analyzer::ApacheSessionEntry Database::GetApacheOneSessionStatistic(long long id) {
+::apache::type::ApacheSessionEntry Database::GetApacheOneSessionStatistic(long long id) {
   BOOST_LOG_TRIVIAL(debug) << "database::Database::GetApacheOneSessionStatistic: Function call";
-  analyzer::ApacheSessionEntry entry;
+  ::apache::type::ApacheSessionEntry entry;
   int ret, hour, minute, second, day, month, year;
 
   if (is_open_ == false) {

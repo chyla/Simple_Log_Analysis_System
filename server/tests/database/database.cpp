@@ -508,7 +508,7 @@ TEST(DatabaseTest, AddApacheSessionStatistics_WithEmptySessionsList) {
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
-  analyzer::ApacheSessions sessions;
+  ::apache::type::ApacheSessions sessions;
 
   EXPECT_TRUE(database->AddApacheSessionStatistics(sessions));
 }
@@ -540,7 +540,7 @@ TEST(DatabaseTest, AddApacheSessionStatistics_WithOneEntry) {
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
-  analyzer::ApacheSessions sessions;
+  ::apache::type::ApacheSessions sessions;
   sessions.push_back({0, "agentname", "vh1", "127.0.0.1", MY_DEFAULT_TIME1(), 23, 941, 13, 44, "User-Agent Example", true});
 
   EXPECT_TRUE(database->AddApacheSessionStatistics(sessions));
@@ -593,7 +593,7 @@ TEST(DatabaseTest, AddApacheSessionStatistics_WithTwoEntries) {
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
-  analyzer::ApacheSessions sessions;
+  ::apache::type::ApacheSessions sessions;
   sessions.push_back({0, "agentname", "vh1", "127.0.0.1", MY_DEFAULT_TIME1(), 23, 941, 13, 44, "User-Agent Example", false});
   sessions.push_back({0, "agentname2", "vh2", "127.0.0.12", MY_DEFAULT_TIME2(), 232, 9412, 132, 442, "User-Agent Example 2", true});
 
@@ -608,7 +608,7 @@ TEST(DatabaseTest, AddApacheSessionStatistics_WhenPrepareFailed) {
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
-  analyzer::ApacheSessions sessions;
+  ::apache::type::ApacheSessions sessions;
   sessions.push_back({0, "agentname", "vh1", "127.0.0.1", MY_DEFAULT_TIME1(), 23, 941, 13, 44, "User-Agent Example"});
 
   EXPECT_THROW(database->AddApacheSessionStatistics(sessions), database::exception::detail::CantExecuteSqlStatementException);
@@ -641,7 +641,7 @@ TEST(DatabaseTest, AddApacheSessionStatistics_WhenFinalizeFailed) {
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
-  analyzer::ApacheSessions sessions;
+  ::apache::type::ApacheSessions sessions;
   sessions.push_back({0, "agentname", "vh1", "127.0.0.1", MY_DEFAULT_TIME1(), 23, 941, 13, 44, "User-Agent Example", false});
 
   EXPECT_THROW(database->AddApacheSessionStatistics(sessions), database::exception::detail::CantExecuteSqlStatementException);
@@ -673,7 +673,7 @@ TEST(DatabaseTest, AddApacheSessionStatistics_WhenStepFailed) {
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
-  analyzer::ApacheSessions sessions;
+  ::apache::type::ApacheSessions sessions;
   sessions.push_back({0, "agentname", "vh1", "127.0.0.1", MY_DEFAULT_TIME1(), 23, 941, 13, 44, "User-Agent Example", true});
 
   EXPECT_THROW(database->AddApacheSessionStatistics(sessions), database::exception::detail::CantExecuteSqlStatementException);
@@ -705,7 +705,7 @@ TEST(DatabaseTest, AddApacheSessionStatistics_StepWhenDatabaseIsBusy) {
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
-  analyzer::ApacheSessions sessions;
+  ::apache::type::ApacheSessions sessions;
   sessions.push_back({0, "agentname", "vh1", "127.0.0.1", MY_DEFAULT_TIME1(), 23, 941, 13, 44, "User-Agent Example", true});
 
   EXPECT_FALSE(database->AddApacheSessionStatistics(sessions));
@@ -735,7 +735,7 @@ TEST(DatabaseTest, AddApacheSessionStatistics_WhenBindUserAgentFailed) {
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
-  analyzer::ApacheSessions sessions;
+  ::apache::type::ApacheSessions sessions;
   sessions.push_back({0, "agentname", "vh1", "127.0.0.1", MY_DEFAULT_TIME1(), 23, 941, 13, 44, "User-Agent Example"});
 
   EXPECT_THROW(database->AddApacheSessionStatistics(sessions), database::exception::detail::CantExecuteSqlStatementException);
@@ -764,7 +764,7 @@ TEST(DatabaseTest, AddApacheSessionStatistics_WhenBindErrorPercentageFailed) {
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
-  analyzer::ApacheSessions sessions;
+  ::apache::type::ApacheSessions sessions;
   sessions.push_back({0, "agentname", "vh1", "127.0.0.1", MY_DEFAULT_TIME1(), 23, 941, 13, 44, "User-Agent Example"});
 
   EXPECT_THROW(database->AddApacheSessionStatistics(sessions), database::exception::detail::CantExecuteSqlStatementException);
@@ -792,7 +792,7 @@ TEST(DatabaseTest, AddApacheSessionStatistics_WhenBindRequestsCountFailed) {
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
-  analyzer::ApacheSessions sessions;
+  ::apache::type::ApacheSessions sessions;
   sessions.push_back({0, "agentname", "vh1", "127.0.0.1", MY_DEFAULT_TIME1(), 23, 941, 13, 44, "User-Agent Example"});
 
   EXPECT_THROW(database->AddApacheSessionStatistics(sessions), database::exception::detail::CantExecuteSqlStatementException);
@@ -819,7 +819,7 @@ TEST(DatabaseTest, AddApacheSessionStatistics_WhenBindBandwidthUsageFailed) {
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
-  analyzer::ApacheSessions sessions;
+  ::apache::type::ApacheSessions sessions;
   sessions.push_back({0, "agentname", "vh1", "127.0.0.1", MY_DEFAULT_TIME1(), 23, 941, 13, 44, "User-Agent Example"});
 
   EXPECT_THROW(database->AddApacheSessionStatistics(sessions), database::exception::detail::CantExecuteSqlStatementException);
@@ -845,7 +845,7 @@ TEST(DatabaseTest, AddApacheSessionStatistics_WhenBindSessionLengthFailed) {
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
-  analyzer::ApacheSessions sessions;
+  ::apache::type::ApacheSessions sessions;
   sessions.push_back({0, "agentname", "vh1", "127.0.0.1", MY_DEFAULT_TIME1(), 23, 941, 13, 44, "User-Agent Example"});
 
   EXPECT_THROW(database->AddApacheSessionStatistics(sessions), database::exception::detail::CantExecuteSqlStatementException);
@@ -869,7 +869,7 @@ TEST(DatabaseTest, AddApacheSessionStatistics_WhenBindYearFailed) {
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
-  analyzer::ApacheSessions sessions;
+  ::apache::type::ApacheSessions sessions;
   sessions.push_back({0, "agentname", "vh1", "127.0.0.1", MY_DEFAULT_TIME1(), 23, 941, 13, 44, "User-Agent Example"});
 
   EXPECT_THROW(database->AddApacheSessionStatistics(sessions), database::exception::detail::CantExecuteSqlStatementException);
@@ -892,7 +892,7 @@ TEST(DatabaseTest, AddApacheSessionStatistics_WhenBindMonthFailed) {
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
-  analyzer::ApacheSessions sessions;
+  ::apache::type::ApacheSessions sessions;
   sessions.push_back({0, "agentname", "vh1", "127.0.0.1", MY_DEFAULT_TIME1(), 23, 941, 13, 44, "User-Agent Example"});
 
   EXPECT_THROW(database->AddApacheSessionStatistics(sessions), database::exception::detail::CantExecuteSqlStatementException);
@@ -914,7 +914,7 @@ TEST(DatabaseTest, AddApacheSessionStatistics_WhenBindDayFailed) {
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
-  analyzer::ApacheSessions sessions;
+  ::apache::type::ApacheSessions sessions;
   sessions.push_back({0, "agentname", "vh1", "127.0.0.1", MY_DEFAULT_TIME1(), 23, 941, 13, 44, "User-Agent Example"});
 
   EXPECT_THROW(database->AddApacheSessionStatistics(sessions), database::exception::detail::CantExecuteSqlStatementException);
@@ -935,7 +935,7 @@ TEST(DatabaseTest, AddApacheSessionStatistics_WhenBindSecondFailed) {
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
-  analyzer::ApacheSessions sessions;
+  ::apache::type::ApacheSessions sessions;
   sessions.push_back({0, "agentname", "vh1", "127.0.0.1", MY_DEFAULT_TIME1(), 23, 941, 13, 44, "User-Agent Example"});
 
   EXPECT_THROW(database->AddApacheSessionStatistics(sessions), database::exception::detail::CantExecuteSqlStatementException);
@@ -955,7 +955,7 @@ TEST(DatabaseTest, AddApacheSessionStatistics_WhenBindMinuteFailed) {
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
-  analyzer::ApacheSessions sessions;
+  ::apache::type::ApacheSessions sessions;
   sessions.push_back({0, "agentname", "vh1", "127.0.0.1", MY_DEFAULT_TIME1(), 23, 941, 13, 44, "User-Agent Example"});
 
   EXPECT_THROW(database->AddApacheSessionStatistics(sessions), database::exception::detail::CantExecuteSqlStatementException);
@@ -974,7 +974,7 @@ TEST(DatabaseTest, AddApacheSessionStatistics_WhenBindHourFailed) {
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
-  analyzer::ApacheSessions sessions;
+  ::apache::type::ApacheSessions sessions;
   sessions.push_back({0, "agentname", "vh1", "127.0.0.1", MY_DEFAULT_TIME1(), 23, 941, 13, 44, "User-Agent Example"});
 
   EXPECT_THROW(database->AddApacheSessionStatistics(sessions), database::exception::detail::CantExecuteSqlStatementException);
@@ -991,7 +991,7 @@ TEST(DatabaseTest, AddApacheSessionStatistics_WhenBindClientIPFailed) {
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
-  analyzer::ApacheSessions sessions;
+  ::apache::type::ApacheSessions sessions;
   sessions.push_back({0, "agentname", "vh1", "127.0.0.1", MY_DEFAULT_TIME1(), 23, 941, 13, 44, "User-Agent Example"});
 
   EXPECT_THROW(database->AddApacheSessionStatistics(sessions), database::exception::detail::CantExecuteSqlStatementException);
@@ -1007,7 +1007,7 @@ TEST(DatabaseTest, AddApacheSessionStatistics_WhenBindVirtualhostFailed) {
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
-  analyzer::ApacheSessions sessions;
+  ::apache::type::ApacheSessions sessions;
   sessions.push_back({0, "agentname", "vh1", "127.0.0.1", MY_DEFAULT_TIME1(), 23, 941, 13, 44, "User-Agent Example"});
 
   EXPECT_THROW(database->AddApacheSessionStatistics(sessions), database::exception::detail::CantExecuteSqlStatementException);
@@ -1022,7 +1022,7 @@ TEST(DatabaseTest, AddApacheSessionStatistics_WhenBindAgentNameFailed) {
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
-  analyzer::ApacheSessions sessions;
+  ::apache::type::ApacheSessions sessions;
   sessions.push_back({0, "agentname", "vh1", "127.0.0.1", MY_DEFAULT_TIME1(), 23, 941, 13, 44, "User-Agent Example"});
 
   EXPECT_THROW(database->AddApacheSessionStatistics(sessions), database::exception::detail::CantExecuteSqlStatementException);
