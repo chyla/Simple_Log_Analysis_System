@@ -2,6 +2,18 @@
 
 set -e 
 
+function insert_module_name () {
+  sed -r "s~(.*)~`echo -e '\e[36;1m'`$1`echo -e '\e[0m'`: \1~"
+}
+
+function build () {
+  ./autogen.sh 
+  ./configure --prefix=${PATLMS_INSTALL_DIR} 
+  make
+  make install
+  make check
+}
+
 START_DIR=`pwd`
 
 export DIR=~/patlms_bindir
@@ -21,12 +33,8 @@ export CPPFLAGS="$CPPFLAGS -I${GTEST_INSTALL_DIR}/include -I${GMOCK_INSTALL_DIR}
 
 
 # build libpatlms
-cd libpatlms
-./autogen.sh
-./configure --prefix=${PATLMS_INSTALL_DIR}
-make
-make install
-make check
+cd ${START_DIR}/libpatlms
+build | insert_module_name libpatlms
 
 # libpatlms flags
 export CPPFLAGS="$CPPFLAGS -I${PATLMS_INSTALL_DIR}/include"
@@ -35,21 +43,13 @@ export LD_LIBRARY_PATH="${PATLMS_INSTALL_DIR}/lib"
 
 # build server
 cd ${START_DIR}/server
-./autogen.sh
-./configure --prefix=${SERVER_INSTALL_DIR}
-make
-make install
-make check
+build | insert_module_name server
 
 # build agent
 cd ${START_DIR}/agent
-./autogen.sh
-./configure --prefix=${AGENT_INSTALL_DIR}
-make
-make install
-make check
+build | insert_module_name agent
 
 # check web server
 cd ${START_DIR}/web
-tox
+tox | insert_module_name web
 
