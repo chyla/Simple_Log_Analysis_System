@@ -18,6 +18,7 @@ lib_libpatlms_la_SOURCES  = \
 					network/detail/system.cpp \
 					network/detail/system_interface.cpp \
 					type/time.cpp \
+					type/date.cpp \
 					util/path.cpp \
 					util/demonize.cpp \
 					util/configure_logger.cpp \

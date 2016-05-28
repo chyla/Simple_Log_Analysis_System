@@ -10,6 +10,7 @@ if CAN_RUN_TESTS
 tests_SOURCES	= main.cpp \
 			network/network.cpp \
 			type/time.cpp \
+			type/date.cpp \
 			util/path.cpp \
 			util/create_pidfile.cpp \
 			util/remove_file.cpp
@@ -19,6 +20,7 @@ OBJECT_FILES	= ../src/network/network.o \
 			../src/network/detail/system.o \
 			../src/network/detail/system_interface.o \
 			../src/type/time.o \
+			../src/type/date.o \
 			../src/util/path.o \
 			../src/util/create_pidfile.o \
 			../src/util/remove_file.o
