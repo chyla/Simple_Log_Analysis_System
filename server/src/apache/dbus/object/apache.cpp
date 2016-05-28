@@ -101,7 +101,7 @@ DBusHandlerResult Apache::OwnMessageHandler(DBusConnection *connection, DBusMess
         << "bytes=" << bytes << " ; "
         << "user_agent=" << user_agent;
 
-    type::ApacheLogEntry log_entry;
+    ::type::ApacheLogEntry log_entry;
     log_entry.agent_name = agent_name;
     log_entry.virtualhost = virtualhost;
     log_entry.client_ip = client_ip;

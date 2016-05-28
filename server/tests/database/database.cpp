@@ -11,7 +11,7 @@
 #include "src/database/exception/detail/cant_execute_sql_statement_exception.h"
 
 #include "mock/database/sqlite.h"
-#include "src/apache/database/anomaly_detection_configuration_entry.h"
+#include "src/apache/type/anomaly_detection_configuration_entry.h"
 
 using std::unique_ptr;
 using std::move;

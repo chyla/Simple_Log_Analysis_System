@@ -125,8 +125,8 @@ const ::web::type::JsonMessage CommandExecutorObject::GetSessions(const std::str
                                                                   const std::string &end_date) {
   BOOST_LOG_TRIVIAL(debug) << "apache::web::CommandExecutorObject::GetSessions: Function call";
 
-  auto tbegin = type::Time::FromString(begin_date);
-  auto tend = type::Time::FromString(end_date);
+  auto tbegin = ::type::Time::FromString(begin_date);
+  auto tend = ::type::Time::FromString(end_date);
   auto count = database_->GetApacheSessionStatisticsCount(agent_name, virtualhost_name,
                                                           tbegin, tend);
 
@@ -198,7 +198,7 @@ const ::web::type::JsonMessage CommandExecutorObject::SetApacheAnomalyDetectionC
                                                                                              const std::string &virtualhost_name,
                                                                                              const std::string &begin_date,
                                                                                              const std::string &end_date) {
-  ::apache::database::AnomalyDetectionConfigurationEntry c;
+  ::apache::type::AnomalyDetectionConfigurationEntry c;
   c.agent_name = agent_name;
   c.virtualhost_name = virtualhost_name;
   c.begin_date = ::type::Time::FromString(begin_date);

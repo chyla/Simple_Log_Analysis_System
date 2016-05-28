@@ -364,7 +364,7 @@ bool Database::AddApacheLogs(const type::ApacheLogs &log_entries) {
   ret = sqlite_interface_->Exec(db_handle_, "begin transaction", nullptr, nullptr, nullptr);
   StatementCheckForError(ret, "Begin transaction error");
 
-  for (const type::ApacheLogEntry &entry : log_entries) {
+  for (const ::type::ApacheLogEntry &entry : log_entries) {
     const char *sql = "insert into APACHE_LOGS_TABLE(AGENT_NAME, VIRTUALHOST, CLIENT_IP, UTC_HOUR, UTC_MINUTE, UTC_SECOND, UTC_DAY, UTC_MONTH, UTC_YEAR, REQUEST, STATUS_CODE, BYTES, USER_AGENT) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     sqlite3_stmt *statement;
     ret = sqlite_interface_->Prepare(db_handle_, sql, -1, &statement, nullptr);
@@ -679,7 +679,7 @@ analyzer::ApacheSessionEntry Database::GetApacheOneSessionStatistic(long long id
   return entry;
 }
 
-void Database::SetApacheAnomalyDetectionConfiguration(const ::apache::database::AnomalyDetectionConfigurationEntry &configuration) {
+void Database::SetApacheAnomalyDetectionConfiguration(const ::apache::type::AnomalyDetectionConfigurationEntry &configuration) {
   BOOST_LOG_TRIVIAL(debug) << "database::Database::SetApacheAnomalyDetectionConfiguration: Function call";
   int ret;
 
@@ -721,11 +721,11 @@ void Database::SetApacheAnomalyDetectionConfiguration(const ::apache::database::
   StatementCheckForError(ret, "Finalize error");
 }
 
-const ::apache::database::AnomalyDetectionConfiguration Database::GetApacheAnomalyDetectionConfiguration() {
+const ::apache::type::AnomalyDetectionConfiguration Database::GetApacheAnomalyDetectionConfiguration() {
   BOOST_LOG_TRIVIAL(debug) << "database::Database::GetApacheAnomalyDetectionConfiguration: Function call";
   int ret;
   RowId date_id;
-  ::apache::database::AnomalyDetectionConfiguration configuration;
+  ::apache::type::AnomalyDetectionConfiguration configuration;
 
   if (is_open_ == false) {
     BOOST_LOG_TRIVIAL(error) << "database::Database::GetApacheAnomalyDetectionConfiguration: Database is not open.";
@@ -744,7 +744,7 @@ const ::apache::database::AnomalyDetectionConfiguration Database::GetApacheAnoma
 
     if (ret == SQLITE_ROW) {
       BOOST_LOG_TRIVIAL(debug) << "database::Database::GetApacheAnomalyDetectionConfiguration: Found new entry in database";
-      ::apache::database::AnomalyDetectionConfigurationEntry entry;
+      ::apache::type::AnomalyDetectionConfigurationEntry entry;
 
       entry.id = sqlite_interface_->ColumnInt64(statement, 0);
       entry.agent_name = TextHelper(sqlite_interface_->ColumnText(statement, 1));
@@ -862,7 +862,7 @@ type::ApacheLogs Database::GetApacheLogs(std::string agent_name, std::string vir
 
     if (ret == SQLITE_ROW) {
       BOOST_LOG_TRIVIAL(debug) << "database::Database::GetApacheLogs: Found new log entry in database";
-      type::ApacheLogEntry log_entry;
+      ::type::ApacheLogEntry log_entry;
 
       log_entry.id = sqlite_interface_->ColumnInt64(statement, 0);
       log_entry.agent_name = TextHelper(sqlite_interface_->ColumnText(statement, 1));

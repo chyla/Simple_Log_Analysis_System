@@ -12,7 +12,7 @@
 #include "types.h"
 #include "detail/sqlite_interface.h"
 #include "src/analyzer/apache_session_entry.h"
-#include "src/apache/database/anomaly_detection_configuration_entry.h"
+#include "src/apache/type/anomaly_detection_configuration_entry.h"
 
 namespace database
 {
@@ -68,9 +68,9 @@ class Database {
 
   analyzer::ApacheSessionEntry GetApacheOneSessionStatistic(long long id);
 
-  void SetApacheAnomalyDetectionConfiguration(const ::apache::database::AnomalyDetectionConfigurationEntry &configuration);
+  void SetApacheAnomalyDetectionConfiguration(const ::apache::type::AnomalyDetectionConfigurationEntry &configuration);
 
-  const ::apache::database::AnomalyDetectionConfiguration GetApacheAnomalyDetectionConfiguration();
+  const ::apache::type::AnomalyDetectionConfiguration GetApacheAnomalyDetectionConfiguration();
 
   void MarkApacheStatisticsAsCreatedFor(int day, int month, int year);
 
