@@ -21,11 +21,11 @@ SQLiteWrapperPtr SQLiteWrapper::Create(detail::SQLiteInterfacePtr sqlite_interfa
 }
 
 void SQLiteWrapper::Open(const std::string &file_path) {
-  BOOST_LOG_TRIVIAL(debug) << "database::detail::SQLiteWrapper::Open: Function call";
+  BOOST_LOG_TRIVIAL(debug) << "database::SQLiteWrapper::Open: Function call";
 
   int ret = sqlite_interface_->Open(file_path.c_str(), &db_handle_, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, nullptr);
   if (ret != SQLITE_OK) {
-    BOOST_LOG_TRIVIAL(error) << "database::detail::SQLiteWrapper::Open: Open error: " << ret;
+    BOOST_LOG_TRIVIAL(error) << "database::SQLiteWrapper::Open: Open error: " << ret;
     throw exception::detail::CantOpenDatabaseException();
   }
 
@@ -37,12 +37,12 @@ bool SQLiteWrapper::IsOpen() const {
 }
 
 bool SQLiteWrapper::Close() {
-  BOOST_LOG_TRIVIAL(debug) << "database::detail::SQLiteWrapper::Close: Function call";
+  BOOST_LOG_TRIVIAL(debug) << "database::SQLiteWrapper::Close: Function call";
 
   if (is_open_) {
     int ret = sqlite_interface_->Close(db_handle_);
     if (ret != SQLITE_OK) {
-      BOOST_LOG_TRIVIAL(error) << "database::detail::SQLiteWrapper::Close: Failed to close database: " << ret;
+      BOOST_LOG_TRIVIAL(error) << "database::SQLiteWrapper::Close: Failed to close database: " << ret;
       throw exception::detail::CantCloseDatabaseException();
     }
 
@@ -50,12 +50,14 @@ bool SQLiteWrapper::Close() {
     return true;
   }
   else {
-    BOOST_LOG_TRIVIAL(warning) << "database::detail::SQLiteWrapper::Close: Database already closed";
+    BOOST_LOG_TRIVIAL(warning) << "database::SQLiteWrapper::Close: Database already closed";
     return false;
   }
 }
 
 void SQLiteWrapper::Prepare(const std::string &sql, sqlite3_stmt **ppStmt) {
+  BOOST_LOG_TRIVIAL(debug) << "database::SQLiteWrapper::Prepare: Function call";
+
   CheckIsOpen();
 
   int ret = sqlite_interface_->Prepare(db_handle_, sql.c_str(), -1, ppStmt, nullptr);
@@ -63,6 +65,8 @@ void SQLiteWrapper::Prepare(const std::string &sql, sqlite3_stmt **ppStmt) {
 }
 
 void SQLiteWrapper::BindDouble(sqlite3_stmt* pStmt, int pos, double value) {
+  BOOST_LOG_TRIVIAL(debug) << "database::SQLiteWrapper::BindDouble: Function call";
+
   CheckIsOpen();
 
   int ret = sqlite_interface_->BindDouble(pStmt, pos, value);
@@ -70,6 +74,8 @@ void SQLiteWrapper::BindDouble(sqlite3_stmt* pStmt, int pos, double value) {
 }
 
 void SQLiteWrapper::BindInt(sqlite3_stmt *pStmt, int pos, int value) {
+  BOOST_LOG_TRIVIAL(debug) << "database::SQLiteWrapper::BindInt: Function call";
+
   CheckIsOpen();
 
   int ret = sqlite_interface_->BindInt(pStmt, pos, value);
@@ -77,6 +83,8 @@ void SQLiteWrapper::BindInt(sqlite3_stmt *pStmt, int pos, int value) {
 }
 
 void SQLiteWrapper::BindInt64(sqlite3_stmt *pStmt, int pos, sqlite3_int64 value) {
+  BOOST_LOG_TRIVIAL(debug) << "database::SQLiteWrapper::BindInt64: Function call";
+
   CheckIsOpen();
 
   int ret = sqlite_interface_->BindInt64(pStmt, pos, value);
@@ -84,6 +92,8 @@ void SQLiteWrapper::BindInt64(sqlite3_stmt *pStmt, int pos, sqlite3_int64 value)
 }
 
 void SQLiteWrapper::BindText(sqlite3_stmt *pStmt, int pos, const std::string &value) {
+  BOOST_LOG_TRIVIAL(debug) << "database::SQLiteWrapper::BindText: Function call";
+
   CheckIsOpen();
 
   int ret = sqlite_interface_->BindText(pStmt, pos, value.c_str(), -1, SQLITE_STATIC);
@@ -91,24 +101,32 @@ void SQLiteWrapper::BindText(sqlite3_stmt *pStmt, int pos, const std::string &va
 }
 
 double SQLiteWrapper::ColumnDouble(sqlite3_stmt *pStmt, int iCol) {
+  BOOST_LOG_TRIVIAL(debug) << "database::SQLiteWrapper::ColumnDouble: Function call";
+
   CheckIsOpen();
 
   return sqlite_interface_->ColumnDouble(pStmt, iCol);
 }
 
 int SQLiteWrapper::ColumnInt(sqlite3_stmt *pStmt, int iCol) {
+  BOOST_LOG_TRIVIAL(debug) << "database::SQLiteWrapper::ColumnInt: Function call";
+
   CheckIsOpen();
 
   return sqlite_interface_->ColumnInt(pStmt, iCol);
 }
 
 sqlite3_int64 SQLiteWrapper::ColumnInt64(sqlite3_stmt *pStmt, int iCol) {
+  BOOST_LOG_TRIVIAL(debug) << "database::SQLiteWrapper::ColumnInt64: Function call";
+
   CheckIsOpen();
 
   return sqlite_interface_->ColumnInt64(pStmt, iCol);
 }
 
 const std::string SQLiteWrapper::ColumnText(sqlite3_stmt *pStmt, int iCol) {
+  BOOST_LOG_TRIVIAL(debug) << "database::SQLiteWrapper::ColumnText: Function call";
+
   CheckIsOpen();
 
   const unsigned char *text = sqlite_interface_->ColumnText(pStmt, iCol);
@@ -121,6 +139,8 @@ const std::string SQLiteWrapper::ColumnText(sqlite3_stmt *pStmt, int iCol) {
 }
 
 int SQLiteWrapper::Step(sqlite3_stmt *pStmt) {
+  BOOST_LOG_TRIVIAL(debug) << "database::SQLiteWrapper::Step: Function call";
+
   CheckIsOpen();
 
   int ret = sqlite_interface_->Step(pStmt);
@@ -130,6 +150,8 @@ int SQLiteWrapper::Step(sqlite3_stmt *pStmt) {
 }
 
 void SQLiteWrapper::Finalize(sqlite3_stmt *pStmt) {
+  BOOST_LOG_TRIVIAL(debug) << "database::SQLiteWrapper::Finalize: Function call";
+
   CheckIsOpen();
 
   int ret = sqlite_interface_->Finalize(pStmt);
@@ -137,8 +159,10 @@ void SQLiteWrapper::Finalize(sqlite3_stmt *pStmt) {
 }
 
 void SQLiteWrapper::Exec(const std::string &sql, int (*callback) (void *, int, char **, char **), void *arg) {
+  BOOST_LOG_TRIVIAL(debug) << "database::SQLiteWrapper::Exec: Function call";
+
   CheckIsOpen();
-  
+
   int ret = sqlite_interface_->Exec(db_handle_, sql.c_str(), callback, arg, nullptr);
   CheckForError(ret, "Exec function error");
 }
@@ -149,15 +173,19 @@ is_open_(false) {
 }
 
 void SQLiteWrapper::CheckIsOpen() {
+  BOOST_LOG_TRIVIAL(debug) << "database::SQLiteWrapper::CheckIsOpen: Function call";
+
   if (is_open_ == false) {
-    BOOST_LOG_TRIVIAL(error) << "database::SQLiteWrapper: Database is not open.";
+    BOOST_LOG_TRIVIAL(error) << "database::SQLiteWrapper::CheckIsOpen: Database is not open.";
     throw exception::detail::CantExecuteSqlStatementException();
   }
 }
 
 void SQLiteWrapper::CheckForError(int return_value, const char *description) {
+  BOOST_LOG_TRIVIAL(debug) << "database::SQLiteWrapper::CheckForError: Function call";
+
   if (return_value != SQLITE_OK && return_value != SQLITE_DONE && return_value != SQLITE_ROW) {
-    BOOST_LOG_TRIVIAL(error) << "database::SQLiteWrapper: " << description << ": " << return_value;
+    BOOST_LOG_TRIVIAL(error) << "database::SQLiteWrapper::CheckForError: " << description << ": " << return_value;
     throw exception::detail::CantExecuteSqlStatementException();
   }
 }
