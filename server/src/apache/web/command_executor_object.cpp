@@ -127,7 +127,7 @@ const ::web::type::JsonMessage CommandExecutorObject::GetSessions(const std::str
 
   auto tbegin = ::type::Timestamp::Create(::type::Time(),
                                           ::type::Date::Create(begin_date));
-  auto tend = ::type::Timestamp::Create(::type::Time(),
+  auto tend = ::type::Timestamp::Create(::type::Time(24, 59, 59),
                                         ::type::Date::Create(end_date));
   auto count = database_->GetApacheSessionStatisticsCount(agent_name, virtualhost_name,
                                                           tbegin, tend);
