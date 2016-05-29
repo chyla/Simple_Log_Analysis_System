@@ -1,6 +1,7 @@
 #ifndef PATLMS_TESTS_MOCK_DATABASE_SQLITE_H
 #define PATLMS_TESTS_MOCK_DATABASE_SQLITE_H
 
+#include <memory>
 #include <gmock/gmock.h>
 
 #include "src/database/detail/sqlite_interface.h"
@@ -32,7 +33,7 @@ class SQLite : public ::database::detail::SQLiteInterface {
 
   MOCK_METHOD2(ColumnInt, int (sqlite3_stmt *pStmt, int iCol));
 
-  MOCK_METHOD2(ColumnInt64, sqlite3_int64 (sqlite3_stmt *pStmt, int iCol));
+  MOCK_METHOD2(ColumnInt64, sqlite3_int64(sqlite3_stmt *pStmt, int iCol));
 
   MOCK_METHOD2(ColumnText, const unsigned char* (sqlite3_stmt *pStmt, int iCol));
 
@@ -42,6 +43,8 @@ class SQLite : public ::database::detail::SQLiteInterface {
 
   MOCK_METHOD5(Exec, int (sqlite3 *pDb, const char *sql, int (*callback) (void *, int, char **, char **), void *arg, char **errmsg));
 };
+
+typedef std::unique_ptr<SQLite> SQLitePtr;
 
 }
 

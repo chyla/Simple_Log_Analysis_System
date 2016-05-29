@@ -7,6 +7,7 @@ AM_LDFLAGS		= @BOOST_LDFLAGS@ $(DBUS_LIBS)
 bin_PROGRAMS		= patlms-server
 patlms_server_SOURCES	= main.cpp \
 				database/database.cpp \
+				database/sqlite_wrapper.cpp \
 				database/detail/sqlite.cpp \
 				program_options/parser.cpp \
 				program_options/type/options.cpp \

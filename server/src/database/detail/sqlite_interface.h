@@ -1,6 +1,8 @@
 #ifndef PATLMS_DATABASE_DETAIL_SQLITE_INTERFACE_H
 #define PATLMS_DATABASE_DETAIL_SQLITE_INTERFACE_H
 
+#include <memory>
+
 #include <sqlite3.h>
 
 namespace database
@@ -44,6 +46,8 @@ class SQLiteInterface {
 
 SQLiteInterface::~SQLiteInterface() {
 }
+
+typedef std::unique_ptr<SQLiteInterface> SQLiteInterfacePtr;
 
 }
 
