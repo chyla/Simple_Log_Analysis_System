@@ -5,7 +5,7 @@
 
 #include <patlms/type/time.h>
 
-#include "src/database/types.h"
+#include "src/database/type/row_id.h"
 
 namespace apache
 {
@@ -14,7 +14,7 @@ namespace type
 {
 
 struct AnomalyDetectionConfigurationEntry {
-  ::database::RowId id;
+  ::database::type::RowId id;
   std::string agent_name;
   std::string virtualhost_name;
   ::type::Date begin_date;

@@ -206,7 +206,7 @@ void Database::AddDate(int day, int month, int year) {
   StatementCheckForError(ret, "Insert or ignore date error");
 }
 
-long long Database::GetDateId(int day, int month, int year) {
+type::RowId Database::GetDateId(int day, int month, int year) {
   BOOST_LOG_TRIVIAL(debug) << "database::Database::GetDateId: Function call";
   int ret;
   long long id = -1;
@@ -240,10 +240,10 @@ long long Database::GetDateId(int day, int month, int year) {
   return id;
 }
 
-type::Date Database::GetDateById(RowId id) {
+::type::Date Database::GetDateById(type::RowId id) {
   BOOST_LOG_TRIVIAL(debug) << "database::Database::GetDateById: Function call";
   int ret, day, month, year;
-  type::Date date;
+  ::type::Date date;
   bool found = false;
 
   if (is_open_ == false) {
@@ -268,7 +268,7 @@ type::Date Database::GetDateById(RowId id) {
     day = sqlite_interface_->ColumnInt(statement, 0);
     month = sqlite_interface_->ColumnInt(statement, 1);
     year = sqlite_interface_->ColumnInt(statement, 2);
-    date = type::Date::Create(day, month, year);
+    date = ::type::Date::Create(day, month, year);
   }
 
   ret = sqlite_interface_->Finalize(statement);
@@ -282,7 +282,7 @@ type::Date Database::GetDateById(RowId id) {
   return date;
 }
 
-bool Database::AddBashLogs(const type::BashLogs &log_entries) {
+bool Database::AddBashLogs(const ::type::BashLogs &log_entries) {
   BOOST_LOG_TRIVIAL(debug) << "database::Database::AddBashLogs: Function call";
 
   if (is_open_ == false) {
@@ -294,7 +294,7 @@ bool Database::AddBashLogs(const type::BashLogs &log_entries) {
   ret = sqlite_interface_->Exec(db_handle_, "begin transaction", nullptr, nullptr, nullptr);
   StatementCheckForError(ret, "Begin transaction error");
 
-  for (const type::BashLogEntry &entry : log_entries) {
+  for (const ::type::BashLogEntry &entry : log_entries) {
     BOOST_LOG_TRIVIAL(debug) << "database::Database::AddBashLogs: Processing: " << entry.agent_name << " ; " << entry.utc_time << " ; " << entry.user_id << " ; " << entry.command;
 
     const char *sql = "insert into BASH_LOGS_TABLE(AGENT_NAME, UTC_HOUR, UTC_MINUTE, UTC_SECOND, UTC_DAY, UTC_MONTH, UTC_YEAR, USER_ID, COMMAND) values(?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -352,7 +352,7 @@ bool Database::AddBashLogs(const type::BashLogs &log_entries) {
   return true;
 }
 
-bool Database::AddApacheLogs(const type::ApacheLogs &log_entries) {
+bool Database::AddApacheLogs(const ::type::ApacheLogs &log_entries) {
   BOOST_LOG_TRIVIAL(debug) << "database::Database::AddApacheLogs: Function call";
 
   if (is_open_ == false) {
@@ -519,13 +519,13 @@ bool Database::AddApacheSessionStatistics(const ::apache::type::ApacheSessions &
 }
 
 long long Database::GetApacheSessionStatisticsCount(const std::string &agent_name, const std::string &virtualhost_name,
-                                                    const type::Timestamp &from, const type::Timestamp &to) {
+                                                    const ::type::Timestamp &from, const ::type::Timestamp &to) {
   BOOST_LOG_TRIVIAL(debug) << "database::Database::GetApacheSessionStatisticsCount: Function call";
   return GetApacheCount("APACHE_SESSION_TABLE", agent_name, virtualhost_name, from, to);
 }
 
 ::apache::type::ApacheSessions Database::GetApacheSessionStatistics(const std::string &agent_name, const std::string &virtualhost_name,
-                                                                    const type::Timestamp &from, const type::Timestamp &to, unsigned limit, long long offset) {
+                                                                    const ::type::Timestamp &from, const ::type::Timestamp &to, unsigned limit, long long offset) {
   BOOST_LOG_TRIVIAL(debug) << "database::Database::GetApacheSessionStatistics: Function call";
   ::apache::type::ApacheSessions sessions;
   int ret, hour, minute, second, day, month, year;
@@ -579,7 +579,7 @@ long long Database::GetApacheSessionStatisticsCount(const std::string &agent_nam
       month = sqlite_interface_->ColumnInt(statement, 8);
       year = sqlite_interface_->ColumnInt(statement, 9);
 
-      type::Timestamp t;
+      ::type::Timestamp t;
       t.Set(hour, minute, second, day, month, year);
 
       entry.session_start = t;
@@ -601,7 +601,7 @@ long long Database::GetApacheSessionStatisticsCount(const std::string &agent_nam
   return sessions;
 }
 
-void Database::SetApacheSessionAsAnomaly(RowIds all, RowIds anomalies) {
+void Database::SetApacheSessionAsAnomaly(type::RowIds all, type::RowIds anomalies) {
   BOOST_LOG_TRIVIAL(debug) << "database::Database::SetApacheSessionAsAnomaly: Function call";
 
   if (is_open_ == false) {
@@ -661,7 +661,7 @@ void Database::SetApacheSessionAsAnomaly(RowIds all, RowIds anomalies) {
     month = sqlite_interface_->ColumnInt(statement, 8);
     year = sqlite_interface_->ColumnInt(statement, 9);
 
-    type::Timestamp t;
+    ::type::Timestamp t;
     t.Set(hour, minute, second, day, month, year);
 
     entry.session_start = t;
@@ -724,7 +724,7 @@ void Database::SetApacheAnomalyDetectionConfiguration(const ::apache::type::Anom
 const ::apache::type::AnomalyDetectionConfiguration Database::GetApacheAnomalyDetectionConfiguration() {
   BOOST_LOG_TRIVIAL(debug) << "database::Database::GetApacheAnomalyDetectionConfiguration: Function call";
   int ret;
-  RowId date_id;
+  type::RowId date_id;
   ::apache::type::AnomalyDetectionConfiguration configuration;
 
   if (is_open_ == false) {
@@ -818,15 +818,15 @@ bool Database::IsApacheStatisticsCreatedFor(int day, int month, int year) {
   return created;
 }
 
-long long Database::GetApacheLogsCount(string agent_name, string virtualhost_name, type::Timestamp from, type::Timestamp to) {
+long long Database::GetApacheLogsCount(string agent_name, string virtualhost_name, ::type::Timestamp from, ::type::Timestamp to) {
   BOOST_LOG_TRIVIAL(debug) << "database::Database::GetApacheLogsCount: Function call";
   return GetApacheCount("APACHE_LOGS_TABLE", agent_name, virtualhost_name, from, to);
 }
 
-type::ApacheLogs Database::GetApacheLogs(std::string agent_name, std::string virtualhost_name, type::Timestamp from, type::Timestamp to, unsigned limit, long long offset) {
+::type::ApacheLogs Database::GetApacheLogs(std::string agent_name, std::string virtualhost_name, ::type::Timestamp from, ::type::Timestamp to, unsigned limit, long long offset) {
   BOOST_LOG_TRIVIAL(debug) << "database::Database::GetApacheLogs: Function call";
   int ret, hour, minute, second, day, month, year;
-  type::ApacheLogs logs;
+  ::type::ApacheLogs logs;
 
   if (is_open_ == false) {
     BOOST_LOG_TRIVIAL(error) << "database::Database::GetApacheLogs: Database is not open";
@@ -876,7 +876,7 @@ type::ApacheLogs Database::GetApacheLogs(std::string agent_name, std::string vir
       month = sqlite_interface_->ColumnInt(statement, 8);
       year = sqlite_interface_->ColumnInt(statement, 9);
 
-      type::Timestamp t;
+      ::type::Timestamp t;
       t.Set(hour, minute, second, day, month, year);
 
       log_entry.time = t;
@@ -1004,7 +1004,7 @@ int Database::GetApacheAgentNamesCallback(void *names_vptr, int argc, char **arg
   return 0;
 }
 
-string Database::GetTimeRule(const type::Timestamp &from, const type::Timestamp &to) const {
+string Database::GetTimeRule(const ::type::Timestamp &from, const ::type::Timestamp &to) const {
   string from_day = to_string(from.GetDate().GetDay()),
       from_month = to_string(from.GetDate().GetMonth()),
       from_year = to_string(from.GetDate().GetYear()),
@@ -1054,8 +1054,8 @@ std::string Database::TextHelper(unsigned const char *text) const {
 }
 
 long long Database::GetApacheCount(const std::string &table, const std::string &agent_name,
-                                   const std::string &virtualhost_name, const type::Timestamp &from,
-                                   const type::Timestamp &to) {
+                                   const std::string &virtualhost_name, const ::type::Timestamp &from,
+                                   const ::type::Timestamp &to) {
   BOOST_LOG_TRIVIAL(debug) << "database::Database::GetApacheCount: Function call";
   int ret;
   long long count = 0;

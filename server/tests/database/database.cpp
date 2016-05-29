@@ -21,14 +21,14 @@ using namespace database;
 #define DB_HANDLE_EXAMPLE_PTR_VALUE (reinterpret_cast<sqlite3*>(0x000001))
 #define DB_STATEMENT_EXAMPLE_PTR_VALUE (reinterpret_cast<sqlite3_stmt*>(0x000002))
 
-type::Timestamp MY_DEFAULT_TIME1() {
-  type::Timestamp t;
+::type::Timestamp MY_DEFAULT_TIME1() {
+  ::type::Timestamp t;
   t.Set(21, 12, 3, 22, 4, 2011);
   return t;
 }
 
-type::Timestamp MY_DEFAULT_TIME2() {
-  type::Timestamp t;
+::type::Timestamp MY_DEFAULT_TIME2() {
+  ::type::Timestamp t;
   t.Set(22, 13, 4, 23, 5, 2012);
   return t;
 }
@@ -243,7 +243,7 @@ TEST(DatabaseTest, AddBashLogsWithEmptyLogList) {
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
-  type::BashLogs logs;
+  ::type::BashLogs logs;
 
   EXPECT_TRUE(database->AddBashLogs(logs));
 }
@@ -262,7 +262,7 @@ TEST(DatabaseTest, AddBashLogsOneLogEntry) {
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
-  type::BashLogs logs;
+  ::type::BashLogs logs;
   logs.push_back({0, "agentname", MY_DEFAULT_TIME1(), 11, "command"});
 
   EXPECT_TRUE(database->AddBashLogs(logs));
@@ -289,7 +289,7 @@ TEST(DatabaseTest, AddBashLogsTwoLogsEntries) {
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
-  type::BashLogs logs;
+  ::type::BashLogs logs;
   logs.push_back({0, "agentname", MY_DEFAULT_TIME1(), 11, "command"});
   logs.push_back({0, "agentname2", MY_DEFAULT_TIME2(), 21, "command2"});
 
@@ -304,7 +304,7 @@ TEST(DatabaseTest, AddBashLogsOneLogEntryWhenPrepareFailed) {
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
-  type::BashLogs logs;
+  ::type::BashLogs logs;
   logs.push_back({0, "agentname", MY_DEFAULT_TIME1(), 11, "command"});
 
   EXPECT_THROW(database->AddBashLogs(logs), database::exception::detail::CantExecuteSqlStatementException);
@@ -319,7 +319,7 @@ TEST(DatabaseTest, AddBashLogsOneLogEntryWhenBindHostnameFailed) {
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
-  type::BashLogs logs;
+  ::type::BashLogs logs;
   logs.push_back({0, "agentname", MY_DEFAULT_TIME1(), 11, "command"});
 
   EXPECT_THROW(database->AddBashLogs(logs), database::exception::detail::CantExecuteSqlStatementException);
@@ -336,7 +336,7 @@ TEST(DatabaseTest, AddBashLogsOneLogEntryWhenBindUidFailed) {
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
-  type::BashLogs logs;
+  ::type::BashLogs logs;
   logs.push_back({0, "agentname", MY_DEFAULT_TIME1(), 11, "command"});
 
   EXPECT_THROW(database->AddBashLogs(logs), database::exception::detail::CantExecuteSqlStatementException);
@@ -354,7 +354,7 @@ TEST(DatabaseTest, AddBashLogsOneLogEntryWhenBindCommandFailed) {
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
-  type::BashLogs logs;
+  ::type::BashLogs logs;
   logs.push_back({0, "agentname", MY_DEFAULT_TIME1(), 11, "command"});
 
   EXPECT_THROW(database->AddBashLogs(logs), database::exception::detail::CantExecuteSqlStatementException);
@@ -373,7 +373,7 @@ TEST(DatabaseTest, AddBashLogsOneLogEntryWhenStepFailed) {
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
-  type::BashLogs logs;
+  ::type::BashLogs logs;
   logs.push_back({0, "agentname", MY_DEFAULT_TIME1(), 11, "command"});
 
   EXPECT_THROW(database->AddBashLogs(logs), database::exception::detail::CantExecuteSqlStatementException);
@@ -392,7 +392,7 @@ TEST(DatabaseTest, AddBashLogsOneLogEntryWhenStepBusy) {
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
-  type::BashLogs logs;
+  ::type::BashLogs logs;
   logs.push_back({0, "agentname", MY_DEFAULT_TIME1(), 11, "command"});
 
   EXPECT_FALSE(database->AddBashLogs(logs));
@@ -412,7 +412,7 @@ TEST(DatabaseTest, AddBashLogsOneLogEntryWhenFinalizeFailed) {
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
-  type::BashLogs logs;
+  ::type::BashLogs logs;
   logs.push_back({0, "agentname", MY_DEFAULT_TIME1(), 11, "command"});
 
   EXPECT_THROW(database->AddBashLogs(logs), database::exception::detail::CantExecuteSqlStatementException);
@@ -422,7 +422,7 @@ TEST(DatabaseTest, AddBashLogsWhenDatabaseIsClosed) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  type::BashLogs logs;
+  ::type::BashLogs logs;
 
   EXPECT_FALSE(database->IsOpen());
   EXPECT_THROW(database->AddBashLogs(logs), database::exception::detail::CantExecuteSqlStatementException);
@@ -436,7 +436,7 @@ TEST(DatabaseTest, AddBashLogsWhenBeginTransactionFailed) {
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
-  type::BashLogs logs;
+  ::type::BashLogs logs;
 
   EXPECT_THROW(database->AddBashLogs(logs), database::exception::detail::CantExecuteSqlStatementException);
 }
@@ -451,7 +451,7 @@ TEST(DatabaseTest, AddBashLogsWhenEndTransactionFailed) {
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
-  type::BashLogs logs;
+  ::type::BashLogs logs;
 
   EXPECT_THROW(database->AddBashLogs(logs), database::exception::detail::CantExecuteSqlStatementException);
 }
@@ -466,7 +466,7 @@ TEST(DatabaseTest, AddBashLogsWhenEndTransactionFailedAndRollbackFailed) {
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
-  type::BashLogs logs;
+  ::type::BashLogs logs;
 
   EXPECT_THROW(database->AddBashLogs(logs), database::exception::detail::CantExecuteSqlStatementException);
 }
@@ -481,7 +481,7 @@ TEST(DatabaseTest, AddBashLogsWhenEndTransactionBusy) {
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
-  type::BashLogs logs;
+  ::type::BashLogs logs;
 
   EXPECT_FALSE(database->AddBashLogs(logs));
 }
@@ -496,7 +496,7 @@ TEST(DatabaseTest, AddBashLogsWhenEndTransactionBusyAndRollbackFailed) {
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
-  type::BashLogs logs;
+  ::type::BashLogs logs;
 
   EXPECT_THROW(database->AddBashLogs(logs), database::exception::detail::CantExecuteSqlStatementException);
 }
@@ -1038,7 +1038,7 @@ TEST(DatabaseTest, GetApacheLogsCount) {
   EXPECT_CALL(*sqlite_mock, ColumnInt64(DB_STATEMENT_EXAMPLE_PTR_VALUE, 0)).WillOnce(Return(43));
   EXPECT_CALL(*sqlite_mock, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_OK));
 
-  type::Timestamp from, to;
+  ::type::Timestamp from, to;
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
 
@@ -1055,7 +1055,7 @@ TEST(DatabaseTest, GetApacheLogsCount_WhenFinalizeFailed) {
   EXPECT_CALL(*sqlite_mock, ColumnInt64(DB_STATEMENT_EXAMPLE_PTR_VALUE, 0)).WillOnce(Return(43));
   EXPECT_CALL(*sqlite_mock, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_NOMEM));
 
-  type::Timestamp from, to;
+  ::type::Timestamp from, to;
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
 
@@ -1070,7 +1070,7 @@ TEST(DatabaseTest, GetApacheLogsCount_WhenStepFailed) {
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 2, StrEq("vh1"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
   EXPECT_CALL(*sqlite_mock, Step(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_NOMEM));
 
-  type::Timestamp from, to;
+  ::type::Timestamp from, to;
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
 
@@ -1084,7 +1084,7 @@ TEST(DatabaseTest, GetApacheLogsCount_WhenBindVirtualhostFailed) {
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("agentname"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 2, StrEq("vh1"), -1, nullptr)).WillOnce(Return(SQLITE_NOMEM));
 
-  type::Timestamp from, to;
+  ::type::Timestamp from, to;
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
 
@@ -1097,7 +1097,7 @@ TEST(DatabaseTest, GetApacheLogsCount_WhenBindAgentNameFailed) {
   MY_EXPECT_PREPARE(sqlite_mock, 1);
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("agentname"), -1, nullptr)).WillOnce(Return(SQLITE_NOMEM));
 
-  type::Timestamp from, to;
+  ::type::Timestamp from, to;
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
 
@@ -1109,7 +1109,7 @@ TEST(DatabaseTest, GetApacheLogsCount_WhenPrepareFailed) {
   MY_EXPECT_OPEN(sqlite_mock);
   MY_EXPECT_PREPARE(sqlite_mock, 1, SQLITE_NOMEM);
 
-  type::Timestamp from, to;
+  ::type::Timestamp from, to;
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
 
@@ -1276,7 +1276,7 @@ TEST(DatabaseTest, GetApacheLogs) {
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
 
-  type::Timestamp from, to;
+  ::type::Timestamp from, to;
   from.Set(10, 0, 0, 1, 1, 2015);
   to.Set(10, 0, 0, 1, 1, 2017);
   auto names = database->GetApacheLogs("agentname", "vh1", from, to, 100, 0);
@@ -1329,7 +1329,7 @@ TEST(DatabaseTest, GetApacheLogs_WhenFinalizeFail) {
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
 
-  type::Timestamp from, to;
+  ::type::Timestamp from, to;
   from.Set(10, 0, 0, 1, 1, 2015);
   to.Set(10, 0, 0, 1, 1, 2017);
   EXPECT_THROW(database->GetApacheLogs("agentname", "vh1", from, to, 100, 0), database::exception::detail::CantExecuteSqlStatementException);
@@ -1365,7 +1365,7 @@ TEST(DatabaseTest, GetApacheLogs_WhenUserAgentReturnsNull) {
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
 
-  type::Timestamp from, to;
+  ::type::Timestamp from, to;
   from.Set(10, 0, 0, 1, 1, 2015);
   to.Set(10, 0, 0, 1, 1, 2017);
   auto names = database->GetApacheLogs("agentname", "vh1", from, to, 100, 0);
@@ -1418,7 +1418,7 @@ TEST(DatabaseTest, GetApacheLogs_WhenRequestReturnsNull) {
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
 
-  type::Timestamp from, to;
+  ::type::Timestamp from, to;
   from.Set(10, 0, 0, 1, 1, 2015);
   to.Set(10, 0, 0, 1, 1, 2017);
   auto names = database->GetApacheLogs("agentname", "vh1", from, to, 100, 0);
@@ -1471,7 +1471,7 @@ TEST(DatabaseTest, GetApacheLogs_WhenClientIPReturnsNull) {
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
 
-  type::Timestamp from, to;
+  ::type::Timestamp from, to;
   from.Set(10, 0, 0, 1, 1, 2015);
   to.Set(10, 0, 0, 1, 1, 2017);
   auto names = database->GetApacheLogs("agentname", "vh1", from, to, 100, 0);
@@ -1524,7 +1524,7 @@ TEST(DatabaseTest, GetApacheLogs_WhenVirtualhostReturnsNull) {
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
 
-  type::Timestamp from, to;
+  ::type::Timestamp from, to;
   from.Set(10, 0, 0, 1, 1, 2015);
   to.Set(10, 0, 0, 1, 1, 2017);
   auto names = database->GetApacheLogs("agentname", "vh1", from, to, 100, 0);
@@ -1577,7 +1577,7 @@ TEST(DatabaseTest, GetApacheLogs_WhenAgentNameReturnsNull) {
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
 
-  type::Timestamp from, to;
+  ::type::Timestamp from, to;
   from.Set(10, 0, 0, 1, 1, 2015);
   to.Set(10, 0, 0, 1, 1, 2017);
   auto names = database->GetApacheLogs("agentname", "vh1", from, to, 100, 0);
@@ -1612,7 +1612,7 @@ TEST(DatabaseTest, GetApacheLogs_WhenStepFail) {
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
 
-  type::Timestamp from, to;
+  ::type::Timestamp from, to;
   from.Set(10, 0, 0, 1, 1, 2015);
   to.Set(10, 0, 0, 1, 1, 2017);
   EXPECT_THROW(database->GetApacheLogs("agentname", "vh1", from, to, 100, 0), database::exception::detail::CantExecuteSqlStatementException);
@@ -1628,7 +1628,7 @@ TEST(DatabaseTest, GetApacheLogs_WhenBindVirtualhostFail) {
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
 
-  type::Timestamp from, to;
+  ::type::Timestamp from, to;
   from.Set(10, 0, 0, 1, 1, 2015);
   to.Set(10, 0, 0, 1, 1, 2017);
   EXPECT_THROW(database->GetApacheLogs("agentname", "vh1", from, to, 100, 0), database::exception::detail::CantExecuteSqlStatementException);
@@ -1643,7 +1643,7 @@ TEST(DatabaseTest, GetApacheLogs_WhenBindAgentNameFail) {
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
 
-  type::Timestamp from, to;
+  ::type::Timestamp from, to;
   from.Set(10, 0, 0, 1, 1, 2015);
   to.Set(10, 0, 0, 1, 1, 2017);
   EXPECT_THROW(database->GetApacheLogs("agentname", "vh1", from, to, 100, 0), database::exception::detail::CantExecuteSqlStatementException);
@@ -1657,7 +1657,7 @@ TEST(DatabaseTest, GetApacheLogs_WhenBindPrepareFail) {
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
 
-  type::Timestamp from, to;
+  ::type::Timestamp from, to;
   from.Set(10, 0, 0, 1, 1, 2015);
   to.Set(10, 0, 0, 1, 1, 2017);
   EXPECT_THROW(database->GetApacheLogs("agentname", "vh1", from, to, 100, 0), database::exception::detail::CantExecuteSqlStatementException);
@@ -1673,7 +1673,7 @@ TEST(DatabaseTest, GetApacheSessionStatisticsCount) {
   EXPECT_CALL(*sqlite_mock, ColumnInt64(DB_STATEMENT_EXAMPLE_PTR_VALUE, 0)).WillOnce(Return(43));
   EXPECT_CALL(*sqlite_mock, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_OK));
 
-  type::Timestamp from, to;
+  ::type::Timestamp from, to;
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
 
@@ -1690,7 +1690,7 @@ TEST(DatabaseTest, GetApacheSessionStatisticsCount_WhenFinalizeFailed) {
   EXPECT_CALL(*sqlite_mock, ColumnInt64(DB_STATEMENT_EXAMPLE_PTR_VALUE, 0)).WillOnce(Return(43));
   EXPECT_CALL(*sqlite_mock, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_NOMEM));
 
-  type::Timestamp from, to;
+  ::type::Timestamp from, to;
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
 
@@ -1705,7 +1705,7 @@ TEST(DatabaseTest, GetApacheSessionStatisticsCount_WhenStepFailed) {
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 2, StrEq("vh1"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
   EXPECT_CALL(*sqlite_mock, Step(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_NOMEM));
 
-  type::Timestamp from, to;
+  ::type::Timestamp from, to;
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
 
@@ -1719,7 +1719,7 @@ TEST(DatabaseTest, GetApacheSessionStatisticsCount_WhenBindVirtualhostFailed) {
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("agentname"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 2, StrEq("vh1"), -1, nullptr)).WillOnce(Return(SQLITE_NOMEM));
 
-  type::Timestamp from, to;
+  ::type::Timestamp from, to;
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
 
@@ -1732,7 +1732,7 @@ TEST(DatabaseTest, GetApacheSessionStatisticsCount_WhenBindAgentNameFailed) {
   MY_EXPECT_PREPARE(sqlite_mock, 1);
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("agentname"), -1, nullptr)).WillOnce(Return(SQLITE_NOMEM));
 
-  type::Timestamp from, to;
+  ::type::Timestamp from, to;
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
 
@@ -1744,7 +1744,7 @@ TEST(DatabaseTest, GetApacheSessionStatisticsCount_WhenPrepareFailed) {
   MY_EXPECT_OPEN(sqlite_mock);
   MY_EXPECT_PREPARE(sqlite_mock, 1, SQLITE_NOMEM);
 
-  type::Timestamp from, to;
+  ::type::Timestamp from, to;
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
 
@@ -1783,7 +1783,7 @@ TEST(DatabaseTest, GetApacheSessionStatistics) {
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
 
-  type::Timestamp from, to;
+  ::type::Timestamp from, to;
   from.Set(10, 0, 0, 1, 1, 2015);
   to.Set(10, 0, 0, 1, 1, 2017);
   auto names = database->GetApacheSessionStatistics("agentname", "vh1", from, to, 100, 0);
@@ -1840,7 +1840,7 @@ TEST(DatabaseTest, GetApacheSessionStatistics_WhenFinalizeFail) {
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
 
-  type::Timestamp from, to;
+  ::type::Timestamp from, to;
   from.Set(10, 0, 0, 1, 1, 2015);
   to.Set(10, 0, 0, 1, 1, 2017);
   EXPECT_THROW(database->GetApacheSessionStatistics("agentname", "vh1", from, to, 100, 0), database::exception::detail::CantExecuteSqlStatementException);
@@ -1858,7 +1858,7 @@ TEST(DatabaseTest, GetApacheSessionStatistics_WhenStepFail) {
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
 
-  type::Timestamp from, to;
+  ::type::Timestamp from, to;
   from.Set(10, 0, 0, 1, 1, 2015);
   to.Set(10, 0, 0, 1, 1, 2017);
   EXPECT_THROW(database->GetApacheSessionStatistics("agentname", "vh1", from, to, 100, 0), database::exception::detail::CantExecuteSqlStatementException);
@@ -1874,7 +1874,7 @@ TEST(DatabaseTest, GetApacheSessionStatistics_WhenBindVirtualhostFail) {
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
 
-  type::Timestamp from, to;
+  ::type::Timestamp from, to;
   from.Set(10, 0, 0, 1, 1, 2015);
   to.Set(10, 0, 0, 1, 1, 2017);
   EXPECT_THROW(database->GetApacheSessionStatistics("agentname", "vh1", from, to, 100, 0), database::exception::detail::CantExecuteSqlStatementException);
@@ -1889,7 +1889,7 @@ TEST(DatabaseTest, GetApacheSessionStatistics_WhenBindAgentNameFail) {
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
 
-  type::Timestamp from, to;
+  ::type::Timestamp from, to;
   from.Set(10, 0, 0, 1, 1, 2015);
   to.Set(10, 0, 0, 1, 1, 2017);
   EXPECT_THROW(database->GetApacheSessionStatistics("agentname", "vh1", from, to, 100, 0), database::exception::detail::CantExecuteSqlStatementException);
@@ -1903,7 +1903,7 @@ TEST(DatabaseTest, GetApacheSessionStatistics_WhenPrepareFail) {
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
 
-  type::Timestamp from, to;
+  ::type::Timestamp from, to;
   from.Set(10, 0, 0, 1, 1, 2015);
   to.Set(10, 0, 0, 1, 1, 2017);
   EXPECT_THROW(database->GetApacheSessionStatistics("agentname", "vh1", from, to, 100, 0), database::exception::detail::CantExecuteSqlStatementException);
@@ -2141,7 +2141,7 @@ TEST(DatabaseTest, GetApacheOneSessionStatistic) {
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
 
-  type::Timestamp from, to;
+  ::type::Timestamp from, to;
   from.Set(10, 0, 0, 1, 1, 2015);
   to.Set(10, 0, 0, 1, 1, 2017);
   auto session = database->GetApacheOneSessionStatistic(1);
@@ -2191,7 +2191,7 @@ TEST(DatabaseTest, GetApacheOneSessionStatistic_WhenFinalizeFailed) {
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
 
-  type::Timestamp from, to;
+  ::type::Timestamp from, to;
   from.Set(10, 0, 0, 1, 1, 2015);
   to.Set(10, 0, 0, 1, 1, 2017);
   EXPECT_THROW(database->GetApacheOneSessionStatistic(1), database::exception::detail::CantExecuteSqlStatementException);
@@ -2206,7 +2206,7 @@ TEST(DatabaseTest, GetApacheOneSessionStatistic_WhenStepFailed) {
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
 
-  type::Timestamp from, to;
+  ::type::Timestamp from, to;
   from.Set(10, 0, 0, 1, 1, 2015);
   to.Set(10, 0, 0, 1, 1, 2017);
   EXPECT_THROW(database->GetApacheOneSessionStatistic(1), database::exception::detail::CantExecuteSqlStatementException);
@@ -2220,7 +2220,7 @@ TEST(DatabaseTest, GetApacheOneSessionStatistic_WhenPrepareFailed) {
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
 
-  type::Timestamp from, to;
+  ::type::Timestamp from, to;
   from.Set(10, 0, 0, 1, 1, 2015);
   to.Set(10, 0, 0, 1, 1, 2017);
   EXPECT_THROW(database->GetApacheOneSessionStatistic(1), database::exception::detail::CantExecuteSqlStatementException);
@@ -2233,7 +2233,7 @@ TEST(DatabaseTest, SetApacheSessionAsAnomaly) {
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
-  Database::RowIds ids{1};
+  ::database::type::RowIds ids{1};
   database->SetApacheSessionAsAnomaly(ids, ids);
 }
 
@@ -2244,7 +2244,7 @@ TEST(DatabaseTest, SetApacheSessionAsAnomaly_WhenExecFail) {
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
   database->Open("sqlite.db");
-  Database::RowIds ids{1};
+  ::database::type::RowIds ids{1};
   EXPECT_THROW(database->SetApacheSessionAsAnomaly(ids, ids), database::exception::detail::CantExecuteSqlStatementException);
 }
 
