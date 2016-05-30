@@ -7,13 +7,16 @@ AM_LDFLAGS		= @BOOST_LDFLAGS@
 check_PROGRAMS	= tests
 if CAN_RUN_TESTS
 tests_SOURCES	= main.cpp \
+		    analyzer/analyzer.cpp \
 		    database/database.cpp \
 		    database/sqlite_wrapper.cpp \
 		    web/command_executor.cpp \
 		    web/command_receiver.cpp \
 		    program_options/web/command_executor_object.cpp
 
-OBJECT_FILES	= ../src/database/database.o \
+OBJECT_FILES	= \
+		    ../src/analyzer/analyzer.o \
+		    ../src/database/database.o \
 		    ../src/database/sqlite_wrapper.o \
 		    ../src/database/detail/sqlite.o \
 		    ../src/web/command_executor.o \
