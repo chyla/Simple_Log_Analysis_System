@@ -33,7 +33,9 @@ dbus::BusPtr bus;
 web::CommandReceiverPtr command_receiver;
 std::thread command_receiver_thread;
 
-void sigterm_handler(int sig) {
+struct sigaction act;
+
+void signal_handler(int sig, siginfo_t *siginfo, void *context) {
   bus->StopLoop();
   command_receiver->StopListen();
 }
@@ -121,10 +123,13 @@ main(int argc, char *argv[]) {
 
     util::CreatePidFile(options.GetPidfilePath());
 
-    signal(SIGTERM, sigterm_handler);
-    signal(SIGINT, sigterm_handler);
-    signal(SIGKILL, sigterm_handler);
-    signal(SIGQUIT, sigterm_handler);
+    memset(&act, '\0', sizeof (act));
+    act.sa_sigaction = signal_handler;
+    act.sa_flags = SA_SIGINFO;
+    sigaction(SIGTERM, &act, nullptr);
+    sigaction(SIGINT, &act, nullptr);
+    sigaction(SIGKILL, &act, nullptr);
+    sigaction(SIGQUIT, &act, nullptr);
 
     command_receiver_thread = std::thread([]() {
       command_receiver->StartListen();
