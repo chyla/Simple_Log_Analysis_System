@@ -23,6 +23,8 @@ void Analyzer::StartLoop() {
     ExecuteAll();
     sleep(1);
   }
+
+  BOOST_LOG_TRIVIAL(debug) << "analyzer::Analyzer::StartLoop: Done";
 }
 
 void Analyzer::StopLoop() {
