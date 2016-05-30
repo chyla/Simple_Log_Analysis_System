@@ -5,6 +5,7 @@
 #include <string>
 
 #include "detail/sqlite_interface.h"
+#include "detail/sqlite_wrapper_interface.h"
 
 namespace database
 {
@@ -12,31 +13,31 @@ namespace database
 class SQLiteWrapper;
 typedef std::shared_ptr<SQLiteWrapper> SQLiteWrapperPtr;
 
-class SQLiteWrapper {
+class SQLiteWrapper : public detail::SQLiteWrapperInterface {
  public:
   static SQLiteWrapperPtr Create();
   static SQLiteWrapperPtr Create(detail::SQLiteInterfacePtr sqlite_interface);
 
-  void Open(const std::string &file_path);
-  bool IsOpen() const;
-  bool Close();
+  void Open(const std::string &file_path) override;
+  bool IsOpen() const override;
+  bool Close() override;
 
-  void Prepare(const std::string &sql, sqlite3_stmt **ppStmt);
+  void Prepare(const std::string &sql, sqlite3_stmt **ppStmt) override;
 
-  void BindDouble(sqlite3_stmt *pStmt, int pos, double value);
-  void BindInt(sqlite3_stmt *pStmt, int pos, int value);
-  void BindInt64(sqlite3_stmt *pStmt, int pos, sqlite3_int64 value);
-  void BindText(sqlite3_stmt *pStmt, int pos, const std::string &value);
+  void BindDouble(sqlite3_stmt *pStmt, int pos, double value) override;
+  void BindInt(sqlite3_stmt *pStmt, int pos, int value) override;
+  void BindInt64(sqlite3_stmt *pStmt, int pos, sqlite3_int64 value) override;
+  void BindText(sqlite3_stmt *pStmt, int pos, const std::string &value) override;
 
-  double ColumnDouble(sqlite3_stmt *pStmt, int iCol);
-  int ColumnInt(sqlite3_stmt *pStmt, int iCol);
-  sqlite3_int64 ColumnInt64(sqlite3_stmt *pStmt, int iCol);
-  const std::string ColumnText(sqlite3_stmt *pStmt, int iCol);
+  double ColumnDouble(sqlite3_stmt *pStmt, int iCol) override;
+  int ColumnInt(sqlite3_stmt *pStmt, int iCol) override;
+  sqlite3_int64 ColumnInt64(sqlite3_stmt *pStmt, int iCol) override;
+  const std::string ColumnText(sqlite3_stmt *pStmt, int iCol) override;
 
-  int Step(sqlite3_stmt *pStmt);
-  void Finalize(sqlite3_stmt *pStmt);
+  int Step(sqlite3_stmt *pStmt) override;
+  void Finalize(sqlite3_stmt *pStmt) override;
 
-  void Exec(const std::string &sql, int (*callback) (void *, int, char **, char **), void *arg);
+  void Exec(const std::string &sql, int (*callback) (void *, int, char **, char **), void *arg) override;
 
  private:
   detail::SQLiteInterfacePtr sqlite_interface_;
