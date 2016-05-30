@@ -22,6 +22,8 @@
 #include "src/apache/dbus/object/apache.h"
 #include "src/bash/dbus/object/bash.h"
 
+#include "analyzer/analyzer.h"
+
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
@@ -31,13 +33,16 @@ namespace keywords = boost::log::keywords;
 
 dbus::BusPtr bus;
 web::CommandReceiverPtr command_receiver;
+analyzer::AnalyzerPtr analyzer_worker;
 std::thread command_receiver_thread;
+std::thread analyzer_thread;
 
 struct sigaction act;
 
 void signal_handler(int sig, siginfo_t *siginfo, void *context) {
   bus->StopLoop();
   command_receiver->StopListen();
+  analyzer_worker->StopLoop();
 }
 
 database::DatabasePtr CreateDatabase(const program_options::type::Options &options) {
@@ -131,6 +136,12 @@ main(int argc, char *argv[]) {
     sigaction(SIGKILL, &act, nullptr);
     sigaction(SIGQUIT, &act, nullptr);
 
+    analyzer_worker = analyzer::Analyzer::Create();
+
+    analyzer_thread = std::thread([]() {
+      analyzer_worker->StartLoop();
+    });
+
     command_receiver_thread = std::thread([]() {
       command_receiver->StartListen();
     });
@@ -143,6 +154,9 @@ main(int argc, char *argv[]) {
   }
 
   try {
+    if (analyzer_worker)
+      analyzer_worker->StopLoop();
+
     if (command_receiver)
       command_receiver->StopListen();
 
@@ -157,6 +171,9 @@ main(int argc, char *argv[]) {
 
     if (database)
       database->Close();
+
+    if (analyzer_thread.joinable())
+      analyzer_thread.join();
 
     if (command_receiver_thread.joinable())
       command_receiver_thread.join();
