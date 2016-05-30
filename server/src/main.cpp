@@ -37,12 +37,16 @@ analyzer::AnalyzerPtr analyzer_worker;
 std::thread command_receiver_thread;
 std::thread analyzer_thread;
 
-struct sigaction act;
+struct sigaction act, act_usr;
 
-void signal_handler(int sig, siginfo_t *siginfo, void *context) {
+void exit_signal_handler(int sig, siginfo_t *siginfo, void *context) {
   bus->StopLoop();
   command_receiver->StopListen();
   analyzer_worker->StopLoop();
+}
+
+void analyze_signal_handler(int sig, siginfo_t *siginfo, void *context) {
+  analyzer_worker->StartAnalyzing();
 }
 
 database::DatabasePtr CreateDatabase(const program_options::type::Options &options) {
@@ -129,12 +133,17 @@ main(int argc, char *argv[]) {
     util::CreatePidFile(options.GetPidfilePath());
 
     memset(&act, '\0', sizeof (act));
-    act.sa_sigaction = signal_handler;
+    act.sa_sigaction = exit_signal_handler;
     act.sa_flags = SA_SIGINFO;
     sigaction(SIGTERM, &act, nullptr);
     sigaction(SIGINT, &act, nullptr);
     sigaction(SIGKILL, &act, nullptr);
     sigaction(SIGQUIT, &act, nullptr);
+
+    memset(&act, '\0', sizeof (act_usr));
+    act_usr.sa_sigaction = analyze_signal_handler;
+    act_usr.sa_flags = SA_SIGINFO;
+    sigaction(SIGUSR1, &act_usr, nullptr);
 
     analyzer_worker = analyzer::Analyzer::Create();
 
