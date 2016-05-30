@@ -25,15 +25,8 @@ DatabasePtr Database::Create(std::unique_ptr<detail::SQLiteInterface> sqlite) {
   return db;
 }
 
-void Database::Open(const std::string &file_path) {
-  BOOST_LOG_TRIVIAL(debug) << "database::Database::Open: Function call";
-
-  int ret = sqlite_interface_->Open(file_path.c_str(), &db_handle_, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, nullptr);
-  if (ret != SQLITE_OK) {
-    BOOST_LOG_TRIVIAL(error) << "database::Database::Open: Open error: " << ret;
-    throw exception::detail::CantOpenDatabaseException();
-  }
-
+void Database::Open(sqlite3 *db_handle) {
+  db_handle_ = db_handle;
   is_open_ = true;
 }
 
@@ -942,25 +935,6 @@ Database::VirtualhostNames Database::GetApacheVirtualhostNames(std::string agent
   StatementCheckForError(ret, "Finalize error");
 
   return names;
-}
-
-bool Database::Close() {
-  BOOST_LOG_TRIVIAL(debug) << "database::Database::Close: Function call";
-
-  if (is_open_) {
-    int ret = sqlite_interface_->Close(db_handle_);
-    if (ret != SQLITE_OK) {
-      BOOST_LOG_TRIVIAL(error) << "database::Database::Close: Failed to close database: " << ret;
-      throw exception::detail::CantCloseDatabaseException();
-    }
-
-    is_open_ = false;
-    return true;
-  }
-  else {
-    BOOST_LOG_TRIVIAL(warning) << "database::Database::Close: Database already closed";
-    return false;
-  }
 }
 
 Database::Database(std::unique_ptr<database::detail::SQLiteInterface> sqlite)

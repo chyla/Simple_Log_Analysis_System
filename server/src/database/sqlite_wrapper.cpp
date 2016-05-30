@@ -172,6 +172,10 @@ sqlite_interface_(move(sqlite_interface)),
 is_open_(false) {
 }
 
+sqlite3* SQLiteWrapper::GetSQLiteHandle() {
+  return db_handle_;
+}
+
 void SQLiteWrapper::CheckIsOpen() {
   BOOST_LOG_TRIVIAL(debug) << "database::SQLiteWrapper::CheckIsOpen: Function call";
 

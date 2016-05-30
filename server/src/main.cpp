@@ -50,9 +50,9 @@ void analyze_signal_handler(int sig, siginfo_t *siginfo, void *context) {
   analyzer_worker->StartAnalyzing();
 }
 
-database::DatabasePtr CreateDatabase(const program_options::type::Options &options) {
+database::DatabasePtr CreateDatabase(database::SQLiteWrapperPtr sqlite_wrapper) {
   database::DatabasePtr database = database::Database::Create();
-  database->Open(options.GetDatabasefilePath());
+  database->Open(sqlite_wrapper->GetSQLiteHandle());
   database->CreateBashLogsTable();
   database->CreateApacheLogsTable();
   database->CreateApacheSessionTable();
@@ -112,7 +112,7 @@ main(int argc, char *argv[]) {
 
     sqlite_wrapper = database::SQLiteWrapper::Create();
     sqlite_wrapper->Open(options.GetDatabasefilePath());
-    database = CreateDatabase(options);
+    database = CreateDatabase(sqlite_wrapper);
 
     auto options_command_object = program_options::web::CommandExecutorObject::Create(options);
     auto command_executor = web::CommandExecutor::Create();
@@ -181,9 +181,6 @@ main(int argc, char *argv[]) {
 
     if (apache_object)
       apache_object->FlushCache();
-
-    if (database)
-      database->Close();
 
     if (sqlite_wrapper)
       sqlite_wrapper->Close();

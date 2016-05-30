@@ -39,6 +39,8 @@ class SQLiteWrapperInterface {
   virtual void Finalize(sqlite3_stmt *pStmt) = 0;
 
   virtual void Exec(const std::string &sql, int (*callback) (void *, int, char **, char **), void *arg) = 0;
+
+  virtual sqlite3* GetSQLiteHandle() = 0;
 };
 
 }

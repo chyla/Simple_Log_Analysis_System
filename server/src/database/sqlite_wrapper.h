@@ -39,6 +39,8 @@ class SQLiteWrapper : public detail::SQLiteWrapperInterface {
 
   void Exec(const std::string &sql, int (*callback) (void *, int, char **, char **), void *arg) override;
 
+  sqlite3* GetSQLiteHandle() override;
+
  private:
   detail::SQLiteInterfacePtr sqlite_interface_;
   bool is_open_;

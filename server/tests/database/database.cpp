@@ -7,7 +7,6 @@
 
 #include "src/database/database.h"
 #include "src/database/exception/detail/cant_open_database_exception.h"
-#include "src/database/exception/detail/cant_close_database_exception.h"
 #include "src/database/exception/detail/cant_execute_sql_statement_exception.h"
 
 #include "mock/database/sqlite.h"
@@ -51,20 +50,6 @@ void MY_EXPECT_DEFAULT_TIME2(unique_ptr<mock::database::SQLite> &sqlite_mock) {
   EXPECT_CALL(*sqlite_mock, BindInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 7, 2012)).WillOnce(Return(SQLITE_OK));
 }
 
-void MY_EXPECT_OPEN(unique_ptr<mock::database::SQLite> &sqlite_mock, int return_value = SQLITE_OK) {
-  EXPECT_CALL(*sqlite_mock, Open(NotNull(), NotNull(), SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, IsNull()))
-      .WillOnce(
-                DoAll(SetArgPointee<1>(DB_HANDLE_EXAMPLE_PTR_VALUE),
-                      Return(return_value)
-                      )
-                );
-}
-
-void MY_EXPECT_CLOSE(unique_ptr<mock::database::SQLite> &sqlite_mock, int return_value = SQLITE_OK) {
-  EXPECT_CALL(*sqlite_mock, Close(DB_HANDLE_EXAMPLE_PTR_VALUE))
-      .WillOnce(Return(return_value));
-}
-
 void MY_EXPECT_PREPARE(unique_ptr<mock::database::SQLite> &sqlite_mock, int times = 1, int return_value = SQLITE_OK) {
   EXPECT_CALL(*sqlite_mock, Prepare(DB_HANDLE_EXAMPLE_PTR_VALUE, NotNull(), -1, NotNull(), nullptr))
       .Times(times)
@@ -82,80 +67,13 @@ TEST(DatabaseTest, ConstructorTest) {
   EXPECT_FALSE(database->IsOpen());
 }
 
-TEST(DatabaseTest, OpenDatabase) {
-  unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
-
-  DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
-
-  EXPECT_TRUE(database->IsOpen());
-}
-
-TEST(DatabaseTest, OpenDatabaseWhenFailed) {
-  unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock, SQLITE_NOMEM);
-
-  DatabasePtr database = Database::Create(move(sqlite_mock));
-
-  EXPECT_THROW(database->Open("sqlite.db"), database::exception::detail::CantOpenDatabaseException);
-  EXPECT_FALSE(database->IsOpen());
-}
-
-TEST(DatabaseTest, CloseDatabaseWhenOpened) {
-  unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
-  MY_EXPECT_CLOSE(sqlite_mock);
-
-  DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
-
-  EXPECT_TRUE(database->IsOpen());
-  EXPECT_TRUE(database->Close());
-}
-
-TEST(DatabaseTest, CloseDatabaseDoubleClose) {
-  unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
-  MY_EXPECT_CLOSE(sqlite_mock);
-
-  DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
-
-  EXPECT_TRUE(database->IsOpen());
-  EXPECT_TRUE(database->Close());
-  EXPECT_FALSE(database->Close());
-  EXPECT_FALSE(database->Close());
-}
-
-TEST(DatabaseTest, CloseDatabaseWhenFailed) {
-  unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
-  MY_EXPECT_CLOSE(sqlite_mock, SQLITE_NOMEM);
-
-  DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
-
-  EXPECT_TRUE(database->IsOpen());
-  EXPECT_THROW(database->Close(), database::exception::detail::CantCloseDatabaseException);
-}
-
-TEST(DatabaseTest, CloseDatabaseWhenDatabaseIsClosed) {
-  unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-
-  DatabasePtr database = Database::Create(move(sqlite_mock));
-
-  EXPECT_FALSE(database->IsOpen());
-  EXPECT_FALSE(database->Close());
-}
-
 TEST(DatabaseTest, CreateBashLogsTable) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   EXPECT_CALL(*sqlite_mock, Exec(DB_HANDLE_EXAMPLE_PTR_VALUE, NotNull(), IsNull(), IsNull(), IsNull())).WillOnce(Return(SQLITE_OK));
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
   database->CreateBashLogsTable();
 }
 
@@ -170,21 +88,21 @@ TEST(DatabaseTest, CreateBashLogsTableWhenDatabaseIsClosed) {
 
 TEST(DatabaseTest, CreateBashLogsTableWhenFailed) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   EXPECT_CALL(*sqlite_mock, Exec(DB_HANDLE_EXAMPLE_PTR_VALUE, NotNull(), IsNull(), IsNull(), IsNull())).WillOnce(Return(SQLITE_NOMEM));
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
   EXPECT_THROW(database->CreateBashLogsTable(), database::exception::detail::CantExecuteSqlStatementException);
 }
 
 TEST(DatabaseTest, CreateApacheSessionTable) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   EXPECT_CALL(*sqlite_mock, Exec(DB_HANDLE_EXAMPLE_PTR_VALUE, NotNull(), IsNull(), IsNull(), IsNull())).WillOnce(Return(SQLITE_OK));
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
   database->CreateApacheSessionTable();
 }
 
@@ -199,21 +117,21 @@ TEST(DatabaseTest, CreateApacheSessionTable_WhenDatabaseIsClosed) {
 
 TEST(DatabaseTest, CreateApacheSessionTable_WhenFailed) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   EXPECT_CALL(*sqlite_mock, Exec(DB_HANDLE_EXAMPLE_PTR_VALUE, NotNull(), IsNull(), IsNull(), IsNull())).WillOnce(Return(SQLITE_NOMEM));
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
   EXPECT_THROW(database->CreateApacheSessionTable(), database::exception::detail::CantExecuteSqlStatementException);
 }
 
 TEST(DatabaseTest, CreateApacheLogsTable) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   EXPECT_CALL(*sqlite_mock, Exec(DB_HANDLE_EXAMPLE_PTR_VALUE, NotNull(), IsNull(), IsNull(), IsNull())).WillOnce(Return(SQLITE_OK));
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
   database->CreateApacheLogsTable();
 }
 
@@ -228,21 +146,21 @@ TEST(DatabaseTest, CreateApacheLogsTableWhenDatabaseIsClosed) {
 
 TEST(DatabaseTest, CreateApacheLogsTableWhenFailed) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   EXPECT_CALL(*sqlite_mock, Exec(DB_HANDLE_EXAMPLE_PTR_VALUE, NotNull(), IsNull(), IsNull(), IsNull())).WillOnce(Return(SQLITE_NOMEM));
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
   EXPECT_THROW(database->CreateApacheLogsTable(), database::exception::detail::CantExecuteSqlStatementException);
 }
 
 TEST(DatabaseTest, AddBashLogsWithEmptyLogList) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   EXPECT_CALL(*sqlite_mock, Exec(DB_HANDLE_EXAMPLE_PTR_VALUE, NotNull(), IsNull(), IsNull(), IsNull())).Times(2).WillRepeatedly(Return(SQLITE_OK));
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
   ::type::BashLogs logs;
 
   EXPECT_TRUE(database->AddBashLogs(logs));
@@ -250,7 +168,7 @@ TEST(DatabaseTest, AddBashLogsWithEmptyLogList) {
 
 TEST(DatabaseTest, AddBashLogsOneLogEntry) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   EXPECT_CALL(*sqlite_mock, Exec(DB_HANDLE_EXAMPLE_PTR_VALUE, NotNull(), IsNull(), IsNull(), IsNull())).Times(2).WillRepeatedly(Return(SQLITE_OK));
   MY_EXPECT_PREPARE(sqlite_mock);
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("agentname"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
@@ -261,7 +179,7 @@ TEST(DatabaseTest, AddBashLogsOneLogEntry) {
   EXPECT_CALL(*sqlite_mock, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_OK));
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
   ::type::BashLogs logs;
   logs.push_back({0, "agentname", MY_DEFAULT_TIME1(), 11, "command"});
 
@@ -270,7 +188,7 @@ TEST(DatabaseTest, AddBashLogsOneLogEntry) {
 
 TEST(DatabaseTest, AddBashLogsTwoLogsEntries) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   EXPECT_CALL(*sqlite_mock, Exec(DB_HANDLE_EXAMPLE_PTR_VALUE, NotNull(), IsNull(), IsNull(), IsNull())).Times(2).WillRepeatedly(Return(SQLITE_OK));
   MY_EXPECT_PREPARE(sqlite_mock, 2);
 
@@ -288,7 +206,7 @@ TEST(DatabaseTest, AddBashLogsTwoLogsEntries) {
   EXPECT_CALL(*sqlite_mock, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE)).Times(2).WillRepeatedly(Return(SQLITE_OK));
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
   ::type::BashLogs logs;
   logs.push_back({0, "agentname", MY_DEFAULT_TIME1(), 11, "command"});
   logs.push_back({0, "agentname2", MY_DEFAULT_TIME2(), 21, "command2"});
@@ -298,12 +216,12 @@ TEST(DatabaseTest, AddBashLogsTwoLogsEntries) {
 
 TEST(DatabaseTest, AddBashLogsOneLogEntryWhenPrepareFailed) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   EXPECT_CALL(*sqlite_mock, Exec(DB_HANDLE_EXAMPLE_PTR_VALUE, NotNull(), IsNull(), IsNull(), IsNull())).Times(2).WillRepeatedly(Return(SQLITE_OK));
   MY_EXPECT_PREPARE(sqlite_mock, 1, SQLITE_NOMEM);
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
   ::type::BashLogs logs;
   logs.push_back({0, "agentname", MY_DEFAULT_TIME1(), 11, "command"});
 
@@ -312,13 +230,13 @@ TEST(DatabaseTest, AddBashLogsOneLogEntryWhenPrepareFailed) {
 
 TEST(DatabaseTest, AddBashLogsOneLogEntryWhenBindHostnameFailed) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   EXPECT_CALL(*sqlite_mock, Exec(DB_HANDLE_EXAMPLE_PTR_VALUE, NotNull(), IsNull(), IsNull(), IsNull())).Times(2).WillRepeatedly(Return(SQLITE_OK));
   MY_EXPECT_PREPARE(sqlite_mock);
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("agentname"), -1, nullptr)).WillOnce(Return(SQLITE_NOMEM));
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
   ::type::BashLogs logs;
   logs.push_back({0, "agentname", MY_DEFAULT_TIME1(), 11, "command"});
 
@@ -327,7 +245,7 @@ TEST(DatabaseTest, AddBashLogsOneLogEntryWhenBindHostnameFailed) {
 
 TEST(DatabaseTest, AddBashLogsOneLogEntryWhenBindUidFailed) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   EXPECT_CALL(*sqlite_mock, Exec(DB_HANDLE_EXAMPLE_PTR_VALUE, NotNull(), IsNull(), IsNull(), IsNull())).Times(2).WillRepeatedly(Return(SQLITE_OK));
   MY_EXPECT_PREPARE(sqlite_mock);
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("agentname"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
@@ -335,7 +253,7 @@ TEST(DatabaseTest, AddBashLogsOneLogEntryWhenBindUidFailed) {
   EXPECT_CALL(*sqlite_mock, BindInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 8, 11)).WillOnce(Return(SQLITE_NOMEM));
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
   ::type::BashLogs logs;
   logs.push_back({0, "agentname", MY_DEFAULT_TIME1(), 11, "command"});
 
@@ -344,7 +262,7 @@ TEST(DatabaseTest, AddBashLogsOneLogEntryWhenBindUidFailed) {
 
 TEST(DatabaseTest, AddBashLogsOneLogEntryWhenBindCommandFailed) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   EXPECT_CALL(*sqlite_mock, Exec(DB_HANDLE_EXAMPLE_PTR_VALUE, NotNull(), IsNull(), IsNull(), IsNull())).Times(2).WillRepeatedly(Return(SQLITE_OK));
   MY_EXPECT_PREPARE(sqlite_mock);
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("agentname"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
@@ -353,7 +271,7 @@ TEST(DatabaseTest, AddBashLogsOneLogEntryWhenBindCommandFailed) {
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 9, StrEq("command"), -1, nullptr)).WillOnce(Return(SQLITE_NOMEM));
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
   ::type::BashLogs logs;
   logs.push_back({0, "agentname", MY_DEFAULT_TIME1(), 11, "command"});
 
@@ -362,7 +280,7 @@ TEST(DatabaseTest, AddBashLogsOneLogEntryWhenBindCommandFailed) {
 
 TEST(DatabaseTest, AddBashLogsOneLogEntryWhenStepFailed) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   EXPECT_CALL(*sqlite_mock, Exec(DB_HANDLE_EXAMPLE_PTR_VALUE, NotNull(), IsNull(), IsNull(), IsNull())).Times(2).WillRepeatedly(Return(SQLITE_OK));
   MY_EXPECT_PREPARE(sqlite_mock);
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("agentname"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
@@ -372,7 +290,7 @@ TEST(DatabaseTest, AddBashLogsOneLogEntryWhenStepFailed) {
   EXPECT_CALL(*sqlite_mock, Step(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_NOMEM));
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
   ::type::BashLogs logs;
   logs.push_back({0, "agentname", MY_DEFAULT_TIME1(), 11, "command"});
 
@@ -381,7 +299,7 @@ TEST(DatabaseTest, AddBashLogsOneLogEntryWhenStepFailed) {
 
 TEST(DatabaseTest, AddBashLogsOneLogEntryWhenStepBusy) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   EXPECT_CALL(*sqlite_mock, Exec(DB_HANDLE_EXAMPLE_PTR_VALUE, NotNull(), IsNull(), IsNull(), IsNull())).Times(2).WillRepeatedly(Return(SQLITE_OK));
   MY_EXPECT_PREPARE(sqlite_mock);
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("agentname"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
@@ -391,7 +309,7 @@ TEST(DatabaseTest, AddBashLogsOneLogEntryWhenStepBusy) {
   EXPECT_CALL(*sqlite_mock, Step(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_BUSY));
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
   ::type::BashLogs logs;
   logs.push_back({0, "agentname", MY_DEFAULT_TIME1(), 11, "command"});
 
@@ -400,7 +318,7 @@ TEST(DatabaseTest, AddBashLogsOneLogEntryWhenStepBusy) {
 
 TEST(DatabaseTest, AddBashLogsOneLogEntryWhenFinalizeFailed) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   EXPECT_CALL(*sqlite_mock, Exec(DB_HANDLE_EXAMPLE_PTR_VALUE, NotNull(), IsNull(), IsNull(), IsNull())).Times(2).WillRepeatedly(Return(SQLITE_OK));
   MY_EXPECT_PREPARE(sqlite_mock);
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("agentname"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
@@ -411,7 +329,7 @@ TEST(DatabaseTest, AddBashLogsOneLogEntryWhenFinalizeFailed) {
   EXPECT_CALL(*sqlite_mock, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_NOMEM));
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
   ::type::BashLogs logs;
   logs.push_back({0, "agentname", MY_DEFAULT_TIME1(), 11, "command"});
 
@@ -430,12 +348,12 @@ TEST(DatabaseTest, AddBashLogsWhenDatabaseIsClosed) {
 
 TEST(DatabaseTest, AddBashLogsWhenBeginTransactionFailed) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   EXPECT_CALL(*sqlite_mock, Exec(DB_HANDLE_EXAMPLE_PTR_VALUE, NotNull(), IsNull(), IsNull(), IsNull()))
       .WillOnce(Return(SQLITE_NOMEM));
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
   ::type::BashLogs logs;
 
   EXPECT_THROW(database->AddBashLogs(logs), database::exception::detail::CantExecuteSqlStatementException);
@@ -443,14 +361,14 @@ TEST(DatabaseTest, AddBashLogsWhenBeginTransactionFailed) {
 
 TEST(DatabaseTest, AddBashLogsWhenEndTransactionFailed) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   EXPECT_CALL(*sqlite_mock, Exec(DB_HANDLE_EXAMPLE_PTR_VALUE, NotNull(), IsNull(), IsNull(), IsNull()))
       .WillOnce(Return(SQLITE_OK))
       .WillOnce(Return(SQLITE_NOMEM))
       .WillOnce(Return(SQLITE_OK));
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
   ::type::BashLogs logs;
 
   EXPECT_THROW(database->AddBashLogs(logs), database::exception::detail::CantExecuteSqlStatementException);
@@ -458,14 +376,14 @@ TEST(DatabaseTest, AddBashLogsWhenEndTransactionFailed) {
 
 TEST(DatabaseTest, AddBashLogsWhenEndTransactionFailedAndRollbackFailed) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   EXPECT_CALL(*sqlite_mock, Exec(DB_HANDLE_EXAMPLE_PTR_VALUE, NotNull(), IsNull(), IsNull(), IsNull()))
       .WillOnce(Return(SQLITE_OK))
       .WillOnce(Return(SQLITE_NOMEM))
       .WillOnce(Return(SQLITE_NOMEM));
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
   ::type::BashLogs logs;
 
   EXPECT_THROW(database->AddBashLogs(logs), database::exception::detail::CantExecuteSqlStatementException);
@@ -473,14 +391,14 @@ TEST(DatabaseTest, AddBashLogsWhenEndTransactionFailedAndRollbackFailed) {
 
 TEST(DatabaseTest, AddBashLogsWhenEndTransactionBusy) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   EXPECT_CALL(*sqlite_mock, Exec(DB_HANDLE_EXAMPLE_PTR_VALUE, NotNull(), IsNull(), IsNull(), IsNull()))
       .WillOnce(Return(SQLITE_OK))
       .WillOnce(Return(SQLITE_BUSY))
       .WillOnce(Return(SQLITE_OK));
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
   ::type::BashLogs logs;
 
   EXPECT_FALSE(database->AddBashLogs(logs));
@@ -488,14 +406,14 @@ TEST(DatabaseTest, AddBashLogsWhenEndTransactionBusy) {
 
 TEST(DatabaseTest, AddBashLogsWhenEndTransactionBusyAndRollbackFailed) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   EXPECT_CALL(*sqlite_mock, Exec(DB_HANDLE_EXAMPLE_PTR_VALUE, NotNull(), IsNull(), IsNull(), IsNull()))
       .WillOnce(Return(SQLITE_OK))
       .WillOnce(Return(SQLITE_BUSY))
       .WillOnce(Return(SQLITE_NOMEM));
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
   ::type::BashLogs logs;
 
   EXPECT_THROW(database->AddBashLogs(logs), database::exception::detail::CantExecuteSqlStatementException);
@@ -503,11 +421,11 @@ TEST(DatabaseTest, AddBashLogsWhenEndTransactionBusyAndRollbackFailed) {
 
 TEST(DatabaseTest, AddApacheSessionStatistics_WithEmptySessionsList) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   EXPECT_CALL(*sqlite_mock, Exec(DB_HANDLE_EXAMPLE_PTR_VALUE, NotNull(), IsNull(), IsNull(), IsNull())).Times(2).WillRepeatedly(Return(SQLITE_OK));
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
   ::apache::type::ApacheSessions sessions;
 
   EXPECT_TRUE(database->AddApacheSessionStatistics(sessions));
@@ -515,7 +433,7 @@ TEST(DatabaseTest, AddApacheSessionStatistics_WithEmptySessionsList) {
 
 TEST(DatabaseTest, AddApacheSessionStatistics_WithOneEntry) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   EXPECT_CALL(*sqlite_mock, Exec(DB_HANDLE_EXAMPLE_PTR_VALUE, NotNull(), IsNull(), IsNull(), IsNull())).Times(2).WillRepeatedly(Return(SQLITE_OK));
   MY_EXPECT_PREPARE(sqlite_mock);
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("agentname"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
@@ -539,7 +457,7 @@ TEST(DatabaseTest, AddApacheSessionStatistics_WithOneEntry) {
   EXPECT_CALL(*sqlite_mock, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_OK));
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
   ::apache::type::ApacheSessions sessions;
   sessions.push_back({0, "agentname", "vh1", "127.0.0.1", MY_DEFAULT_TIME1(), 23, 941, 13, 44, "User-Agent Example", true});
 
@@ -548,7 +466,7 @@ TEST(DatabaseTest, AddApacheSessionStatistics_WithOneEntry) {
 
 TEST(DatabaseTest, AddApacheSessionStatistics_WithTwoEntries) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   EXPECT_CALL(*sqlite_mock, Exec(DB_HANDLE_EXAMPLE_PTR_VALUE, NotNull(), IsNull(), IsNull(), IsNull())).Times(2).WillRepeatedly(Return(SQLITE_OK));
   MY_EXPECT_PREPARE(sqlite_mock, 2);
 
@@ -592,7 +510,7 @@ TEST(DatabaseTest, AddApacheSessionStatistics_WithTwoEntries) {
   EXPECT_CALL(*sqlite_mock, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE)).Times(2).WillRepeatedly(Return(SQLITE_OK));
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
   ::apache::type::ApacheSessions sessions;
   sessions.push_back({0, "agentname", "vh1", "127.0.0.1", MY_DEFAULT_TIME1(), 23, 941, 13, 44, "User-Agent Example", false});
   sessions.push_back({0, "agentname2", "vh2", "127.0.0.12", MY_DEFAULT_TIME2(), 232, 9412, 132, 442, "User-Agent Example 2", true});
@@ -602,12 +520,12 @@ TEST(DatabaseTest, AddApacheSessionStatistics_WithTwoEntries) {
 
 TEST(DatabaseTest, AddApacheSessionStatistics_WhenPrepareFailed) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   EXPECT_CALL(*sqlite_mock, Exec(DB_HANDLE_EXAMPLE_PTR_VALUE, NotNull(), IsNull(), IsNull(), IsNull())).Times(2).WillRepeatedly(Return(SQLITE_OK));
   MY_EXPECT_PREPARE(sqlite_mock, 1, SQLITE_NOMEM);
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
   ::apache::type::ApacheSessions sessions;
   sessions.push_back({0, "agentname", "vh1", "127.0.0.1", MY_DEFAULT_TIME1(), 23, 941, 13, 44, "User-Agent Example"});
 
@@ -616,7 +534,7 @@ TEST(DatabaseTest, AddApacheSessionStatistics_WhenPrepareFailed) {
 
 TEST(DatabaseTest, AddApacheSessionStatistics_WhenFinalizeFailed) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   EXPECT_CALL(*sqlite_mock, Exec(DB_HANDLE_EXAMPLE_PTR_VALUE, NotNull(), IsNull(), IsNull(), IsNull())).Times(2).WillRepeatedly(Return(SQLITE_OK));
   MY_EXPECT_PREPARE(sqlite_mock);
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("agentname"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
@@ -640,7 +558,7 @@ TEST(DatabaseTest, AddApacheSessionStatistics_WhenFinalizeFailed) {
   EXPECT_CALL(*sqlite_mock, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_NOMEM));
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
   ::apache::type::ApacheSessions sessions;
   sessions.push_back({0, "agentname", "vh1", "127.0.0.1", MY_DEFAULT_TIME1(), 23, 941, 13, 44, "User-Agent Example", false});
 
@@ -649,7 +567,7 @@ TEST(DatabaseTest, AddApacheSessionStatistics_WhenFinalizeFailed) {
 
 TEST(DatabaseTest, AddApacheSessionStatistics_WhenStepFailed) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   EXPECT_CALL(*sqlite_mock, Exec(DB_HANDLE_EXAMPLE_PTR_VALUE, NotNull(), IsNull(), IsNull(), IsNull())).Times(2).WillRepeatedly(Return(SQLITE_OK));
   MY_EXPECT_PREPARE(sqlite_mock);
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("agentname"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
@@ -672,7 +590,7 @@ TEST(DatabaseTest, AddApacheSessionStatistics_WhenStepFailed) {
   EXPECT_CALL(*sqlite_mock, Step(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_NOMEM));
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
   ::apache::type::ApacheSessions sessions;
   sessions.push_back({0, "agentname", "vh1", "127.0.0.1", MY_DEFAULT_TIME1(), 23, 941, 13, 44, "User-Agent Example", true});
 
@@ -681,7 +599,7 @@ TEST(DatabaseTest, AddApacheSessionStatistics_WhenStepFailed) {
 
 TEST(DatabaseTest, AddApacheSessionStatistics_StepWhenDatabaseIsBusy) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   EXPECT_CALL(*sqlite_mock, Exec(DB_HANDLE_EXAMPLE_PTR_VALUE, NotNull(), IsNull(), IsNull(), IsNull())).Times(2).WillRepeatedly(Return(SQLITE_OK));
   MY_EXPECT_PREPARE(sqlite_mock);
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("agentname"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
@@ -704,7 +622,7 @@ TEST(DatabaseTest, AddApacheSessionStatistics_StepWhenDatabaseIsBusy) {
   EXPECT_CALL(*sqlite_mock, Step(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_BUSY));
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
   ::apache::type::ApacheSessions sessions;
   sessions.push_back({0, "agentname", "vh1", "127.0.0.1", MY_DEFAULT_TIME1(), 23, 941, 13, 44, "User-Agent Example", true});
 
@@ -713,7 +631,7 @@ TEST(DatabaseTest, AddApacheSessionStatistics_StepWhenDatabaseIsBusy) {
 
 TEST(DatabaseTest, AddApacheSessionStatistics_WhenBindUserAgentFailed) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   EXPECT_CALL(*sqlite_mock, Exec(DB_HANDLE_EXAMPLE_PTR_VALUE, NotNull(), IsNull(), IsNull(), IsNull())).Times(2).WillRepeatedly(Return(SQLITE_OK));
   MY_EXPECT_PREPARE(sqlite_mock);
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("agentname"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
@@ -734,7 +652,7 @@ TEST(DatabaseTest, AddApacheSessionStatistics_WhenBindUserAgentFailed) {
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 14, StrEq("User-Agent Example"), -1, nullptr)).WillOnce(Return(SQLITE_NOMEM));
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
   ::apache::type::ApacheSessions sessions;
   sessions.push_back({0, "agentname", "vh1", "127.0.0.1", MY_DEFAULT_TIME1(), 23, 941, 13, 44, "User-Agent Example"});
 
@@ -743,7 +661,7 @@ TEST(DatabaseTest, AddApacheSessionStatistics_WhenBindUserAgentFailed) {
 
 TEST(DatabaseTest, AddApacheSessionStatistics_WhenBindErrorPercentageFailed) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   EXPECT_CALL(*sqlite_mock, Exec(DB_HANDLE_EXAMPLE_PTR_VALUE, NotNull(), IsNull(), IsNull(), IsNull())).Times(2).WillRepeatedly(Return(SQLITE_OK));
   MY_EXPECT_PREPARE(sqlite_mock);
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("agentname"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
@@ -763,7 +681,7 @@ TEST(DatabaseTest, AddApacheSessionStatistics_WhenBindErrorPercentageFailed) {
   EXPECT_CALL(*sqlite_mock, BindInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 13, 44)).WillOnce(Return(SQLITE_NOMEM));
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
   ::apache::type::ApacheSessions sessions;
   sessions.push_back({0, "agentname", "vh1", "127.0.0.1", MY_DEFAULT_TIME1(), 23, 941, 13, 44, "User-Agent Example"});
 
@@ -772,7 +690,7 @@ TEST(DatabaseTest, AddApacheSessionStatistics_WhenBindErrorPercentageFailed) {
 
 TEST(DatabaseTest, AddApacheSessionStatistics_WhenBindRequestsCountFailed) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   EXPECT_CALL(*sqlite_mock, Exec(DB_HANDLE_EXAMPLE_PTR_VALUE, NotNull(), IsNull(), IsNull(), IsNull())).Times(2).WillRepeatedly(Return(SQLITE_OK));
   MY_EXPECT_PREPARE(sqlite_mock);
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("agentname"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
@@ -791,7 +709,7 @@ TEST(DatabaseTest, AddApacheSessionStatistics_WhenBindRequestsCountFailed) {
   EXPECT_CALL(*sqlite_mock, BindInt64(DB_STATEMENT_EXAMPLE_PTR_VALUE, 12, 13)).WillOnce(Return(SQLITE_NOMEM));
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
   ::apache::type::ApacheSessions sessions;
   sessions.push_back({0, "agentname", "vh1", "127.0.0.1", MY_DEFAULT_TIME1(), 23, 941, 13, 44, "User-Agent Example"});
 
@@ -800,7 +718,7 @@ TEST(DatabaseTest, AddApacheSessionStatistics_WhenBindRequestsCountFailed) {
 
 TEST(DatabaseTest, AddApacheSessionStatistics_WhenBindBandwidthUsageFailed) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   EXPECT_CALL(*sqlite_mock, Exec(DB_HANDLE_EXAMPLE_PTR_VALUE, NotNull(), IsNull(), IsNull(), IsNull())).Times(2).WillRepeatedly(Return(SQLITE_OK));
   MY_EXPECT_PREPARE(sqlite_mock);
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("agentname"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
@@ -818,7 +736,7 @@ TEST(DatabaseTest, AddApacheSessionStatistics_WhenBindBandwidthUsageFailed) {
   EXPECT_CALL(*sqlite_mock, BindInt64(DB_STATEMENT_EXAMPLE_PTR_VALUE, 11, 941)).WillOnce(Return(SQLITE_NOMEM));
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
   ::apache::type::ApacheSessions sessions;
   sessions.push_back({0, "agentname", "vh1", "127.0.0.1", MY_DEFAULT_TIME1(), 23, 941, 13, 44, "User-Agent Example"});
 
@@ -827,7 +745,7 @@ TEST(DatabaseTest, AddApacheSessionStatistics_WhenBindBandwidthUsageFailed) {
 
 TEST(DatabaseTest, AddApacheSessionStatistics_WhenBindSessionLengthFailed) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   EXPECT_CALL(*sqlite_mock, Exec(DB_HANDLE_EXAMPLE_PTR_VALUE, NotNull(), IsNull(), IsNull(), IsNull())).Times(2).WillRepeatedly(Return(SQLITE_OK));
   MY_EXPECT_PREPARE(sqlite_mock);
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("agentname"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
@@ -844,7 +762,7 @@ TEST(DatabaseTest, AddApacheSessionStatistics_WhenBindSessionLengthFailed) {
   EXPECT_CALL(*sqlite_mock, BindInt64(DB_STATEMENT_EXAMPLE_PTR_VALUE, 10, 23)).WillOnce(Return(SQLITE_NOMEM));
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
   ::apache::type::ApacheSessions sessions;
   sessions.push_back({0, "agentname", "vh1", "127.0.0.1", MY_DEFAULT_TIME1(), 23, 941, 13, 44, "User-Agent Example"});
 
@@ -853,7 +771,7 @@ TEST(DatabaseTest, AddApacheSessionStatistics_WhenBindSessionLengthFailed) {
 
 TEST(DatabaseTest, AddApacheSessionStatistics_WhenBindYearFailed) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   EXPECT_CALL(*sqlite_mock, Exec(DB_HANDLE_EXAMPLE_PTR_VALUE, NotNull(), IsNull(), IsNull(), IsNull())).Times(2).WillRepeatedly(Return(SQLITE_OK));
   MY_EXPECT_PREPARE(sqlite_mock);
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("agentname"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
@@ -868,7 +786,7 @@ TEST(DatabaseTest, AddApacheSessionStatistics_WhenBindYearFailed) {
   EXPECT_CALL(*sqlite_mock, BindInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 9, 2011)).WillOnce(Return(SQLITE_NOMEM));
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
   ::apache::type::ApacheSessions sessions;
   sessions.push_back({0, "agentname", "vh1", "127.0.0.1", MY_DEFAULT_TIME1(), 23, 941, 13, 44, "User-Agent Example"});
 
@@ -877,7 +795,7 @@ TEST(DatabaseTest, AddApacheSessionStatistics_WhenBindYearFailed) {
 
 TEST(DatabaseTest, AddApacheSessionStatistics_WhenBindMonthFailed) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   EXPECT_CALL(*sqlite_mock, Exec(DB_HANDLE_EXAMPLE_PTR_VALUE, NotNull(), IsNull(), IsNull(), IsNull())).Times(2).WillRepeatedly(Return(SQLITE_OK));
   MY_EXPECT_PREPARE(sqlite_mock);
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("agentname"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
@@ -891,7 +809,7 @@ TEST(DatabaseTest, AddApacheSessionStatistics_WhenBindMonthFailed) {
   EXPECT_CALL(*sqlite_mock, BindInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 8, 4)).WillOnce(Return(SQLITE_NOMEM));
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
   ::apache::type::ApacheSessions sessions;
   sessions.push_back({0, "agentname", "vh1", "127.0.0.1", MY_DEFAULT_TIME1(), 23, 941, 13, 44, "User-Agent Example"});
 
@@ -900,7 +818,7 @@ TEST(DatabaseTest, AddApacheSessionStatistics_WhenBindMonthFailed) {
 
 TEST(DatabaseTest, AddApacheSessionStatistics_WhenBindDayFailed) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   EXPECT_CALL(*sqlite_mock, Exec(DB_HANDLE_EXAMPLE_PTR_VALUE, NotNull(), IsNull(), IsNull(), IsNull())).Times(2).WillRepeatedly(Return(SQLITE_OK));
   MY_EXPECT_PREPARE(sqlite_mock);
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("agentname"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
@@ -913,7 +831,7 @@ TEST(DatabaseTest, AddApacheSessionStatistics_WhenBindDayFailed) {
   EXPECT_CALL(*sqlite_mock, BindInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 7, 22)).WillOnce(Return(SQLITE_NOMEM));
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
   ::apache::type::ApacheSessions sessions;
   sessions.push_back({0, "agentname", "vh1", "127.0.0.1", MY_DEFAULT_TIME1(), 23, 941, 13, 44, "User-Agent Example"});
 
@@ -922,7 +840,7 @@ TEST(DatabaseTest, AddApacheSessionStatistics_WhenBindDayFailed) {
 
 TEST(DatabaseTest, AddApacheSessionStatistics_WhenBindSecondFailed) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   EXPECT_CALL(*sqlite_mock, Exec(DB_HANDLE_EXAMPLE_PTR_VALUE, NotNull(), IsNull(), IsNull(), IsNull())).Times(2).WillRepeatedly(Return(SQLITE_OK));
   MY_EXPECT_PREPARE(sqlite_mock);
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("agentname"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
@@ -934,7 +852,7 @@ TEST(DatabaseTest, AddApacheSessionStatistics_WhenBindSecondFailed) {
   EXPECT_CALL(*sqlite_mock, BindInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 6, 3)).WillOnce(Return(SQLITE_NOMEM));
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
   ::apache::type::ApacheSessions sessions;
   sessions.push_back({0, "agentname", "vh1", "127.0.0.1", MY_DEFAULT_TIME1(), 23, 941, 13, 44, "User-Agent Example"});
 
@@ -943,7 +861,7 @@ TEST(DatabaseTest, AddApacheSessionStatistics_WhenBindSecondFailed) {
 
 TEST(DatabaseTest, AddApacheSessionStatistics_WhenBindMinuteFailed) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   EXPECT_CALL(*sqlite_mock, Exec(DB_HANDLE_EXAMPLE_PTR_VALUE, NotNull(), IsNull(), IsNull(), IsNull())).Times(2).WillRepeatedly(Return(SQLITE_OK));
   MY_EXPECT_PREPARE(sqlite_mock);
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("agentname"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
@@ -954,7 +872,7 @@ TEST(DatabaseTest, AddApacheSessionStatistics_WhenBindMinuteFailed) {
   EXPECT_CALL(*sqlite_mock, BindInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 5, 12)).WillOnce(Return(SQLITE_NOMEM));
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
   ::apache::type::ApacheSessions sessions;
   sessions.push_back({0, "agentname", "vh1", "127.0.0.1", MY_DEFAULT_TIME1(), 23, 941, 13, 44, "User-Agent Example"});
 
@@ -963,7 +881,7 @@ TEST(DatabaseTest, AddApacheSessionStatistics_WhenBindMinuteFailed) {
 
 TEST(DatabaseTest, AddApacheSessionStatistics_WhenBindHourFailed) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   EXPECT_CALL(*sqlite_mock, Exec(DB_HANDLE_EXAMPLE_PTR_VALUE, NotNull(), IsNull(), IsNull(), IsNull())).Times(2).WillRepeatedly(Return(SQLITE_OK));
   MY_EXPECT_PREPARE(sqlite_mock);
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("agentname"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
@@ -973,7 +891,7 @@ TEST(DatabaseTest, AddApacheSessionStatistics_WhenBindHourFailed) {
   EXPECT_CALL(*sqlite_mock, BindInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 4, 21)).WillOnce(Return(SQLITE_NOMEM));
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
   ::apache::type::ApacheSessions sessions;
   sessions.push_back({0, "agentname", "vh1", "127.0.0.1", MY_DEFAULT_TIME1(), 23, 941, 13, 44, "User-Agent Example"});
 
@@ -982,7 +900,7 @@ TEST(DatabaseTest, AddApacheSessionStatistics_WhenBindHourFailed) {
 
 TEST(DatabaseTest, AddApacheSessionStatistics_WhenBindClientIPFailed) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   EXPECT_CALL(*sqlite_mock, Exec(DB_HANDLE_EXAMPLE_PTR_VALUE, NotNull(), IsNull(), IsNull(), IsNull())).Times(2).WillRepeatedly(Return(SQLITE_OK));
   MY_EXPECT_PREPARE(sqlite_mock);
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("agentname"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
@@ -990,7 +908,7 @@ TEST(DatabaseTest, AddApacheSessionStatistics_WhenBindClientIPFailed) {
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 3, StrEq("127.0.0.1"), -1, nullptr)).WillOnce(Return(SQLITE_NOMEM));
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
   ::apache::type::ApacheSessions sessions;
   sessions.push_back({0, "agentname", "vh1", "127.0.0.1", MY_DEFAULT_TIME1(), 23, 941, 13, 44, "User-Agent Example"});
 
@@ -999,14 +917,14 @@ TEST(DatabaseTest, AddApacheSessionStatistics_WhenBindClientIPFailed) {
 
 TEST(DatabaseTest, AddApacheSessionStatistics_WhenBindVirtualhostFailed) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   EXPECT_CALL(*sqlite_mock, Exec(DB_HANDLE_EXAMPLE_PTR_VALUE, NotNull(), IsNull(), IsNull(), IsNull())).Times(2).WillRepeatedly(Return(SQLITE_OK));
   MY_EXPECT_PREPARE(sqlite_mock);
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("agentname"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 2, StrEq("vh1"), -1, nullptr)).WillOnce(Return(SQLITE_NOMEM));
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
   ::apache::type::ApacheSessions sessions;
   sessions.push_back({0, "agentname", "vh1", "127.0.0.1", MY_DEFAULT_TIME1(), 23, 941, 13, 44, "User-Agent Example"});
 
@@ -1015,13 +933,13 @@ TEST(DatabaseTest, AddApacheSessionStatistics_WhenBindVirtualhostFailed) {
 
 TEST(DatabaseTest, AddApacheSessionStatistics_WhenBindAgentNameFailed) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   EXPECT_CALL(*sqlite_mock, Exec(DB_HANDLE_EXAMPLE_PTR_VALUE, NotNull(), IsNull(), IsNull(), IsNull())).Times(2).WillRepeatedly(Return(SQLITE_OK));
   MY_EXPECT_PREPARE(sqlite_mock);
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("agentname"), -1, nullptr)).WillOnce(Return(SQLITE_NOMEM));
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
   ::apache::type::ApacheSessions sessions;
   sessions.push_back({0, "agentname", "vh1", "127.0.0.1", MY_DEFAULT_TIME1(), 23, 941, 13, 44, "User-Agent Example"});
 
@@ -1030,7 +948,7 @@ TEST(DatabaseTest, AddApacheSessionStatistics_WhenBindAgentNameFailed) {
 
 TEST(DatabaseTest, GetApacheLogsCount) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   MY_EXPECT_PREPARE(sqlite_mock, 1);
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("agentname"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 2, StrEq("vh1"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
@@ -1040,14 +958,14 @@ TEST(DatabaseTest, GetApacheLogsCount) {
 
   ::type::Timestamp from, to;
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
 
   EXPECT_EQ(43, database->GetApacheLogsCount("agentname", "vh1", from, to));
 }
 
 TEST(DatabaseTest, GetApacheLogsCount_WhenFinalizeFailed) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   MY_EXPECT_PREPARE(sqlite_mock, 1);
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("agentname"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 2, StrEq("vh1"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
@@ -1057,14 +975,14 @@ TEST(DatabaseTest, GetApacheLogsCount_WhenFinalizeFailed) {
 
   ::type::Timestamp from, to;
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
 
   EXPECT_THROW(database->GetApacheLogsCount("agentname", "vh1", from, to), database::exception::detail::CantExecuteSqlStatementException);
 }
 
 TEST(DatabaseTest, GetApacheLogsCount_WhenStepFailed) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   MY_EXPECT_PREPARE(sqlite_mock, 1);
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("agentname"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 2, StrEq("vh1"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
@@ -1072,57 +990,57 @@ TEST(DatabaseTest, GetApacheLogsCount_WhenStepFailed) {
 
   ::type::Timestamp from, to;
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
 
   EXPECT_THROW(database->GetApacheLogsCount("agentname", "vh1", from, to), database::exception::detail::CantExecuteSqlStatementException);
 }
 
 TEST(DatabaseTest, GetApacheLogsCount_WhenBindVirtualhostFailed) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   MY_EXPECT_PREPARE(sqlite_mock, 1);
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("agentname"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 2, StrEq("vh1"), -1, nullptr)).WillOnce(Return(SQLITE_NOMEM));
 
   ::type::Timestamp from, to;
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
 
   EXPECT_THROW(database->GetApacheLogsCount("agentname", "vh1", from, to), database::exception::detail::CantExecuteSqlStatementException);
 }
 
 TEST(DatabaseTest, GetApacheLogsCount_WhenBindAgentNameFailed) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   MY_EXPECT_PREPARE(sqlite_mock, 1);
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("agentname"), -1, nullptr)).WillOnce(Return(SQLITE_NOMEM));
 
   ::type::Timestamp from, to;
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
 
   EXPECT_THROW(database->GetApacheLogsCount("agentname", "vh1", from, to), database::exception::detail::CantExecuteSqlStatementException);
 }
 
 TEST(DatabaseTest, GetApacheLogsCount_WhenPrepareFailed) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   MY_EXPECT_PREPARE(sqlite_mock, 1, SQLITE_NOMEM);
 
   ::type::Timestamp from, to;
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
 
   EXPECT_THROW(database->GetApacheLogsCount("agentname", "vh1", from, to), database::exception::detail::CantExecuteSqlStatementException);
 }
 
 TEST(DatabaseTest, GetApacheAgentNames) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   EXPECT_CALL(*sqlite_mock, Exec(DB_HANDLE_EXAMPLE_PTR_VALUE, NotNull(), NotNull(), NotNull(), IsNull())).Times(1).WillRepeatedly(Return(SQLITE_OK));
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
 
   auto names = database->GetApacheAgentNames();
   EXPECT_EQ(static_cast<unsigned>(0), names.size());
@@ -1130,18 +1048,18 @@ TEST(DatabaseTest, GetApacheAgentNames) {
 
 TEST(DatabaseTest, GetApacheAgentNames_WhenExecFail) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   EXPECT_CALL(*sqlite_mock, Exec(DB_HANDLE_EXAMPLE_PTR_VALUE, NotNull(), NotNull(), NotNull(), IsNull())).Times(1).WillRepeatedly(Return(SQLITE_NOMEM));
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
 
   EXPECT_THROW(database->GetApacheAgentNames(), database::exception::detail::CantExecuteSqlStatementException);
 }
 
 TEST(DatabaseTest, GetApacheVirtualhostNames) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   MY_EXPECT_PREPARE(sqlite_mock);
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("agentname2"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
   EXPECT_CALL(*sqlite_mock, Step(DB_STATEMENT_EXAMPLE_PTR_VALUE)).Times(2).WillOnce(Return(SQLITE_ROW)).WillOnce(Return(SQLITE_DONE));
@@ -1149,7 +1067,7 @@ TEST(DatabaseTest, GetApacheVirtualhostNames) {
   EXPECT_CALL(*sqlite_mock, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_OK));
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
 
   auto names = database->GetApacheVirtualhostNames("agentname2");
   EXPECT_EQ(static_cast<unsigned>(1), names.size());
@@ -1158,7 +1076,7 @@ TEST(DatabaseTest, GetApacheVirtualhostNames) {
 
 TEST(DatabaseTest, GetApacheVirtualhostNames_WhenTwoNamesAreAvailable) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   MY_EXPECT_PREPARE(sqlite_mock);
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("agentname2"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
   EXPECT_CALL(*sqlite_mock, Step(DB_STATEMENT_EXAMPLE_PTR_VALUE)).Times(3).WillOnce(Return(SQLITE_ROW)).WillOnce(Return(SQLITE_ROW)).WillOnce(Return(SQLITE_DONE));
@@ -1168,7 +1086,7 @@ TEST(DatabaseTest, GetApacheVirtualhostNames_WhenTwoNamesAreAvailable) {
   EXPECT_CALL(*sqlite_mock, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_OK));
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
 
   auto names = database->GetApacheVirtualhostNames("agentname2");
   EXPECT_EQ(static_cast<unsigned>(2), names.size());
@@ -1178,7 +1096,7 @@ TEST(DatabaseTest, GetApacheVirtualhostNames_WhenTwoNamesAreAvailable) {
 
 TEST(DatabaseTest, GetApacheVirtualhostNames_WhenColumnTextReturnsNull) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   MY_EXPECT_PREPARE(sqlite_mock);
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("agentname2"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
   EXPECT_CALL(*sqlite_mock, Step(DB_STATEMENT_EXAMPLE_PTR_VALUE)).Times(3).WillOnce(Return(SQLITE_ROW)).WillOnce(Return(SQLITE_ROW)).WillOnce(Return(SQLITE_DONE));
@@ -1188,7 +1106,7 @@ TEST(DatabaseTest, GetApacheVirtualhostNames_WhenColumnTextReturnsNull) {
   EXPECT_CALL(*sqlite_mock, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_OK));
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
 
   auto names = database->GetApacheVirtualhostNames("agentname2");
   EXPECT_EQ(static_cast<unsigned>(1), names.size());
@@ -1197,7 +1115,7 @@ TEST(DatabaseTest, GetApacheVirtualhostNames_WhenColumnTextReturnsNull) {
 
 TEST(DatabaseTest, GetApacheVirtualhostNames_WhenFinalizeFailed) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   MY_EXPECT_PREPARE(sqlite_mock);
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("agentname2"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
   EXPECT_CALL(*sqlite_mock, Step(DB_STATEMENT_EXAMPLE_PTR_VALUE)).Times(2).WillOnce(Return(SQLITE_ROW)).WillOnce(Return(SQLITE_DONE));
@@ -1205,50 +1123,50 @@ TEST(DatabaseTest, GetApacheVirtualhostNames_WhenFinalizeFailed) {
   EXPECT_CALL(*sqlite_mock, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_NOMEM));
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
 
   EXPECT_THROW(database->GetApacheVirtualhostNames("agentname2"), database::exception::detail::CantExecuteSqlStatementException);
 }
 
 TEST(DatabaseTest, GetApacheVirtualhostNames_WhenStepFailed) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   MY_EXPECT_PREPARE(sqlite_mock);
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("agentname2"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
   EXPECT_CALL(*sqlite_mock, Step(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_NOMEM));
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
 
   EXPECT_THROW(database->GetApacheVirtualhostNames("agentname2"), database::exception::detail::CantExecuteSqlStatementException);
 }
 
 TEST(DatabaseTest, GetApacheVirtualhostNames_WhenBindAgentNameFailed) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   MY_EXPECT_PREPARE(sqlite_mock);
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("agentname2"), -1, nullptr)).WillOnce(Return(SQLITE_NOMEM));
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
 
   EXPECT_THROW(database->GetApacheVirtualhostNames("agentname2"), database::exception::detail::CantExecuteSqlStatementException);
 }
 
 TEST(DatabaseTest, GetApacheVirtualhostNames_WhenPrepareFailed) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   MY_EXPECT_PREPARE(sqlite_mock, 1, SQLITE_NOMEM);
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
 
   EXPECT_THROW(database->GetApacheVirtualhostNames("agentname2"), database::exception::detail::CantExecuteSqlStatementException);
 }
 
 TEST(DatabaseTest, GetApacheLogs) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   MY_EXPECT_PREPARE(sqlite_mock);
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("agentname"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 2, StrEq("vh1"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
@@ -1274,7 +1192,7 @@ TEST(DatabaseTest, GetApacheLogs) {
   EXPECT_CALL(*sqlite_mock, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_OK));
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
 
   ::type::Timestamp from, to;
   from.Set(10, 0, 0, 1, 1, 2015);
@@ -1301,7 +1219,7 @@ TEST(DatabaseTest, GetApacheLogs) {
 
 TEST(DatabaseTest, GetApacheLogs_WhenFinalizeFail) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   MY_EXPECT_PREPARE(sqlite_mock);
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("agentname"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 2, StrEq("vh1"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
@@ -1327,7 +1245,7 @@ TEST(DatabaseTest, GetApacheLogs_WhenFinalizeFail) {
   EXPECT_CALL(*sqlite_mock, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_NOMEM));
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
 
   ::type::Timestamp from, to;
   from.Set(10, 0, 0, 1, 1, 2015);
@@ -1337,7 +1255,7 @@ TEST(DatabaseTest, GetApacheLogs_WhenFinalizeFail) {
 
 TEST(DatabaseTest, GetApacheLogs_WhenUserAgentReturnsNull) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   MY_EXPECT_PREPARE(sqlite_mock);
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("agentname"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 2, StrEq("vh1"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
@@ -1363,7 +1281,7 @@ TEST(DatabaseTest, GetApacheLogs_WhenUserAgentReturnsNull) {
   EXPECT_CALL(*sqlite_mock, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_OK));
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
 
   ::type::Timestamp from, to;
   from.Set(10, 0, 0, 1, 1, 2015);
@@ -1390,7 +1308,7 @@ TEST(DatabaseTest, GetApacheLogs_WhenUserAgentReturnsNull) {
 
 TEST(DatabaseTest, GetApacheLogs_WhenRequestReturnsNull) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   MY_EXPECT_PREPARE(sqlite_mock);
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("agentname"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 2, StrEq("vh1"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
@@ -1416,7 +1334,7 @@ TEST(DatabaseTest, GetApacheLogs_WhenRequestReturnsNull) {
   EXPECT_CALL(*sqlite_mock, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_OK));
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
 
   ::type::Timestamp from, to;
   from.Set(10, 0, 0, 1, 1, 2015);
@@ -1443,7 +1361,7 @@ TEST(DatabaseTest, GetApacheLogs_WhenRequestReturnsNull) {
 
 TEST(DatabaseTest, GetApacheLogs_WhenClientIPReturnsNull) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   MY_EXPECT_PREPARE(sqlite_mock);
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("agentname"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 2, StrEq("vh1"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
@@ -1469,7 +1387,7 @@ TEST(DatabaseTest, GetApacheLogs_WhenClientIPReturnsNull) {
   EXPECT_CALL(*sqlite_mock, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_OK));
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
 
   ::type::Timestamp from, to;
   from.Set(10, 0, 0, 1, 1, 2015);
@@ -1496,7 +1414,7 @@ TEST(DatabaseTest, GetApacheLogs_WhenClientIPReturnsNull) {
 
 TEST(DatabaseTest, GetApacheLogs_WhenVirtualhostReturnsNull) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   MY_EXPECT_PREPARE(sqlite_mock);
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("agentname"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 2, StrEq("vh1"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
@@ -1522,7 +1440,7 @@ TEST(DatabaseTest, GetApacheLogs_WhenVirtualhostReturnsNull) {
   EXPECT_CALL(*sqlite_mock, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_OK));
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
 
   ::type::Timestamp from, to;
   from.Set(10, 0, 0, 1, 1, 2015);
@@ -1549,7 +1467,7 @@ TEST(DatabaseTest, GetApacheLogs_WhenVirtualhostReturnsNull) {
 
 TEST(DatabaseTest, GetApacheLogs_WhenAgentNameReturnsNull) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   MY_EXPECT_PREPARE(sqlite_mock);
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("agentname"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 2, StrEq("vh1"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
@@ -1575,7 +1493,7 @@ TEST(DatabaseTest, GetApacheLogs_WhenAgentNameReturnsNull) {
   EXPECT_CALL(*sqlite_mock, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_OK));
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
 
   ::type::Timestamp from, to;
   from.Set(10, 0, 0, 1, 1, 2015);
@@ -1602,7 +1520,7 @@ TEST(DatabaseTest, GetApacheLogs_WhenAgentNameReturnsNull) {
 
 TEST(DatabaseTest, GetApacheLogs_WhenStepFail) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   MY_EXPECT_PREPARE(sqlite_mock);
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("agentname"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 2, StrEq("vh1"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
@@ -1610,7 +1528,7 @@ TEST(DatabaseTest, GetApacheLogs_WhenStepFail) {
   EXPECT_CALL(*sqlite_mock, Step(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_NOMEM));
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
 
   ::type::Timestamp from, to;
   from.Set(10, 0, 0, 1, 1, 2015);
@@ -1620,13 +1538,13 @@ TEST(DatabaseTest, GetApacheLogs_WhenStepFail) {
 
 TEST(DatabaseTest, GetApacheLogs_WhenBindVirtualhostFail) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   MY_EXPECT_PREPARE(sqlite_mock);
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("agentname"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 2, StrEq("vh1"), -1, nullptr)).WillOnce(Return(SQLITE_NOMEM));
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
 
   ::type::Timestamp from, to;
   from.Set(10, 0, 0, 1, 1, 2015);
@@ -1636,12 +1554,12 @@ TEST(DatabaseTest, GetApacheLogs_WhenBindVirtualhostFail) {
 
 TEST(DatabaseTest, GetApacheLogs_WhenBindAgentNameFail) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   MY_EXPECT_PREPARE(sqlite_mock);
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("agentname"), -1, nullptr)).WillOnce(Return(SQLITE_NOMEM));
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
 
   ::type::Timestamp from, to;
   from.Set(10, 0, 0, 1, 1, 2015);
@@ -1651,11 +1569,11 @@ TEST(DatabaseTest, GetApacheLogs_WhenBindAgentNameFail) {
 
 TEST(DatabaseTest, GetApacheLogs_WhenBindPrepareFail) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   MY_EXPECT_PREPARE(sqlite_mock, 1, SQLITE_NOMEM);
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
 
   ::type::Timestamp from, to;
   from.Set(10, 0, 0, 1, 1, 2015);
@@ -1665,7 +1583,7 @@ TEST(DatabaseTest, GetApacheLogs_WhenBindPrepareFail) {
 
 TEST(DatabaseTest, GetApacheSessionStatisticsCount) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   MY_EXPECT_PREPARE(sqlite_mock, 1);
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("agentname"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 2, StrEq("vh1"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
@@ -1675,14 +1593,14 @@ TEST(DatabaseTest, GetApacheSessionStatisticsCount) {
 
   ::type::Timestamp from, to;
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
 
   EXPECT_EQ(43, database->GetApacheSessionStatisticsCount("agentname", "vh1", from, to));
 }
 
 TEST(DatabaseTest, GetApacheSessionStatisticsCount_WhenFinalizeFailed) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   MY_EXPECT_PREPARE(sqlite_mock, 1);
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("agentname"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 2, StrEq("vh1"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
@@ -1692,14 +1610,14 @@ TEST(DatabaseTest, GetApacheSessionStatisticsCount_WhenFinalizeFailed) {
 
   ::type::Timestamp from, to;
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
 
   EXPECT_THROW(database->GetApacheSessionStatisticsCount("agentname", "vh1", from, to), database::exception::detail::CantExecuteSqlStatementException);
 }
 
 TEST(DatabaseTest, GetApacheSessionStatisticsCount_WhenStepFailed) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   MY_EXPECT_PREPARE(sqlite_mock, 1);
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("agentname"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 2, StrEq("vh1"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
@@ -1707,53 +1625,53 @@ TEST(DatabaseTest, GetApacheSessionStatisticsCount_WhenStepFailed) {
 
   ::type::Timestamp from, to;
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
 
   EXPECT_THROW(database->GetApacheSessionStatisticsCount("agentname", "vh1", from, to), database::exception::detail::CantExecuteSqlStatementException);
 }
 
 TEST(DatabaseTest, GetApacheSessionStatisticsCount_WhenBindVirtualhostFailed) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   MY_EXPECT_PREPARE(sqlite_mock, 1);
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("agentname"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 2, StrEq("vh1"), -1, nullptr)).WillOnce(Return(SQLITE_NOMEM));
 
   ::type::Timestamp from, to;
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
 
   EXPECT_THROW(database->GetApacheSessionStatisticsCount("agentname", "vh1", from, to), database::exception::detail::CantExecuteSqlStatementException);
 }
 
 TEST(DatabaseTest, GetApacheSessionStatisticsCount_WhenBindAgentNameFailed) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   MY_EXPECT_PREPARE(sqlite_mock, 1);
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("agentname"), -1, nullptr)).WillOnce(Return(SQLITE_NOMEM));
 
   ::type::Timestamp from, to;
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
 
   EXPECT_THROW(database->GetApacheSessionStatisticsCount("agentname", "vh1", from, to), database::exception::detail::CantExecuteSqlStatementException);
 }
 
 TEST(DatabaseTest, GetApacheSessionStatisticsCount_WhenPrepareFailed) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   MY_EXPECT_PREPARE(sqlite_mock, 1, SQLITE_NOMEM);
 
   ::type::Timestamp from, to;
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
 
   EXPECT_THROW(database->GetApacheSessionStatisticsCount("agentname", "vh1", from, to), database::exception::detail::CantExecuteSqlStatementException);
 }
 
 TEST(DatabaseTest, GetApacheSessionStatistics) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   MY_EXPECT_PREPARE(sqlite_mock);
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("agentname"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 2, StrEq("vh1"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
@@ -1781,7 +1699,7 @@ TEST(DatabaseTest, GetApacheSessionStatistics) {
   EXPECT_CALL(*sqlite_mock, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_OK));
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
 
   ::type::Timestamp from, to;
   from.Set(10, 0, 0, 1, 1, 2015);
@@ -1810,7 +1728,7 @@ TEST(DatabaseTest, GetApacheSessionStatistics) {
 
 TEST(DatabaseTest, GetApacheSessionStatistics_WhenFinalizeFail) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   MY_EXPECT_PREPARE(sqlite_mock);
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("agentname"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 2, StrEq("vh1"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
@@ -1838,7 +1756,7 @@ TEST(DatabaseTest, GetApacheSessionStatistics_WhenFinalizeFail) {
   EXPECT_CALL(*sqlite_mock, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_NOMEM));
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
 
   ::type::Timestamp from, to;
   from.Set(10, 0, 0, 1, 1, 2015);
@@ -1848,7 +1766,7 @@ TEST(DatabaseTest, GetApacheSessionStatistics_WhenFinalizeFail) {
 
 TEST(DatabaseTest, GetApacheSessionStatistics_WhenStepFail) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   MY_EXPECT_PREPARE(sqlite_mock);
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("agentname"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 2, StrEq("vh1"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
@@ -1856,7 +1774,7 @@ TEST(DatabaseTest, GetApacheSessionStatistics_WhenStepFail) {
   EXPECT_CALL(*sqlite_mock, Step(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_NOMEM));
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
 
   ::type::Timestamp from, to;
   from.Set(10, 0, 0, 1, 1, 2015);
@@ -1866,13 +1784,13 @@ TEST(DatabaseTest, GetApacheSessionStatistics_WhenStepFail) {
 
 TEST(DatabaseTest, GetApacheSessionStatistics_WhenBindVirtualhostFail) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   MY_EXPECT_PREPARE(sqlite_mock);
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("agentname"), -1, nullptr)).WillOnce(Return(SQLITE_OK));
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 2, StrEq("vh1"), -1, nullptr)).WillOnce(Return(SQLITE_NOMEM));
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
 
   ::type::Timestamp from, to;
   from.Set(10, 0, 0, 1, 1, 2015);
@@ -1882,12 +1800,12 @@ TEST(DatabaseTest, GetApacheSessionStatistics_WhenBindVirtualhostFail) {
 
 TEST(DatabaseTest, GetApacheSessionStatistics_WhenBindAgentNameFail) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   MY_EXPECT_PREPARE(sqlite_mock);
   EXPECT_CALL(*sqlite_mock, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq("agentname"), -1, nullptr)).WillOnce(Return(SQLITE_NOMEM));
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
 
   ::type::Timestamp from, to;
   from.Set(10, 0, 0, 1, 1, 2015);
@@ -1897,11 +1815,11 @@ TEST(DatabaseTest, GetApacheSessionStatistics_WhenBindAgentNameFail) {
 
 TEST(DatabaseTest, GetApacheSessionStatistics_WhenPrepareFail) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   MY_EXPECT_PREPARE(sqlite_mock, 1, SQLITE_NOMEM);
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
 
   ::type::Timestamp from, to;
   from.Set(10, 0, 0, 1, 1, 2015);
@@ -1911,211 +1829,211 @@ TEST(DatabaseTest, GetApacheSessionStatistics_WhenPrepareFail) {
 
 TEST(DatabaseTest, CreateDateTable) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   EXPECT_CALL(*sqlite_mock, Exec(DB_HANDLE_EXAMPLE_PTR_VALUE, NotNull(), IsNull(), IsNull(), IsNull())).WillOnce(Return(SQLITE_OK));
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
   database->CreateDateTable();
 }
 
 TEST(DatabaseTest, CreateDateTable_WhenExecFail) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   EXPECT_CALL(*sqlite_mock, Exec(DB_HANDLE_EXAMPLE_PTR_VALUE, NotNull(), IsNull(), IsNull(), IsNull())).WillOnce(Return(SQLITE_NOMEM));
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
   EXPECT_THROW(database->CreateDateTable(), database::exception::detail::CantExecuteSqlStatementException);
 }
 
 TEST(DatabaseTest, AddDate) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   EXPECT_CALL(*sqlite_mock, Exec(DB_HANDLE_EXAMPLE_PTR_VALUE, NotNull(), IsNull(), IsNull(), IsNull())).WillOnce(Return(SQLITE_OK));
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
   database->AddDate(1, 1, 2016);
 }
 
 TEST(DatabaseTest, AddDate_WhenExecFail) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   EXPECT_CALL(*sqlite_mock, Exec(DB_HANDLE_EXAMPLE_PTR_VALUE, NotNull(), IsNull(), IsNull(), IsNull())).WillOnce(Return(SQLITE_NOMEM));
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
   EXPECT_THROW(database->AddDate(1, 1, 2016), database::exception::detail::CantExecuteSqlStatementException);
 }
 
 TEST(DatabaseTest, GetDateId) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   MY_EXPECT_PREPARE(sqlite_mock);
   EXPECT_CALL(*sqlite_mock, Step(DB_STATEMENT_EXAMPLE_PTR_VALUE)).Times(1).WillOnce(Return(SQLITE_ROW));
   EXPECT_CALL(*sqlite_mock, ColumnInt64(DB_STATEMENT_EXAMPLE_PTR_VALUE, 0)).WillOnce(Return(7));
   EXPECT_CALL(*sqlite_mock, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_OK));
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
   EXPECT_EQ(7, database->GetDateId(1, 1, 2016));
 }
 
 TEST(DatabaseTest, GetDateId_WhenItemNotExist) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   MY_EXPECT_PREPARE(sqlite_mock);
   EXPECT_CALL(*sqlite_mock, Step(DB_STATEMENT_EXAMPLE_PTR_VALUE)).Times(1).WillOnce(Return(SQLITE_DONE));
   EXPECT_CALL(*sqlite_mock, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_OK));
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
   EXPECT_EQ(-1, database->GetDateId(1, 1, 2016));
 }
 
 TEST(DatabaseTest, GetDateId_WhenFinalizeFail) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   MY_EXPECT_PREPARE(sqlite_mock);
   EXPECT_CALL(*sqlite_mock, Step(DB_STATEMENT_EXAMPLE_PTR_VALUE)).Times(1).WillOnce(Return(SQLITE_ROW));
   EXPECT_CALL(*sqlite_mock, ColumnInt64(DB_STATEMENT_EXAMPLE_PTR_VALUE, 0)).WillOnce(Return(7));
   EXPECT_CALL(*sqlite_mock, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_NOMEM));
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
   EXPECT_THROW(database->GetDateId(1, 1, 2016), database::exception::detail::CantExecuteSqlStatementException);
 }
 
 TEST(DatabaseTest, GetDateId_WhenStepFail) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   MY_EXPECT_PREPARE(sqlite_mock);
   EXPECT_CALL(*sqlite_mock, Step(DB_STATEMENT_EXAMPLE_PTR_VALUE)).Times(1).WillOnce(Return(SQLITE_NOMEM));
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
   EXPECT_THROW(database->GetDateId(1, 1, 2016), database::exception::detail::CantExecuteSqlStatementException);
 }
 
 TEST(DatabaseTest, GetDateId_WhenPrepareFail) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   MY_EXPECT_PREPARE(sqlite_mock, 1, SQLITE_NOMEM);
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
   EXPECT_THROW(database->GetDateId(1, 1, 2016), database::exception::detail::CantExecuteSqlStatementException);
 }
 
 TEST(DatabaseTest, CreateApacheSessionExistsTable) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   EXPECT_CALL(*sqlite_mock, Exec(DB_HANDLE_EXAMPLE_PTR_VALUE, NotNull(), IsNull(), IsNull(), IsNull())).WillOnce(Return(SQLITE_OK));
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
   database->CreateApacheSessionExistsTable();
 }
 
 TEST(DatabaseTest, CreateApacheSessionExistsTable_WhenExecFail) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   EXPECT_CALL(*sqlite_mock, Exec(DB_HANDLE_EXAMPLE_PTR_VALUE, NotNull(), IsNull(), IsNull(), IsNull())).WillOnce(Return(SQLITE_NOMEM));
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
   EXPECT_THROW(database->CreateApacheSessionExistsTable(), database::exception::detail::CantExecuteSqlStatementException);
 }
 
 TEST(DatabaseTest, MarkApacheStatisticsAsCreatedFor) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   EXPECT_CALL(*sqlite_mock, Exec(DB_HANDLE_EXAMPLE_PTR_VALUE, NotNull(), IsNull(), IsNull(), IsNull())).WillOnce(Return(SQLITE_OK));
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
   database->MarkApacheStatisticsAsCreatedFor(10, 10, 2016);
 }
 
 TEST(DatabaseTest, MarkApacheStatisticsAsCreatedFor_WhenExecFail) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   EXPECT_CALL(*sqlite_mock, Exec(DB_HANDLE_EXAMPLE_PTR_VALUE, NotNull(), IsNull(), IsNull(), IsNull())).WillOnce(Return(SQLITE_NOMEM));
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
   EXPECT_THROW(database->MarkApacheStatisticsAsCreatedFor(10, 10, 2016), database::exception::detail::CantExecuteSqlStatementException);
 }
 
 TEST(DatabaseTest, IsApacheStatisticsCreatedFor_WhenExist) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   MY_EXPECT_PREPARE(sqlite_mock);
   EXPECT_CALL(*sqlite_mock, Step(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_ROW));
   EXPECT_CALL(*sqlite_mock, ColumnInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 0)).WillOnce(Return(1));
   EXPECT_CALL(*sqlite_mock, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_OK));
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
 
   EXPECT_EQ(true, database->IsApacheStatisticsCreatedFor(1, 1, 2016));
 }
 
 TEST(DatabaseTest, IsApacheStatisticsCreatedFor_WhenNotExist) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   MY_EXPECT_PREPARE(sqlite_mock);
   EXPECT_CALL(*sqlite_mock, Step(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_ROW));
   EXPECT_CALL(*sqlite_mock, ColumnInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 0)).WillOnce(Return(0));
   EXPECT_CALL(*sqlite_mock, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_OK));
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
 
   EXPECT_FALSE(database->IsApacheStatisticsCreatedFor(1, 1, 2016));
 }
 
 TEST(DatabaseTest, IsApacheStatisticsCreatedFor_WhenFinalizeFail) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   MY_EXPECT_PREPARE(sqlite_mock);
   EXPECT_CALL(*sqlite_mock, Step(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_ROW));
   EXPECT_CALL(*sqlite_mock, ColumnInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 0)).WillOnce(Return(0));
   EXPECT_CALL(*sqlite_mock, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_NOMEM));
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
 
   EXPECT_THROW(database->IsApacheStatisticsCreatedFor(1, 1, 2016), database::exception::detail::CantExecuteSqlStatementException);
 }
 
 TEST(DatabaseTest, IsApacheStatisticsCreatedFor_WhenStepFail) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   MY_EXPECT_PREPARE(sqlite_mock);
   EXPECT_CALL(*sqlite_mock, Step(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_NOMEM));
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
 
   EXPECT_THROW(database->IsApacheStatisticsCreatedFor(1, 1, 2016), database::exception::detail::CantExecuteSqlStatementException);
 }
 
 TEST(DatabaseTest, IsApacheStatisticsCreatedFor_WhenPrepareFail) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   MY_EXPECT_PREPARE(sqlite_mock, 1, SQLITE_NOMEM);
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
 
   EXPECT_THROW(database->IsApacheStatisticsCreatedFor(1, 1, 2016), database::exception::detail::CantExecuteSqlStatementException);
 }
 
 TEST(DatabaseTest, GetApacheOneSessionStatistic) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   MY_EXPECT_PREPARE(sqlite_mock);
   EXPECT_CALL(*sqlite_mock, Step(DB_STATEMENT_EXAMPLE_PTR_VALUE)).Times(1).WillOnce(Return(SQLITE_ROW));
 
@@ -2139,7 +2057,7 @@ TEST(DatabaseTest, GetApacheOneSessionStatistic) {
   EXPECT_CALL(*sqlite_mock, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_OK));
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
 
   ::type::Timestamp from, to;
   from.Set(10, 0, 0, 1, 1, 2015);
@@ -2165,7 +2083,7 @@ TEST(DatabaseTest, GetApacheOneSessionStatistic) {
 
 TEST(DatabaseTest, GetApacheOneSessionStatistic_WhenFinalizeFailed) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   MY_EXPECT_PREPARE(sqlite_mock);
   EXPECT_CALL(*sqlite_mock, Step(DB_STATEMENT_EXAMPLE_PTR_VALUE)).Times(1).WillOnce(Return(SQLITE_ROW));
 
@@ -2189,7 +2107,7 @@ TEST(DatabaseTest, GetApacheOneSessionStatistic_WhenFinalizeFailed) {
   EXPECT_CALL(*sqlite_mock, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_NOMEM));
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
 
   ::type::Timestamp from, to;
   from.Set(10, 0, 0, 1, 1, 2015);
@@ -2199,12 +2117,12 @@ TEST(DatabaseTest, GetApacheOneSessionStatistic_WhenFinalizeFailed) {
 
 TEST(DatabaseTest, GetApacheOneSessionStatistic_WhenStepFailed) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   MY_EXPECT_PREPARE(sqlite_mock);
   EXPECT_CALL(*sqlite_mock, Step(DB_STATEMENT_EXAMPLE_PTR_VALUE)).Times(1).WillOnce(Return(SQLITE_NOMEM));
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
 
   ::type::Timestamp from, to;
   from.Set(10, 0, 0, 1, 1, 2015);
@@ -2214,11 +2132,11 @@ TEST(DatabaseTest, GetApacheOneSessionStatistic_WhenStepFailed) {
 
 TEST(DatabaseTest, GetApacheOneSessionStatistic_WhenPrepareFailed) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   MY_EXPECT_PREPARE(sqlite_mock, 1, SQLITE_NOMEM);
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
 
   ::type::Timestamp from, to;
   from.Set(10, 0, 0, 1, 1, 2015);
@@ -2228,42 +2146,42 @@ TEST(DatabaseTest, GetApacheOneSessionStatistic_WhenPrepareFailed) {
 
 TEST(DatabaseTest, SetApacheSessionAsAnomaly) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   EXPECT_CALL(*sqlite_mock, Exec(DB_HANDLE_EXAMPLE_PTR_VALUE, NotNull(), IsNull(), IsNull(), IsNull())).WillOnce(Return(SQLITE_OK));
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
   ::database::type::RowIds ids{1};
   database->SetApacheSessionAsAnomaly(ids, ids);
 }
 
 TEST(DatabaseTest, SetApacheSessionAsAnomaly_WhenExecFail) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   EXPECT_CALL(*sqlite_mock, Exec(DB_HANDLE_EXAMPLE_PTR_VALUE, NotNull(), IsNull(), IsNull(), IsNull())).WillOnce(Return(SQLITE_NOMEM));
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
   ::database::type::RowIds ids{1};
   EXPECT_THROW(database->SetApacheSessionAsAnomaly(ids, ids), database::exception::detail::CantExecuteSqlStatementException);
 }
 
 TEST(DatabaseTest, CreateApacheAnomalyDetectionConfigurationTable) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   EXPECT_CALL(*sqlite_mock, Exec(DB_HANDLE_EXAMPLE_PTR_VALUE, NotNull(), IsNull(), IsNull(), IsNull())).WillOnce(Return(SQLITE_OK));
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
   database->CreateApacheAnomalyDetectionConfigurationTable();
 }
 
 TEST(DatabaseTest, CreateApacheAnomalyDetectionConfigurationTable_WhenExecFail) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-  MY_EXPECT_OPEN(sqlite_mock);
+
   EXPECT_CALL(*sqlite_mock, Exec(DB_HANDLE_EXAMPLE_PTR_VALUE, NotNull(), IsNull(), IsNull(), IsNull())).WillOnce(Return(SQLITE_NOMEM));
 
   DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open("sqlite.db");
+  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
   EXPECT_THROW(database->CreateApacheAnomalyDetectionConfigurationTable(), database::exception::detail::CantExecuteSqlStatementException);
 }

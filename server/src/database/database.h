@@ -30,7 +30,7 @@ class Database {
   static DatabasePtr Create();
   static DatabasePtr Create(std::unique_ptr<detail::SQLiteInterface> sqlite);
 
-  void Open(const std::string &file_path);
+  void Open(sqlite3 *db_handle);
 
   bool IsOpen() const;
 
@@ -84,8 +84,6 @@ class Database {
   AgentNames GetApacheAgentNames();
 
   VirtualhostNames GetApacheVirtualhostNames(std::string agent_name);
-
-  bool Close();
 
  private:
   bool is_open_;
