@@ -14,6 +14,7 @@
 
 #include "program_options/parser.h"
 #include "database/database.h"
+#include "database/sqlite_wrapper.h"
 #include "web/command_receiver.h"
 #include "web/command_executor.h"
 #include "program_options/web/command_executor_object.h"
@@ -68,6 +69,7 @@ main(int argc, char *argv[]) {
   program_options::type::Options options;
   bash::dbus::object::BashPtr bash_object;
   apache::dbus::object::ApachePtr apache_object;
+  database::SQLiteWrapperPtr sqlite_wrapper;
   database::DatabasePtr database;
 
   try {
@@ -108,6 +110,8 @@ main(int argc, char *argv[]) {
 
     util::Demonize(options.IsDaemon());
 
+    sqlite_wrapper = database::SQLiteWrapper::Create();
+    sqlite_wrapper->Open(options.GetDatabasefilePath());
     database = CreateDatabase(options);
 
     auto options_command_object = program_options::web::CommandExecutorObject::Create(options);
@@ -181,6 +185,9 @@ main(int argc, char *argv[]) {
     if (database)
       database->Close();
 
+    if (sqlite_wrapper)
+      sqlite_wrapper->Close();
+    
     if (analyzer_thread.joinable())
       analyzer_thread.join();
 
