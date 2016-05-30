@@ -56,11 +56,11 @@ is_analyzing_(false) {
 void Analyzer::ExecuteAll() {
   BOOST_LOG_TRIVIAL(debug) << "analyzer::Analyzer::ExecuteAll: Function call";
   if (is_analyzing_) {
-    BOOST_LOG_TRIVIAL(debug) << "analyzer::Analyzer::ExecuteAll: Analyzing started";
+    BOOST_LOG_TRIVIAL(info) << "analyzer::Analyzer::ExecuteAll: Analyzing started";
     for (auto obj : objects_) {
       obj->Analyze();
     }
-    BOOST_LOG_TRIVIAL(debug) << "analyzer::Analyzer::ExecuteAll: Analyzing finished";
+    BOOST_LOG_TRIVIAL(info) << "analyzer::Analyzer::ExecuteAll: Analyzing finished";
 
     is_analyzing_ = false;
   }
