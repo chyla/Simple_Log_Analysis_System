@@ -6,8 +6,9 @@
 #ifndef SRC_DATABASE_DETAIL_SQLITE_WRAPPER_INTERFACE_H
 #define SRC_DATABASE_DETAIL_SQLITE_WRAPPER_INTERFACE_H
 
-#include "sqlite_interface.h"
+#include <memory>
 
+#include "sqlite_interface.h"
 
 namespace database
 {
@@ -42,6 +43,8 @@ class SQLiteWrapperInterface {
 
   virtual sqlite3* GetSQLiteHandle() = 0;
 };
+
+typedef std::shared_ptr<SQLiteWrapperInterface> SQLiteWrapperInterfacePtr;
 
 }
 

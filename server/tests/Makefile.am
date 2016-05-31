@@ -8,6 +8,7 @@ check_PROGRAMS	= tests
 if CAN_RUN_TESTS
 tests_SOURCES	= main.cpp \
 		    analyzer/analyzer.cpp \
+		    apache/database/database_functions.cpp \
 		    database/database.cpp \
 		    database/sqlite_wrapper.cpp \
 		    web/command_executor.cpp \
@@ -16,6 +17,7 @@ tests_SOURCES	= main.cpp \
 
 OBJECT_FILES	= \
 		    ../src/analyzer/analyzer.o \
+		    ../src/apache/database/database_functions.o \
 		    ../src/database/database.o \
 		    ../src/database/sqlite_wrapper.o \
 		    ../src/database/detail/sqlite.o \
