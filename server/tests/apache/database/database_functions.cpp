@@ -15,13 +15,10 @@ class apache_DatabaseFunctionsTest : public ::testing::Test {
   virtual ~apache_DatabaseFunctionsTest() = default;
 
   void SetUp() {
-    database_functions = ::mock::apache::database::DatabaseFunctions::Create();
   }
 
   void TearDown() {
   }
-
-  ::mock::apache::database::DatabaseFunctionsPtr database_functions;
 };
 
 TEST_F(apache_DatabaseFunctionsTest, Create) {
