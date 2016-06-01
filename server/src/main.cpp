@@ -24,6 +24,7 @@
 #include "src/bash/dbus/object/bash.h"
 
 #include "analyzer/analyzer.h"
+#include "apache/analyzer/apache_analyzer_object.h"
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -71,6 +72,7 @@ main(int argc, char *argv[]) {
   apache::dbus::object::ApachePtr apache_object;
   database::SQLiteWrapperPtr sqlite_wrapper;
   database::DatabasePtr database;
+  apache::database::DatabaseFunctionsPtr apache_database_functions;
 
   try {
     p.SetCommandLineOptions(argc, argv);
@@ -113,6 +115,8 @@ main(int argc, char *argv[]) {
     sqlite_wrapper = database::SQLiteWrapper::Create();
     sqlite_wrapper->Open(options.GetDatabasefilePath());
     database = CreateDatabase(sqlite_wrapper);
+    apache_database_functions = apache::database::DatabaseFunctions::Create(database,
+                                                                            sqlite_wrapper);
 
     auto options_command_object = program_options::web::CommandExecutorObject::Create(options);
     auto command_executor = web::CommandExecutor::Create();
@@ -150,6 +154,7 @@ main(int argc, char *argv[]) {
     sigaction(SIGUSR1, &act_usr, nullptr);
 
     analyzer_worker = analyzer::Analyzer::Create();
+    analyzer_worker->AddObject(apache::analyzer::ApacheAnalyzerObject::Create(apache_database_functions));
 
     analyzer_thread = std::thread([]() {
       analyzer_worker->StartLoop();

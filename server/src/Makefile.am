@@ -8,6 +8,9 @@ bin_PROGRAMS		= patlms-server
 patlms_server_SOURCES	= main.cpp \
 				analyzer/analyzer.cpp \
 				apache/database/database_functions.cpp \
+				apache/analyzer/apache_analyzer_object.cpp \
+				apache/analyzer/detail/prepare_statistics_analyzer_object.cpp \
+				apache/analyzer/detail/system.cpp \
 				database/database.cpp \
 				database/sqlite_wrapper.cpp \
 				database/detail/sqlite.cpp \

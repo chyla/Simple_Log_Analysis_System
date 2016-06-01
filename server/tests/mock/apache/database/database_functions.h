@@ -31,18 +31,22 @@ class DatabaseFunctions : public ::apache::database::detail::DatabaseFunctionsIn
     return std::make_shared<DatabaseFunctions>();
   }
 
-  MOCK_METHOD4(GetApacheLogsCount, ::database::type::RowsCount(std::string agent_name, std::string virtualhost_name,
+  MOCK_METHOD4(GetLogsCount, ::database::type::RowsCount(std::string agent_name, std::string virtualhost_name,
                                                                ::type::Date from, ::type::Date to));
 
-  MOCK_METHOD6(GetApacheLogs, ::type::ApacheLogs(std::string agent_name, std::string virtualhost_name,
+  MOCK_METHOD6(GetLogs, ::type::ApacheLogs(std::string agent_name, std::string virtualhost_name,
                                                  ::type::Date from, ::type::Date to,
                                                  unsigned limit, ::database::type::RowsCount offset));
 
-  MOCK_METHOD1(AddApacheSessionStatistics, bool(const ::apache::type::ApacheSessions &sessions));
+  MOCK_METHOD1(AddSessionStatistics, bool(const ::apache::type::ApacheSessions &sessions));
 
-  MOCK_METHOD1(MarkApacheStatisticsAsCreatedFor, void(::type::Date date));
+  MOCK_METHOD1(MarkStatisticsAsCreatedFor, void(::type::Date date));
 
-  MOCK_METHOD1(IsApacheStatisticsCreatedFor, bool(::type::Date date));
+  MOCK_METHOD1(IsStatisticsCreatedFor, bool(::type::Date date));
+
+  MOCK_METHOD0(GetAgentNames, ::database::type::AgentNames());
+
+  MOCK_METHOD1(GetVirtualhostNames, ::database::type::VirtualhostNames(::database::type::AgentName agent_name));
 };
 
 }

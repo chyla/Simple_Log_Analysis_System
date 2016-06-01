@@ -12,6 +12,8 @@
 #include <patlms/type/bash_log_entry.h>
 
 #include "type/row_id.h"
+#include "type/agent_name.h"
+#include "type/virtualhost_name.h"
 #include "detail/sqlite_interface.h"
 #include "src/apache/type/apache_session_entry.h"
 #include "src/apache/type/anomaly_detection_configuration_entry.h"
@@ -24,9 +26,6 @@ typedef std::shared_ptr<Database> DatabasePtr;
 
 class Database {
  public:
-  typedef std::vector<std::string> AgentNames;
-  typedef std::vector<std::string> VirtualhostNames;
-
   static DatabasePtr Create();
   static DatabasePtr Create(std::unique_ptr<detail::SQLiteInterface> sqlite);
 
@@ -81,9 +80,9 @@ class Database {
 
   ::type::ApacheLogs GetApacheLogs(std::string agent_name, std::string virtualhost_name, ::type::Timestamp from, ::type::Timestamp to, unsigned limit, long long offset);
 
-  AgentNames GetApacheAgentNames();
+  type::AgentNames GetApacheAgentNames();
 
-  VirtualhostNames GetApacheVirtualhostNames(std::string agent_name);
+  type::VirtualhostNames GetApacheVirtualhostNames(std::string agent_name);
 
  private:
   bool is_open_;

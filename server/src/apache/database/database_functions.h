@@ -30,18 +30,22 @@ class DatabaseFunctions : public detail::DatabaseFunctionsInterface {
   static DatabaseFunctionsPtr Create(::database::DatabasePtr db,
                                      ::database::detail::SQLiteWrapperInterfacePtr sqlite_wrapper);
 
-  ::database::type::RowsCount GetApacheLogsCount(std::string agent_name, std::string virtualhost_name,
-                                                 ::type::Date from, ::type::Date to) override;
+  ::database::type::RowsCount GetLogsCount(std::string agent_name, std::string virtualhost_name,
+                                           ::type::Date from, ::type::Date to) override;
 
-  ::type::ApacheLogs GetApacheLogs(std::string agent_name, std::string virtualhost_name,
-                                   ::type::Date from, ::type::Date to,
-                                   unsigned limit, ::database::type::RowsCount offset) override;
+  ::type::ApacheLogs GetLogs(std::string agent_name, std::string virtualhost_name,
+                             ::type::Date from, ::type::Date to,
+                             unsigned limit, ::database::type::RowsCount offset) override;
 
-  bool AddApacheSessionStatistics(const ::apache::type::ApacheSessions &sessions) override;
+  bool AddSessionStatistics(const ::apache::type::ApacheSessions &sessions) override;
 
-  void MarkApacheStatisticsAsCreatedFor(::type::Date date) override;
+  void MarkStatisticsAsCreatedFor(::type::Date date) override;
 
-  bool IsApacheStatisticsCreatedFor(::type::Date date) override;
+  bool IsStatisticsCreatedFor(::type::Date date) override;
+
+  virtual ::database::type::AgentNames GetAgentNames() override;
+
+  virtual ::database::type::VirtualhostNames GetVirtualhostNames(::database::type::AgentName agent_name) override;
 
  private:
   ::database::DatabasePtr db_;

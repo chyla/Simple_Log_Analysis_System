@@ -13,6 +13,8 @@
 
 #include "src/apache/type/apache_session_entry.h"
 #include "src/database/type/rows_count.h"
+#include "src/database/type/agent_name.h"
+#include "src/database/type/virtualhost_name.h"
 
 namespace apache
 {
@@ -27,18 +29,22 @@ class DatabaseFunctionsInterface {
  public:
   virtual ~DatabaseFunctionsInterface() = default;
 
-  virtual ::database::type::RowsCount GetApacheLogsCount(std::string agent_name, std::string virtualhost_name,
-                                                         ::type::Date from, ::type::Date to) = 0;
+  virtual ::database::type::RowsCount GetLogsCount(std::string agent_name, std::string virtualhost_name,
+                                                   ::type::Date from, ::type::Date to) = 0;
 
-  virtual ::type::ApacheLogs GetApacheLogs(std::string agent_name, std::string virtualhost_name,
-                                           ::type::Date from, ::type::Date to,
-                                           unsigned limit, ::database::type::RowsCount offset) = 0;
+  virtual ::type::ApacheLogs GetLogs(std::string agent_name, std::string virtualhost_name,
+                                     ::type::Date from, ::type::Date to,
+                                     unsigned limit, ::database::type::RowsCount offset) = 0;
 
-  virtual bool AddApacheSessionStatistics(const ::apache::type::ApacheSessions &sessions) = 0;
+  virtual bool AddSessionStatistics(const ::apache::type::ApacheSessions &sessions) = 0;
 
-  virtual void MarkApacheStatisticsAsCreatedFor(::type::Date date) = 0;
+  virtual void MarkStatisticsAsCreatedFor(::type::Date date) = 0;
 
-  virtual bool IsApacheStatisticsCreatedFor(::type::Date date) = 0;
+  virtual bool IsStatisticsCreatedFor(::type::Date date) = 0;
+
+  virtual ::database::type::AgentNames GetAgentNames() = 0;
+
+  virtual ::database::type::VirtualhostNames GetVirtualhostNames(::database::type::AgentName agent_name) = 0;
 };
 
 typedef std::shared_ptr<DatabaseFunctionsInterface> DatabaseFunctionsInterfacePtr;

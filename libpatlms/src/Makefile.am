@@ -22,6 +22,7 @@ lib_libpatlms_la_SOURCES  = \
 					type/timestamp.cpp \
 					util/path.cpp \
 					util/demonize.cpp \
+					util/distance.cpp \
 					util/configure_logger.cpp \
 					util/create_pidfile.cpp \
 					util/remove_file.cpp \
@@ -95,6 +96,7 @@ pkginclude_util_HEADERS = \
 					$(top_srcdir)/include/patlms/util/demonize.h \
 					$(top_srcdir)/include/patlms/util/configure_logger.h \
 					$(top_srcdir)/include/patlms/util/create_pidfile.h \
+					$(top_srcdir)/include/patlms/util/distance.h \
 					$(top_srcdir)/include/patlms/util/remove_file.h
 
 pkginclude_util_detaildir = $(pkgincludedir)/util/detail

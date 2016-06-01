@@ -23,8 +23,14 @@ class Date {
   inline int GetMonth() const;
   inline int GetYear() const;
 
+  Date GetYesterdayDate() const;
+
+  bool operator==(const Date &t2) const;
+
  private:
   static void CheckDate(int day, int month, int year);
+
+  const int GetNumberOfDayInMonth(int month) const;
 
   int day_, month_, year_;
 };

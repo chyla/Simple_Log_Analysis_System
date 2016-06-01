@@ -13,6 +13,7 @@ tests_SOURCES	= main.cpp \
 			type/date.cpp \
 			util/path.cpp \
 			util/create_pidfile.cpp \
+			util/distance.cpp \
 			util/remove_file.cpp
 
 OBJECT_FILES	= ../src/network/network.o \
@@ -23,6 +24,7 @@ OBJECT_FILES	= ../src/network/network.o \
 			../src/type/date.o \
 			../src/util/path.o \
 			../src/util/create_pidfile.o \
+			../src/util/distance.o \
 			../src/util/remove_file.o
 
 tests_LDADD	= $(OBJECT_FILES) \

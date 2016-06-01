@@ -181,3 +181,58 @@ TEST(Date, Set_WhenYearIs1969) {
 
   ASSERT_THROW(t.Set(1, 13, 1969), ::type::exception::detail::WrongDateValueException);
 }
+
+TEST(Date, GetYesterdayDate_MiddleOfTheMonth) {
+  Date t1 = Date::Create(22, 1, 2016);
+  
+  auto yesterday = t1.GetYesterdayDate();
+  
+  EXPECT_EQ(Date::Create(21, 1, 2016), yesterday);
+}
+
+TEST(Date, GetYesterdayDate_FirstDayOfMonth) {
+  Date t1 = Date::Create(1, 4, 2016);
+  
+  auto yesterday = t1.GetYesterdayDate();
+  
+  EXPECT_EQ(Date::Create(31, 3, 2016), yesterday);  
+}
+
+TEST(Date, GetYesterdayDate_FirstDayOfMonth_March_LeapYear) {
+  Date t1 = Date::Create(1, 3, 2000);
+  
+  auto yesterday = t1.GetYesterdayDate();
+  
+  EXPECT_EQ(Date::Create(29, 2, 2000), yesterday);  
+}
+
+
+TEST(Date, GetYesterdayDate_FirstDayOfMonth_March_NonLeapYear) {
+  Date t1 = Date::Create(1, 3, 2100);
+  
+  auto yesterday = t1.GetYesterdayDate();
+  
+  EXPECT_EQ(Date::Create(28, 2, 2100), yesterday);  
+}
+
+TEST(Date, GetYesterdayDate_FirstDayOfJanuary) {
+  Date t1 = Date::Create(1, 1, 2016);
+  
+  auto yesterday = t1.GetYesterdayDate();
+  
+  EXPECT_EQ(Date::Create(31, 12, 2015), yesterday);  
+}
+
+/*
+TEST(Date, GetYesterdayDate) {
+}
+
+TEST(Date, GetYesterdayDate) {
+}
+
+TEST(Date, GetYesterdayDate) {
+}
+
+TEST(Date, GetYesterdayDate) {
+}
+*/

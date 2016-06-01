@@ -889,11 +889,11 @@ long long Database::GetApacheLogsCount(string agent_name, string virtualhost_nam
   return logs;
 }
 
-Database::AgentNames Database::GetApacheAgentNames() {
+type::AgentNames Database::GetApacheAgentNames() {
   BOOST_LOG_TRIVIAL(debug) << "database::Database::GetApacheAgentNames: Function call";
 
   int ret;
-  AgentNames names;
+  type::AgentNames names;
 
   const char *sql = "select DISTINCT AGENT_NAME from APACHE_SESSION_TABLE;";
 
@@ -905,10 +905,10 @@ Database::AgentNames Database::GetApacheAgentNames() {
   return names;
 }
 
-Database::VirtualhostNames Database::GetApacheVirtualhostNames(std::string agent_name) {
+type::VirtualhostNames Database::GetApacheVirtualhostNames(std::string agent_name) {
   BOOST_LOG_TRIVIAL(debug) << "database::Database::GetApacheVirtualhostNames: Function call";
 
-  VirtualhostNames names;
+  type::VirtualhostNames names;
   int ret;
   const char *sql = "select distinct VIRTUALHOST from APACHE_SESSION_TABLE where AGENT_NAME = ?;";
   sqlite3_stmt *statement;
@@ -967,7 +967,7 @@ void Database::Rollback() {
 }
 
 int Database::GetApacheAgentNamesCallback(void *names_vptr, int argc, char **argv, char **azColName) {
-  AgentNames *names_ptr = static_cast<AgentNames*> (names_vptr);
+  type::AgentNames *names_ptr = static_cast<type::AgentNames*> (names_vptr);
 
   for (int i = 0; i < argc; i++) {
     if (argv[i] != nullptr) {
