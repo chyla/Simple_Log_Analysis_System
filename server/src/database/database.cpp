@@ -439,7 +439,9 @@ bool Database::AddApacheSessionStatistics(const ::apache::type::ApacheSessions &
   StatementCheckForError(ret, "Begin transaction error");
 
   for (const ::apache::type::ApacheSessionEntry &entry : sessions) {
-    const char *sql = "insert into APACHE_SESSION_TABLE(AGENT_NAME, VIRTUALHOST, CLIENT_IP, UTC_HOUR, UTC_MINUTE, UTC_SECOND, UTC_DAY, UTC_MONTH, UTC_YEAR, SESSION_LENGTH, BANDWIDTH_USAGE, REQUESTS_COUNT, ERROR_COUNT, ERRORS_PERCENTAGE, USER_AGENT, IS_ANOMALY) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    const char *sql = "insert into APACHE_SESSION_TABLE(AGENT_NAME, VIRTUALHOST, CLIENT_IP, UTC_HOUR, UTC_MINUTE, UTC_SECOND, UTC_DAY, UTC_MONTH,"
+                      "                                 UTC_YEAR, SESSION_LENGTH, BANDWIDTH_USAGE, REQUESTS_COUNT, ERRORS_COUNT, ERROR_PERCENTAGE, USER_AGENT, IS_ANOMALY)"
+                      " values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     sqlite3_stmt *statement;
     ret = sqlite_interface_->Prepare(db_handle_, sql, -1, &statement, nullptr);
     StatementCheckForErrorAndRollback(ret, "Prepare insert error");
