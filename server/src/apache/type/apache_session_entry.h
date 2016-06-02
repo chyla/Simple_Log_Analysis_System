@@ -20,6 +20,7 @@ struct ApacheSessionEntry {
   long session_length;
   long bandwidth_usage;
   long requests_count;
+  long errors_count;
   int error_percentage;
   std::string useragent;
   bool is_anomaly;

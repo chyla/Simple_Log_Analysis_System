@@ -109,9 +109,9 @@ void PrepareStatisticsAnalyzerObject::CalculateStatistics(const ::database::type
 
       if (IsInThisSameSession(session, log_entry)) {
         session.bandwidth_usage += log_entry.bytes;
-        auto errors_count = session.requests_count * session.error_percentage / 100.;
-        session.error_percentage = (errors_count + (static_cast<int> (IsErrorCode(log_entry.status_code)))) * 100. / (session.requests_count + 1);
+        session.errors_count += static_cast<int> (IsErrorCode(log_entry.status_code));
         session.requests_count += 1;
+        session.error_percentage = session.errors_count * 100. / session.requests_count;
         session.session_length = ::util::Distance(session.session_start.GetTime(), log_entry.time.GetTime());
       }
       else {
@@ -126,7 +126,8 @@ void PrepareStatisticsAnalyzerObject::CalculateStatistics(const ::database::type
       session.agent_name = log_entry.agent_name;
       session.bandwidth_usage = log_entry.bytes;
       session.client_ip = log_entry.client_ip;
-      session.error_percentage = static_cast<int> (IsErrorCode(log_entry.status_code)) * 100;
+      session.errors_count = static_cast<int> (IsErrorCode(log_entry.status_code));
+      session.error_percentage = session.errors_count * 100;
       session.is_anomaly = false;
       session.requests_count = 1;
       session.session_length = 0;
