@@ -895,7 +895,7 @@ type::AgentNames Database::GetApacheAgentNames() {
   int ret;
   type::AgentNames names;
 
-  const char *sql = "select DISTINCT AGENT_NAME from APACHE_SESSION_TABLE;";
+  const char *sql = "select DISTINCT AGENT_NAME from APACHE_LOGS_TABLE;";
 
   ret = sqlite_interface_->Exec(db_handle_, sql, GetApacheAgentNamesCallback, static_cast<void*> (&names), nullptr);
   StatementCheckForError(ret, "Exec error");
@@ -910,7 +910,7 @@ type::VirtualhostNames Database::GetApacheVirtualhostNames(std::string agent_nam
 
   type::VirtualhostNames names;
   int ret;
-  const char *sql = "select distinct VIRTUALHOST from APACHE_SESSION_TABLE where AGENT_NAME = ?;";
+  const char *sql = "select distinct VIRTUALHOST from APACHE_LOGS_TABLE where AGENT_NAME = ?;";
   sqlite3_stmt *statement;
 
   ret = sqlite_interface_->Prepare(db_handle_, sql, -1, &statement, nullptr);
