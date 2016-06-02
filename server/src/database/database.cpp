@@ -133,7 +133,7 @@ void Database::CreateApacheSessionTable() {
       "  BANDWIDTH_USAGE integer, "
       "  REQUESTS_COUNT integer, "
       "  ERRORS_COUNT integer, "
-      "  ERROR_PERCENTAGE integer, "
+      "  ERROR_PERCENTAGE real, "
       "  USER_AGENT text, "
       "  IS_ANOMALY integer "
       ");";
@@ -480,10 +480,10 @@ bool Database::AddApacheSessionStatistics(const ::apache::type::ApacheSessions &
     ret = sqlite_interface_->BindInt64(statement, 12, entry.requests_count);
     StatementCheckForErrorAndRollback(ret, "Bind requests_count error");
 
-    ret = sqlite_interface_->BindInt(statement, 13, entry.errors_count);
+    ret = sqlite_interface_->BindInt64(statement, 13, entry.errors_count);
     StatementCheckForErrorAndRollback(ret, "Bind errors_count error");
 
-    ret = sqlite_interface_->BindInt(statement, 14, entry.error_percentage);
+    ret = sqlite_interface_->BindDouble(statement, 14, entry.error_percentage);
     StatementCheckForErrorAndRollback(ret, "Bind error_percentage error");
 
     ret = sqlite_interface_->BindText(statement, 15, entry.useragent.c_str(), -1, nullptr);
@@ -580,11 +580,11 @@ long long Database::GetApacheSessionStatisticsCount(const std::string &agent_nam
       t.Set(hour, minute, second, day, month, year);
 
       entry.session_start = t;
-      entry.session_length = sqlite_interface_->ColumnInt(statement, 10);
-      entry.bandwidth_usage = sqlite_interface_->ColumnInt(statement, 11);
-      entry.requests_count = sqlite_interface_->ColumnInt(statement, 12);
-      entry.errors_count = sqlite_interface_->ColumnInt(statement, 13);
-      entry.error_percentage = sqlite_interface_->ColumnInt(statement, 14);
+      entry.session_length = sqlite_interface_->ColumnInt64(statement, 10);
+      entry.bandwidth_usage = sqlite_interface_->ColumnInt64(statement, 11);
+      entry.requests_count = sqlite_interface_->ColumnInt64(statement, 12);
+      entry.errors_count = sqlite_interface_->ColumnInt64(statement, 13);
+      entry.error_percentage = sqlite_interface_->ColumnDouble(statement, 14);
       entry.useragent = TextHelper(sqlite_interface_->ColumnText(statement, 15));
       entry.is_anomaly = static_cast<bool> (sqlite_interface_->ColumnInt(statement, 16));
 
@@ -663,11 +663,11 @@ void Database::SetApacheSessionAsAnomaly(type::RowIds all, type::RowIds anomalie
     t.Set(hour, minute, second, day, month, year);
 
     entry.session_start = t;
-    entry.session_length = sqlite_interface_->ColumnInt(statement, 10);
-    entry.bandwidth_usage = sqlite_interface_->ColumnInt(statement, 11);
-    entry.requests_count = sqlite_interface_->ColumnInt(statement, 12);
-    entry.errors_count = sqlite_interface_->ColumnInt(statement, 13);
-    entry.error_percentage = sqlite_interface_->ColumnInt(statement, 14);
+    entry.session_length = sqlite_interface_->ColumnInt64(statement, 10);
+    entry.bandwidth_usage = sqlite_interface_->ColumnInt64(statement, 11);
+    entry.requests_count = sqlite_interface_->ColumnInt64(statement, 12);
+    entry.errors_count = sqlite_interface_->ColumnInt64(statement, 13);
+    entry.error_percentage = sqlite_interface_->ColumnDouble(statement, 14);
     entry.useragent = TextHelper(sqlite_interface_->ColumnText(statement, 15));
     entry.is_anomaly = static_cast<bool> (sqlite_interface_->ColumnInt(statement, 16));
   }
