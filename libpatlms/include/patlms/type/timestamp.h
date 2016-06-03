@@ -23,6 +23,8 @@ class Timestamp {
 
   inline const std::string ToString() const;
 
+  inline bool operator<(const Timestamp &t2) const;
+
  private:
   Time time_;
   Date date_;
@@ -64,6 +66,11 @@ const Date& Timestamp::GetDate() const {
 
 const std::string Timestamp::ToString() const {
   return date_.ToString() + " " + time_.ToString();
+}
+
+bool Timestamp::operator<(const Timestamp &t2) const {
+  return ((GetDate() == t2.GetDate()) && (GetTime() < t2.GetTime())) ||
+    (GetDate() < t2.GetDate());
 }
 
 std::ostream& operator<<(std::ostream& os, const type::Timestamp &timestamp);

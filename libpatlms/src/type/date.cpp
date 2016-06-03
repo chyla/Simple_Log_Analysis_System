@@ -77,6 +77,20 @@ bool Date::operator==(const Date &t2) const {
       (t2.GetYear() == GetYear());
 }
 
+bool Date::operator<(const Date &t2) const {
+  if ((GetYear() == t2.GetYear()) &&
+      (GetMonth() == t2.GetMonth()) &&
+      (GetDay() < t2.GetDay()))
+    return true;
+  else if ((GetYear() == t2.GetYear()) &&
+      (GetMonth() < t2.GetMonth()))
+    return true;
+  else if ((GetYear() < t2.GetYear()))
+    return true;
+
+  return false;
+}
+
 void Date::CheckDate(int day, int month, int year) {
   if ((day < 1 || day > 31) ||
       (month < 1 || month > 12) ||

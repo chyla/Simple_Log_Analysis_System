@@ -26,6 +26,7 @@ class Date {
   Date GetYesterdayDate() const;
 
   bool operator==(const Date &t2) const;
+  bool operator<(const Date &t2) const;
 
  private:
   static void CheckDate(int day, int month, int year);

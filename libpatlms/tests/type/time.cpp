@@ -149,3 +149,52 @@ TEST(Time, Set_WhenSecondIs60) {
 
   ASSERT_THROW(t.Set(9, 2, 60), ::type::exception::detail::WrongTimeValueException);
 }
+
+TEST(Time, OperatorLess0) {
+  Time t1 = Time::Create(16, 2, 1);
+  Time t2 = Time::Create(16, 2, 1);
+
+  EXPECT_FALSE(t1 < t2);
+}
+
+TEST(Time, OperatorLess1) {
+  Time t1 = Time::Create(16, 2, 1);
+  Time t2 = Time::Create(17, 2, 1);
+
+  EXPECT_TRUE(t1 < t2);
+}
+
+TEST(Time, OperatorLess2) {
+  Time t1 = Time::Create(16, 2, 1);
+  Time t2 = Time::Create(16, 3, 1);
+
+  EXPECT_TRUE(t1 < t2);
+}
+
+TEST(Time, OperatorLess3) {
+  Time t1 = Time::Create(16, 2, 1);
+  Time t2 = Time::Create(16, 2, 2);
+
+  EXPECT_TRUE(t1 < t2);
+}
+
+TEST(Time, OperatorLess4) {
+  Time t1 = Time::Create(16, 30, 1);
+  Time t2 = Time::Create(17, 2, 2);
+
+  EXPECT_TRUE(t1 < t2);
+}
+
+TEST(Time, OperatorLess5) {
+  Time t1 = Time::Create(16, 30, 30);
+  Time t2 = Time::Create(17, 2, 2);
+
+  EXPECT_TRUE(t1 < t2);
+}
+
+TEST(Time, OperatorLess6) {
+  Time t1 = Time::Create(17, 3, 4);
+  Time t2 = Time::Create(16, 2, 2);
+
+  EXPECT_FALSE(t1 < t2);
+}

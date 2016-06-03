@@ -49,6 +49,20 @@ const std::string Time::ToString() const {
   return time_string;
 }
 
+bool Time::operator<(const Time &t2) const {
+  if ((GetHour() == t2.GetHour()) &&
+      (GetMinute() == t2.GetMinute()) &&
+      (GetSecond() < t2.GetSecond()))
+    return true;
+  else if ((GetHour() == t2.GetHour()) &&
+      (GetMinute() < t2.GetMinute()))
+    return true;
+  else if ((GetHour() < t2.GetHour()))
+    return true;
+
+  return false;
+}
+
 void Time::CheckTime(int hour, int minute, int second) {
   if ((hour < 0 || hour > 24) ||
       (minute < 0 || minute > 59) ||

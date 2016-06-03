@@ -184,55 +184,103 @@ TEST(Date, Set_WhenYearIs1969) {
 
 TEST(Date, GetYesterdayDate_MiddleOfTheMonth) {
   Date t1 = Date::Create(22, 1, 2016);
-  
+
   auto yesterday = t1.GetYesterdayDate();
-  
+
   EXPECT_EQ(Date::Create(21, 1, 2016), yesterday);
 }
 
 TEST(Date, GetYesterdayDate_FirstDayOfMonth) {
   Date t1 = Date::Create(1, 4, 2016);
-  
+
   auto yesterday = t1.GetYesterdayDate();
-  
-  EXPECT_EQ(Date::Create(31, 3, 2016), yesterday);  
+
+  EXPECT_EQ(Date::Create(31, 3, 2016), yesterday);
 }
 
 TEST(Date, GetYesterdayDate_FirstDayOfMonth_March_LeapYear) {
   Date t1 = Date::Create(1, 3, 2000);
-  
-  auto yesterday = t1.GetYesterdayDate();
-  
-  EXPECT_EQ(Date::Create(29, 2, 2000), yesterday);  
-}
 
+  auto yesterday = t1.GetYesterdayDate();
+
+  EXPECT_EQ(Date::Create(29, 2, 2000), yesterday);
+}
 
 TEST(Date, GetYesterdayDate_FirstDayOfMonth_March_NonLeapYear) {
   Date t1 = Date::Create(1, 3, 2100);
-  
+
   auto yesterday = t1.GetYesterdayDate();
-  
-  EXPECT_EQ(Date::Create(28, 2, 2100), yesterday);  
+
+  EXPECT_EQ(Date::Create(28, 2, 2100), yesterday);
 }
 
 TEST(Date, GetYesterdayDate_FirstDayOfJanuary) {
   Date t1 = Date::Create(1, 1, 2016);
-  
+
   auto yesterday = t1.GetYesterdayDate();
-  
-  EXPECT_EQ(Date::Create(31, 12, 2015), yesterday);  
+
+  EXPECT_EQ(Date::Create(31, 12, 2015), yesterday);
 }
 
-/*
-TEST(Date, GetYesterdayDate) {
+TEST(Date, OperatorLess0) {
+  Date t1 = Date::Create(1, 1, 2016);
+  Date t2 = Date::Create(1, 1, 2016);
+
+  EXPECT_FALSE(t1 < t2);
 }
 
-TEST(Date, GetYesterdayDate) {
+TEST(Date, OperatorLess1) {
+  Date t1 = Date::Create(1, 1, 2016);
+  Date t2 = Date::Create(2, 1, 2016);
+
+  EXPECT_TRUE(t1 < t2);
 }
 
-TEST(Date, GetYesterdayDate) {
+TEST(Date, OperatorLess2) {
+  Date t1 = Date::Create(1, 1, 2016);
+  Date t2 = Date::Create(1, 2, 2016);
+
+  EXPECT_TRUE(t1 < t2);
 }
 
-TEST(Date, GetYesterdayDate) {
+TEST(Date, OperatorLess3) {
+  Date t1 = Date::Create(1, 1, 2016);
+  Date t2 = Date::Create(1, 1, 2017);
+
+  EXPECT_TRUE(t1 < t2);
 }
-*/
+
+TEST(Date, OperatorLess4) {
+  Date t1 = Date::Create(3, 1, 2016);
+  Date t2 = Date::Create(1, 2, 2016);
+
+  EXPECT_TRUE(t1 < t2);
+}
+
+TEST(Date, OperatorLess5) {
+  Date t1 = Date::Create(3, 7, 2015);
+  Date t2 = Date::Create(1, 2, 2016);
+
+  EXPECT_TRUE(t1 < t2);
+}
+
+TEST(Date, OperatorLess6) {
+  Date t1 = Date::Create(2, 1, 2016);
+  Date t2 = Date::Create(1, 1, 2016);
+
+  EXPECT_FALSE(t1 < t2);
+}
+
+TEST(Date, OperatorLess7) {
+  Date t1 = Date::Create(1, 2, 2016);
+  Date t2 = Date::Create(1, 1, 2016);
+
+  EXPECT_FALSE(t1 < t2);
+}
+
+TEST(Date, OperatorLess8) {
+  Date t1 = Date::Create(1, 1, 2017);
+  Date t2 = Date::Create(1, 1, 2016);
+
+  EXPECT_FALSE(t1 < t2);
+}
