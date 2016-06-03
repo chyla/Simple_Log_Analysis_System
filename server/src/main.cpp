@@ -15,6 +15,7 @@
 #include "program_options/parser.h"
 #include "database/database.h"
 #include "database/sqlite_wrapper.h"
+#include "database/general_database_functions.h"
 #include "web/command_receiver.h"
 #include "web/command_executor.h"
 #include "program_options/web/command_executor_object.h"
@@ -72,6 +73,7 @@ main(int argc, char *argv[]) {
   apache::dbus::object::ApachePtr apache_object;
   database::SQLiteWrapperPtr sqlite_wrapper;
   database::DatabasePtr database;
+  database::GeneralDatabaseFunctionsPtr general_database_functions;
   apache::database::DatabaseFunctionsPtr apache_database_functions;
 
   try {
@@ -115,6 +117,8 @@ main(int argc, char *argv[]) {
     sqlite_wrapper = database::SQLiteWrapper::Create();
     sqlite_wrapper->Open(options.GetDatabasefilePath());
     database = CreateDatabase(sqlite_wrapper);
+    general_database_functions = database::GeneralDatabaseFunctions::Create(sqlite_wrapper);
+    general_database_functions->CreateTables();
     apache_database_functions = apache::database::DatabaseFunctions::Create(database,
                                                                             sqlite_wrapper);
 
@@ -189,7 +193,7 @@ main(int argc, char *argv[]) {
 
     if (sqlite_wrapper)
       sqlite_wrapper->Close();
-    
+
     if (analyzer_thread.joinable())
       analyzer_thread.join();
 

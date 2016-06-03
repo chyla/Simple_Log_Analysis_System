@@ -37,7 +37,7 @@ class SQLiteWrapper : public detail::SQLiteWrapperInterface {
   int Step(sqlite3_stmt *pStmt) override;
   void Finalize(sqlite3_stmt *pStmt) override;
 
-  void Exec(const std::string &sql, int (*callback) (void *, int, char **, char **), void *arg) override;
+  void Exec(const std::string &sql, int (*callback) (void *, int, char **, char **) = nullptr, void *arg = nullptr) override;
 
   sqlite3* GetSQLiteHandle() override;
 

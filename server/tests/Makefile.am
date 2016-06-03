@@ -11,6 +11,7 @@ tests_SOURCES	= main.cpp \
 		    apache/database/database_functions.cpp \
 		    database/database.cpp \
 		    database/sqlite_wrapper.cpp \
+		    database/general_database_functions.cpp \
 		    web/command_executor.cpp \
 		    web/command_receiver.cpp \
 		    program_options/web/command_executor_object.cpp
@@ -20,6 +21,7 @@ OBJECT_FILES	= \
 		    ../src/apache/database/database_functions.o \
 		    ../src/database/database.o \
 		    ../src/database/sqlite_wrapper.o \
+		    ../src/database/general_database_functions.o \
 		    ../src/database/detail/sqlite.o \
 		    ../src/web/command_executor.o \
 		    ../src/web/command_receiver.o \

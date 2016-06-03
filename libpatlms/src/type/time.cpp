@@ -49,6 +49,12 @@ const std::string Time::ToString() const {
   return time_string;
 }
 
+bool Time::operator==(const Time &t2) const {
+  return (GetHour() == t2.GetHour()) &&
+      (GetMinute() == t2.GetMinute()) &&
+      (GetSecond() == t2.GetSecond());
+}
+
 bool Time::operator<(const Time &t2) const {
   if ((GetHour() == t2.GetHour()) &&
       (GetMinute() == t2.GetMinute()) &&

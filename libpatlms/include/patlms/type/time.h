@@ -23,6 +23,7 @@ class Time {
   inline int GetHour() const;
   inline int GetSecond() const;
 
+  bool operator==(const Time &t2) const;
   bool operator<(const Time &t2) const;
 
  private:
