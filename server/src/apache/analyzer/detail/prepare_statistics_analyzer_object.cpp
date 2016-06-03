@@ -9,6 +9,7 @@
 #include <patlms/util/distance.h>
 
 #include "system.h"
+#include "session_length.h"
 
 namespace apache
 {
@@ -155,9 +156,7 @@ bool PrepareStatisticsAnalyzerObject::IsErrorCode(const int &status_code) const 
 
 bool PrepareStatisticsAnalyzerObject::IsInThisSameSession(const ::apache::type::ApacheSessionEntry &session,
                                                           const ::type::ApacheLogEntry &log_entry) {
-  constexpr int HOUR_SECONDS = 3600;
-
-  return (::util::Distance(session.session_start.GetTime(), log_entry.time.GetTime()) < HOUR_SECONDS) &&
+  return (::util::Distance(session.session_start.GetTime(), log_entry.time.GetTime()) < SESSION_LENGTH) &&
       (session.session_start.GetDate() == log_entry.time.GetDate());
 }
 
