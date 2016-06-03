@@ -17,9 +17,16 @@ namespace mock
 namespace database
 {
 
+class SQLiteWrapper;
+typedef std::shared_ptr<SQLiteWrapper> SQLiteWrapperPtr;
+
 class SQLiteWrapper : public ::database::detail::SQLiteWrapperInterface {
  public:
   virtual ~SQLiteWrapper() = default;
+
+  static SQLiteWrapperPtr Create() {
+    return std::make_shared<SQLiteWrapper>();
+  }
 
   MOCK_METHOD1(Open, void(const std::string &file_path));
   MOCK_METHOD0(IsOpen, bool());
@@ -44,8 +51,6 @@ class SQLiteWrapper : public ::database::detail::SQLiteWrapperInterface {
 
   MOCK_METHOD0(GetSQLiteHandle, sqlite3*());
 };
-
-typedef std::shared_ptr<SQLiteWrapper> SQLiteWrapperPtr;
 
 }
 
