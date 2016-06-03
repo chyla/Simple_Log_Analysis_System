@@ -29,7 +29,7 @@ class SQLiteWrapper : public ::database::detail::SQLiteWrapperInterface {
   }
 
   MOCK_METHOD1(Open, void(const std::string &file_path));
-  MOCK_METHOD0(IsOpen, bool());
+  MOCK_CONST_METHOD0(IsOpen, bool());
   MOCK_METHOD0(Close, bool());
 
   MOCK_METHOD2(Prepare, void(const std::string &sql, sqlite3_stmt **ppStmt));
