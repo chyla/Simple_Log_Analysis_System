@@ -48,6 +48,7 @@ class SQLiteWrapper : public ::database::detail::SQLiteWrapperInterface {
   MOCK_METHOD1(Finalize, void(sqlite3_stmt *pStmt));
 
   MOCK_METHOD3(Exec, void(const std::string &sql, int (*callback) (void *, int, char **, char **), void *arg));
+  MOCK_METHOD1(GetFirstInt64Column, long long(const std::string &sql));
 
   MOCK_METHOD0(GetSQLiteHandle, sqlite3*());
 };

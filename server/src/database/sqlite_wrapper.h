@@ -38,6 +38,7 @@ class SQLiteWrapper : public detail::SQLiteWrapperInterface {
   void Finalize(sqlite3_stmt *pStmt) override;
 
   void Exec(const std::string &sql, int (*callback) (void *, int, char **, char **) = nullptr, void *arg = nullptr) override;
+  long long GetFirstInt64Column(const std::string &sql) override;
 
   sqlite3* GetSQLiteHandle() override;
 

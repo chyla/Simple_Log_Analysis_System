@@ -516,3 +516,98 @@ TEST_F(SQLiteWrapperTest, Exec_WhenFinalizeFail) {
   EXPECT_THROW(wrapper->Exec(example_text, nullptr, nullptr), database::exception::detail::CantExecuteSqlStatementException);
   EXPECT_TRUE(wrapper->Close());
 }
+
+TEST_F(SQLiteWrapperTest, GetFirstInt64Column) {
+  MY_EXPECT_OPEN(sqlite_mock);
+  EXPECT_CALL(*sqlite_mock, Prepare(DB_HANDLE_EXAMPLE_PTR_VALUE, NotNull(), -1, NotNull(), nullptr))
+      .WillOnce(
+                DoAll(SetArgPointee<3>(DB_STATEMENT_EXAMPLE_PTR_VALUE),
+                      Return(SQLITE_OK))
+                );
+  EXPECT_CALL(*sqlite_mock, Step(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_ROW));
+  EXPECT_CALL(*sqlite_mock, ColumnInt64(DB_STATEMENT_EXAMPLE_PTR_VALUE, 0)).WillOnce(Return(4));
+  EXPECT_CALL(*sqlite_mock, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_OK));
+  MY_EXPECT_CLOSE(sqlite_mock);
+
+  SQLiteWrapperPtr wrapper = SQLiteWrapper::Create(move(sqlite_mock));
+  wrapper->Open("sqlite.db");
+
+  EXPECT_TRUE(wrapper->IsOpen());
+  EXPECT_EQ(4, wrapper->GetFirstInt64Column("sql"));
+  EXPECT_TRUE(wrapper->Close());
+}
+
+TEST_F(SQLiteWrapperTest, GetFirstInt64Column_WhenRowNotFound) {
+  MY_EXPECT_OPEN(sqlite_mock);
+  EXPECT_CALL(*sqlite_mock, Prepare(DB_HANDLE_EXAMPLE_PTR_VALUE, NotNull(), -1, NotNull(), nullptr))
+      .WillOnce(
+                DoAll(SetArgPointee<3>(DB_STATEMENT_EXAMPLE_PTR_VALUE),
+                      Return(SQLITE_OK))
+                );
+  EXPECT_CALL(*sqlite_mock, Step(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_DONE));
+  EXPECT_CALL(*sqlite_mock, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_OK));
+  MY_EXPECT_CLOSE(sqlite_mock);
+
+  SQLiteWrapperPtr wrapper = SQLiteWrapper::Create(move(sqlite_mock));
+  wrapper->Open("sqlite.db");
+
+  EXPECT_TRUE(wrapper->IsOpen());
+  EXPECT_THROW(wrapper->GetFirstInt64Column("sql"), database::exception::detail::CantExecuteSqlStatementException);
+  EXPECT_TRUE(wrapper->Close());
+}
+
+TEST_F(SQLiteWrapperTest, GetFirstInt64Column_WhenFinalizeFail) {
+  MY_EXPECT_OPEN(sqlite_mock);
+  EXPECT_CALL(*sqlite_mock, Prepare(DB_HANDLE_EXAMPLE_PTR_VALUE, NotNull(), -1, NotNull(), nullptr))
+      .WillOnce(
+                DoAll(SetArgPointee<3>(DB_STATEMENT_EXAMPLE_PTR_VALUE),
+                      Return(SQLITE_OK))
+                );
+  EXPECT_CALL(*sqlite_mock, Step(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_ROW));
+  EXPECT_CALL(*sqlite_mock, ColumnInt64(DB_STATEMENT_EXAMPLE_PTR_VALUE, 0)).WillOnce(Return(4));
+  EXPECT_CALL(*sqlite_mock, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_NOMEM));
+  MY_EXPECT_CLOSE(sqlite_mock);
+
+  SQLiteWrapperPtr wrapper = SQLiteWrapper::Create(move(sqlite_mock));
+  wrapper->Open("sqlite.db");
+
+  EXPECT_TRUE(wrapper->IsOpen());
+  EXPECT_THROW(wrapper->GetFirstInt64Column("sql"), database::exception::detail::CantExecuteSqlStatementException);
+  EXPECT_TRUE(wrapper->Close());
+}
+
+TEST_F(SQLiteWrapperTest, GetFirstInt64Column_WhenStepFail) {
+  MY_EXPECT_OPEN(sqlite_mock);
+  EXPECT_CALL(*sqlite_mock, Prepare(DB_HANDLE_EXAMPLE_PTR_VALUE, NotNull(), -1, NotNull(), nullptr))
+      .WillOnce(
+                DoAll(SetArgPointee<3>(DB_STATEMENT_EXAMPLE_PTR_VALUE),
+                      Return(SQLITE_OK))
+                );
+  EXPECT_CALL(*sqlite_mock, Step(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_NOMEM));
+  EXPECT_CALL(*sqlite_mock, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_OK));
+  MY_EXPECT_CLOSE(sqlite_mock);
+
+  SQLiteWrapperPtr wrapper = SQLiteWrapper::Create(move(sqlite_mock));
+  wrapper->Open("sqlite.db");
+
+  EXPECT_TRUE(wrapper->IsOpen());
+  EXPECT_THROW(wrapper->GetFirstInt64Column("sql"), database::exception::detail::CantExecuteSqlStatementException);
+  EXPECT_TRUE(wrapper->Close());
+}
+
+TEST_F(SQLiteWrapperTest, GetFirstInt64Column_WhenPrepareFail) {
+  MY_EXPECT_OPEN(sqlite_mock);
+  EXPECT_CALL(*sqlite_mock, Prepare(DB_HANDLE_EXAMPLE_PTR_VALUE, NotNull(), -1, NotNull(), nullptr))
+      .WillOnce(
+                DoAll(SetArgPointee<3>(DB_STATEMENT_EXAMPLE_PTR_VALUE),
+                      Return(SQLITE_NOMEM))
+                );
+  MY_EXPECT_CLOSE(sqlite_mock);
+
+  SQLiteWrapperPtr wrapper = SQLiteWrapper::Create(move(sqlite_mock));
+  wrapper->Open("sqlite.db");
+
+  EXPECT_TRUE(wrapper->IsOpen());
+  EXPECT_THROW(wrapper->GetFirstInt64Column("sql"), database::exception::detail::CantExecuteSqlStatementException);
+  EXPECT_TRUE(wrapper->Close());
+}
