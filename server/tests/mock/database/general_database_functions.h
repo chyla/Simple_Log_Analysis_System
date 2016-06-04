@@ -17,20 +17,27 @@ namespace mock
 namespace database
 {
 
+class GeneralDatabaseFunctions;
+typedef std::shared_ptr<GeneralDatabaseFunctions> GeneralDatabaseFunctionsPtr;
+
 class GeneralDatabaseFunctions : public ::database::detail::GeneralDatabaseFunctionsInterface {
  public:
   virtual ~GeneralDatabaseFunctions() = default;
+  
+  static GeneralDatabaseFunctionsPtr Create() {
+    return std::make_shared<GeneralDatabaseFunctions>();
+  }
 
   MOCK_METHOD0(CreateTables, void());
 
   MOCK_METHOD1(AddTime, void(const ::type::Time &t));
-
   MOCK_METHOD1(GetTimeId, ::database::type::RowId(const ::type::Time &t));
-
   MOCK_METHOD1(GetTimeById, const ::type::Time(::database::type::RowId id));
-};
 
-typedef std::shared_ptr<GeneralDatabaseFunctions> GeneralDatabaseFunctionsPtr;
+  MOCK_METHOD1(AddDate, void(const ::type::Date &date));
+  MOCK_METHOD1(GetDateId, ::database::type::RowId(const ::type::Date &date));
+  MOCK_METHOD1(GetDateById, ::type::Date(const ::database::type::RowId &id));
+};
 
 }
 
