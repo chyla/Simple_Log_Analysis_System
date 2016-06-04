@@ -37,16 +37,8 @@ class apache_database_DatabaseFunctionsTest : public ::testing::Test {
   }
 };
 
-TEST_F(apache_database_DatabaseFunctionsTest, MarkStatisticsAsCreatedFor_WhenDateExists) {
-  EXPECT_CALL(*general_database_functions, GetDateId(example_date)).WillOnce(Return(1));
-  EXPECT_CALL(*sqlite_wrapper, Exec(_, nullptr, nullptr));
-
-  database_functions->MarkStatisticsAsCreatedFor(example_date);
-}
-
-TEST_F(apache_database_DatabaseFunctionsTest, MarkStatisticsAsCreatedFor_WhenDateNotExists) {
-  EXPECT_CALL(*general_database_functions, GetDateId(example_date)).WillOnce(Return(-1)).WillOnce(Return(1));
-  EXPECT_CALL(*general_database_functions, AddDate(example_date));
+TEST_F(apache_database_DatabaseFunctionsTest, MarkStatisticsAsCreatedFor) {
+  EXPECT_CALL(*general_database_functions, AddAndGetDateId(example_date)).WillOnce(Return(1));
   EXPECT_CALL(*sqlite_wrapper, Exec(_, nullptr, nullptr));
 
   database_functions->MarkStatisticsAsCreatedFor(example_date);

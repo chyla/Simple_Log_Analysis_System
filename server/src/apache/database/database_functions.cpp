@@ -57,11 +57,7 @@ bool DatabaseFunctions::AddSessionStatistics(const ::apache::type::ApacheSession
 void DatabaseFunctions::MarkStatisticsAsCreatedFor(::type::Date date) {
   BOOST_LOG_TRIVIAL(debug) << "apache::database::DatabaseFunctions::MarkStatisticsAsCreatedFor: Function call";
 
-  auto date_id = general_database_functions_->GetDateId(date);
-  if (date_id == -1) {
-    general_database_functions_->AddDate(date);
-    date_id = general_database_functions_->GetDateId(date);
-  }
+  auto date_id = general_database_functions_->AddAndGetDateId(date);
 
   sqlite_wrapper_->Exec("insert or ignore into APACHE_SESSION_EXISTS_TABLE (DATE_ID, EXIST) "
                         "values ("
