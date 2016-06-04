@@ -10,6 +10,7 @@
 
 #include "detail/database_functions_interface.h"
 
+#include "src/database/detail/general_database_functions_interface.h"
 #include "src/database/detail/sqlite_wrapper_interface.h"
 // will be removed in the future
 #include "src/database/database.h"
@@ -28,7 +29,8 @@ class DatabaseFunctions : public detail::DatabaseFunctionsInterface {
   virtual ~DatabaseFunctions() = default;
 
   static DatabaseFunctionsPtr Create(::database::DatabasePtr db,
-                                     ::database::detail::SQLiteWrapperInterfacePtr sqlite_wrapper);
+                                     ::database::detail::SQLiteWrapperInterfacePtr sqlite_wrapper,
+                                     ::database::detail::GeneralDatabaseFunctionsInterfacePtr general_database_functions);
 
   ::database::type::RowsCount GetLogsCount(std::string agent_name, std::string virtualhost_name,
                                            ::type::Date from, ::type::Date to) override;
@@ -50,9 +52,11 @@ class DatabaseFunctions : public detail::DatabaseFunctionsInterface {
  private:
   ::database::DatabasePtr db_;
   ::database::detail::SQLiteWrapperInterfacePtr sqlite_wrapper_;
+  ::database::detail::GeneralDatabaseFunctionsInterfacePtr general_database_functions_;
 
   DatabaseFunctions(::database::DatabasePtr db,
-                    ::database::detail::SQLiteWrapperInterfacePtr sqlite_wrapper);
+                    ::database::detail::SQLiteWrapperInterfacePtr sqlite_wrapper,
+                    ::database::detail::GeneralDatabaseFunctionsInterfacePtr general_database_functions);
 };
 
 }

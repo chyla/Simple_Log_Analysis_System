@@ -6,6 +6,8 @@
 #ifndef SRC_DATABASE_DETAIL_GENERAL_DATABASE_FUNCTIONS_INTERFACE_H
 #define SRC_DATABASE_DETAIL_GENERAL_DATABASE_FUNCTIONS_INTERFACE_H
 
+#include <memory>
+
 #include <patlms/type/time.h>
 #include <patlms/type/date.h>
 
@@ -31,6 +33,8 @@ class GeneralDatabaseFunctionsInterface {
   virtual ::database::type::RowId GetDateId(const ::type::Date &date) = 0;
   virtual ::type::Date GetDateById(const ::database::type::RowId &id) = 0;
 };
+
+typedef std::shared_ptr<GeneralDatabaseFunctionsInterface> GeneralDatabaseFunctionsInterfacePtr;
 
 }
 

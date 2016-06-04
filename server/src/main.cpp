@@ -119,7 +119,8 @@ main(int argc, char *argv[]) {
     general_database_functions = database::GeneralDatabaseFunctions::Create(sqlite_wrapper);
     general_database_functions->CreateTables();
     apache_database_functions = apache::database::DatabaseFunctions::Create(database,
-                                                                            sqlite_wrapper);
+                                                                            sqlite_wrapper,
+                                                                            general_database_functions);
 
     auto options_command_object = program_options::web::CommandExecutorObject::Create(options);
     auto command_executor = web::CommandExecutor::Create();

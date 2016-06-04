@@ -18,10 +18,11 @@ namespace database
 {
 
 DatabaseFunctionsPtr DatabaseFunctions::Create(::database::DatabasePtr db,
-                                               ::database::detail::SQLiteWrapperInterfacePtr sqlite_wrapper) {
+                                               ::database::detail::SQLiteWrapperInterfacePtr sqlite_wrapper,
+                                               ::database::detail::GeneralDatabaseFunctionsInterfacePtr general_database_functions) {
   BOOST_LOG_TRIVIAL(debug) << "apache::database::DatabaseFunctions::Create: Function call";
 
-  return DatabaseFunctionsPtr(new DatabaseFunctions(db, sqlite_wrapper));
+  return DatabaseFunctionsPtr(new DatabaseFunctions(db, sqlite_wrapper, general_database_functions));
 }
 
 ::database::type::RowsCount DatabaseFunctions::GetLogsCount(std::string agent_name, std::string virtualhost_name,
@@ -75,9 +76,11 @@ bool DatabaseFunctions::IsStatisticsCreatedFor(::type::Date date) {
 }
 
 DatabaseFunctions::DatabaseFunctions(::database::DatabasePtr db,
-                                     ::database::detail::SQLiteWrapperInterfacePtr sqlite_wrapper) :
+                                     ::database::detail::SQLiteWrapperInterfacePtr sqlite_wrapper,
+                                     ::database::detail::GeneralDatabaseFunctionsInterfacePtr general_database_functions) :
 db_(db),
-sqlite_wrapper_(sqlite_wrapper) {
+sqlite_wrapper_(sqlite_wrapper),
+general_database_functions_(general_database_functions) {
 }
 
 }
