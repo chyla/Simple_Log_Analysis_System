@@ -30,6 +30,7 @@ class GeneralDatabaseFunctionsInterface {
   virtual const ::type::Time GetTimeById(::database::type::RowId id) = 0;
 
   virtual void AddDate(const ::type::Date &date) = 0;
+  virtual ::database::type::RowId AddAndGetDateId(const ::type::Date &date) = 0;
   virtual ::database::type::RowId GetDateId(const ::type::Date &date) = 0;
   virtual ::type::Date GetDateById(const ::database::type::RowId &id) = 0;
 };

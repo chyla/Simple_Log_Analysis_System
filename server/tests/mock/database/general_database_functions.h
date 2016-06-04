@@ -23,7 +23,7 @@ typedef std::shared_ptr<GeneralDatabaseFunctions> GeneralDatabaseFunctionsPtr;
 class GeneralDatabaseFunctions : public ::database::detail::GeneralDatabaseFunctionsInterface {
  public:
   virtual ~GeneralDatabaseFunctions() = default;
-  
+
   static GeneralDatabaseFunctionsPtr Create() {
     return std::make_shared<GeneralDatabaseFunctions>();
   }
@@ -35,6 +35,7 @@ class GeneralDatabaseFunctions : public ::database::detail::GeneralDatabaseFunct
   MOCK_METHOD1(GetTimeById, const ::type::Time(::database::type::RowId id));
 
   MOCK_METHOD1(AddDate, void(const ::type::Date &date));
+  MOCK_METHOD1(AddAndGetDateId, ::database::type::RowId(const ::type::Date &date));
   MOCK_METHOD1(GetDateId, ::database::type::RowId(const ::type::Date &date));
   MOCK_METHOD1(GetDateById, ::type::Date(const ::database::type::RowId &id));
 };

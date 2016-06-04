@@ -118,6 +118,18 @@ void GeneralDatabaseFunctions::AddDate(const ::type::Date &date) {
                         + " );");
 }
 
+::database::type::RowId GeneralDatabaseFunctions::AddAndGetDateId(const ::type::Date &date) {
+  BOOST_LOG_TRIVIAL(debug) << "database::GeneralDatabaseFunctions::AddAndGetDateId: Function call";
+
+  auto date_id = GetDateId(date);
+  if (date_id == -1) {
+    AddDate(date);
+    date_id = GetDateId(date);
+  }
+
+  return date_id;
+}
+
 ::database::type::RowId GeneralDatabaseFunctions::GetDateId(const ::type::Date &date) {
   BOOST_LOG_TRIVIAL(debug) << "database::Database::GetDateId: Function call";
   ::database::type::RowId id = -1;

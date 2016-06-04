@@ -31,6 +31,7 @@ class GeneralDatabaseFunctions : public detail::GeneralDatabaseFunctionsInterfac
   const ::type::Time GetTimeById(::database::type::RowId id) override;
 
   void AddDate(const ::type::Date &date) override;
+  ::database::type::RowId AddAndGetDateId(const ::type::Date &date) override;
   ::database::type::RowId GetDateId(const ::type::Date &date) override;
   ::type::Date GetDateById(const ::database::type::RowId &id) override;
 

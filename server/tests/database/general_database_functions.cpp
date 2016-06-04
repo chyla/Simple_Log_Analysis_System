@@ -74,6 +74,31 @@ TEST_F(GeneralDatabaseFunctionsTest, GetTimeById_WhenTimeNotFound) {
   EXPECT_THROW(general_database_functions->GetTimeById(11), database::exception::detail::CantExecuteSqlStatementException);
 }
 
+TEST_F(GeneralDatabaseFunctionsTest, AddAndGetDateId) {
+  EXPECT_CALL(*sqlite_wrapper, Prepare(_, NotNull())).WillOnce(SetArgPointee<1>(DB_STATEMENT_EXAMPLE_PTR_VALUE));
+  EXPECT_CALL(*sqlite_wrapper, Step(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_ROW));
+  EXPECT_CALL(*sqlite_wrapper, ColumnInt64(DB_STATEMENT_EXAMPLE_PTR_VALUE, 0)).WillOnce(Return(11));
+  EXPECT_CALL(*sqlite_wrapper, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE));
+
+  auto id = general_database_functions->AddAndGetDateId(::type::Date::Create(10, 12, 2016));
+
+  EXPECT_EQ(11, id);
+}
+
+TEST_F(GeneralDatabaseFunctionsTest, AddAndGetDateId_WhenDateNotFound) {
+  EXPECT_CALL(*sqlite_wrapper, Prepare(_, NotNull())).Times(2).WillRepeatedly(SetArgPointee<1>(DB_STATEMENT_EXAMPLE_PTR_VALUE));
+  EXPECT_CALL(*sqlite_wrapper, Step(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_DONE)).WillOnce(Return(SQLITE_ROW));
+  EXPECT_CALL(*sqlite_wrapper, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE)).Times(2);
+
+  EXPECT_CALL(*sqlite_wrapper, Exec(_, nullptr, nullptr));
+
+  EXPECT_CALL(*sqlite_wrapper, ColumnInt64(DB_STATEMENT_EXAMPLE_PTR_VALUE, 0)).WillOnce(Return(12));
+
+  auto id = general_database_functions->AddAndGetDateId(::type::Date::Create(10, 12, 2016));
+
+  EXPECT_EQ(12, id);
+}
+
 TEST_F(GeneralDatabaseFunctionsTest, GetDateId) {
   EXPECT_CALL(*sqlite_wrapper, Prepare(_, NotNull())).WillOnce(SetArgPointee<1>(DB_STATEMENT_EXAMPLE_PTR_VALUE));
   EXPECT_CALL(*sqlite_wrapper, Step(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_ROW));
