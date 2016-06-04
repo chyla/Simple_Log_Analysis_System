@@ -63,26 +63,35 @@ void PrepareStatisticsAnalyzerObject::CreateStatistics(const ::database::type::A
   auto current_date = GetCurrentDate();
   auto yesterday_date = current_date.GetYesterdayDate();
 
-  RowsCount summary_logs_count = database_functions_->GetLogsCount(agent_name, virtualhost_name,
-                                                                   yesterday_date, yesterday_date);
+  if (database_functions_->AreStatisticsCreatedFor(yesterday_date) == false) {
+    BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::PrepareStatisticsAnalyzerObject::CreateStatistics: Statistics not created for " << yesterday_date;
 
-  BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::PrepareStatisticsAnalyzerObject::CreateStatistics: Found " << summary_logs_count << " logs";
+    RowsCount summary_logs_count = database_functions_->GetLogsCount(agent_name, virtualhost_name,
+                                                                     yesterday_date, yesterday_date);
 
-  for (RowsCount i = 0; i < summary_logs_count / max_rows_in_memory; ++i) {
-    CalculateStatistics(agent_name, virtualhost_name, yesterday_date, yesterday_date, max_rows_in_memory, i);
+    BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::PrepareStatisticsAnalyzerObject::CreateStatistics: Found " << summary_logs_count << " logs";
+
+    for (RowsCount i = 0; i < summary_logs_count / max_rows_in_memory; ++i) {
+      CalculateStatistics(agent_name, virtualhost_name, yesterday_date, yesterday_date, max_rows_in_memory, i);
+    }
+
+    auto offset = summary_logs_count - (summary_logs_count % max_rows_in_memory);
+    auto left_logs_count = summary_logs_count % max_rows_in_memory;
+
+    CalculateStatistics(agent_name,
+                        virtualhost_name,
+                        yesterday_date,
+                        yesterday_date,
+                        left_logs_count,
+                        offset);
+
+    SaveAllSessions();
+
+    database_functions_->MarkStatisticsAsCreatedFor(yesterday_date);
   }
-
-  auto offset = summary_logs_count - (summary_logs_count % max_rows_in_memory);
-  auto left_logs_count = summary_logs_count % max_rows_in_memory;
-
-  CalculateStatistics(agent_name,
-                      virtualhost_name,
-                      yesterday_date,
-                      yesterday_date,
-                      left_logs_count,
-                      offset);
-
-  SaveAllSessions();
+  else {
+    BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::PrepareStatisticsAnalyzerObject::CreateStatistics: Statistics already created for " << yesterday_date << ", nothing to do";
+  }
 }
 
 void PrepareStatisticsAnalyzerObject::CalculateStatistics(const ::database::type::AgentName &agent_name,
@@ -104,7 +113,7 @@ void PrepareStatisticsAnalyzerObject::CalculateStatistics(const ::database::type
     usi.second = log_entry.agent_name;
 
     if (sessions_statistics_.find(usi) != sessions_statistics_.end()) {
-      BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::PrepareStatisticsAnalyzerObject::CalculateStatistics: Session statistics found";
+      BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::PrepareStatisticsAnalyzerObject::CalculateStatistics: Session statistics found in memory for: " << log_entry.client_ip << "-" << log_entry.agent_name;
 
       ::apache::type::ApacheSessionEntry &session = sessions_statistics_.at(usi);
 
@@ -121,7 +130,7 @@ void PrepareStatisticsAnalyzerObject::CalculateStatistics(const ::database::type
       }
     }
     else {
-      BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::PrepareStatisticsAnalyzerObject::CalculateStatistics: Session statistics not found";
+      BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::PrepareStatisticsAnalyzerObject::CalculateStatistics: Session statistics not found in memory for: " << log_entry.client_ip << "-" << log_entry.agent_name;
 
       ::apache::type::ApacheSessionEntry session;
       session.agent_name = log_entry.agent_name;
