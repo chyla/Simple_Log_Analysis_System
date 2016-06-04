@@ -27,10 +27,12 @@ class GeneralDatabaseFunctions : public detail::GeneralDatabaseFunctionsInterfac
   void CreateTables() override;
 
   void AddTime(const ::type::Time &t) override;
-
   ::database::type::RowId GetTimeId(const ::type::Time &t) override;
-
   const ::type::Time GetTimeById(::database::type::RowId id) override;
+
+  void AddDate(const ::type::Date &date) override;
+  ::database::type::RowId GetDateId(const ::type::Date &date) override;
+  ::type::Date GetDateById(const ::database::type::RowId &id) override;
 
  private:
   GeneralDatabaseFunctions(detail::SQLiteWrapperInterfacePtr sqlite_wrapper);

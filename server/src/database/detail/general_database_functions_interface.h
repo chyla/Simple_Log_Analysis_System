@@ -7,6 +7,7 @@
 #define SRC_DATABASE_DETAIL_GENERAL_DATABASE_FUNCTIONS_INTERFACE_H
 
 #include <patlms/type/time.h>
+#include <patlms/type/date.h>
 
 #include "src/database/type/row_id.h"
 
@@ -23,10 +24,12 @@ class GeneralDatabaseFunctionsInterface {
   virtual void CreateTables() = 0;
 
   virtual void AddTime(const ::type::Time &t) = 0;
-  
   virtual ::database::type::RowId GetTimeId(const ::type::Time &t) = 0;
-
   virtual const ::type::Time GetTimeById(::database::type::RowId id) = 0;
+
+  virtual void AddDate(const ::type::Date &date) = 0;
+  virtual ::database::type::RowId GetDateId(const ::type::Date &date) = 0;
+  virtual ::type::Date GetDateById(const ::database::type::RowId &id) = 0;
 };
 
 }

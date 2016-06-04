@@ -33,7 +33,7 @@ class Database {
 
   bool IsOpen() const;
 
-  void CreateDateTable();
+  void CreateDateTable() __attribute__ ((deprecated));
 
   void CreateBashLogsTable();
 
@@ -45,11 +45,11 @@ class Database {
 
   void CreateApacheAnomalyDetectionConfigurationTable();
 
-  void AddDate(int day, int month, int year);
+  void AddDate(int day, int month, int year) __attribute__ ((deprecated));
 
-  type::RowId GetDateId(int day, int month, int year);
+  type::RowId GetDateId(int day, int month, int year) __attribute__ ((deprecated));
 
-  ::type::Date GetDateById(type::RowId id);
+  ::type::Date GetDateById(type::RowId id) __attribute__ ((deprecated));
 
   bool AddBashLogs(const ::type::BashLogs &log_entries);
 
