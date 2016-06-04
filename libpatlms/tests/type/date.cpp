@@ -222,6 +222,46 @@ TEST(Date, GetYesterdayDate_FirstDayOfJanuary) {
   EXPECT_EQ(Date::Create(31, 12, 2015), yesterday);
 }
 
+TEST(Date, GetTomorrowDate_MiddleOfTheMonth) {
+  Date t1 = Date::Create(23, 1, 2016);
+
+  auto tomorrow = t1.GetTomorrowDate();
+
+  EXPECT_EQ(Date::Create(24, 1, 2016), tomorrow);
+}
+
+TEST(Date, GetTomorrowDate_EndOfTheMonth) {
+  Date t1 = Date::Create(31, 1, 2016);
+
+  auto tomorrow = t1.GetTomorrowDate();
+
+  EXPECT_EQ(Date::Create(1, 2, 2016), tomorrow);
+}
+
+TEST(Date, GetTomorrowDate_FirstDayOfMonth_March_LeapYear) {
+  Date t1 = Date::Create(29, 2, 2000);
+
+  auto tomorrow = t1.GetTomorrowDate();
+
+  EXPECT_EQ(Date::Create(1, 3, 2000), tomorrow);
+}
+
+TEST(Date, GetTomorrowDate_FirstDayOfMonth_March_NonLeapYear) {
+  Date t1 = Date::Create(28, 2, 2100);
+
+  auto tomorrow = t1.GetTomorrowDate();
+
+  EXPECT_EQ(Date::Create(1, 3, 2100), tomorrow);
+}
+
+TEST(Date, GetTomorrowDate_LastDayOfTheYear) {
+  Date t1 = Date::Create(31, 12, 2016);
+
+  auto tomorrow = t1.GetTomorrowDate();
+
+  EXPECT_EQ(Date::Create(1, 1, 2017), tomorrow);
+}
+
 TEST(Date, OperatorLess0) {
   Date t1 = Date::Create(1, 1, 2016);
   Date t2 = Date::Create(1, 1, 2016);

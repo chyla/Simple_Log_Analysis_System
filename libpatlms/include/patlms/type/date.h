@@ -24,6 +24,7 @@ class Date {
   inline int GetYear() const;
 
   Date GetYesterdayDate() const;
+  Date GetTomorrowDate() const;
 
   bool operator==(const Date &t2) const;
   bool operator<(const Date &t2) const;

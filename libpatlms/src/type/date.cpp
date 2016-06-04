@@ -71,6 +71,24 @@ Date Date::GetYesterdayDate() const {
   return yesterday;
 }
 
+Date Date::GetTomorrowDate() const {
+  int day = GetDay(), month = GetMonth(), year = GetYear();
+
+  if (day == GetNumberOfDayInMonth(month)) {
+    day = 1;
+    month++;
+  }
+  else
+    day++;
+
+  if (month == 13) {
+    month = 1;
+    year++;
+  }
+
+  return Date::Create(day, month, year);
+}
+
 bool Date::operator==(const Date &t2) const {
   return (t2.GetDay() == GetDay()) &&
       (t2.GetMonth() == GetMonth()) &&
