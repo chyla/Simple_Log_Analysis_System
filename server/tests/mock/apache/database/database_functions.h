@@ -32,11 +32,11 @@ class DatabaseFunctions : public ::apache::database::detail::DatabaseFunctionsIn
   }
 
   MOCK_METHOD4(GetLogsCount, ::database::type::RowsCount(std::string agent_name, std::string virtualhost_name,
-                                                               ::type::Date from, ::type::Date to));
+                                                         ::type::Date from, ::type::Date to));
 
   MOCK_METHOD6(GetLogs, ::type::ApacheLogs(std::string agent_name, std::string virtualhost_name,
-                                                 ::type::Date from, ::type::Date to,
-                                                 unsigned limit, ::database::type::RowsCount offset));
+                                           ::type::Date from, ::type::Date to,
+                                           unsigned limit, ::database::type::RowsCount offset));
 
   MOCK_METHOD1(AddSessionStatistics, bool(const ::apache::type::ApacheSessions &sessions));
 
@@ -47,6 +47,12 @@ class DatabaseFunctions : public ::apache::database::detail::DatabaseFunctionsIn
   MOCK_METHOD0(GetAgentNames, ::database::type::AgentNames());
 
   MOCK_METHOD1(GetVirtualhostNames, ::database::type::VirtualhostNames(::database::type::AgentName agent_name));
+
+  MOCK_METHOD1(IsLastRunSet, bool(const ::apache::type::LastRunType &type));
+
+  MOCK_METHOD2(SetLastRun, void(const ::apache::type::LastRunType &type, const ::type::Date &date));
+
+  MOCK_METHOD1(GetLastRun, ::type::Date(const ::apache::type::LastRunType &type));
 };
 
 }

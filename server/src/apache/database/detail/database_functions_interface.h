@@ -12,6 +12,7 @@
 #include <patlms/type/apache_log_entry.h>
 
 #include "src/apache/type/apache_session_entry.h"
+#include "src/apache/type/last_run_type.h"
 #include "src/database/type/rows_count.h"
 #include "src/database/type/agent_name.h"
 #include "src/database/type/virtualhost_name.h"
@@ -29,6 +30,8 @@ class DatabaseFunctionsInterface {
  public:
   virtual ~DatabaseFunctionsInterface() = default;
 
+  virtual void CreateTables() = 0;
+
   virtual ::database::type::RowsCount GetLogsCount(std::string agent_name, std::string virtualhost_name,
                                                    ::type::Date from, ::type::Date to) = 0;
 
@@ -45,6 +48,12 @@ class DatabaseFunctionsInterface {
   virtual ::database::type::AgentNames GetAgentNames() = 0;
 
   virtual ::database::type::VirtualhostNames GetVirtualhostNames(::database::type::AgentName agent_name) = 0;
+
+  virtual bool IsLastRunSet(const ::apache::type::LastRunType &type) = 0;
+
+  virtual void SetLastRun(const ::apache::type::LastRunType &type, const ::type::Date &date) = 0;
+
+  virtual ::type::Date GetLastRun(const ::apache::type::LastRunType &type) = 0;
 };
 
 typedef std::shared_ptr<DatabaseFunctionsInterface> DatabaseFunctionsInterfacePtr;

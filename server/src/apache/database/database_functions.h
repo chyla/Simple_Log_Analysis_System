@@ -32,6 +32,8 @@ class DatabaseFunctions : public detail::DatabaseFunctionsInterface {
                                      ::database::detail::SQLiteWrapperInterfacePtr sqlite_wrapper,
                                      ::database::detail::GeneralDatabaseFunctionsInterfacePtr general_database_functions);
 
+  void CreateTables() override;
+
   ::database::type::RowsCount GetLogsCount(std::string agent_name, std::string virtualhost_name,
                                            ::type::Date from, ::type::Date to) override;
 
@@ -48,6 +50,12 @@ class DatabaseFunctions : public detail::DatabaseFunctionsInterface {
   virtual ::database::type::AgentNames GetAgentNames() override;
 
   virtual ::database::type::VirtualhostNames GetVirtualhostNames(::database::type::AgentName agent_name) override;
+
+  bool IsLastRunSet(const ::apache::type::LastRunType &type) override;
+
+  void SetLastRun(const ::apache::type::LastRunType &type, const ::type::Date &date) override;
+
+  ::type::Date GetLastRun(const ::apache::type::LastRunType &type) override;
 
  private:
   ::database::DatabasePtr db_;
