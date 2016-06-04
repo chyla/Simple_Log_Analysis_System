@@ -32,27 +32,6 @@ class GeneralDatabaseFunctionsTest : public ::testing::Test {
   }
 };
 
-TEST_F(GeneralDatabaseFunctionsTest, GetTimeId) {
-  EXPECT_CALL(*sqlite_wrapper, Prepare(_, NotNull())).WillOnce(SetArgPointee<1>(DB_STATEMENT_EXAMPLE_PTR_VALUE));
-  EXPECT_CALL(*sqlite_wrapper, Step(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_ROW));
-  EXPECT_CALL(*sqlite_wrapper, ColumnInt64(DB_STATEMENT_EXAMPLE_PTR_VALUE, 0)).WillOnce(Return(11));
-  EXPECT_CALL(*sqlite_wrapper, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE));
-
-  auto id = general_database_functions->GetTimeId(::type::Time::Create(10, 12, 14));
-
-  EXPECT_EQ(11, id);
-}
-
-TEST_F(GeneralDatabaseFunctionsTest, GetTimeId_WhenTimeNotFound) {
-  EXPECT_CALL(*sqlite_wrapper, Prepare(_, NotNull())).WillOnce(SetArgPointee<1>(DB_STATEMENT_EXAMPLE_PTR_VALUE));
-  EXPECT_CALL(*sqlite_wrapper, Step(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_DONE));
-  EXPECT_CALL(*sqlite_wrapper, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE));
-
-  auto id = general_database_functions->GetTimeId(::type::Time::Create(10, 12, 14));
-
-  EXPECT_EQ(-1, id);
-}
-
 TEST_F(GeneralDatabaseFunctionsTest, GetTimeById) {
   EXPECT_CALL(*sqlite_wrapper, Prepare(_, NotNull())).WillOnce(SetArgPointee<1>(DB_STATEMENT_EXAMPLE_PTR_VALUE));
   EXPECT_CALL(*sqlite_wrapper, Step(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_ROW));
@@ -75,10 +54,7 @@ TEST_F(GeneralDatabaseFunctionsTest, GetTimeById_WhenTimeNotFound) {
 }
 
 TEST_F(GeneralDatabaseFunctionsTest, AddAndGetDateId) {
-  EXPECT_CALL(*sqlite_wrapper, Prepare(_, NotNull())).WillOnce(SetArgPointee<1>(DB_STATEMENT_EXAMPLE_PTR_VALUE));
-  EXPECT_CALL(*sqlite_wrapper, Step(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_ROW));
-  EXPECT_CALL(*sqlite_wrapper, ColumnInt64(DB_STATEMENT_EXAMPLE_PTR_VALUE, 0)).WillOnce(Return(11));
-  EXPECT_CALL(*sqlite_wrapper, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE));
+  EXPECT_CALL(*sqlite_wrapper, GetFirstInt64Column(_, -1)).WillOnce(Return(11));
 
   auto id = general_database_functions->AddAndGetDateId(::type::Date::Create(10, 12, 2016));
 
@@ -86,38 +62,12 @@ TEST_F(GeneralDatabaseFunctionsTest, AddAndGetDateId) {
 }
 
 TEST_F(GeneralDatabaseFunctionsTest, AddAndGetDateId_WhenDateNotFound) {
-  EXPECT_CALL(*sqlite_wrapper, Prepare(_, NotNull())).Times(2).WillRepeatedly(SetArgPointee<1>(DB_STATEMENT_EXAMPLE_PTR_VALUE));
-  EXPECT_CALL(*sqlite_wrapper, Step(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_DONE)).WillOnce(Return(SQLITE_ROW));
-  EXPECT_CALL(*sqlite_wrapper, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE)).Times(2);
-
+  EXPECT_CALL(*sqlite_wrapper, GetFirstInt64Column(_, -1)).WillOnce(Return(-1)).WillOnce(Return(12));
   EXPECT_CALL(*sqlite_wrapper, Exec(_, nullptr, nullptr));
-
-  EXPECT_CALL(*sqlite_wrapper, ColumnInt64(DB_STATEMENT_EXAMPLE_PTR_VALUE, 0)).WillOnce(Return(12));
 
   auto id = general_database_functions->AddAndGetDateId(::type::Date::Create(10, 12, 2016));
 
   EXPECT_EQ(12, id);
-}
-
-TEST_F(GeneralDatabaseFunctionsTest, GetDateId) {
-  EXPECT_CALL(*sqlite_wrapper, Prepare(_, NotNull())).WillOnce(SetArgPointee<1>(DB_STATEMENT_EXAMPLE_PTR_VALUE));
-  EXPECT_CALL(*sqlite_wrapper, Step(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_ROW));
-  EXPECT_CALL(*sqlite_wrapper, ColumnInt64(DB_STATEMENT_EXAMPLE_PTR_VALUE, 0)).WillOnce(Return(11));
-  EXPECT_CALL(*sqlite_wrapper, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE));
-
-  auto id = general_database_functions->GetDateId(::type::Date::Create(10, 12, 2016));
-
-  EXPECT_EQ(11, id);
-}
-
-TEST_F(GeneralDatabaseFunctionsTest, GetDateId_WhenTimeNotFound) {
-  EXPECT_CALL(*sqlite_wrapper, Prepare(_, NotNull())).WillOnce(SetArgPointee<1>(DB_STATEMENT_EXAMPLE_PTR_VALUE));
-  EXPECT_CALL(*sqlite_wrapper, Step(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_DONE));
-  EXPECT_CALL(*sqlite_wrapper, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE));
-
-  auto id = general_database_functions->GetDateId(::type::Date::Create(10, 12, 2016));
-
-  EXPECT_EQ(-1, id);
 }
 
 TEST_F(GeneralDatabaseFunctionsTest, GetDateById) {

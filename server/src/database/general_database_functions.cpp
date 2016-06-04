@@ -56,7 +56,6 @@ void GeneralDatabaseFunctions::AddTime(const ::type::Time &t) {
 
 ::database::type::RowId GeneralDatabaseFunctions::GetTimeId(const ::type::Time &t) {
   BOOST_LOG_TRIVIAL(debug) << "database::Database::GetDateId: Function call";
-  ::database::type::RowId id = -1;
 
   const string sql =
       "select id from TIME_TABLE "
@@ -66,16 +65,7 @@ void GeneralDatabaseFunctions::AddTime(const ::type::Time &t) {
       "    SECOND=" + to_string(t.GetSecond()) +
       ";";
 
-  sqlite3_stmt *statement = nullptr;
-  sqlite_wrapper_->Prepare(sql, &statement);
-
-  auto ret = sqlite_wrapper_->Step(statement);
-  if (ret == SQLITE_ROW)
-    id = sqlite_wrapper_->ColumnInt64(statement, 0);
-
-  sqlite_wrapper_->Finalize(statement);
-
-  return id;
+  return sqlite_wrapper_->GetFirstInt64Column(sql, -1);
 }
 
 const ::type::Time GeneralDatabaseFunctions::GetTimeById(::database::type::RowId id) {
@@ -132,7 +122,6 @@ void GeneralDatabaseFunctions::AddDate(const ::type::Date &date) {
 
 ::database::type::RowId GeneralDatabaseFunctions::GetDateId(const ::type::Date &date) {
   BOOST_LOG_TRIVIAL(debug) << "database::Database::GetDateId: Function call";
-  ::database::type::RowId id = -1;
 
   string sql =
       "select id from DATE_TABLE "
@@ -142,16 +131,7 @@ void GeneralDatabaseFunctions::AddDate(const ::type::Date &date) {
       "    YEAR=" + to_string(date.GetYear()) +
       ";";
 
-  sqlite3_stmt *statement = nullptr;
-  sqlite_wrapper_->Prepare(sql, &statement);
-
-  auto ret = sqlite_wrapper_->Step(statement);
-  if (ret == SQLITE_ROW)
-    id = sqlite_wrapper_->ColumnInt64(statement, 0);
-
-  sqlite_wrapper_->Finalize(statement);
-
-  return id;
+  return sqlite_wrapper_->GetFirstInt64Column(sql, -1);
 }
 
 ::type::Date GeneralDatabaseFunctions::GetDateById(const ::database::type::RowId &id) {
