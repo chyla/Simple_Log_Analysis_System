@@ -72,9 +72,9 @@ class Database {
 
   const ::apache::type::AnomalyDetectionConfiguration GetApacheAnomalyDetectionConfiguration();
 
-  void MarkApacheStatisticsAsCreatedFor(int day, int month, int year);
+  void MarkApacheStatisticsAsCreatedFor(int day, int month, int year) __attribute__ ((deprecated));
 
-  bool IsApacheStatisticsCreatedFor(int day, int month, int year);
+  bool IsApacheStatisticsCreatedFor(int day, int month, int year) __attribute__ ((deprecated));
 
   long long GetApacheLogsCount(std::string agent_name, std::string virtualhost_name, ::type::Timestamp from, ::type::Timestamp to);
 

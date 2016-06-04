@@ -43,7 +43,7 @@ class DatabaseFunctions : public detail::DatabaseFunctionsInterface {
 
   void MarkStatisticsAsCreatedFor(::type::Date date) override;
 
-  bool IsStatisticsCreatedFor(::type::Date date) override;
+  bool AreStatisticsCreatedFor(::type::Date date) override;
 
   virtual ::database::type::AgentNames GetAgentNames() override;
 

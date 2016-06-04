@@ -42,7 +42,7 @@ class DatabaseFunctions : public ::apache::database::detail::DatabaseFunctionsIn
 
   MOCK_METHOD1(MarkStatisticsAsCreatedFor, void(::type::Date date));
 
-  MOCK_METHOD1(IsStatisticsCreatedFor, bool(::type::Date date));
+  MOCK_METHOD1(AreStatisticsCreatedFor, bool(::type::Date date));
 
   MOCK_METHOD0(GetAgentNames, ::database::type::AgentNames());
 

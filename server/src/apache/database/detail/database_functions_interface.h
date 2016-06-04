@@ -40,7 +40,7 @@ class DatabaseFunctionsInterface {
 
   virtual void MarkStatisticsAsCreatedFor(::type::Date date) = 0;
 
-  virtual bool IsStatisticsCreatedFor(::type::Date date) = 0;
+  virtual bool AreStatisticsCreatedFor(::type::Date date) = 0;
 
   virtual ::database::type::AgentNames GetAgentNames() = 0;
 
