@@ -4,6 +4,7 @@
 #include "src/database/exception/detail/cant_open_database_exception.h"
 #include "src/database/exception/detail/cant_close_database_exception.h"
 #include "src/database/exception/detail/cant_execute_sql_statement_exception.h"
+#include "src/database/exception/detail/item_not_found_exception.h"
 
 #include "mock/database/sqlite.h"
 
@@ -552,7 +553,7 @@ TEST_F(SQLiteWrapperTest, GetFirstInt64Column_WhenRowNotFound) {
   wrapper->Open("sqlite.db");
 
   EXPECT_TRUE(wrapper->IsOpen());
-  EXPECT_THROW(wrapper->GetFirstInt64Column("sql"), database::exception::detail::CantExecuteSqlStatementException);
+  EXPECT_THROW(wrapper->GetFirstInt64Column("sql"), database::exception::detail::ItemNotFoundException);
   EXPECT_TRUE(wrapper->Close());
 }
 

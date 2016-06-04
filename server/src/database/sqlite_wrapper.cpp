@@ -6,6 +6,7 @@
 #include "src/database/exception/detail/cant_open_database_exception.h"
 #include "src/database/exception/detail/cant_close_database_exception.h"
 #include "src/database/exception/detail/cant_execute_sql_statement_exception.h"
+#include "src/database/exception/detail/item_not_found_exception.h"
 
 namespace database
 {
@@ -191,7 +192,7 @@ long long SQLiteWrapper::GetFirstInt64Column(const std::string &sql) {
 
   if (!found) {
     BOOST_LOG_TRIVIAL(error) << "database::SQLiteWrapper::GetFirstInt64Column: Item not found";
-    throw exception::detail::CantExecuteSqlStatementException();
+    throw exception::detail::ItemNotFoundException();
   }
 
   return value;
