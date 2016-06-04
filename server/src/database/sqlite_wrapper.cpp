@@ -191,7 +191,7 @@ long long SQLiteWrapper::GetFirstInt64Column(const std::string &sql) {
   Finalize(statement);
 
   if (!found) {
-    BOOST_LOG_TRIVIAL(error) << "database::SQLiteWrapper::GetFirstInt64Column: Item not found";
+    BOOST_LOG_TRIVIAL(info) << "database::SQLiteWrapper::GetFirstInt64Column: Item not found";
     throw exception::detail::ItemNotFoundException();
   }
 
