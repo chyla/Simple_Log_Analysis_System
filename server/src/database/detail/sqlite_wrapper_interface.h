@@ -41,6 +41,7 @@ class SQLiteWrapperInterface {
 
   virtual void Exec(const std::string &sql, int (*callback) (void *, int, char **, char **) = nullptr, void *arg = nullptr) = 0;
   virtual long long GetFirstInt64Column(const std::string &sql) = 0;
+  virtual long long GetFirstInt64Column(const std::string &sql, long long default_return_value) = 0;
 
   virtual sqlite3* GetSQLiteHandle() = 0;
 };

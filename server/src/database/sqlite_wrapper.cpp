@@ -198,6 +198,31 @@ long long SQLiteWrapper::GetFirstInt64Column(const std::string &sql) {
   return value;
 }
 
+long long SQLiteWrapper::GetFirstInt64Column(const std::string &sql, long long default_return_value) {
+  BOOST_LOG_TRIVIAL(debug) << "database::SQLiteWrapper::GetFirstInt64Column: Function call with default_return_value=" << default_return_value;
+  long long value = default_return_value;
+
+  sqlite3_stmt *statement = nullptr;
+  Prepare(sql, &statement);
+
+  try {
+    auto ret = Step(statement);
+    if (ret == SQLITE_ROW) {
+      value = ColumnInt64(statement, 0);
+    }
+    else
+      BOOST_LOG_TRIVIAL(debug) << "database::SQLiteWrapper::GetFirstInt64Column: Item not found";
+  }
+  catch (exception::DatabaseException &ex) {
+    Finalize(statement);
+    throw;
+  }
+
+  Finalize(statement);
+
+  return value;
+}
+
 SQLiteWrapper::SQLiteWrapper(detail::SQLiteInterfacePtr sqlite_interface) :
 sqlite_interface_(move(sqlite_interface)),
 is_open_(false) {
