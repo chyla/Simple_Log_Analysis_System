@@ -54,6 +54,18 @@ void GeneralDatabaseFunctions::AddTime(const ::type::Time &t) {
                         + " );");
 }
 
+::database::type::RowId GeneralDatabaseFunctions::AddAndGetTimeId(const ::type::Time &time) {
+  BOOST_LOG_TRIVIAL(debug) << "database::GeneralDatabaseFunctions::AddAndGetTimeId: Function call";
+
+  auto time_id = GetTimeId(time);
+  if (time_id == -1) {
+    AddTime(time);
+    time_id = GetTimeId(time);
+  }
+
+  return time_id;
+}
+
 ::database::type::RowId GeneralDatabaseFunctions::GetTimeId(const ::type::Time &t) {
   BOOST_LOG_TRIVIAL(debug) << "database::Database::GetDateId: Function call";
 
@@ -121,7 +133,7 @@ void GeneralDatabaseFunctions::AddDate(const ::type::Date &date) {
 }
 
 ::database::type::RowId GeneralDatabaseFunctions::GetDateId(const ::type::Date &date) {
-  BOOST_LOG_TRIVIAL(debug) << "database::Database::GetDateId: Function call";
+  BOOST_LOG_TRIVIAL(debug) << "database::GeneralDatabaseFunctions::GetDateId: Function call";
 
   string sql =
       "select id from DATE_TABLE "

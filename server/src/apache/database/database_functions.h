@@ -53,9 +53,9 @@ class DatabaseFunctions : public detail::DatabaseFunctionsInterface {
 
   bool IsLastRunSet(const ::apache::type::LastRunType &type) override;
 
-  void SetLastRun(const ::apache::type::LastRunType &type, const ::type::Date &date) override;
+  void SetLastRun(const ::apache::type::LastRunType &type, const ::type::Timestamp &date) override;
 
-  ::type::Date GetLastRun(const ::apache::type::LastRunType &type) override;
+  ::type::Timestamp GetLastRun(const ::apache::type::LastRunType &type) override;
 
  private:
   ::database::DatabasePtr db_;

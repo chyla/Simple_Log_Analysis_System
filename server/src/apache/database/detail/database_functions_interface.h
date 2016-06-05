@@ -51,9 +51,9 @@ class DatabaseFunctionsInterface {
 
   virtual bool IsLastRunSet(const ::apache::type::LastRunType &type) = 0;
 
-  virtual void SetLastRun(const ::apache::type::LastRunType &type, const ::type::Date &date) = 0;
+  virtual void SetLastRun(const ::apache::type::LastRunType &type, const ::type::Timestamp &date) = 0;
 
-  virtual ::type::Date GetLastRun(const ::apache::type::LastRunType &type) = 0;
+  virtual ::type::Timestamp GetLastRun(const ::apache::type::LastRunType &type) = 0;
 };
 
 typedef std::shared_ptr<DatabaseFunctionsInterface> DatabaseFunctionsInterfacePtr;

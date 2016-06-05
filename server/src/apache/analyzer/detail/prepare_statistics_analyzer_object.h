@@ -56,7 +56,7 @@ class PrepareStatisticsAnalyzerObject : public PrepareStatisticsAnalyzerObjectIn
                            ::database::type::RowsCount count,
                            ::database::type::RowId offset);
 
-  ::type::Date GetCurrentDate() const;
+  ::type::Timestamp GetCurrentTimestamp() const;
 
   bool IsErrorCode(const int &status_code) const;
   bool IsInThisSameSession(const ::apache::type::ApacheSessionEntry &session,

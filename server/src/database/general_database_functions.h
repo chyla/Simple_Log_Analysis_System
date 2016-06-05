@@ -27,6 +27,7 @@ class GeneralDatabaseFunctions : public detail::GeneralDatabaseFunctionsInterfac
   void CreateTables() override;
 
   void AddTime(const ::type::Time &t) override;
+  ::database::type::RowId AddAndGetTimeId(const ::type::Time &time) override;
   ::database::type::RowId GetTimeId(const ::type::Time &t) override;
   const ::type::Time GetTimeById(::database::type::RowId id) override;
 

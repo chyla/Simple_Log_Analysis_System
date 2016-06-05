@@ -31,6 +31,7 @@ class GeneralDatabaseFunctions : public ::database::detail::GeneralDatabaseFunct
   MOCK_METHOD0(CreateTables, void());
 
   MOCK_METHOD1(AddTime, void(const ::type::Time &t));
+  MOCK_METHOD1(AddAndGetTimeId, ::database::type::RowId(const ::type::Time &time));
   MOCK_METHOD1(GetTimeId, ::database::type::RowId(const ::type::Time &t));
   MOCK_METHOD1(GetTimeById, const ::type::Time(::database::type::RowId id));
 

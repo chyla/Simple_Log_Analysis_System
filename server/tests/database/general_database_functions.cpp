@@ -53,6 +53,23 @@ TEST_F(GeneralDatabaseFunctionsTest, GetTimeById_WhenTimeNotFound) {
   EXPECT_THROW(general_database_functions->GetTimeById(11), database::exception::detail::CantExecuteSqlStatementException);
 }
 
+TEST_F(GeneralDatabaseFunctionsTest, AddAndGetTimeId) {
+  EXPECT_CALL(*sqlite_wrapper, GetFirstInt64Column(_, -1)).WillOnce(Return(11));
+
+  auto id = general_database_functions->AddAndGetTimeId(::type::Time::Create(10, 12, 6));
+
+  EXPECT_EQ(11, id);
+}
+
+TEST_F(GeneralDatabaseFunctionsTest, AddAndGetTimeId_WhenTimeNotFound) {
+  EXPECT_CALL(*sqlite_wrapper, GetFirstInt64Column(_, -1)).WillOnce(Return(-1)).WillOnce(Return(12));
+  EXPECT_CALL(*sqlite_wrapper, Exec(_, nullptr, nullptr));
+
+  auto id = general_database_functions->AddAndGetTimeId(::type::Time::Create(10, 12, 6));
+
+  EXPECT_EQ(12, id);
+}
+
 TEST_F(GeneralDatabaseFunctionsTest, AddAndGetDateId) {
   EXPECT_CALL(*sqlite_wrapper, GetFirstInt64Column(_, -1)).WillOnce(Return(11));
 

@@ -60,10 +60,12 @@ void PrepareStatisticsAnalyzerObject::CreateStatistics(const ::database::type::A
   using ::database::type::RowsCount;
   constexpr RowsCount max_rows_in_memory = 100;
 
+  ::type::Timestamp from;
   ::type::Date date_from;
   auto is_stats = database_functions_->IsLastRunSet(::apache::type::LastRunType::STATISTICS_CALCULATION);
   if (is_stats) {
-    date_from = database_functions_->GetLastRun(::apache::type::LastRunType::STATISTICS_CALCULATION);
+    from = database_functions_->GetLastRun(::apache::type::LastRunType::STATISTICS_CALCULATION);
+    date_from = from.GetDate();
     BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::PrepareStatisticsAnalyzerObject::CreateStatistics: Found last statistics calculation date " << date_from;
   }
   else {
@@ -71,7 +73,8 @@ void PrepareStatisticsAnalyzerObject::CreateStatistics(const ::database::type::A
     BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::PrepareStatisticsAnalyzerObject::CreateStatistics: Last statistics calculation date not found - assuming " << date_from;
   }
 
-  auto date_to = GetCurrentDate();
+  auto to = GetCurrentTimestamp();
+  auto date_to = to.GetDate();
   BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::PrepareStatisticsAnalyzerObject::CreateStatistics: Current date " << date_to;
 
   for (auto t = date_from.GetTomorrowDate(); t < date_to || t == date_to; t = t.GetTomorrowDate()) {
@@ -107,6 +110,8 @@ void PrepareStatisticsAnalyzerObject::CreateStatistics(const ::database::type::A
       BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::PrepareStatisticsAnalyzerObject::CreateStatistics: Statistics already created for " << t << ", nothing to do";
     }
   }
+
+  database_functions_->SetLastRun(::apache::type::LastRunType::STATISTICS_CALCULATION, to);
 }
 
 void PrepareStatisticsAnalyzerObject::CalculateStatistics(const ::database::type::AgentName &agent_name,
@@ -186,11 +191,12 @@ void PrepareStatisticsAnalyzerObject::CalculateStatistics(const ::database::type
   BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::PrepareStatisticsAnalyzerObject::CalculateStatistics: Done";
 }
 
-::type::Date PrepareStatisticsAnalyzerObject::GetCurrentDate() const {
+::type::Timestamp PrepareStatisticsAnalyzerObject::GetCurrentTimestamp() const {
   time_t t = system_interface_->Time(nullptr);
   struct tm *now = system_interface_->LocalTime(&t);
 
-  return ::type::Date::Create(now->tm_mday, now->tm_mon + 1, now->tm_year + 1900);
+  return ::type::Timestamp::Create(::type::Time::Create(now->tm_hour, now->tm_min, now->tm_sec),
+                                   ::type::Date::Create(now->tm_mday, now->tm_mon + 1, now->tm_year + 1900));
 }
 
 bool PrepareStatisticsAnalyzerObject::IsErrorCode(const int &status_code) const {

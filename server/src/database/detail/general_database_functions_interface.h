@@ -26,6 +26,7 @@ class GeneralDatabaseFunctionsInterface {
   virtual void CreateTables() = 0;
 
   virtual void AddTime(const ::type::Time &t) = 0;
+  virtual ::database::type::RowId AddAndGetTimeId(const ::type::Time &time) = 0;
   virtual ::database::type::RowId GetTimeId(const ::type::Time &t) = 0;
   virtual const ::type::Time GetTimeById(::database::type::RowId id) = 0;
 
