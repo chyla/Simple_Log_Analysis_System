@@ -95,6 +95,10 @@ bool Date::operator==(const Date &t2) const {
       (t2.GetYear() == GetYear());
 }
 
+bool Date::operator!=(const Date &t2) const {
+  return !(*this == t2);
+}
+
 bool Date::operator<(const Date &t2) const {
   if ((GetYear() == t2.GetYear()) &&
       (GetMonth() == t2.GetMonth()) &&

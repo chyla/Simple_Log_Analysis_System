@@ -27,6 +27,7 @@ class Date {
   Date GetTomorrowDate() const;
 
   bool operator==(const Date &t2) const;
+  bool operator!=(const Date &t2) const;
   bool operator<(const Date &t2) const;
 
  private:
