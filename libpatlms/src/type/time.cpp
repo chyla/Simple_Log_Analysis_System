@@ -107,7 +107,7 @@ Time Time::operator+(long seconds) const {
 }
 
 void Time::CheckTime(int hour, int minute, int second) {
-  if ((hour < 0 || hour > 24) ||
+  if ((hour < 0 || hour > 23) ||
       (minute < 0 || minute > 59) ||
       (second < 0 || second > 59)) {
     throw exception::detail::WrongTimeValueException();
