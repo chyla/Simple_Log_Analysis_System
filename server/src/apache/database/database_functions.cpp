@@ -45,22 +45,19 @@ void DatabaseFunctions::CreateTables() {
 }
 
 ::database::type::RowsCount DatabaseFunctions::GetLogsCount(std::string agent_name, std::string virtualhost_name,
-                                                            ::type::Date from, ::type::Date to) {
+                                                            ::type::Timestamp from, ::type::Timestamp to) {
   BOOST_LOG_TRIVIAL(debug) << "apache::database::DatabaseFunctions::GetLogsCount: Function call";
 
-  return db_->GetApacheLogsCount(agent_name, virtualhost_name,
-                                 Timestamp::Create(Time::Create(0, 0, 0), from),
-                                 Timestamp::Create(Time::Create(23, 59, 59), to));
+  return db_->GetApacheLogsCount(agent_name, virtualhost_name, from, to);
 }
 
 ::type::ApacheLogs DatabaseFunctions::GetLogs(std::string agent_name, std::string virtualhost_name,
-                                              ::type::Date from, ::type::Date to,
+                                              ::type::Timestamp from, ::type::Timestamp to,
                                               unsigned limit, ::database::type::RowsCount offset) {
   BOOST_LOG_TRIVIAL(debug) << "apache::database::DatabaseFunctions::GetLogs: Function call";
 
   return db_->GetApacheLogs(agent_name, virtualhost_name,
-                            Timestamp::Create(Time::Create(0, 0, 0), from),
-                            Timestamp::Create(Time::Create(23, 59, 59), to),
+                            from, to,
                             limit, offset);
 }
 

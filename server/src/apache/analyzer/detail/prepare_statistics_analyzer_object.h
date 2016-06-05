@@ -47,29 +47,50 @@ class PrepareStatisticsAnalyzerObject : public PrepareStatisticsAnalyzerObjectIn
                                   SystemInterfacePtr system_interface);
 
   void CreateStatistics(const ::database::type::AgentName &agent_name,
-                        const ::database::type::VirtualhostName &virtualhost_name);
+                        const ::database::type::VirtualhostName &virtualhost_name,
+                        const ::type::Timestamp &now);
+
+  void CreateStatisticsForPastDays(const ::database::type::AgentName &agent_name,
+                                   const ::database::type::VirtualhostName &virtualhost_name,
+                                   const ::type::Timestamp &last_statistics_calculation,
+                                   const ::type::Timestamp &now);
+
+  void CreateStatisticsForToday(const ::database::type::AgentName &agent_name,
+                                const ::database::type::VirtualhostName &virtualhost_name,
+                                const ::type::Timestamp &last_statistics_calculation,
+                                const ::type::Timestamp &now);
+
+  void CalculateStatisticsPartially(const ::database::type::AgentName &agent_name,
+                                    const ::database::type::VirtualhostName &virtualhost_name,
+                                    const ::type::Timestamp &from,
+                                    const ::type::Timestamp &to,
+                                    const ::type::Timestamp &now);
 
   void CalculateStatistics(const ::database::type::AgentName &agent_name,
                            const ::database::type::VirtualhostName &virtualhost_name,
-                           const ::type::Date &from,
-                           const ::type::Date &to,
+                           const ::type::Timestamp &from,
+                           const ::type::Timestamp &to,
                            ::database::type::RowsCount count,
                            ::database::type::RowId offset);
 
+  ::type::Timestamp GetLastStatisticsCalculationTimestamp();
   ::type::Timestamp GetCurrentTimestamp() const;
 
   bool IsErrorCode(const int &status_code) const;
   bool IsInThisSameSession(const ::apache::type::ApacheSessionEntry &session,
                            const ::type::ApacheLogEntry &log_entry);
+  ::apache::type::ApacheSessionEntry CreateSession(const ::type::ApacheLogEntry &log_entry);
+  void UpdateCurrentStatisticsCalculationTime(const ::apache::type::ApacheSessionEntry &session);
 
-  void SaveAllSessions();
-  
+  void SaveAllSessions(const ::type::Timestamp &now);
+
   typedef std::pair<std::string, std::string> UniqueSessionId;
   ::apache::type::ApacheSessions calculated_sessions_statistics_;
 
   ::apache::database::detail::DatabaseFunctionsInterfacePtr database_functions_;
   SystemInterfacePtr system_interface_;
   std::map<UniqueSessionId, ::apache::type::ApacheSessionEntry> sessions_statistics_;
+  ::type::Timestamp current_statistic_calculation_;
 };
 
 }

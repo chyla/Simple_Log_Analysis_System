@@ -35,10 +35,10 @@ class DatabaseFunctions : public detail::DatabaseFunctionsInterface {
   void CreateTables() override;
 
   ::database::type::RowsCount GetLogsCount(std::string agent_name, std::string virtualhost_name,
-                                           ::type::Date from, ::type::Date to) override;
+                                           ::type::Timestamp from, ::type::Timestamp to) override;
 
   ::type::ApacheLogs GetLogs(std::string agent_name, std::string virtualhost_name,
-                             ::type::Date from, ::type::Date to,
+                             ::type::Timestamp from, ::type::Timestamp to,
                              unsigned limit, ::database::type::RowsCount offset) override;
 
   bool AddSessionStatistics(const ::apache::type::ApacheSessions &sessions) override;

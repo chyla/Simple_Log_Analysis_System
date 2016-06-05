@@ -33,10 +33,10 @@ class DatabaseFunctionsInterface {
   virtual void CreateTables() = 0;
 
   virtual ::database::type::RowsCount GetLogsCount(std::string agent_name, std::string virtualhost_name,
-                                                   ::type::Date from, ::type::Date to) = 0;
+                                                   ::type::Timestamp from, ::type::Timestamp to) = 0;
 
   virtual ::type::ApacheLogs GetLogs(std::string agent_name, std::string virtualhost_name,
-                                     ::type::Date from, ::type::Date to,
+                                     ::type::Timestamp from, ::type::Timestamp to,
                                      unsigned limit, ::database::type::RowsCount offset) = 0;
 
   virtual bool AddSessionStatistics(const ::apache::type::ApacheSessions &sessions) = 0;
