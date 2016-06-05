@@ -85,6 +85,10 @@ TEST(Time, Create_WhenSecondIs0) {
   ASSERT_EQ(0, t.GetSecond());
 }
 
+TEST(Time, Create_WhenHourIs24) {
+  ASSERT_THROW(Time::Create(24, 2, 3), ::type::exception::detail::WrongTimeValueException);
+}
+
 TEST(Time, Create_WhenHourIs25) {
   ASSERT_THROW(Time::Create(25, 2, 3), ::type::exception::detail::WrongTimeValueException);
 }
