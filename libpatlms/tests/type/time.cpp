@@ -263,3 +263,67 @@ TEST(Time, OperatorMinusSeconds7) {
 
   EXPECT_EQ(Time::Create(0, 0, 0), t2);
 }
+
+TEST(Time, OperatorPlusSeconds0) {
+  Time t1 = Time::Create(1, 2, 3);
+
+  Time t2 = t1 + 2;
+
+  EXPECT_EQ(Time::Create(1, 2, 5), t2);
+}
+
+TEST(Time, OperatorPlusSeconds1) {
+  Time t1 = Time::Create(1, 2, 57);
+
+  Time t2 = t1 + 3;
+
+  EXPECT_EQ(Time::Create(1, 3, 0), t2);
+}
+
+TEST(Time, OperatorPlusSeconds2) {
+  Time t1 = Time::Create(1, 2, 57);
+
+  Time t2 = t1 + 4;
+
+  EXPECT_EQ(Time::Create(1, 3, 1), t2);
+}
+
+TEST(Time, OperatorPlusSeconds3) {
+  Time t1 = Time::Create(1, 1, 0);
+
+  Time t2 = t1 + 60;
+
+  EXPECT_EQ(Time::Create(1, 2, 0), t2);
+}
+
+TEST(Time, OperatorPlusSeconds4) {
+  Time t1 = Time::Create(23, 59, 58);
+
+  Time t2 = t1 + 2;
+
+  EXPECT_EQ(Time::Create(23, 59, 59), t2);
+}
+
+TEST(Time, OperatorPlusSeconds5) {
+  Time t1 = Time::Create(0, 1, 1);
+
+  Time t2 = t1 + (60 + 2);
+
+  EXPECT_EQ(Time::Create(0, 2, 3), t2);
+}
+
+TEST(Time, OperatorPlusSeconds6) {
+  Time t1 = Time::Create(1, 1, 1);
+
+  Time t2 = t1 + (60 * 60 + 60 + 2);
+
+  EXPECT_EQ(Time::Create(2, 2, 3), t2);
+}
+
+TEST(Time, OperatorPlusSeconds7) {
+  Time t1 = Time::Create(23, 59, 59);
+
+  Time t2 = t1 + std::numeric_limits<long>::max();
+
+  EXPECT_EQ(Time::Create(23, 59, 59), t2);
+}

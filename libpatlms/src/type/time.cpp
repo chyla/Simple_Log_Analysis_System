@@ -86,6 +86,26 @@ Time Time::operator-(long seconds) const {
   return Time::Create(hour, minute, second);
 }
 
+Time Time::operator+(long seconds) const {
+  int hour = 23, minute = 59, second = 59;
+
+  if (seconds < 23 * 60 * 60 + 59 * 60 + 59) {
+    long time_in_seconds = GetHour() * 60 * 60 + GetMinute() * 60 + GetSecond() + seconds;
+
+    if (time_in_seconds < 23 * 60 * 60 + 59 * 60 + 59) {
+      hour = time_in_seconds / (60 * 60);
+      time_in_seconds = time_in_seconds - hour * (60 * 60);
+
+      minute = time_in_seconds / 60;
+      time_in_seconds = time_in_seconds - minute * 60;
+
+      second = time_in_seconds;
+    }
+  }
+
+  return Time::Create(hour, minute, second);
+}
+
 void Time::CheckTime(int hour, int minute, int second) {
   if ((hour < 0 || hour > 24) ||
       (minute < 0 || minute > 59) ||

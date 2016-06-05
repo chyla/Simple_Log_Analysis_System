@@ -26,6 +26,7 @@ class Time {
   bool operator==(const Time &t2) const;
   bool operator<(const Time &t2) const;
   Time operator-(long seconds) const;
+  Time operator+(long seconds) const;
 
  private:
   static void CheckTime(int hour, int minute, int second);
