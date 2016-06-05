@@ -4,7 +4,7 @@
 #include <patlms/type/exception/detail/time_parse_exception.h>
 
 #include <regex>
-
+#include <iostream>
 namespace type
 {
 
@@ -67,6 +67,23 @@ bool Time::operator<(const Time &t2) const {
     return true;
 
   return false;
+}
+
+Time Time::operator-(long seconds) const {
+  int hour = 0, minute = 0, second = 0;
+  long time_in_seconds = GetHour() * 60 * 60 + GetMinute() * 60 + GetSecond() - seconds;
+
+  if (time_in_seconds > 0) {
+    hour = time_in_seconds / (60 * 60);
+    time_in_seconds = time_in_seconds - hour * (60 * 60);
+
+    minute = time_in_seconds / 60;
+    time_in_seconds = time_in_seconds - minute * 60;
+
+    second = time_in_seconds;
+  }
+
+  return Time::Create(hour, minute, second);
 }
 
 void Time::CheckTime(int hour, int minute, int second) {
