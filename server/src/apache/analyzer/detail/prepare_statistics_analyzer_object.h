@@ -76,6 +76,8 @@ class PrepareStatisticsAnalyzerObject : public PrepareStatisticsAnalyzerObjectIn
   ::type::Timestamp GetCurrentTimestamp() const;
 
   bool IsErrorCode(const int &status_code) const;
+  bool ShouldStatisticsBeCalculated(const ::type::Timestamp &last_statistics_calculation,
+                                    const ::type::Timestamp &now);
   bool IsInThisSameSession(const ::apache::type::ApacheSessionEntry &session,
                            const ::type::ApacheLogEntry &log_entry);
   ::apache::type::ApacheSessionEntry CreateSession(const ::type::ApacheLogEntry &log_entry);

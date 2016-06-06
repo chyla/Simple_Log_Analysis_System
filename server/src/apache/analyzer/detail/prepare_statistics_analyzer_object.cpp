@@ -11,6 +11,8 @@
 #include "system.h"
 #include "session_length.h"
 
+using namespace ::apache::database::detail;
+using namespace ::apache::type;
 using namespace ::database::type;
 using namespace ::type;
 using namespace ::util;
@@ -24,14 +26,14 @@ namespace analyzer
 namespace detail
 {
 
-PrepareStatisticsAnalyzerObjectPtr PrepareStatisticsAnalyzerObject::Create(::apache::database::detail::DatabaseFunctionsInterfacePtr database_functions) {
+PrepareStatisticsAnalyzerObjectPtr PrepareStatisticsAnalyzerObject::Create(DatabaseFunctionsInterfacePtr database_functions) {
   BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::PrepareStatisticsAnalyzerObject::Create: Function call";
   auto system = System::Create();
 
   return PrepareStatisticsAnalyzerObjectPtr(new PrepareStatisticsAnalyzerObject(database_functions, system));
 }
 
-PrepareStatisticsAnalyzerObjectPtr PrepareStatisticsAnalyzerObject::Create(::apache::database::detail::DatabaseFunctionsInterfacePtr database_functions,
+PrepareStatisticsAnalyzerObjectPtr PrepareStatisticsAnalyzerObject::Create(DatabaseFunctionsInterfacePtr database_functions,
                                                                            SystemInterfacePtr system_interface) {
   BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::PrepareStatisticsAnalyzerObject::Create: Function call";
 
@@ -44,8 +46,7 @@ void PrepareStatisticsAnalyzerObject::Prepare() {
   const auto last_statistics_calculation = GetLastStatisticsCalculationTimestamp();
   const auto now = GetCurrentTimestamp();
 
-  if ((last_statistics_calculation.GetDate() != now.GetDate()) ||
-      (Distance(last_statistics_calculation.GetTime(), now.GetTime()) > SESSION_LENGTH)) {
+  if (ShouldStatisticsBeCalculated(last_statistics_calculation, now)) {
     for (auto agent_name : database_functions_->GetAgentNames()) {
       BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::PrepareStatisticsAnalyzerObject::Prepare: Preparing agent: " << agent_name;
 
@@ -56,14 +57,14 @@ void PrepareStatisticsAnalyzerObject::Prepare() {
       }
     }
 
-    database_functions_->SetLastRun(::apache::type::LastRunType::STATISTICS_CALCULATION, now);
+    database_functions_->SetLastRun(LastRunType::STATISTICS_CALCULATION, now);
   }
   else {
     BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::PrepareStatisticsAnalyzerObject::Prepare: Not running, last statistics prepared: " << GetLastStatisticsCalculationTimestamp();
   }
 }
 
-PrepareStatisticsAnalyzerObject::PrepareStatisticsAnalyzerObject(::apache::database::detail::DatabaseFunctionsInterfacePtr database_functions,
+PrepareStatisticsAnalyzerObject::PrepareStatisticsAnalyzerObject(DatabaseFunctionsInterfacePtr database_functions,
                                                                  SystemInterfacePtr system_interface) :
 database_functions_(database_functions),
 system_interface_(system_interface) {
@@ -100,8 +101,8 @@ void PrepareStatisticsAnalyzerObject::CreateStatisticsForPastDays(const AgentNam
 
       CalculateStatisticsPartially(agent_name,
                                    virtualhost_name,
-                                   Timestamp::Create(::type::Time::Create(0, 0, 0), date),
-                                   Timestamp::Create(::type::Time::Create(23, 59, 59), date));
+                                   Timestamp::Create(Time::Create(0, 0, 0), date),
+                                   Timestamp::Create(Time::Create(23, 59, 59), date));
 
       database_functions_->MarkStatisticsAsCreatedFor(date);
     }
@@ -176,7 +177,7 @@ void PrepareStatisticsAnalyzerObject::CalculateStatistics(const AgentName &agent
     if (sessions_statistics_.find(usi) != sessions_statistics_.end()) {
       BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::PrepareStatisticsAnalyzerObject::CalculateStatistics: Session statistics found in memory";
 
-      ::apache::type::ApacheSessionEntry &session = sessions_statistics_.at(usi);
+      ApacheSessionEntry &session = sessions_statistics_.at(usi);
 
       if (IsInThisSameSession(session, log_entry)) {
         session.bandwidth_usage += log_entry.bytes;
@@ -203,12 +204,12 @@ void PrepareStatisticsAnalyzerObject::CalculateStatistics(const AgentName &agent
   BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::PrepareStatisticsAnalyzerObject::CalculateStatistics: Done";
 }
 
-::type::Timestamp PrepareStatisticsAnalyzerObject::GetLastStatisticsCalculationTimestamp() {
+Timestamp PrepareStatisticsAnalyzerObject::GetLastStatisticsCalculationTimestamp() {
   Timestamp last_statistics_calculation;
 
-  auto is_stats = database_functions_->IsLastRunSet(::apache::type::LastRunType::STATISTICS_CALCULATION);
+  auto is_stats = database_functions_->IsLastRunSet(LastRunType::STATISTICS_CALCULATION);
   if (is_stats) {
-    last_statistics_calculation = database_functions_->GetLastRun(::apache::type::LastRunType::STATISTICS_CALCULATION);
+    last_statistics_calculation = database_functions_->GetLastRun(LastRunType::STATISTICS_CALCULATION);
     BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::PrepareStatisticsAnalyzerObject::GetLastRunTimestamp: Found last statistics calculation time " << last_statistics_calculation;
   }
   else {
@@ -219,11 +220,11 @@ void PrepareStatisticsAnalyzerObject::CalculateStatistics(const AgentName &agent
   return last_statistics_calculation;
 }
 
-::type::Timestamp PrepareStatisticsAnalyzerObject::GetCurrentTimestamp() const {
+Timestamp PrepareStatisticsAnalyzerObject::GetCurrentTimestamp() const {
   time_t t = system_interface_->Time(nullptr);
   struct tm *now = system_interface_->LocalTime(&t);
 
-  return Timestamp::Create(::type::Time::Create(now->tm_hour, now->tm_min, now->tm_sec),
+  return Timestamp::Create(Time::Create(now->tm_hour, now->tm_min, now->tm_sec),
                            Date::Create(now->tm_mday, now->tm_mon + 1, now->tm_year + 1900));
 }
 
@@ -231,14 +232,20 @@ bool PrepareStatisticsAnalyzerObject::IsErrorCode(const int &status_code) const 
   return (status_code >= 400) && (status_code <= 511);
 }
 
-bool PrepareStatisticsAnalyzerObject::IsInThisSameSession(const ::apache::type::ApacheSessionEntry &session,
+bool PrepareStatisticsAnalyzerObject::ShouldStatisticsBeCalculated(const Timestamp &last_statistics_calculation,
+                                                                   const Timestamp &now) {
+  return (last_statistics_calculation.GetDate() != now.GetDate()) ||
+      (Distance(last_statistics_calculation.GetTime(), now.GetTime()) > SESSION_LENGTH);
+}
+
+bool PrepareStatisticsAnalyzerObject::IsInThisSameSession(const ApacheSessionEntry &session,
                                                           const ApacheLogEntry &log_entry) {
   return ( Distance(session.session_start.GetTime(), log_entry.time.GetTime()) < SESSION_LENGTH) &&
       (session.session_start.GetDate() == log_entry.time.GetDate());
 }
 
-::apache::type::ApacheSessionEntry PrepareStatisticsAnalyzerObject::CreateSession(const ApacheLogEntry &log_entry) {
-  ::apache::type::ApacheSessionEntry session;
+ApacheSessionEntry PrepareStatisticsAnalyzerObject::CreateSession(const ApacheLogEntry &log_entry) {
+  ApacheSessionEntry session;
 
   session.agent_name = log_entry.agent_name;
   session.bandwidth_usage = log_entry.bytes;
