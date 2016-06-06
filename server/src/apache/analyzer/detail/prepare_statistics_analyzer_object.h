@@ -63,8 +63,7 @@ class PrepareStatisticsAnalyzerObject : public PrepareStatisticsAnalyzerObjectIn
   void CalculateStatisticsPartially(const ::database::type::AgentName &agent_name,
                                     const ::database::type::VirtualhostName &virtualhost_name,
                                     const ::type::Timestamp &from,
-                                    const ::type::Timestamp &to,
-                                    const ::type::Timestamp &now);
+                                    const ::type::Timestamp &to);
 
   void CalculateStatistics(const ::database::type::AgentName &agent_name,
                            const ::database::type::VirtualhostName &virtualhost_name,
@@ -82,7 +81,7 @@ class PrepareStatisticsAnalyzerObject : public PrepareStatisticsAnalyzerObjectIn
   ::apache::type::ApacheSessionEntry CreateSession(const ::type::ApacheLogEntry &log_entry);
   void UpdateCurrentStatisticsCalculationTime(const ::apache::type::ApacheSessionEntry &session);
 
-  void SaveAllSessions(const ::type::Timestamp &now);
+  void SaveAllSessions();
 
   typedef std::pair<std::string, std::string> UniqueSessionId;
   ::apache::type::ApacheSessions calculated_sessions_statistics_;
@@ -90,7 +89,6 @@ class PrepareStatisticsAnalyzerObject : public PrepareStatisticsAnalyzerObjectIn
   ::apache::database::detail::DatabaseFunctionsInterfacePtr database_functions_;
   SystemInterfacePtr system_interface_;
   std::map<UniqueSessionId, ::apache::type::ApacheSessionEntry> sessions_statistics_;
-  ::type::Timestamp current_statistic_calculation_;
 };
 
 }

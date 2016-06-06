@@ -56,8 +56,7 @@ void PrepareStatisticsAnalyzerObject::Prepare() {
       }
     }
 
-    if (GetLastStatisticsCalculationTimestamp() < current_statistic_calculation_)
-      database_functions_->SetLastRun(::apache::type::LastRunType::STATISTICS_CALCULATION, current_statistic_calculation_);
+    database_functions_->SetLastRun(::apache::type::LastRunType::STATISTICS_CALCULATION, now);
   }
   else {
     BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::PrepareStatisticsAnalyzerObject::Prepare: Not running, last statistics prepared: " << GetLastStatisticsCalculationTimestamp();
@@ -102,8 +101,7 @@ void PrepareStatisticsAnalyzerObject::CreateStatisticsForPastDays(const AgentNam
       CalculateStatisticsPartially(agent_name,
                                    virtualhost_name,
                                    Timestamp::Create(::type::Time::Create(0, 0, 0), date),
-                                   Timestamp::Create(::type::Time::Create(23, 59, 59), date),
-                                   now);
+                                   Timestamp::Create(::type::Time::Create(23, 59, 59), date));
 
       database_functions_->MarkStatisticsAsCreatedFor(date);
     }
@@ -121,7 +119,7 @@ void PrepareStatisticsAnalyzerObject::CreateStatisticsForToday(const AgentName &
 
   Time from_time;
   if (last_statistics_calculation.GetDate() == now.GetDate())
-    from_time = last_statistics_calculation.GetTime() + SESSION_LENGTH;
+    from_time = last_statistics_calculation.GetTime();
   else
     from_time.Set(0, 0, 0);
 
@@ -129,14 +127,13 @@ void PrepareStatisticsAnalyzerObject::CreateStatisticsForToday(const AgentName &
   const Timestamp &to = now;
   BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::PrepareStatisticsAnalyzerObject::CreateStatisticsForToday: Creating session statistics for today (" << now << ") partially, from " << from << " to " << now;
 
-  CalculateStatisticsPartially(agent_name, virtualhost_name, from, to, now);
+  CalculateStatisticsPartially(agent_name, virtualhost_name, from, to);
 }
 
 void PrepareStatisticsAnalyzerObject::CalculateStatisticsPartially(const AgentName &agent_name,
                                                                    const VirtualhostName &virtualhost_name,
                                                                    const Timestamp &from,
-                                                                   const Timestamp &to,
-                                                                   const Timestamp &now) {
+                                                                   const Timestamp &to) {
   BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::PrepareStatisticsAnalyzerObject::CalculateStatisticsPartially: Function call";
   constexpr RowsCount MAX_ROWS_IN_MEMORY = 100;
 
@@ -152,7 +149,7 @@ void PrepareStatisticsAnalyzerObject::CalculateStatisticsPartially(const AgentNa
 
   CalculateStatistics(agent_name, virtualhost_name, from, to, left_logs_count, left_offset);
 
-  SaveAllSessions(now);
+  SaveAllSessions();
 }
 
 void PrepareStatisticsAnalyzerObject::CalculateStatistics(const AgentName &agent_name,
@@ -190,8 +187,6 @@ void PrepareStatisticsAnalyzerObject::CalculateStatistics(const AgentName &agent
       }
       else {
         BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::PrepareStatisticsAnalyzerObject::CalculateStatistics: Session statistics found in memory, but removing";
-
-        UpdateCurrentStatisticsCalculationTime(session);
 
         calculated_sessions_statistics_.push_back(session);
         sessions_statistics_.erase(usi);
@@ -260,31 +255,16 @@ bool PrepareStatisticsAnalyzerObject::IsInThisSameSession(const ::apache::type::
   return session;
 }
 
-void PrepareStatisticsAnalyzerObject::UpdateCurrentStatisticsCalculationTime(const ::apache::type::ApacheSessionEntry &session) {
-  if (current_statistic_calculation_ < session.session_start)
-    current_statistic_calculation_ = session.session_start;
-}
-
-void PrepareStatisticsAnalyzerObject::SaveAllSessions(const Timestamp &now) {
+void PrepareStatisticsAnalyzerObject::SaveAllSessions() {
   BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::PrepareStatisticsAnalyzerObject::SaveAllSessions: Function call";
 
-  for (auto element : sessions_statistics_) {
-    if (now.GetDate() == element.second.session_start.GetDate()) {
-      if (Distance(element.second.session_start.GetTime(), now.GetTime()) > SESSION_LENGTH) {
-        calculated_sessions_statistics_.push_back(element.second);
-        UpdateCurrentStatisticsCalculationTime(element.second);
-      }
-    }
-    else {
-      calculated_sessions_statistics_.push_back(element.second);
-      UpdateCurrentStatisticsCalculationTime(element.second);
-    }
+  for (auto element : sessions_statistics_)
+    calculated_sessions_statistics_.push_back(element.second);
 
-    database_functions_->AddSessionStatistics(calculated_sessions_statistics_);
+  database_functions_->AddSessionStatistics(calculated_sessions_statistics_);
 
-    sessions_statistics_.clear();
-    calculated_sessions_statistics_.clear();
-  }
+  sessions_statistics_.clear();
+  calculated_sessions_statistics_.clear();
 }
 
 }
