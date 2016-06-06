@@ -2,7 +2,7 @@
 
 #include <boost/log/trivial.hpp>
 
-#define CACHE_CAPACITY 5
+#define CACHE_CAPACITY 1
 
 namespace bash
 {
