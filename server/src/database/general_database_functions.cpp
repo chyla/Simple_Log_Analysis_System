@@ -214,6 +214,7 @@ void GeneralDatabaseFunctions::AddAgentName(const std::string &name) {
 
   auto id = GetAgentNameId(name);
   if (id == -1) {
+    std::cerr << "AAA";
     AddAgentName(name);
     id = GetAgentNameId(name);
   }
@@ -222,7 +223,7 @@ void GeneralDatabaseFunctions::AddAgentName(const std::string &name) {
 }
 
 ::database::type::RowId GeneralDatabaseFunctions::GetAgentNameId(const std::string &name) {
-  BOOST_LOG_TRIVIAL(debug) << "database::GeneralDatabaseFunctions::AddAgentName: Function call";
+  BOOST_LOG_TRIVIAL(debug) << "database::GeneralDatabaseFunctions::GetAgentNameId: Function call";
   ::database::type::RowId id = -1;
 
   string sql = "select ID from AGENT_NAMES where AGENT_NAME=?";
@@ -275,7 +276,7 @@ std::string GeneralDatabaseFunctions::GetAgentNameById(const ::database::type::R
   sqlite_wrapper_->Finalize(statement);
 
   if (!found) {
-    BOOST_LOG_TRIVIAL(error) << "database::GeneralDatabaseFunctions::GetTimeById: Item with id=" << id << " not found";
+    BOOST_LOG_TRIVIAL(error) << "database::GeneralDatabaseFunctions::GetAgentNameById: Item with id=" << id << " not found";
     throw exception::detail::ItemNotFoundException();
   }
 
