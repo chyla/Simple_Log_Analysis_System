@@ -54,6 +54,11 @@ class DatabaseFunctionsInterface {
   virtual void SetLastRun(const ::apache::type::LastRunType &type, const ::type::Timestamp &date) = 0;
 
   virtual ::type::Timestamp GetLastRun(const ::apache::type::LastRunType &type) = 0;
+
+  virtual void AddVirtualhostName(const std::string &name) = 0;
+  virtual ::database::type::RowId AddAndGetVirtualhostNameId(const std::string &name) = 0;
+  virtual ::database::type::RowId GetVirtualhostNameId(const std::string &name) = 0;
+  virtual std::string GetVirtualhostNameById(const ::database::type::RowId &id) = 0;
 };
 
 typedef std::shared_ptr<DatabaseFunctionsInterface> DatabaseFunctionsInterfacePtr;

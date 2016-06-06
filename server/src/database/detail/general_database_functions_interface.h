@@ -34,6 +34,11 @@ class GeneralDatabaseFunctionsInterface {
   virtual ::database::type::RowId AddAndGetDateId(const ::type::Date &date) = 0;
   virtual ::database::type::RowId GetDateId(const ::type::Date &date) = 0;
   virtual ::type::Date GetDateById(const ::database::type::RowId &id) = 0;
+
+  virtual void AddAgentName(const std::string &name) = 0;
+  virtual ::database::type::RowId AddAndGetAgentNameId(const std::string &name) = 0;
+  virtual ::database::type::RowId GetAgentNameId(const std::string &name) = 0;
+  virtual std::string GetAgentNameById(const ::database::type::RowId &id) = 0;
 };
 
 typedef std::shared_ptr<GeneralDatabaseFunctionsInterface> GeneralDatabaseFunctionsInterfacePtr;

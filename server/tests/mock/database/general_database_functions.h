@@ -39,6 +39,11 @@ class GeneralDatabaseFunctions : public ::database::detail::GeneralDatabaseFunct
   MOCK_METHOD1(AddAndGetDateId, ::database::type::RowId(const ::type::Date &date));
   MOCK_METHOD1(GetDateId, ::database::type::RowId(const ::type::Date &date));
   MOCK_METHOD1(GetDateById, ::type::Date(const ::database::type::RowId &id));
+
+  MOCK_METHOD1(AddAgentName, void (const std::string &name));
+  MOCK_METHOD1(AddAndGetAgentNameId, ::database::type::RowId(const std::string &name));
+  MOCK_METHOD1(GetAgentNameId, ::database::type::RowId(const std::string &name));
+  MOCK_METHOD1(GetAgentNameById, std::string(const ::database::type::RowId &id));
 };
 
 }

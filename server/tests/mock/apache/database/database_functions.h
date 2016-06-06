@@ -53,6 +53,11 @@ class DatabaseFunctions : public ::apache::database::detail::DatabaseFunctionsIn
   MOCK_METHOD2(SetLastRun, void(const ::apache::type::LastRunType &type, const ::type::Date &date));
 
   MOCK_METHOD1(GetLastRun, ::type::Date(const ::apache::type::LastRunType &type));
+
+  MOCK_METHOD1(AddVirtualhostName, void (const std::string &name));
+  MOCK_METHOD1(AddAndGetVirtualhostNameId, ::database::type::RowId(const std::string &name));
+  MOCK_METHOD1(GetVirtualhostNameId, ::database::type::RowId(const std::string &name));
+  MOCK_METHOD1(GetVirtualhostNameById, std::string(const ::database::type::RowId &id));
 };
 
 }

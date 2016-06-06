@@ -168,6 +168,18 @@ void DatabaseFunctions::SetLastRun(const ::apache::type::LastRunType &type, cons
                                    general_database_functions_->GetDateById(date_id));
 }
 
+void DatabaseFunctions::AddVirtualhostName(const std::string &name) {
+}
+
+::database::type::RowId DatabaseFunctions::AddAndGetVirtualhostNameId(const std::string &name) {
+}
+
+::database::type::RowId DatabaseFunctions::GetVirtualhostNameId(const std::string &name) {
+}
+
+std::string DatabaseFunctions::GetVirtualhostNameById(const ::database::type::RowId &id) {
+}
+
 DatabaseFunctions::DatabaseFunctions(::database::DatabasePtr db,
                                      ::database::detail::SQLiteWrapperInterfacePtr sqlite_wrapper,
                                      ::database::detail::GeneralDatabaseFunctionsInterfacePtr general_database_functions) :

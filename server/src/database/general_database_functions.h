@@ -36,6 +36,11 @@ class GeneralDatabaseFunctions : public detail::GeneralDatabaseFunctionsInterfac
   ::database::type::RowId GetDateId(const ::type::Date &date) override;
   ::type::Date GetDateById(const ::database::type::RowId &id) override;
 
+  void AddAgentName(const std::string &name) override;
+  ::database::type::RowId AddAndGetAgentNameId(const std::string &name) override;
+  ::database::type::RowId GetAgentNameId(const std::string &name) override;
+  std::string GetAgentNameById(const ::database::type::RowId &id) override;
+
  private:
   GeneralDatabaseFunctions(detail::SQLiteWrapperInterfacePtr sqlite_wrapper);
 

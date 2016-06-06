@@ -57,6 +57,11 @@ class DatabaseFunctions : public detail::DatabaseFunctionsInterface {
 
   ::type::Timestamp GetLastRun(const ::apache::type::LastRunType &type) override;
 
+  void AddVirtualhostName(const std::string &name) override;
+  ::database::type::RowId AddAndGetVirtualhostNameId(const std::string &name) override;
+  ::database::type::RowId GetVirtualhostNameId(const std::string &name) override;
+  std::string GetVirtualhostNameById(const ::database::type::RowId &id) override;
+
  private:
   ::database::DatabasePtr db_;
   ::database::detail::SQLiteWrapperInterfacePtr sqlite_wrapper_;
