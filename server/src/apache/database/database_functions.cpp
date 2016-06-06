@@ -16,6 +16,7 @@ using ::type::Time;
 using ::type::Date;
 
 using namespace database;
+using namespace database::type;
 using namespace std;
 
 namespace apache
@@ -49,6 +50,17 @@ void DatabaseFunctions::CreateTables() {
                         "  ID integer primary key not null, "
                         "  VIRTUALHOST_NAME text, "
                         "  unique (VIRTUALHOST_NAME) "
+                        ");");
+
+  sqlite_wrapper_->Exec("create table if not exists APACHE_LEARNING_SESSIONS ( "
+                        "  ID integer primary key not null, "
+                        "  AGENT_NAME_ID integer not null, "
+                        "  VIRTUALHOST_NAME_ID integer not null, "
+                        "  SESSION_ID integer not null, "
+                        "  foreign key(AGENT_NAME_ID) references AGENT_NAMES(ID), "
+                        "  foreign key(VIRTUALHOST_NAME_ID) references APACHE_VIRTUALHOSTS_NAMES(ID), "
+                        "  foreign key(SESSION_ID) references APACHE_SESSION_TABLE(ID), "
+                        "  unique(AGENT_NAME_ID, VIRTUALHOST_NAME_ID, SESSION_ID) "
                         ");");
 }
 
@@ -266,6 +278,49 @@ std::string DatabaseFunctions::GetVirtualhostNameById(const ::database::type::Ro
   }
 
   return name;
+}
+
+void DatabaseFunctions::SetLearningSessions(const std::string &agent_name,
+                                            const std::string &virtualhost_name,
+                                            const RowIds &sessions_ids) {
+  BOOST_LOG_TRIVIAL(debug) << "database::DatabaseFunctions::SetLearningSessions: Function call";
+
+  auto agent_id = general_database_functions_->GetAgentNameId(agent_name);
+  auto virtualhost_id = GetVirtualhostNameId(virtualhost_name);
+
+  string sql;
+  sql = "begin transaction; ";
+
+  for (auto id : sessions_ids) {
+    sql +=
+        "insert or ignore into APACHE_LEARNING_SESSIONS ( AGENT_NAME_ID, VIRTUALHOST_NAME_ID, SESSION_ID ) "
+        "values ( "
+        + to_string(agent_id) + ", "
+        + to_string(virtualhost_id) + ", "
+        + to_string(id) +
+        "); ";
+  }
+
+  sql += "end transaction; ";
+
+  sqlite_wrapper_->Exec(sql);
+}
+
+void DatabaseFunctions::RemoveAllLearningSessions(const std::string &agent_name,
+                                                  const std::string &virtualhost_name) {
+  BOOST_LOG_TRIVIAL(debug) << "database::DatabaseFunctions::RemoveAllLearningSessions: Function call";
+
+  auto agent_id = general_database_functions_->GetAgentNameId(agent_name);
+  auto virtualhost_id = GetVirtualhostNameId(virtualhost_name);
+
+  string sql =
+      "delete from APACHE_LEARNING_SESSIONS where "
+      "  AGENT_NAME_ID=" + to_string(agent_id) +
+      "and " +
+      "  VIRTUALHOST_NAME_ID=" + to_string(virtualhost_id) +
+      ";";
+
+  sqlite_wrapper_->Exec(sql);
 }
 
 DatabaseFunctions::DatabaseFunctions(::database::DatabasePtr db,

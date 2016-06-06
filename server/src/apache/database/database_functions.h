@@ -62,6 +62,12 @@ class DatabaseFunctions : public detail::DatabaseFunctionsInterface {
   ::database::type::RowId GetVirtualhostNameId(const std::string &name) override;
   std::string GetVirtualhostNameById(const ::database::type::RowId &id) override;
 
+  void SetLearningSessions(const std::string &agent_name,
+                           const std::string &virtualhost_name,
+                           const ::database::type::RowIds &sessions_ids) override;
+  void RemoveAllLearningSessions(const std::string &agent_name,
+                                 const std::string &virtualhost_name) override;
+
  private:
   ::database::DatabasePtr db_;
   ::database::detail::SQLiteWrapperInterfacePtr sqlite_wrapper_;
