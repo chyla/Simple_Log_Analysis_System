@@ -44,12 +44,6 @@ void GeneralDatabaseFunctions::CreateTables() {
                         "  AGENT_NAME text, "
                         "  unique (AGENT_NAME) "
                         ");");
-
-  sqlite_wrapper_->Exec("create table if not exists APACHE_VIRTUALHOSTS_NAMES ( "
-                        "  ID integer primary key not null, "
-                        "  VIRTUALHOST_NAME text, "
-                        "  unique (VIRTUALHOST_NAME) "
-                        ");");
 }
 
 void GeneralDatabaseFunctions::AddTime(const ::type::Time &t) {
@@ -214,7 +208,6 @@ void GeneralDatabaseFunctions::AddAgentName(const std::string &name) {
 
   auto id = GetAgentNameId(name);
   if (id == -1) {
-    std::cerr << "AAA";
     AddAgentName(name);
     id = GetAgentNameId(name);
   }

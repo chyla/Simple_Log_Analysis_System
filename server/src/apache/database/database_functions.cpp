@@ -8,12 +8,14 @@
 #include <string>
 #include <boost/log/trivial.hpp>
 
+#include "src/database/exception/detail/item_not_found_exception.h"
 #include "src/database/exception/detail/cant_execute_sql_statement_exception.h"
 
 using ::type::Timestamp;
 using ::type::Time;
 using ::type::Date;
 
+using namespace database;
 using namespace std;
 
 namespace apache
@@ -41,6 +43,12 @@ void DatabaseFunctions::CreateTables() {
                         "  foreign key(DATE_ID) references DATE_TABLE(ID), "
                         "  foreign key(TIME_ID) references TIME_TABLE(ID), "
                         "  unique (RUN_TYPE) "
+                        ");");
+
+  sqlite_wrapper_->Exec("create table if not exists APACHE_VIRTUALHOSTS_NAMES ( "
+                        "  ID integer primary key not null, "
+                        "  VIRTUALHOST_NAME text, "
+                        "  unique (VIRTUALHOST_NAME) "
                         ");");
 }
 
@@ -169,15 +177,95 @@ void DatabaseFunctions::SetLastRun(const ::apache::type::LastRunType &type, cons
 }
 
 void DatabaseFunctions::AddVirtualhostName(const std::string &name) {
+  BOOST_LOG_TRIVIAL(debug) << "database::DatabaseFunctions::AddVirtualhostName: Function call";
+
+  string sql = "insert or ignore into APACHE_VIRTUALHOSTS_NAMES ( VIRTUALHOST_NAME ) values (?);";
+
+  sqlite3_stmt *statement = nullptr;
+  sqlite_wrapper_->Prepare(sql, &statement);
+
+  try {
+    sqlite_wrapper_->BindText(statement, 0, name);
+  }
+  catch (exception::DatabaseException &ex) {
+    sqlite_wrapper_->Finalize(statement);
+    throw;
+  }
+
+  sqlite_wrapper_->Finalize(statement);
 }
 
 ::database::type::RowId DatabaseFunctions::AddAndGetVirtualhostNameId(const std::string &name) {
+  BOOST_LOG_TRIVIAL(debug) << "database::DatabaseFunctions::AddAndGetVirtualhostNameId: Function call";
+
+  auto id = GetVirtualhostNameId(name);
+  if (id == -1) {
+    AddVirtualhostName(name);
+    id = GetVirtualhostNameId(name);
+  }
+
+  return id;
 }
 
 ::database::type::RowId DatabaseFunctions::GetVirtualhostNameId(const std::string &name) {
+  BOOST_LOG_TRIVIAL(debug) << "database::DatabaseFunctions::GetVirtualhostNameId: Function call";
+  ::database::type::RowId id = -1;
+
+  string sql = "select ID from APACHE_VIRTUALHOSTS_NAMES where VIRTUALHOST_NAME=?";
+
+  sqlite3_stmt *statement = nullptr;
+  sqlite_wrapper_->Prepare(sql, &statement);
+
+  try {
+    sqlite_wrapper_->BindText(statement, 0, name);
+
+    auto ret = sqlite_wrapper_->Step(statement);
+    if (ret == SQLITE_ROW)
+      id = sqlite_wrapper_->ColumnInt64(statement, 0);
+  }
+  catch (exception::DatabaseException &ex) {
+    sqlite_wrapper_->Finalize(statement);
+    throw;
+  }
+
+  sqlite_wrapper_->Finalize(statement);
+
+  return id;
 }
 
 std::string DatabaseFunctions::GetVirtualhostNameById(const ::database::type::RowId &id) {
+  BOOST_LOG_TRIVIAL(debug) << "database::DatabaseFunctions::GetVirtualhostNameById: Function call";
+  std::string name;
+  bool found = false;
+
+  string sql =
+      "select VIRTUALHOST_NAME from APACHE_VIRTUALHOSTS_NAMES "
+      "  where"
+      "    ID=" + to_string(id) + ";";
+
+  sqlite3_stmt *statement = nullptr;
+  sqlite_wrapper_->Prepare(sql, &statement);
+
+  try {
+    auto ret = sqlite_wrapper_->Step(statement);
+    if (ret == SQLITE_ROW) {
+      name = sqlite_wrapper_->ColumnText(statement, 0);
+      found = true;
+    }
+  }
+  catch (exception::DatabaseException &ex) {
+    sqlite_wrapper_->Finalize(statement);
+    throw;
+  }
+
+  sqlite_wrapper_->Finalize(statement);
+
+  if (!found) {
+    BOOST_LOG_TRIVIAL(error) << "database::DatabaseFunctions::GetVirtualhostNameById: Item with id=" << id << " not found";
+    throw exception::detail::ItemNotFoundException();
+  }
+
+  return name;
 }
 
 DatabaseFunctions::DatabaseFunctions(::database::DatabasePtr db,

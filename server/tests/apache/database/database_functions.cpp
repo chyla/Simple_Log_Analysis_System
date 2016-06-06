@@ -6,6 +6,8 @@
 #include <gmock/gmock.h>
 
 #include "src/apache/database/database_functions.h"
+#include "src/database/exception/detail/item_not_found_exception.h"
+#include "src/database/exception/detail/cant_execute_sql_statement_exception.h"
 
 #include "tests/mock/database/sqlite_wrapper.h"
 #include "tests/mock/database/general_database_functions.h"
@@ -17,12 +19,16 @@ using namespace std;
 
 class apache_database_DatabaseFunctionsTest : public ::testing::Test {
  public:
-  virtual ~apache_database_DatabaseFunctionsTest() = default;
-
   ::mock::database::SQLiteWrapperPtr sqlite_wrapper;
   ::mock::database::GeneralDatabaseFunctionsPtr general_database_functions;
   ::apache::database::DatabaseFunctionsPtr database_functions;
   ::type::Date example_date;
+  const string example_virtualhost_name;
+
+  apache_database_DatabaseFunctionsTest() :
+  example_virtualhost_name("example_vh_name") {
+  }
+  virtual ~apache_database_DatabaseFunctionsTest() = default;
 
   void SetUp() {
     sqlite_wrapper = ::mock::database::SQLiteWrapper::Create();
@@ -77,4 +83,101 @@ TEST_F(apache_database_DatabaseFunctionsTest, AreStatisticsCreatedFor_WhenStatis
   EXPECT_CALL(*sqlite_wrapper, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE));
 
   EXPECT_FALSE(database_functions->AreStatisticsCreatedFor(example_date));
+}
+
+TEST_F(apache_database_DatabaseFunctionsTest, AddVirtualhostName) {
+  EXPECT_CALL(*sqlite_wrapper, Prepare(_, NotNull())).WillOnce(SetArgPointee<1>(DB_STATEMENT_EXAMPLE_PTR_VALUE));
+  EXPECT_CALL(*sqlite_wrapper, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 0, StrEq(example_virtualhost_name.c_str())));
+  EXPECT_CALL(*sqlite_wrapper, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE));
+
+  database_functions->AddVirtualhostName(example_virtualhost_name);
+}
+
+TEST_F(apache_database_DatabaseFunctionsTest, AddVirtualhostName_WhenBindTextThrowException) {
+  EXPECT_CALL(*sqlite_wrapper, Prepare(_, NotNull())).WillOnce(SetArgPointee<1>(DB_STATEMENT_EXAMPLE_PTR_VALUE));
+  EXPECT_CALL(*sqlite_wrapper, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 0, StrEq(example_virtualhost_name.c_str()))).WillOnce(Throw(::database::exception::detail::CantExecuteSqlStatementException()));
+  EXPECT_CALL(*sqlite_wrapper, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE));
+
+  EXPECT_THROW(database_functions->AddVirtualhostName(example_virtualhost_name), ::database::exception::detail::CantExecuteSqlStatementException);
+}
+
+TEST_F(apache_database_DatabaseFunctionsTest, AddAndGetVirtualhostNameId) {
+  EXPECT_CALL(*sqlite_wrapper, Prepare(_, NotNull())).WillOnce(SetArgPointee<1>(DB_STATEMENT_EXAMPLE_PTR_VALUE));
+  EXPECT_CALL(*sqlite_wrapper, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 0, StrEq(example_virtualhost_name.c_str())));
+  EXPECT_CALL(*sqlite_wrapper, Step(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_ROW));
+  EXPECT_CALL(*sqlite_wrapper, ColumnInt64(DB_STATEMENT_EXAMPLE_PTR_VALUE, 0)).WillOnce(Return(2));
+  EXPECT_CALL(*sqlite_wrapper, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE));
+
+  EXPECT_EQ(2, database_functions->AddAndGetVirtualhostNameId(example_virtualhost_name));
+}
+
+TEST_F(apache_database_DatabaseFunctionsTest, AddAndGetVirtualhostNameId_WhenVirtualhostNameNotExists) {
+  EXPECT_CALL(*sqlite_wrapper, Prepare(_, NotNull())).Times(3).WillRepeatedly(SetArgPointee<1>(DB_STATEMENT_EXAMPLE_PTR_VALUE));
+  EXPECT_CALL(*sqlite_wrapper, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 0, StrEq(example_virtualhost_name.c_str()))).Times(3);
+  EXPECT_CALL(*sqlite_wrapper, Step(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_DONE)).WillOnce(Return(SQLITE_ROW));
+  EXPECT_CALL(*sqlite_wrapper, ColumnInt64(DB_STATEMENT_EXAMPLE_PTR_VALUE, 0)).WillOnce(Return(3));
+  EXPECT_CALL(*sqlite_wrapper, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE)).Times(3);
+
+  EXPECT_EQ(3, database_functions->AddAndGetVirtualhostNameId(example_virtualhost_name));
+}
+
+TEST_F(apache_database_DatabaseFunctionsTest, GetVirtualhostNameId) {
+  EXPECT_CALL(*sqlite_wrapper, Prepare(_, NotNull())).WillOnce(SetArgPointee<1>(DB_STATEMENT_EXAMPLE_PTR_VALUE));
+  EXPECT_CALL(*sqlite_wrapper, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 0, StrEq(example_virtualhost_name.c_str())));
+  EXPECT_CALL(*sqlite_wrapper, Step(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_ROW));
+  EXPECT_CALL(*sqlite_wrapper, ColumnInt64(DB_STATEMENT_EXAMPLE_PTR_VALUE, 0)).WillOnce(Return(2));
+  EXPECT_CALL(*sqlite_wrapper, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE));
+
+  EXPECT_EQ(2, database_functions->GetVirtualhostNameId(example_virtualhost_name));
+}
+
+TEST_F(apache_database_DatabaseFunctionsTest, GetVirtualhostNameId_WhenRowNotFound) {
+  EXPECT_CALL(*sqlite_wrapper, Prepare(_, NotNull())).WillOnce(SetArgPointee<1>(DB_STATEMENT_EXAMPLE_PTR_VALUE));
+  EXPECT_CALL(*sqlite_wrapper, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 0, StrEq(example_virtualhost_name.c_str())));
+  EXPECT_CALL(*sqlite_wrapper, Step(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_DONE));
+  EXPECT_CALL(*sqlite_wrapper, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE));
+
+  EXPECT_EQ(-1, database_functions->GetVirtualhostNameId(example_virtualhost_name));
+}
+
+TEST_F(apache_database_DatabaseFunctionsTest, GetVirtualhostNameId_WhenBindTextThrowException) {
+  EXPECT_CALL(*sqlite_wrapper, Prepare(_, NotNull())).WillOnce(SetArgPointee<1>(DB_STATEMENT_EXAMPLE_PTR_VALUE));
+  EXPECT_CALL(*sqlite_wrapper, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 0, StrEq(example_virtualhost_name.c_str()))).WillOnce(Throw(::database::exception::detail::CantExecuteSqlStatementException()));
+  EXPECT_CALL(*sqlite_wrapper, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE));
+
+  EXPECT_THROW(database_functions->GetVirtualhostNameId(example_virtualhost_name), ::database::exception::detail::CantExecuteSqlStatementException);
+}
+
+TEST_F(apache_database_DatabaseFunctionsTest, GetVirtualhostNameId_WhenStepThrowException) {
+  EXPECT_CALL(*sqlite_wrapper, Prepare(_, NotNull())).WillOnce(SetArgPointee<1>(DB_STATEMENT_EXAMPLE_PTR_VALUE));
+  EXPECT_CALL(*sqlite_wrapper, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 0, StrEq(example_virtualhost_name.c_str())));
+  EXPECT_CALL(*sqlite_wrapper, Step(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Throw(::database::exception::detail::CantExecuteSqlStatementException()));
+  EXPECT_CALL(*sqlite_wrapper, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE));
+
+  EXPECT_THROW(database_functions->GetVirtualhostNameId(example_virtualhost_name), ::database::exception::detail::CantExecuteSqlStatementException);
+}
+
+TEST_F(apache_database_DatabaseFunctionsTest, GetVirtualhostNameById) {
+  EXPECT_CALL(*sqlite_wrapper, Prepare(_, NotNull())).WillOnce(SetArgPointee<1>(DB_STATEMENT_EXAMPLE_PTR_VALUE));
+  EXPECT_CALL(*sqlite_wrapper, Step(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_ROW));
+  EXPECT_CALL(*sqlite_wrapper, ColumnText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 0)).WillOnce(Return(example_virtualhost_name));
+  EXPECT_CALL(*sqlite_wrapper, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE));
+
+  EXPECT_EQ(example_virtualhost_name, database_functions->GetVirtualhostNameById(0));
+}
+
+TEST_F(apache_database_DatabaseFunctionsTest, GetVirtualhostNameById_WhenIdNotFound) {
+  EXPECT_CALL(*sqlite_wrapper, Prepare(_, NotNull())).WillOnce(SetArgPointee<1>(DB_STATEMENT_EXAMPLE_PTR_VALUE));
+  EXPECT_CALL(*sqlite_wrapper, Step(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_DONE));
+  EXPECT_CALL(*sqlite_wrapper, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE));
+
+  EXPECT_THROW(database_functions->GetVirtualhostNameById(0), ::database::exception::detail::ItemNotFoundException);
+}
+
+TEST_F(apache_database_DatabaseFunctionsTest, GetVirtualhostNameById_WhenStepThrowException) {
+  EXPECT_CALL(*sqlite_wrapper, Prepare(_, NotNull())).WillOnce(SetArgPointee<1>(DB_STATEMENT_EXAMPLE_PTR_VALUE));
+  EXPECT_CALL(*sqlite_wrapper, Step(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Throw(::database::exception::detail::CantExecuteSqlStatementException()));
+  EXPECT_CALL(*sqlite_wrapper, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE));
+
+  EXPECT_THROW(database_functions->GetVirtualhostNameById(0), ::database::exception::detail::CantExecuteSqlStatementException);
 }
