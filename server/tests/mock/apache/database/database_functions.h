@@ -58,6 +58,17 @@ class DatabaseFunctions : public ::apache::database::detail::DatabaseFunctionsIn
   MOCK_METHOD1(AddAndGetVirtualhostNameId, ::database::type::RowId(const std::string &name));
   MOCK_METHOD1(GetVirtualhostNameId, ::database::type::RowId(const std::string &name));
   MOCK_METHOD1(GetVirtualhostNameById, std::string(const ::database::type::RowId &id));
+
+  MOCK_METHOD3(GetLearningSessionsIds, ::database::type::RowIds(const ::database::type::RowId &agent_id,
+                                                                const ::database::type::RowId &virtualhost_id,
+                                                                unsigned limit, ::database::type::RowId offset));
+  MOCK_METHOD2(GetLearningSessionsCount, ::database::type::RowsCount(const ::database::type::RowId &agent_id,
+                                                                     const ::database::type::RowId &virtualhost_id));
+  MOCK_METHOD3(SetLearningSessions, void(const ::database::type::RowId &agent_id,
+                                         const ::database::type::RowId &virtualhost_id,
+                                         const ::database::type::RowIds &sessions_ids));
+  MOCK_METHOD2(RemoveAllLearningSessions, void(const ::database::type::RowId &agent_id,
+                                               const ::database::type::RowId &virtualhost_id));
 };
 
 }
