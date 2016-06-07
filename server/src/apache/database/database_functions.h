@@ -67,11 +67,11 @@ class DatabaseFunctions : public detail::DatabaseFunctionsInterface {
                                                   unsigned limit, ::database::type::RowId offset) override;
   ::database::type::RowsCount GetLearningSessionsCount(const ::database::type::RowId &agent_id,
                                                        const ::database::type::RowId &virtualhost_id) override;
-  void SetLearningSessions(const std::string &agent_name,
-                           const std::string &virtualhost_name,
+  void SetLearningSessions(const ::database::type::RowId &agent_id,
+                           const ::database::type::RowId &virtualhost_id,
                            const ::database::type::RowIds &sessions_ids) override;
-  void RemoveAllLearningSessions(const std::string &agent_name,
-                                 const std::string &virtualhost_name) override;
+  void RemoveAllLearningSessions(const ::database::type::RowId &agent_id,
+                                 const ::database::type::RowId &virtualhost_id) override;
 
  private:
   ::database::DatabasePtr db_;

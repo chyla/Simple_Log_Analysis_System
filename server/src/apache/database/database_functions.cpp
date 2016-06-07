@@ -333,13 +333,10 @@ std::string DatabaseFunctions::GetVirtualhostNameById(const ::database::type::Ro
   return sqlite_wrapper_->GetFirstInt64Column(sql);
 }
 
-void DatabaseFunctions::SetLearningSessions(const std::string &agent_name,
-                                            const std::string &virtualhost_name,
+void DatabaseFunctions::SetLearningSessions(const RowId &agent_id,
+                                            const RowId &virtualhost_id,
                                             const RowIds &sessions_ids) {
   BOOST_LOG_TRIVIAL(debug) << "database::DatabaseFunctions::SetLearningSessions: Function call";
-
-  auto agent_id = general_database_functions_->GetAgentNameId(agent_name);
-  auto virtualhost_id = GetVirtualhostNameId(virtualhost_name);
 
   string sql;
   sql = "begin transaction; ";
@@ -359,12 +356,9 @@ void DatabaseFunctions::SetLearningSessions(const std::string &agent_name,
   sqlite_wrapper_->Exec(sql);
 }
 
-void DatabaseFunctions::RemoveAllLearningSessions(const std::string &agent_name,
-                                                  const std::string &virtualhost_name) {
+void DatabaseFunctions::RemoveAllLearningSessions(const RowId &agent_id,
+                                                  const RowId &virtualhost_id) {
   BOOST_LOG_TRIVIAL(debug) << "database::DatabaseFunctions::RemoveAllLearningSessions: Function call";
-
-  auto agent_id = general_database_functions_->GetAgentNameId(agent_name);
-  auto virtualhost_id = GetVirtualhostNameId(virtualhost_name);
 
   string sql =
       "delete from APACHE_LEARNING_SESSIONS where "

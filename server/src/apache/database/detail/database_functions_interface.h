@@ -65,11 +65,11 @@ class DatabaseFunctionsInterface {
                                                           unsigned limit, ::database::type::RowId offset) = 0;
   virtual ::database::type::RowsCount GetLearningSessionsCount(const ::database::type::RowId &agent_id,
                                                                const ::database::type::RowId &virtualhost_id) = 0;
-  virtual void SetLearningSessions(const std::string &agent_name,
-                                   const std::string &virtualhost_name,
+  virtual void SetLearningSessions(const ::database::type::RowId &agent_id,
+                                   const ::database::type::RowId &virtualhost_id,
                                    const ::database::type::RowIds &sessions_ids) = 0;
-  virtual void RemoveAllLearningSessions(const std::string &agent_name,
-                                         const std::string &virtualhost_name) = 0;
+  virtual void RemoveAllLearningSessions(const ::database::type::RowId &agent_id,
+                                         const ::database::type::RowId &virtualhost_id) = 0;
 };
 
 typedef std::shared_ptr<DatabaseFunctionsInterface> DatabaseFunctionsInterfacePtr;
