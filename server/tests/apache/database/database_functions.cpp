@@ -23,9 +23,11 @@ class apache_database_DatabaseFunctionsTest : public ::testing::Test {
   ::mock::database::GeneralDatabaseFunctionsPtr general_database_functions;
   ::apache::database::DatabaseFunctionsPtr database_functions;
   ::type::Date example_date;
+  const string example_agent_name;
   const string example_virtualhost_name;
 
   apache_database_DatabaseFunctionsTest() :
+  example_agent_name("example_agent"),
   example_virtualhost_name("example_vh_name") {
   }
   virtual ~apache_database_DatabaseFunctionsTest() = default;
@@ -180,4 +182,48 @@ TEST_F(apache_database_DatabaseFunctionsTest, GetVirtualhostNameById_WhenStepThr
   EXPECT_CALL(*sqlite_wrapper, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE));
 
   EXPECT_THROW(database_functions->GetVirtualhostNameById(0), ::database::exception::detail::CantExecuteSqlStatementException);
+}
+
+TEST_F(apache_database_DatabaseFunctionsTest, GetLearningSessionsIds) {
+  {
+    InSequence s;
+
+    EXPECT_CALL(*sqlite_wrapper, Prepare(_, NotNull())).WillOnce(SetArgPointee<1>(DB_STATEMENT_EXAMPLE_PTR_VALUE));
+    EXPECT_CALL(*sqlite_wrapper, Step(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_ROW));
+    EXPECT_CALL(*sqlite_wrapper, ColumnInt64(DB_STATEMENT_EXAMPLE_PTR_VALUE, 0)).WillOnce(Return(3));
+    EXPECT_CALL(*sqlite_wrapper, Step(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_ROW));
+    EXPECT_CALL(*sqlite_wrapper, ColumnInt64(DB_STATEMENT_EXAMPLE_PTR_VALUE, 0)).WillOnce(Return(8));
+    EXPECT_CALL(*sqlite_wrapper, Step(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_DONE));
+    EXPECT_CALL(*sqlite_wrapper, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE));
+  }
+
+  auto ids = database_functions->GetLearningSessionsIds(1, 2, 10, 0);
+  EXPECT_EQ(2, ids.size());
+  EXPECT_EQ(3, ids.at(0));
+  EXPECT_EQ(8, ids.at(1));
+}
+
+TEST_F(apache_database_DatabaseFunctionsTest, GetLearningSessionsIds_WhenNoItemsFound) {
+  {
+    InSequence s;
+
+    EXPECT_CALL(*sqlite_wrapper, Prepare(_, NotNull())).WillOnce(SetArgPointee<1>(DB_STATEMENT_EXAMPLE_PTR_VALUE));
+    EXPECT_CALL(*sqlite_wrapper, Step(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_DONE));
+    EXPECT_CALL(*sqlite_wrapper, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE));
+  }
+
+  auto ids = database_functions->GetLearningSessionsIds(1, 2, 10, 0);
+  EXPECT_EQ(0, ids.size());
+}
+
+TEST_F(apache_database_DatabaseFunctionsTest, GetLearningSessionsIds_WhenStepThrowException) {
+  {
+    InSequence s;
+
+    EXPECT_CALL(*sqlite_wrapper, Prepare(_, NotNull())).WillOnce(SetArgPointee<1>(DB_STATEMENT_EXAMPLE_PTR_VALUE));
+    EXPECT_CALL(*sqlite_wrapper, Step(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Throw(::database::exception::detail::CantExecuteSqlStatementException()));
+    EXPECT_CALL(*sqlite_wrapper, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE));
+  }
+
+  EXPECT_THROW(database_functions->GetLearningSessionsIds(1, 2, 10, 0), ::database::exception::detail::CantExecuteSqlStatementException);
 }

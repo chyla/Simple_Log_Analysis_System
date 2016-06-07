@@ -280,6 +280,59 @@ std::string DatabaseFunctions::GetVirtualhostNameById(const ::database::type::Ro
   return name;
 }
 
+::database::type::RowIds DatabaseFunctions::GetLearningSessionsIds(const RowId &agent_id,
+                                                                   const RowId &virtualhost_id,
+                                                                   unsigned limit, RowId offset) {
+  BOOST_LOG_TRIVIAL(debug) << "database::DatabaseFunctions::GetLearningSessions: Function call";
+  ::database::type::RowIds rows;
+
+  string sql =
+      "select SESSION_ID from APACHE_LEARNING_SESSIONS where "
+      "    AGENT_NAME_ID=" + to_string(agent_id) +
+      "  and " +
+      "    VIRTUALHOST_NAME_ID=" + to_string(virtualhost_id) +
+      "  limit " + to_string(limit) + " offset " + to_string(offset) +
+      ";";
+
+  sqlite3_stmt *statement = nullptr;
+  sqlite_wrapper_->Prepare(sql, &statement);
+
+  try {
+    int ret;
+    ::database::type::RowId id;
+    do {
+      ret = sqlite_wrapper_->Step(statement);
+      if (ret == SQLITE_ROW) {
+        id = sqlite_wrapper_->ColumnInt64(statement, 0);
+        rows.push_back(id);
+      }
+    }
+    while (ret != SQLITE_DONE);
+  }
+  catch (exception::DatabaseException &ex) {
+    sqlite_wrapper_->Finalize(statement);
+    throw;
+  }
+
+  sqlite_wrapper_->Finalize(statement);
+
+  return rows;
+}
+
+::database::type::RowsCount DatabaseFunctions::GetLearningSessionsCount(const RowId &agent_id,
+                                                                        const RowId &virtualhost_id) {
+  BOOST_LOG_TRIVIAL(debug) << "database::DatabaseFunctions::GetLearningSessionsCount: Function call";
+
+  string sql =
+      "select count(*) from APACHE_LEARNING_SESSIONS where "
+      "    AGENT_NAME_ID=" + to_string(agent_id) +
+      "  and " +
+      "    VIRTUALHOST_NAME_ID=" + to_string(virtualhost_id) +
+      ";";
+
+  return sqlite_wrapper_->GetFirstInt64Column(sql);
+}
+
 void DatabaseFunctions::SetLearningSessions(const std::string &agent_name,
                                             const std::string &virtualhost_name,
                                             const RowIds &sessions_ids) {
