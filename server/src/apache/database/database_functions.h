@@ -34,17 +34,23 @@ class DatabaseFunctions : public detail::DatabaseFunctionsInterface {
 
   void CreateTables() override;
 
+  const ::apache::type::AnomalyDetectionConfiguration GetAnomalyDetectionConfigurations() override;
+  
   ::database::type::RowsCount GetLogsCount(std::string agent_name, std::string virtualhost_name,
                                            ::type::Timestamp from, ::type::Timestamp to) override;
-
   ::type::ApacheLogs GetLogs(std::string agent_name, std::string virtualhost_name,
                              ::type::Timestamp from, ::type::Timestamp to,
                              unsigned limit, ::database::type::RowsCount offset) override;
 
   bool AddSessionStatistics(const ::apache::type::ApacheSessions &sessions) override;
+  ::database::type::RowsCount GetSessionStatisticsCount(const std::string &agent_name, const std::string &virtualhost_name,
+                                                        const ::type::Timestamp &from, const ::type::Timestamp &to) override;
+  ::apache::type::ApacheSessions GetSessionStatistics(const std::string &agent_name, const std::string &virtualhost_name,
+                                                      const ::type::Timestamp &from, const ::type::Timestamp &to,
+                                                      unsigned limit, ::database::type::RowsCount offset) override;
+  ::apache::type::ApacheSessionEntry GetOneSessionStatistic(::database::type::RowId id) override;
 
   void MarkStatisticsAsCreatedFor(::type::Date date) override;
-
   bool AreStatisticsCreatedFor(::type::Date date) override;
 
   virtual ::database::type::AgentNames GetAgentNames() override;
@@ -52,9 +58,7 @@ class DatabaseFunctions : public detail::DatabaseFunctionsInterface {
   virtual ::database::type::VirtualhostNames GetVirtualhostNames(::database::type::AgentName agent_name) override;
 
   bool IsLastRunSet(const ::apache::type::LastRunType &type) override;
-
   void SetLastRun(const ::apache::type::LastRunType &type, const ::type::Timestamp &date) override;
-
   ::type::Timestamp GetLastRun(const ::apache::type::LastRunType &type) override;
 
   void AddVirtualhostName(const std::string &name) override;

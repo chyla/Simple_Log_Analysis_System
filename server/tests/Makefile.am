@@ -18,6 +18,7 @@ tests_SOURCES	= main.cpp \
 
 OBJECT_FILES	= \
 		    ../src/analyzer/analyzer.o \
+		    ../src/apache/analyzer/detail/knn_analyzer_object.o \
 		    ../src/apache/database/database_functions.o \
 		    ../src/database/database.o \
 		    ../src/database/sqlite_wrapper.o \

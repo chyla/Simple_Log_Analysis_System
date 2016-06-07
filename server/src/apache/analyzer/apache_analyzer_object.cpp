@@ -8,6 +8,7 @@
 #include <boost/log/trivial.hpp>
 
 #include "detail/prepare_statistics_analyzer_object.h"
+#include "detail/knn_analyzer_object.h"
 
 namespace apache
 {
@@ -15,21 +16,27 @@ namespace apache
 namespace analyzer
 {
 
-ApacheAnalyzerObjectPtr ApacheAnalyzerObject::Create(::apache::database::DatabaseFunctionsPtr database_functions) {
+ApacheAnalyzerObjectPtr ApacheAnalyzerObject::Create(::database::detail::GeneralDatabaseFunctionsInterfacePtr general_database_functions,
+                                                     ::apache::database::DatabaseFunctionsPtr database_functions) {
   BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::ApacheAnalyzerObject::Create: Function call";
 
-  return ApacheAnalyzerObjectPtr(new ApacheAnalyzerObject(database_functions));
+  return ApacheAnalyzerObjectPtr(new ApacheAnalyzerObject(general_database_functions, database_functions));
 }
 
 void ApacheAnalyzerObject::Analyze() {
   BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::ApacheAnalyzerObject::Analyze: Function call";
 
   auto statistics = detail::PrepareStatisticsAnalyzerObject::Create(database_functions_);
+  auto knn_analyzer = detail::KnnAnalyzerObject::Create(general_database_functions_,
+                                                        database_functions_);
 
   statistics->Prepare();
+  knn_analyzer->Analyze();
 }
 
-ApacheAnalyzerObject::ApacheAnalyzerObject(::apache::database::DatabaseFunctionsPtr database_functions) :
+ApacheAnalyzerObject::ApacheAnalyzerObject(::database::detail::GeneralDatabaseFunctionsInterfacePtr general_database_functions,
+                                           ::apache::database::DatabaseFunctionsPtr database_functions) :
+general_database_functions_(general_database_functions),
 database_functions_(database_functions) {
 }
 

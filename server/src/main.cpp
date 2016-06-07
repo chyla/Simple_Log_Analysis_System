@@ -160,7 +160,8 @@ main(int argc, char *argv[]) {
     sigaction(SIGUSR1, &act_usr, nullptr);
 
     analyzer_worker = analyzer::Analyzer::Create();
-    analyzer_worker->AddObject(apache::analyzer::ApacheAnalyzerObject::Create(apache_database_functions));
+    analyzer_worker->AddObject(apache::analyzer::ApacheAnalyzerObject::Create(general_database_functions,
+                                                                              apache_database_functions));
 
     analyzer_thread = std::thread([]() {
       analyzer_worker->StartLoop();

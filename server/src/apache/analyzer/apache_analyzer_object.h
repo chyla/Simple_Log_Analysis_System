@@ -6,9 +6,11 @@
 #ifndef SRC_APACHE_ANALYZER_APACHE_ANALYZER_OBJECT_H
 #define SRC_APACHE_ANALYZER_APACHE_ANALYZER_OBJECT_H
 
+#include "src/analyzer/analyzer_object_interface.h"
+
 #include <memory>
 
-#include "src/analyzer/analyzer_object_interface.h"
+#include "src/database/detail/general_database_functions_interface.h"
 #include "src/apache/database/database_functions.h"
 
 namespace apache
@@ -24,13 +26,16 @@ class ApacheAnalyzerObject : public ::analyzer::AnalyzerObjectInterface {
  public:
   virtual ~ApacheAnalyzerObject() = default;
 
-  static ApacheAnalyzerObjectPtr Create(::apache::database::DatabaseFunctionsPtr database_functions);
+  static ApacheAnalyzerObjectPtr Create(::database::detail::GeneralDatabaseFunctionsInterfacePtr general_database_functions,
+                                        ::apache::database::DatabaseFunctionsPtr database_functions);
 
   void Analyze() override;
 
  private:
-  ApacheAnalyzerObject(::apache::database::DatabaseFunctionsPtr database_functions);
+  ApacheAnalyzerObject(::database::detail::GeneralDatabaseFunctionsInterfacePtr general_database_functions,
+                       ::apache::database::DatabaseFunctionsPtr database_functions);
 
+  ::database::detail::GeneralDatabaseFunctionsInterfacePtr general_database_functions_;
   ::apache::database::DatabaseFunctionsPtr database_functions_;
 };
 

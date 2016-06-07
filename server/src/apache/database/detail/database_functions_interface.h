@@ -16,6 +16,7 @@
 #include "src/database/type/rows_count.h"
 #include "src/database/type/agent_name.h"
 #include "src/database/type/virtualhost_name.h"
+#include "src/apache/type/anomaly_detection_configuration_entry.h"
 
 namespace apache
 {
@@ -32,17 +33,23 @@ class DatabaseFunctionsInterface {
 
   virtual void CreateTables() = 0;
 
+  virtual const ::apache::type::AnomalyDetectionConfiguration GetAnomalyDetectionConfigurations() = 0;
+  
   virtual ::database::type::RowsCount GetLogsCount(std::string agent_name, std::string virtualhost_name,
                                                    ::type::Timestamp from, ::type::Timestamp to) = 0;
-
   virtual ::type::ApacheLogs GetLogs(std::string agent_name, std::string virtualhost_name,
                                      ::type::Timestamp from, ::type::Timestamp to,
                                      unsigned limit, ::database::type::RowsCount offset) = 0;
 
   virtual bool AddSessionStatistics(const ::apache::type::ApacheSessions &sessions) = 0;
+  virtual ::database::type::RowsCount GetSessionStatisticsCount(const std::string &agent_name, const std::string &virtualhost_name,
+                                                                const ::type::Timestamp &from, const ::type::Timestamp &to) = 0;
+  virtual ::apache::type::ApacheSessions GetSessionStatistics(const std::string &agent_name, const std::string &virtualhost_name,
+                                                              const ::type::Timestamp &from, const ::type::Timestamp &to,
+                                                              unsigned limit, ::database::type::RowsCount offset) = 0;
+  virtual ::apache::type::ApacheSessionEntry GetOneSessionStatistic(::database::type::RowId id) = 0;
 
   virtual void MarkStatisticsAsCreatedFor(::type::Date date) = 0;
-
   virtual bool AreStatisticsCreatedFor(::type::Date date) = 0;
 
   virtual ::database::type::AgentNames GetAgentNames() = 0;
@@ -50,9 +57,7 @@ class DatabaseFunctionsInterface {
   virtual ::database::type::VirtualhostNames GetVirtualhostNames(::database::type::AgentName agent_name) = 0;
 
   virtual bool IsLastRunSet(const ::apache::type::LastRunType &type) = 0;
-
   virtual void SetLastRun(const ::apache::type::LastRunType &type, const ::type::Timestamp &date) = 0;
-
   virtual ::type::Timestamp GetLastRun(const ::apache::type::LastRunType &type) = 0;
 
   virtual void AddVirtualhostName(const std::string &name) = 0;

@@ -64,6 +64,11 @@ void DatabaseFunctions::CreateTables() {
                         ");");
 }
 
+const ::apache::type::AnomalyDetectionConfiguration DatabaseFunctions::GetAnomalyDetectionConfigurations() {
+  BOOST_LOG_TRIVIAL(debug) << "apache::database::DatabaseFunctions::GetApacheAnomalyDetectionConfiguration: Function call";
+  return db_->GetApacheAnomalyDetectionConfiguration();
+}
+
 ::database::type::RowsCount DatabaseFunctions::GetLogsCount(std::string agent_name, std::string virtualhost_name,
                                                             ::type::Timestamp from, ::type::Timestamp to) {
   BOOST_LOG_TRIVIAL(debug) << "apache::database::DatabaseFunctions::GetLogsCount: Function call";
@@ -85,6 +90,21 @@ bool DatabaseFunctions::AddSessionStatistics(const ::apache::type::ApacheSession
   BOOST_LOG_TRIVIAL(debug) << "apache::database::DatabaseFunctions::AddSessionStatistics: Function call";
 
   return db_->AddApacheSessionStatistics(sessions);
+}
+
+::database::type::RowsCount DatabaseFunctions::GetSessionStatisticsCount(const std::string &agent_name, const std::string &virtualhost_name,
+                                                                         const ::type::Timestamp &from, const ::type::Timestamp &to) {
+  return db_->GetApacheSessionStatisticsCount(agent_name, virtualhost_name, from, to);
+}
+
+::apache::type::ApacheSessions DatabaseFunctions::GetSessionStatistics(const std::string &agent_name, const std::string &virtualhost_name,
+                                                                       const ::type::Timestamp &from, const ::type::Timestamp &to,
+                                                                       unsigned limit, ::database::type::RowsCount offset) {
+  return db_->GetApacheSessionStatistics(agent_name, virtualhost_name, from, to, limit, offset);
+}
+
+::apache::type::ApacheSessionEntry DatabaseFunctions::GetOneSessionStatistic(::database::type::RowId id) {
+  return db_->GetApacheOneSessionStatistic(id);
 }
 
 void DatabaseFunctions::MarkStatisticsAsCreatedFor(::type::Date date) {
