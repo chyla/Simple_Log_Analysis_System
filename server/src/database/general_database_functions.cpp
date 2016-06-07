@@ -10,14 +10,15 @@
 
 #include "exception/detail/cant_execute_sql_statement_exception.h"
 #include "exception/detail/item_not_found_exception.h"
+#include "database.h"
 
 using namespace std;
 
 namespace database
 {
 
-GeneralDatabaseFunctionsPtr GeneralDatabaseFunctions::Create(detail::SQLiteWrapperInterfacePtr sqlite_wrapper) {
-  return GeneralDatabaseFunctionsPtr(new GeneralDatabaseFunctions(sqlite_wrapper));
+GeneralDatabaseFunctionsPtr GeneralDatabaseFunctions::Create(::database::DatabasePtr database, detail::SQLiteWrapperInterfacePtr sqlite_wrapper) {
+  return GeneralDatabaseFunctionsPtr(new GeneralDatabaseFunctions(database, sqlite_wrapper));
 }
 
 void GeneralDatabaseFunctions::CreateTables() {
@@ -203,6 +204,10 @@ void GeneralDatabaseFunctions::AddAgentName(const std::string &name) {
   sqlite_wrapper_->Finalize(statement);
 }
 
+type::AgentNames GeneralDatabaseFunctions::GetAgentNames() {
+  return database_->GetApacheAgentNames();
+}
+
 ::database::type::RowId GeneralDatabaseFunctions::AddAndGetAgentNameId(const std::string &name) {
   BOOST_LOG_TRIVIAL(debug) << "database::GeneralDatabaseFunctions::AddAndGetAgentNameId: Function call";
 
@@ -276,7 +281,9 @@ std::string GeneralDatabaseFunctions::GetAgentNameById(const ::database::type::R
   return name;
 }
 
-GeneralDatabaseFunctions::GeneralDatabaseFunctions(detail::SQLiteWrapperInterfacePtr sqlite_wrapper) :
+GeneralDatabaseFunctions::GeneralDatabaseFunctions(::database::DatabasePtr database,
+                                                   detail::SQLiteWrapperInterfacePtr sqlite_wrapper) :
+database_(database),
 sqlite_wrapper_(sqlite_wrapper) {
 }
 

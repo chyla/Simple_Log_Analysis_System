@@ -116,7 +116,8 @@ main(int argc, char *argv[]) {
     sqlite_wrapper = database::SQLiteWrapper::Create();
     sqlite_wrapper->Open(options.GetDatabasefilePath());
     database = CreateDatabase(sqlite_wrapper);
-    general_database_functions = database::GeneralDatabaseFunctions::Create(sqlite_wrapper);
+    general_database_functions = database::GeneralDatabaseFunctions::Create(database,
+                                                                            sqlite_wrapper);
     general_database_functions->CreateTables();
     apache_database_functions = apache::database::DatabaseFunctions::Create(database,
                                                                             sqlite_wrapper,

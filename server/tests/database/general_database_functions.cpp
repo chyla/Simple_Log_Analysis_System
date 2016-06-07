@@ -31,7 +31,7 @@ class GeneralDatabaseFunctionsTest : public ::testing::Test {
 
   void SetUp() {
     sqlite_wrapper = ::mock::database::SQLiteWrapper::Create();
-    general_database_functions = ::database::GeneralDatabaseFunctions::Create(sqlite_wrapper);
+    general_database_functions = ::database::GeneralDatabaseFunctions::Create(nullptr, sqlite_wrapper);
   }
 
   void TearDown() {

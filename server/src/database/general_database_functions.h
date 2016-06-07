@@ -11,6 +11,7 @@
 #include <memory>
 
 #include "detail/sqlite_wrapper_interface.h"
+#include "src/database/database.h"
 
 namespace database
 {
@@ -22,7 +23,8 @@ class GeneralDatabaseFunctions : public detail::GeneralDatabaseFunctionsInterfac
  public:
   virtual ~GeneralDatabaseFunctions() = default;
 
-  static GeneralDatabaseFunctionsPtr Create(detail::SQLiteWrapperInterfacePtr sqlite_wrapper);
+  static GeneralDatabaseFunctionsPtr Create(DatabasePtr database,
+                                            detail::SQLiteWrapperInterfacePtr sqlite_wrapper);
 
   void CreateTables() override;
 
@@ -37,13 +39,16 @@ class GeneralDatabaseFunctions : public detail::GeneralDatabaseFunctionsInterfac
   ::type::Date GetDateById(const ::database::type::RowId &id) override;
 
   void AddAgentName(const std::string &name) override;
+  type::AgentNames GetAgentNames() override;
   ::database::type::RowId AddAndGetAgentNameId(const std::string &name) override;
   ::database::type::RowId GetAgentNameId(const std::string &name) override;
   std::string GetAgentNameById(const ::database::type::RowId &id) override;
 
  private:
-  GeneralDatabaseFunctions(detail::SQLiteWrapperInterfacePtr sqlite_wrapper);
+  GeneralDatabaseFunctions(DatabasePtr database,
+                           detail::SQLiteWrapperInterfacePtr sqlite_wrapper);
 
+  DatabasePtr database_;
   detail::SQLiteWrapperInterfacePtr sqlite_wrapper_;
 };
 

@@ -11,6 +11,7 @@
 #include <patlms/type/time.h>
 #include <patlms/type/date.h>
 
+#include "src/database/type/agent_name.h"
 #include "src/database/type/row_id.h"
 
 namespace database
@@ -36,6 +37,7 @@ class GeneralDatabaseFunctionsInterface {
   virtual ::type::Date GetDateById(const ::database::type::RowId &id) = 0;
 
   virtual void AddAgentName(const std::string &name) = 0;
+  virtual ::database::type::AgentNames GetAgentNames() = 0;
   virtual ::database::type::RowId AddAndGetAgentNameId(const std::string &name) = 0;
   virtual ::database::type::RowId GetAgentNameId(const std::string &name) = 0;
   virtual std::string GetAgentNameById(const ::database::type::RowId &id) = 0;
