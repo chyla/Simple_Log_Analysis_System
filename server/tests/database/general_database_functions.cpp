@@ -116,7 +116,8 @@ TEST_F(GeneralDatabaseFunctionsTest, GetDateById_WhenTimeNotFound) {
 
 TEST_F(GeneralDatabaseFunctionsTest, AddAgentName) {
   EXPECT_CALL(*sqlite_wrapper, Prepare(_, NotNull())).WillOnce(SetArgPointee<1>(DB_STATEMENT_EXAMPLE_PTR_VALUE));
-  EXPECT_CALL(*sqlite_wrapper, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 0, StrEq(example_agent_name.c_str())));
+  EXPECT_CALL(*sqlite_wrapper, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq(example_agent_name.c_str())));
+  EXPECT_CALL(*sqlite_wrapper, Step(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_DONE));
   EXPECT_CALL(*sqlite_wrapper, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE));
 
   general_database_functions->AddAgentName(example_agent_name);
@@ -124,7 +125,7 @@ TEST_F(GeneralDatabaseFunctionsTest, AddAgentName) {
 
 TEST_F(GeneralDatabaseFunctionsTest, AddAgentName_WhenBindTextThrowException) {
   EXPECT_CALL(*sqlite_wrapper, Prepare(_, NotNull())).WillOnce(SetArgPointee<1>(DB_STATEMENT_EXAMPLE_PTR_VALUE));
-  EXPECT_CALL(*sqlite_wrapper, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 0, StrEq(example_agent_name.c_str()))).WillOnce(Throw(::database::exception::detail::CantExecuteSqlStatementException()));
+  EXPECT_CALL(*sqlite_wrapper, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq(example_agent_name.c_str()))).WillOnce(Throw(::database::exception::detail::CantExecuteSqlStatementException()));
   EXPECT_CALL(*sqlite_wrapper, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE));
 
   EXPECT_THROW(general_database_functions->AddAgentName(example_agent_name), ::database::exception::detail::CantExecuteSqlStatementException);
@@ -132,7 +133,7 @@ TEST_F(GeneralDatabaseFunctionsTest, AddAgentName_WhenBindTextThrowException) {
 
 TEST_F(GeneralDatabaseFunctionsTest, AddAndGetAgentNameId) {
   EXPECT_CALL(*sqlite_wrapper, Prepare(_, NotNull())).WillOnce(SetArgPointee<1>(DB_STATEMENT_EXAMPLE_PTR_VALUE));
-  EXPECT_CALL(*sqlite_wrapper, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 0, StrEq(example_agent_name.c_str())));
+  EXPECT_CALL(*sqlite_wrapper, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq(example_agent_name.c_str())));
   EXPECT_CALL(*sqlite_wrapper, Step(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_ROW));
   EXPECT_CALL(*sqlite_wrapper, ColumnInt64(DB_STATEMENT_EXAMPLE_PTR_VALUE, 0)).WillOnce(Return(2));
   EXPECT_CALL(*sqlite_wrapper, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE));
@@ -142,8 +143,8 @@ TEST_F(GeneralDatabaseFunctionsTest, AddAndGetAgentNameId) {
 
 TEST_F(GeneralDatabaseFunctionsTest, AddAndGetAgentNameId_WhenAgentNameNotExists) {
   EXPECT_CALL(*sqlite_wrapper, Prepare(_, NotNull())).Times(3).WillRepeatedly(SetArgPointee<1>(DB_STATEMENT_EXAMPLE_PTR_VALUE));
-  EXPECT_CALL(*sqlite_wrapper, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 0, StrEq(example_agent_name.c_str()))).Times(3);
-  EXPECT_CALL(*sqlite_wrapper, Step(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_DONE)).WillOnce(Return(SQLITE_ROW));
+  EXPECT_CALL(*sqlite_wrapper, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq(example_agent_name.c_str()))).Times(3);
+  EXPECT_CALL(*sqlite_wrapper, Step(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_DONE)).WillOnce(Return(SQLITE_DONE)).WillOnce(Return(SQLITE_ROW));
   EXPECT_CALL(*sqlite_wrapper, ColumnInt64(DB_STATEMENT_EXAMPLE_PTR_VALUE, 0)).WillOnce(Return(3));
   EXPECT_CALL(*sqlite_wrapper, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE)).Times(3);
 
@@ -152,7 +153,7 @@ TEST_F(GeneralDatabaseFunctionsTest, AddAndGetAgentNameId_WhenAgentNameNotExists
 
 TEST_F(GeneralDatabaseFunctionsTest, GetAgentNameId) {
   EXPECT_CALL(*sqlite_wrapper, Prepare(_, NotNull())).WillOnce(SetArgPointee<1>(DB_STATEMENT_EXAMPLE_PTR_VALUE));
-  EXPECT_CALL(*sqlite_wrapper, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 0, StrEq(example_agent_name.c_str())));
+  EXPECT_CALL(*sqlite_wrapper, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq(example_agent_name.c_str())));
   EXPECT_CALL(*sqlite_wrapper, Step(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_ROW));
   EXPECT_CALL(*sqlite_wrapper, ColumnInt64(DB_STATEMENT_EXAMPLE_PTR_VALUE, 0)).WillOnce(Return(2));
   EXPECT_CALL(*sqlite_wrapper, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE));
@@ -162,7 +163,7 @@ TEST_F(GeneralDatabaseFunctionsTest, GetAgentNameId) {
 
 TEST_F(GeneralDatabaseFunctionsTest, GetAgentNameId_WhenRowNotFound) {
   EXPECT_CALL(*sqlite_wrapper, Prepare(_, NotNull())).WillOnce(SetArgPointee<1>(DB_STATEMENT_EXAMPLE_PTR_VALUE));
-  EXPECT_CALL(*sqlite_wrapper, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 0, StrEq(example_agent_name.c_str())));
+  EXPECT_CALL(*sqlite_wrapper, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq(example_agent_name.c_str())));
   EXPECT_CALL(*sqlite_wrapper, Step(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_DONE));
   EXPECT_CALL(*sqlite_wrapper, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE));
 
@@ -171,7 +172,7 @@ TEST_F(GeneralDatabaseFunctionsTest, GetAgentNameId_WhenRowNotFound) {
 
 TEST_F(GeneralDatabaseFunctionsTest, GetAgentNameId_WhenBindTextThrowException) {
   EXPECT_CALL(*sqlite_wrapper, Prepare(_, NotNull())).WillOnce(SetArgPointee<1>(DB_STATEMENT_EXAMPLE_PTR_VALUE));
-  EXPECT_CALL(*sqlite_wrapper, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 0, StrEq(example_agent_name.c_str()))).WillOnce(Throw(::database::exception::detail::CantExecuteSqlStatementException()));
+  EXPECT_CALL(*sqlite_wrapper, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq(example_agent_name.c_str()))).WillOnce(Throw(::database::exception::detail::CantExecuteSqlStatementException()));
   EXPECT_CALL(*sqlite_wrapper, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE));
 
   EXPECT_THROW(general_database_functions->GetAgentNameId(example_agent_name), ::database::exception::detail::CantExecuteSqlStatementException);
@@ -179,7 +180,7 @@ TEST_F(GeneralDatabaseFunctionsTest, GetAgentNameId_WhenBindTextThrowException) 
 
 TEST_F(GeneralDatabaseFunctionsTest, GetAgentNameId_WhenStepThrowException) {
   EXPECT_CALL(*sqlite_wrapper, Prepare(_, NotNull())).WillOnce(SetArgPointee<1>(DB_STATEMENT_EXAMPLE_PTR_VALUE));
-  EXPECT_CALL(*sqlite_wrapper, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 0, StrEq(example_agent_name.c_str())));
+  EXPECT_CALL(*sqlite_wrapper, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq(example_agent_name.c_str())));
   EXPECT_CALL(*sqlite_wrapper, Step(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Throw(::database::exception::detail::CantExecuteSqlStatementException()));
   EXPECT_CALL(*sqlite_wrapper, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE));
 
