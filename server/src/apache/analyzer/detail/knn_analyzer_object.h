@@ -43,7 +43,7 @@ class KnnAnalyzerObject : public KnnAnalyzerObjectInterface {
                                      ::database::detail::GeneralDatabaseFunctionsInterfacePtr general_database_functions,
                                      ::apache::database::DatabaseFunctionsPtr apache_database_functions);
 
-  void Analyze();
+  void Analyze(const ::type::Timestamp &now);
 
  private:
   KnnAnalyzerObject(detail::SystemInterfacePtr system_interface,

@@ -40,11 +40,10 @@ PrepareStatisticsAnalyzerObjectPtr PrepareStatisticsAnalyzerObject::Create(Datab
   return PrepareStatisticsAnalyzerObjectPtr(new PrepareStatisticsAnalyzerObject(database_functions, system_interface));
 }
 
-void PrepareStatisticsAnalyzerObject::Prepare() {
+void PrepareStatisticsAnalyzerObject::Prepare(const ::type::Timestamp &now) {
   BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::PrepareStatisticsAnalyzerObject::Prepare: Function call";
 
   const auto last_statistics_calculation = GetLastStatisticsCalculationTimestamp();
-  const auto now = GetCurrentTimestamp();
 
   if (ShouldStatisticsBeCalculated(last_statistics_calculation, now)) {
     for (auto agent_name : database_functions_->GetAgentNames()) {
@@ -56,8 +55,6 @@ void PrepareStatisticsAnalyzerObject::Prepare() {
         CreateStatistics(agent_name, virtualhost_name, now);
       }
     }
-
-    database_functions_->SetLastRun(LastRunType::STATISTICS_CALCULATION, now);
   }
   else {
     BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::PrepareStatisticsAnalyzerObject::Prepare: Not running, last statistics prepared: " << GetLastStatisticsCalculationTimestamp();
@@ -218,14 +215,6 @@ Timestamp PrepareStatisticsAnalyzerObject::GetLastStatisticsCalculationTimestamp
   }
 
   return last_statistics_calculation;
-}
-
-Timestamp PrepareStatisticsAnalyzerObject::GetCurrentTimestamp() const {
-  time_t t = system_interface_->Time(nullptr);
-  struct tm *now = system_interface_->LocalTime(&t);
-
-  return Timestamp::Create(Time::Create(now->tm_hour, now->tm_min, now->tm_sec),
-                           Date::Create(now->tm_mday, now->tm_mon + 1, now->tm_year + 1900));
 }
 
 bool PrepareStatisticsAnalyzerObject::IsErrorCode(const int &status_code) const {

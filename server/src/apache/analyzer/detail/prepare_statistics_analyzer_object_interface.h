@@ -19,7 +19,7 @@ class PrepareStatisticsAnalyzerObjectInterface {
  public:
   virtual ~PrepareStatisticsAnalyzerObjectInterface() = default;
 
-  virtual void Prepare() = 0;
+  virtual void Prepare(const ::type::Timestamp &now) = 0;
 };
 
 }

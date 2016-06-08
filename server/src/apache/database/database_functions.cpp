@@ -163,8 +163,7 @@ bool DatabaseFunctions::IsLastRunSet(const ::apache::type::LastRunType &type) {
   const string sql =
       "select ID from APACHE_LAST_RUN_TABLE "
       "  where"
-      "    RUN_TYPE=" + to_string(static_cast<int> (type)) +
-      ";";
+      "    RUN_TYPE=0;";
 
   auto id = sqlite_wrapper_->GetFirstInt64Column(sql, -1);
 
@@ -179,7 +178,7 @@ void DatabaseFunctions::SetLastRun(const ::apache::type::LastRunType &type, cons
 
   sqlite_wrapper_->Exec("insert or replace into APACHE_LAST_RUN_TABLE (ID, RUN_TYPE, DATE_ID, TIME_ID) "
                         "values ("
-                        " ( select ID from APACHE_LAST_RUN_TABLE where RUN_TYPE=" + to_string(static_cast<int> (type)) + " ), "
+                        " ( select ID from APACHE_LAST_RUN_TABLE where RUN_TYPE=0 ), "
                         + to_string(static_cast<int> (type)) + ", "
                         + to_string(date_id) + ", "
                         + to_string(time_id)
@@ -192,13 +191,13 @@ void DatabaseFunctions::SetLastRun(const ::apache::type::LastRunType &type, cons
   const string date_sql =
       "select DATE_ID from APACHE_LAST_RUN_TABLE "
       "  where"
-      "    RUN_TYPE=" + to_string(static_cast<int> (type)) +
+      "    RUN_TYPE=0"
       ";";
 
   const string time_sql =
       "select TIME_ID from APACHE_LAST_RUN_TABLE "
       "  where"
-      "    RUN_TYPE=" + to_string(static_cast<int> (type)) +
+      "    RUN_TYPE=0"
       ";";
 
   ::database::type::RowId date_id = sqlite_wrapper_->GetFirstInt64Column(date_sql);

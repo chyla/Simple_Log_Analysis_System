@@ -40,7 +40,7 @@ class PrepareStatisticsAnalyzerObject : public PrepareStatisticsAnalyzerObjectIn
   static PrepareStatisticsAnalyzerObjectPtr Create(::apache::database::detail::DatabaseFunctionsInterfacePtr database_functions,
                                                    SystemInterfacePtr system_interface);
 
-  void Prepare() override;
+  void Prepare(const ::type::Timestamp &now) override;
 
  private:
   PrepareStatisticsAnalyzerObject(::apache::database::detail::DatabaseFunctionsInterfacePtr database_functions,
@@ -73,7 +73,6 @@ class PrepareStatisticsAnalyzerObject : public PrepareStatisticsAnalyzerObjectIn
                            ::database::type::RowId offset);
 
   ::type::Timestamp GetLastStatisticsCalculationTimestamp();
-  ::type::Timestamp GetCurrentTimestamp() const;
 
   bool IsErrorCode(const int &status_code) const;
   bool ShouldStatisticsBeCalculated(const ::type::Timestamp &last_statistics_calculation,

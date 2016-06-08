@@ -38,22 +38,24 @@ KnnAnalyzerObjectPtr KnnAnalyzerObject::Create(detail::SystemInterfacePtr system
   return KnnAnalyzerObjectPtr(new KnnAnalyzerObject(system_interface, general_database_functions, apache_database_functions));
 }
 
-void KnnAnalyzerObject::Analyze() {
-  auto now = GetCurrentTimestamp();
-  auto last_analyze = GetLastAnalyzeTimestamp(now);
+void KnnAnalyzerObject::Analyze(const ::type::Timestamp &now) {
+  auto is_stats = apache_database_functions_->IsLastRunSet(LastRunType::ANALYZING);
 
-  for (auto agent_name : general_database_functions_->GetAgentNames()) {
-    BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::KnnAnalyzerObject::Analyze: Preparing agent: " << agent_name;
+  if (is_stats) {
+    auto last_analyze = apache_database_functions_->GetLastRun(LastRunType::ANALYZING);
+    BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::KnnAnalyzerObject::Analyze: Found last run time " << last_analyze;
 
-    for (auto virtualhost_name : apache_database_functions_->GetVirtualhostNames(agent_name)) {
-      BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::KnnAnalyzerObject::Analyze: Preparing virtualhost: " << virtualhost_name;
+    for (auto agent_name : general_database_functions_->GetAgentNames()) {
+      BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::KnnAnalyzerObject::Analyze: Preparing agent: " << agent_name;
 
-      // sprawdzic istnienie konfiguracji
-      AnalyzeVirtualhost(agent_name, virtualhost_name, last_analyze, now);
+      for (auto virtualhost_name : apache_database_functions_->GetVirtualhostNames(agent_name)) {
+        BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::KnnAnalyzerObject::Analyze: Preparing virtualhost: " << virtualhost_name;
+
+        // sprawdzic istnienie konfiguracji
+        AnalyzeVirtualhost(agent_name, virtualhost_name, last_analyze, now);
+      }
     }
   }
-
-  apache_database_functions_->SetLastRun(LastRunType::ANALYZING, now);
 }
 
 void KnnAnalyzerObject::AnalyzeVirtualhost(const ::database::type::AgentName &agent_name,
@@ -66,18 +68,7 @@ void KnnAnalyzerObject::AnalyzeVirtualhost(const ::database::type::AgentName &ag
   BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::KnnAnalyzerObject::AnalyzeSessions: Last analyze timestamp: " << last_analyze_timestamp;
   BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::KnnAnalyzerObject::AnalyzeSessions: Current timestamp: " << now;
 
-  auto agent_id = general_database_functions_->GetAgentNameId(agent_name);
-  auto virtualhost_id = apache_database_functions_->GetVirtualhostNameId(virtualhost_name);
-
   auto from = last_analyze_timestamp;
-  auto count = apache_database_functions_->GetLearningSessionsCount(agent_id, virtualhost_id);
-  for (auto session_id : apache_database_functions_->GetLearningSessionsIds(agent_id, virtualhost_id, count, 0))
-  {
-    auto session = apache_database_functions_->GetOneSessionStatistic(session_id);
-    if (from < session.session_start)
-      from = session.session_start;
-  }
-  from = ::Timestamp::Create(from.GetTime() + 1, from.GetDate());
   auto to = now;
 
   auto sessions_count = apache_database_functions_->GetSessionStatisticsCount(agent_name, virtualhost_name, from, to);
@@ -189,32 +180,6 @@ KnnAnalyzerObject::KnnAnalyzerObject(detail::SystemInterfacePtr system_interface
 system_interface_(system_interface),
 general_database_functions_(general_database_functions),
 apache_database_functions_(apache_database_functions) {
-}
-
-Timestamp KnnAnalyzerObject::GetCurrentTimestamp() const {
-  BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::KnnAnalyzerObject::GetCurrentTimestamp: Function call";
-  time_t t = system_interface_->Time(nullptr);
-  struct tm *now = system_interface_->LocalTime(&t);
-
-  return Timestamp::Create(Time::Create(now->tm_hour, now->tm_min, now->tm_sec),
-                           Date::Create(now->tm_mday, now->tm_mon + 1, now->tm_year + 1900));
-}
-
-::type::Timestamp KnnAnalyzerObject::GetLastAnalyzeTimestamp(const ::type::Timestamp &now) const {
-  BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::KnnAnalyzerObject::GetLastAnalyzeTimestamp: Function call";
-  Timestamp last_analyze;
-
-  auto is_stats = apache_database_functions_->IsLastRunSet(LastRunType::ANALYZING);
-  if (is_stats) {
-    last_analyze = apache_database_functions_->GetLastRun(LastRunType::ANALYZING);
-    BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::KnnAnalyzerObject::GetLastAnalyzeTimestamp: Found last analyze time " << last_analyze;
-  }
-  else {
-    last_analyze.Set(0, 0, 0, 1, 1, 2016);
-    BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::KnnAnalyzerObject::GetLastAnalyzeTimestamp: Last analyze time not found - assuming " << last_analyze;
-  }
-
-  return last_analyze;
 }
 
 }

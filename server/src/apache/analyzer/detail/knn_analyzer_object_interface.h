@@ -8,6 +8,8 @@
 
 #include <memory>
 
+#include <patlms/type/timestamp.h>
+
 namespace apache
 {
 
@@ -24,7 +26,7 @@ class KnnAnalyzerObjectInterface {
  public:
   virtual ~KnnAnalyzerObjectInterface() = default;
 
-  virtual void Analyze() = 0;
+  virtual void Analyze(const ::type::Timestamp &now) = 0;
 };
 
 }

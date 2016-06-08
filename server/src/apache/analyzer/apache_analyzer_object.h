@@ -10,8 +10,10 @@
 
 #include <memory>
 
+#include <patlms/type/timestamp.h>
 #include "src/database/detail/general_database_functions_interface.h"
 #include "src/apache/database/database_functions.h"
+#include "detail/system.h"
 
 namespace apache
 {
@@ -29,14 +31,23 @@ class ApacheAnalyzerObject : public ::analyzer::AnalyzerObjectInterface {
   static ApacheAnalyzerObjectPtr Create(::database::detail::GeneralDatabaseFunctionsInterfacePtr general_database_functions,
                                         ::apache::database::DatabaseFunctionsPtr database_functions);
 
+  static ApacheAnalyzerObjectPtr Create(::database::detail::GeneralDatabaseFunctionsInterfacePtr general_database_functions,
+                                        ::apache::database::DatabaseFunctionsPtr database_functions,
+                                        detail::SystemInterfacePtr system_interface);
+
   void Analyze() override;
 
  private:
   ApacheAnalyzerObject(::database::detail::GeneralDatabaseFunctionsInterfacePtr general_database_functions,
-                       ::apache::database::DatabaseFunctionsPtr database_functions);
+                       ::apache::database::DatabaseFunctionsPtr database_functions,
+                       detail::SystemInterfacePtr system_interface);
 
   ::database::detail::GeneralDatabaseFunctionsInterfacePtr general_database_functions_;
   ::apache::database::DatabaseFunctionsPtr database_functions_;
+  detail::SystemInterfacePtr system_interface_;
+
+  bool ShouldRun(const ::type::Timestamp &now);
+  ::type::Timestamp GetCurrentTimestamp() const;
 };
 
 }
