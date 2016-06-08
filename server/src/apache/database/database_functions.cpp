@@ -217,7 +217,7 @@ void DatabaseFunctions::AddVirtualhostName(const std::string &name) {
   sqlite_wrapper_->Prepare(sql, &statement);
 
   try {
-    sqlite_wrapper_->BindText(statement, 0, name);
+    sqlite_wrapper_->BindText(statement, 1, name);
   }
   catch (exception::DatabaseException &ex) {
     sqlite_wrapper_->Finalize(statement);
@@ -249,7 +249,7 @@ void DatabaseFunctions::AddVirtualhostName(const std::string &name) {
   sqlite_wrapper_->Prepare(sql, &statement);
 
   try {
-    sqlite_wrapper_->BindText(statement, 0, name);
+    sqlite_wrapper_->BindText(statement, 1, name);
 
     auto ret = sqlite_wrapper_->Step(statement);
     if (ret == SQLITE_ROW)
