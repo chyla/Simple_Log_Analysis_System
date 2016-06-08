@@ -48,7 +48,7 @@
                         <td>{{ s.session_length }}</td>
                         <td>{{ s.bandwidth_usage }}</td>
                         <td>{{ s.requests_count }}</td>
-                        <td>{{ s.error_percentage }}</td>
+                        <td>{{ s.error_percentage | floatformat }}</td>
                         <td>{{ s.useragent }}</td>
                         <td>
                             <input type="hidden" name="rows_ids" value="{{ s.id }}">
