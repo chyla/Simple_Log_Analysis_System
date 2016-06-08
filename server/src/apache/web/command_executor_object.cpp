@@ -15,9 +15,10 @@ namespace apache
 namespace web
 {
 
-CommandExecutorObjectPtr CommandExecutorObject::Create(::database::DatabasePtr database) {
+CommandExecutorObjectPtr CommandExecutorObject::Create(::database::DatabasePtr database,
+                                                       ::apache::database::detail::DatabaseFunctionsInterfacePtr apache_database_functions) {
   BOOST_LOG_TRIVIAL(debug) << "apache::web::CommandExecutorObject::Create: Function call";
-  auto p = CommandExecutorObjectPtr(new CommandExecutorObject(database));
+  auto p = CommandExecutorObjectPtr(new CommandExecutorObject(database, apache_database_functions));
   return p;
 }
 
@@ -95,8 +96,10 @@ bool CommandExecutorObject::IsCommandSupported(const ::web::type::Command &comma
       || (command == "set_apache_anomaly_detection_configuration");
 }
 
-CommandExecutorObject::CommandExecutorObject(::database::DatabasePtr database)
-: database_(database) {
+CommandExecutorObject::CommandExecutorObject(::database::DatabasePtr database,
+                                             ::apache::database::detail::DatabaseFunctionsInterfacePtr apache_database_functions) :
+database_(database),
+apache_database_functions_(apache_database_functions) {
 }
 
 const ::web::type::JsonMessage CommandExecutorObject::GetHostnames() {

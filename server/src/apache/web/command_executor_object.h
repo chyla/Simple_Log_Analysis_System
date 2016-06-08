@@ -1,10 +1,12 @@
 #ifndef SRC_APACHE_WEB_COMMAND_EXECUTOR_OBJECT_H
 #define SRC_APACHE_WEB_COMMAND_EXECUTOR_OBJECT_H
 
-#include "src/database/database.h"
 #include "src/web/type/command_executor_object_interface.h"
 
 #include <memory>
+
+#include "src/database/database.h"
+#include "src/apache/database/detail/database_functions_interface.h"
 
 namespace apache
 {
@@ -19,16 +21,19 @@ class CommandExecutorObject : public ::web::type::CommandExecutorObjectInterface
  public:
   virtual ~CommandExecutorObject() = default;
 
-  static CommandExecutorObjectPtr Create(::database::DatabasePtr database);
+  static CommandExecutorObjectPtr Create(::database::DatabasePtr database,
+                                         ::apache::database::detail::DatabaseFunctionsInterfacePtr apache_database_functions);
 
   const ::web::type::JsonMessage Execute(const ::web::type::JsonMessage &message);
 
   bool IsCommandSupported(const ::web::type::Command &command);
 
  private:
-  CommandExecutorObject(::database::DatabasePtr database);
+  CommandExecutorObject(::database::DatabasePtr database,
+                        ::apache::database::detail::DatabaseFunctionsInterfacePtr apache_database_functions);
 
   ::database::DatabasePtr database_;
+  ::apache::database::detail::DatabaseFunctionsInterfacePtr apache_database_functions_;
 
   const ::web::type::JsonMessage GetHostnames();
   const ::web::type::JsonMessage GetVirtualhostsNames(const std::string &agent_name);

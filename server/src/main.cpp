@@ -126,7 +126,7 @@ main(int argc, char *argv[]) {
 
     auto options_command_object = program_options::web::CommandExecutorObject::Create(options);
     auto command_executor = web::CommandExecutor::Create();
-    auto apache_web_command_executor = apache::web::CommandExecutorObject::Create(database);
+    auto apache_web_command_executor = apache::web::CommandExecutorObject::Create(database, apache_database_functions);
     command_executor->RegisterCommandObject(options_command_object);
     command_executor->RegisterCommandObject(apache_web_command_executor);
     command_receiver = web::CommandReceiver::Create(command_executor);
