@@ -13,8 +13,12 @@ namespace dbus
 namespace object
 {
 
-Apache::Apache(::database::DatabasePtr database)
-: database_(database) {
+Apache::Apache(::database::DatabasePtr database,
+               ::database::detail::GeneralDatabaseFunctionsInterfacePtr general_database_functions,
+               ::apache::database::detail::DatabaseFunctionsInterfacePtr apache_database_functions) :
+database_(database),
+general_database_functions_(general_database_functions),
+apache_database_functions_(apache_database_functions) {
   log_entry_cache_.reserve(CACHE_CAPACITY);
 }
 
@@ -112,6 +116,9 @@ DBusHandlerResult Apache::OwnMessageHandler(DBusConnection *connection, DBusMess
     log_entry.user_agent = user_agent;
 
     log_entry_cache_.push_back(log_entry);
+
+    general_database_functions_->AddAgentName(agent_name);
+    apache_database_functions_->AddVirtualhostName(virtualhost);
 
     BOOST_LOG_TRIVIAL(debug) << "objects::Apache::OwnMessageHandler: Now, elements in cache: " << log_entry_cache_.size();
     if (log_entry_cache_.size() >= CACHE_CAPACITY) {

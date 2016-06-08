@@ -143,7 +143,7 @@ main(int argc, char *argv[]) {
     bash_object = std::make_shared<bash::dbus::object::Bash>(database);
     bus->RegisterObject(bash_object);
 
-    apache_object = std::make_shared<apache::dbus::object::Apache>(database);
+    apache_object = std::make_shared<apache::dbus::object::Apache>(database, general_database_functions, apache_database_functions);
     bus->RegisterObject(apache_object);
 
     util::CreatePidFile(options.GetPidfilePath());
