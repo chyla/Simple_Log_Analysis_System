@@ -6,6 +6,8 @@
 #include <set>
 #include <memory>
 
+#include "type/json_message.h"
+
 namespace web
 {
 
@@ -26,6 +28,8 @@ class CommandExecutor : public detail::CommandExecutorInterface {
   CommandExecutor();
 
   std::set<type::CommandExecutorObjectInterfacePtr> command_objects_;
+
+  ::web::type::JsonMessage GetErrorMessage(const std::string &what) const;
 };
 
 }

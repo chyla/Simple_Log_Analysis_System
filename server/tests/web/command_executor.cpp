@@ -3,6 +3,7 @@
 
 #include "tests/mock/web/simple_command_object.h"
 
+#include <patlms/type/exception/exception.h>
 #include "src/web/command_executor.h"
 
 using namespace testing;
@@ -22,6 +23,14 @@ class CommandExecutorTest : public ::testing::Test {
 
   virtual ~CommandExecutorTest() {
   }
+
+  class ExceptionTestObject : public ::interface::Exception {
+   public:
+
+    const char* what() const throw() override{
+      return "Exception message";
+    }
+  };
 
   CommandExecutorPtr command_executor;
   std::shared_ptr<mock::web::SimpleCommandObject> simple_command_object;
@@ -58,6 +67,22 @@ TEST_F(CommandExecutorTest, Execute_SimpleCommand_WhenRegisterobjectCalledTwoTim
   EXPECT_CALL(*simple_command_object, IsCommandSupported(StrEq("simple_command"))).WillOnce(Return(true));
 
   command_executor->RegisterCommandObject(simple_command_object);
+
+  command_executor->RegisterCommandObject(simple_command_object);
+
+  auto result = command_executor->Execute(message);
+
+  EXPECT_EQ(expected_result, result);
+}
+
+TEST_F(CommandExecutorTest, Execute_SimpleCommand_WhenItThrowsException) {
+  const ::web::type::JsonMessage message = "{ \"command\" : \"simple_command\" }";
+  const ::web::type::JsonMessage expected_result = "{ \"status\" : \"error\", \"message\" : \"Exception message\" }";
+
+  ExceptionTestObject exception_object;
+
+  EXPECT_CALL(*simple_command_object, Execute(StrEq(message))).WillOnce(Throw(exception_object));
+  EXPECT_CALL(*simple_command_object, IsCommandSupported(StrEq("simple_command"))).WillOnce(Return(true));
 
   command_executor->RegisterCommandObject(simple_command_object);
 

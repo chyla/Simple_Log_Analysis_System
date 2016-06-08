@@ -2,6 +2,7 @@
 
 #include <boost/log/trivial.hpp>
 #include <json/json.hpp>
+#include <patlms/type/exception/exception.h>
 
 using namespace std;
 using namespace nlohmann;
@@ -25,9 +26,15 @@ const type::JsonMessage CommandExecutor::Execute(const type::JsonMessage &messag
   BOOST_LOG_TRIVIAL(debug) << "web::CommandExecutor::Execute: json_command='" << message << "', command='" << command << "'";
 
   for (auto ptr : command_objects_) {
-    if (ptr->IsCommandSupported(command)) {
-      BOOST_LOG_TRIVIAL(debug) << "web::CommandExecutor::Execute: Found object";
-      result = ptr->Execute(message);
+    try {
+      if (ptr->IsCommandSupported(command)) {
+        BOOST_LOG_TRIVIAL(debug) << "web::CommandExecutor::Execute: Found object";
+        result = ptr->Execute(message);
+      }
+    }
+    catch (const ::interface::Exception &ex) {
+      BOOST_LOG_TRIVIAL(error) << "web::CommandExecutor::Execute: Exception catched: " << ex.what();
+      result = GetErrorMessage(ex.what());
     }
   }
 
@@ -38,6 +45,10 @@ const type::JsonMessage CommandExecutor::Execute(const type::JsonMessage &messag
 void CommandExecutor::RegisterCommandObject(type::CommandExecutorObjectInterfacePtr object) {
   BOOST_LOG_TRIVIAL(debug) << "web::CommandExecutor::RegisterCommandObject: Function call";
   command_objects_.insert(object);
+}
+
+::web::type::JsonMessage CommandExecutor::GetErrorMessage(const std::string& what) const {
+  return "{ \"status\" : \"error\", \"message\" : \"" + what + "\" }";
 }
 
 CommandExecutor::CommandExecutor() {

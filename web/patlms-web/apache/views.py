@@ -13,8 +13,8 @@ def status(request):
 
     try:
         configuration = util.get_apache_anomaly_detection_configuration()
-    except IOError as e:
-        exception = e.strerror
+    except Exception as e:
+        exception = str(e)
 
     return render_to_response("apache/status.html",
                               {'exception' : exception,
@@ -27,8 +27,8 @@ def configure_anomaly_detection_select_agent_name(request):
 
     try:
         agent_names = util.get_apache_agent_names()
-    except IOError as e:
-        exception = e.strerror
+    except Exception as e:
+        exception = str(e)
 
     return render_to_response('apache/configure_anomaly_detection/select_agent_name.html',
                               {'exception' : exception,
@@ -53,8 +53,8 @@ def configure_anomaly_detection_select_virtualhost(request):
 
     try:
         virtualhosts_names = util.get_apache_virtualhost_names(agent_name)
-    except IOError as e:
-        exception = e.strerror
+    except Exception as e:
+        exception = str(e)
 
     return render_to_response('apache/configure_anomaly_detection/select_virtualhost.html',
                               {'exception' : exception,
@@ -73,8 +73,8 @@ def configure_anomaly_detection_correct_sessions_marks(request):
     try:
         sessions = util.get_apache_sessions(agent_name, virtualhost_name, begin_date, end_date)
         util.set_apache_anomaly_detection_configuration(agent_name, virtualhost_name, begin_date, end_date)
-    except IOError as e:
-        exception = e.strerror
+    except Exception as e:
+        exception = str(e)
 
     return render(request,
                   'apache/configure_anomaly_detection/correct_sessions_marks.html',
@@ -100,8 +100,8 @@ def configure_anomaly_detection_save_settings(request):
                                             virtualhost_name,
                                             [int(i) for i in all_rows_ids],
                                             [int(i) for i in anomalies])
-    except IOError as e:
-        exception = e.strerror
+    except Exception as e:
+        exception = str(e)
 
     if exception:
         return redirect('apache:configure_anomaly_detection_correct_sessions_marks',
@@ -120,8 +120,8 @@ def review_detection_results_select_agent_and_virtualhost(request):
     try:
         agent_names = util.get_apache_agent_names()
         virtualhosts_names = util.get_apache_virtualhost_names(agent_name)
-    except IOError as e:
-        exception = e.strerror
+    except Exception as e:
+        exception = str(e)
 
     return render(request,
                   'apache/review_detection_results/select_agent_and_virtualhost.html',
@@ -143,8 +143,8 @@ def review_detection_results_show_results(request):
     try:
         if begin_date != '' and end_date != '':
             sessions = util.get_apache_sessions_without_learning_set(agent_name, virtualhost_name, begin_date, end_date)
-    except IOError as e:
-        exception = e.strerror
+    except Exception as e:
+        exception = str(e)
 
     return render(request,
                   'apache/review_detection_results/show_results.html',
