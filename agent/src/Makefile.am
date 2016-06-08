@@ -21,7 +21,9 @@ patlms_agent_SOURCES	= main.cpp \
 				apache/detail/apache_proxy.cpp \
 				apache/detail/apache_dbus_thread_command.cpp
 
-patlms_agent_LDADD	= @BOOST_PROGRAM_OPTIONS_LIB@ \
+patlms_agent_LDADD	= \
+				@LIBPATLMS_LIBS@ \
+				@BOOST_PROGRAM_OPTIONS_LIB@ \
 				@BOOST_LOG_LIB@ \
 				@BOOST_LOG_SETUP_LIB@ \
 				@BOOST_REGEX_LIB@ \
@@ -31,5 +33,4 @@ patlms_agent_LDADD	= @BOOST_PROGRAM_OPTIONS_LIB@ \
 				@BOOST_THREAD_LIB@ \
 				@PTHREAD_LIBS@ \
 				@PTHREAD_CFLAGS@ \
-				$(DBUS_LIBS) \
-				@LIBPATLMS_LIBS@
+				$(DBUS_LIBS)

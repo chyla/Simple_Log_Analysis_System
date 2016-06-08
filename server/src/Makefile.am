@@ -25,7 +25,9 @@ patlms_server_SOURCES	= main.cpp \
 				web/command_executor.cpp \
 				apache/web/command_executor_object.cpp
 
-patlms_server_LDADD	= @BOOST_PROGRAM_OPTIONS_LIB@ \
+patlms_server_LDADD	= \
+				@LIBPATLMS_LIBS@ \
+				@BOOST_PROGRAM_OPTIONS_LIB@ \
 				@BOOST_LOG_LIB@ \
 				@BOOST_LOG_SETUP_LIB@ \
 				@BOOST_REGEX_LIB@ \
@@ -36,5 +38,4 @@ patlms_server_LDADD	= @BOOST_PROGRAM_OPTIONS_LIB@ \
 				@PTHREAD_LIBS@ \
 				@PTHREAD_CFLAGS@ \
 				$(DBUS_LIBS) \
-				$(SQLite3_LIBS) \
-				@LIBPATLMS_LIBS@
+				$(SQLite3_LIBS)
