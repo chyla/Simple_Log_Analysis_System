@@ -17,7 +17,7 @@ class DateParseException : public interface::Exception {
 };
 
 char const* DateParseException::what() const throw () {
-  return "Can't parse date.";
+  return "Can't parse date";
 }
 
 }
