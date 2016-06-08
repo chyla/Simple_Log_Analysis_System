@@ -15,7 +15,7 @@ namespace analyzer
 namespace detail
 {
 
-constexpr int SESSION_LENGTH = 3600;
+constexpr int SESSION_LENGTH = 3 * 60;
 
 }
 
