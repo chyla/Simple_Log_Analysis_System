@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+<h1>Apache Logs</h1>
+
+<h2>Review detection results</h2>
+
+<div class="page-content">
+
+    <p>
+        <h3>Select agent and virtualhost</h3>
+
+        <form class="pure-form ws-validate" method="get" action="#">
+            <div class="col-sm-6 ws-success">
+                <label for="agent_name" class="control-label">Agent name:</label>
+                <select name="agent_name" class='input-max-width' onchange="this.form.submit()">
+                    {% if agent_name == '' %}
+                        <option disabled selected value> -- select an option -- </option>
+                    {% endif %}
+
+                    {% for name in agent_names %}
+                        <option value="{{ name }}"
+                            {% if name == agent_name %}
+                                selected
+                            {% endif %}
+                            >
+                            {{ name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="col-sm-6 ws-success">
+                <label for="virtualhost_name" class="control-label">Virtualhost:</label>
+                <select name="virtualhost_name" class='input-max-width' onchange="this.form.submit()">
+                    {% if virtualhost_name == '' %}
+                        <option disabled selected value> -- select an option -- </option>
+                    {% endif %}
+
+                    {% for name in virtualhosts_names %}
+                        <option value="{{ name }}"
+                            {% if name == virtualhost_name %}
+                                selected
+                            {% endif %}
+                            >
+                            {{ name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+        </form>
+
+        {% if virtualhost_name != '' and  agent_name != ''%}
+            <p class="action-buttons">
+                <a class="pure-button pure-button-primary" href="?agent_name={{ agent_name }}&virtualhost_name={{ virtualhost_name }}">Next</a>
+            </p>
+        {% endif %}
+
+    </p>
+
+</div>
+
+{% endblock %}

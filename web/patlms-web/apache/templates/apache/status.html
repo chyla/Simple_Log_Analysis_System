@@ -5,35 +5,55 @@
 
 <h1>Apache Logs</h1>
 
-<p>
+<div>
+    <h2>Configuration</h2>
 
-{% if configuration %}
-    <table class="pure-table pure-table-bordered">
-        <thead>
-            <tr>
-                <th>Configured</th>
-                <th>Data range</th>
-            </tr>
-        </thead>
+    <p>
+   
+    {% if configuration %}
+        <table class="pure-table pure-table-bordered">
+            <thead>
+                <tr>
+                    <th>Configured</th>
+                    <th>Data range</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for c in configuration %}
+                <tr {% cycle '' 'class="pure-table-odd"' %}>
+                    <td> {{ c.agent_name }}/{{ c.virtualhost_name }} </td>
+                    <td> {{ c.begin_date }} - {{ c.end_date }} </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        No configuration found.
+    {% endif %}
     
-        <tbody>
-            {% for c in configuration %}
-            <tr {% cycle '' 'class="pure-table-odd"' %}>
-                <td> {{ c.agent_name }}/{{ c.virtualhost_name }} </td>
-                <td> {{ c.begin_date }} - {{ c.end_date }} </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-{% else %}
-    No configuration found.
-{% endif %}
+    </p>
+    
+    <div class="action-buttons">
+        <a class="pure-button pure-button-primary" href="{% url 'apache:configure_anomaly_detection' %}">Configure anomaly detection</a>
+        <a class="pure-button pure-button-primary" href="{% url 'apache:configure_actions' %}">Configure actions</a>
+    </div>
 
-</p>
+    <div class="clear-float"></div>
 
-<p class="action-buttons">
-    <a class="pure-button pure-button-primary" href="{% url 'apache:configure_anomaly_detection' %}">Configure anomaly detection</a>
-    <a class="pure-button pure-button-primary" href="{% url 'apache:configure_actions' %}">Configure actions</a>
-</p>
+</div>
+
+
+<div>
+
+    <h2>Results</h2>
+    
+    <div class="action-buttons">
+        <a class="pure-button button-success" href="{% url 'apache:review_detection_results' %}">Review detection results</a>
+    </div>
+
+    <div class="clear-float"></div>
+
+</div>
 
 {% endblock %}
