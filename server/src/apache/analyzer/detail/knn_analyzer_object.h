@@ -35,7 +35,7 @@ typedef std::shared_ptr<KnnAnalyzerObject> KnnAnalyzerObjectPtr;
 class KnnAnalyzerObject : public KnnAnalyzerObjectInterface {
  public:
   virtual ~KnnAnalyzerObject() = default;
-  
+
   static KnnAnalyzerObjectPtr Create(::database::detail::GeneralDatabaseFunctionsInterfacePtr general_database_functions,
                                      ::apache::database::DatabaseFunctionsPtr apache_database_functions);
 
@@ -69,16 +69,29 @@ class KnnAnalyzerObject : public KnnAnalyzerObjectInterface {
                                       const ::apache::type::ApacheSessionEntry &session_to_analyze);
 
   double Distance(const ::apache::type::ApacheSessionEntry &a, const ::apache::type::ApacheSessionEntry &b) const;
-  
+
   ::type::Timestamp GetCurrentTimestamp() const;
   ::type::Timestamp GetLastAnalyzeTimestamp(const ::type::Timestamp &now) const;
 
   detail::SystemInterfacePtr system_interface_;
   ::database::detail::GeneralDatabaseFunctionsInterfacePtr general_database_functions_;
   ::apache::database::DatabaseFunctionsPtr apache_database_functions_;
-  
-  typedef std::pair<double, ::database::type::RowId> DistanceSessionId;
-  std::array<DistanceSessionId, 3> distance_table_;
+
+  struct AnomalyDistance {
+    double distance;
+    bool is_session_anomaly;
+    ::database::type::RowId session_id;
+
+    void ClearValues() {
+      distance = -1;
+      is_session_anomaly = false;
+      session_id = 0;
+    }
+  };
+
+  std::array<AnomalyDistance, 3> distance_table_;
+
+  bool IsSessionInDistanceTable(const ::database::type::RowId &id);
 };
 
 }

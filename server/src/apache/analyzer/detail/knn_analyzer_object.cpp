@@ -107,10 +107,8 @@ void KnnAnalyzerObject::AnalyzeSessions(const ::database::type::AgentName &agent
   BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::KnnAnalyzerObject::AnalyzeSessions: Found " << learning_set_count << " sessions in learning set";
 
   for (auto session : sessions_part) {
-    for (auto i = 0; i < distance_table_.size(); ++i) {
-      distance_table_[i].first = 0;
-      distance_table_[i].second = -1;
-    }
+    for (unsigned i = 0; i < distance_table_.size(); ++i)
+      distance_table_[i].ClearValues();
 
     for (RowsCount i = 0; i < learning_set_count / MAX_ROWS_IN_MEMORY; ++i)
       AnalyzeSessionsWithLearningSet(agent_id, virtualhost_id, MAX_ROWS_IN_MEMORY, i, session);
@@ -121,9 +119,9 @@ void KnnAnalyzerObject::AnalyzeSessions(const ::database::type::AgentName &agent
     AnalyzeSessionsWithLearningSet(agent_id, virtualhost_id, left_logs_count, left_offset, session);
 
     session.is_anomaly =
-        (distance_table_.at(0).first +
-        distance_table_.at(1).first +
-        distance_table_.at(2).first) > 1;
+        (distance_table_.at(0).is_session_anomaly +
+        distance_table_.at(1).is_session_anomaly +
+        distance_table_.at(2).is_session_anomaly) > 1;
     BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::KnnAnalyzerObject::AnalyzeSessions: Is session with id " << session.id << " anomaly? - " << session.is_anomaly;
   }
 }
@@ -139,23 +137,27 @@ void KnnAnalyzerObject::AnalyzeSessionsWithLearningSet(const ::database::type::R
   for (auto session_id : learning_set_ids) {
     BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::KnnAnalyzerObject::AnalyzeSessionsWithLearningSet: Comparing session to analyze with id=" << session_to_analyze.id << " to session from learning set " << session_id;
 
-    double d = Distance(session_to_analyze,
-                        apache_database_functions_->GetOneSessionStatistic(session_id));
+    auto learning_set_session = apache_database_functions_->GetOneSessionStatistic(session_id);
 
-    for (auto i = 0; i < distance_table_.size(); ++i) {
-      if (distance_table_[i].first < d || distance_table_[i].second == -1) {
-        BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::KnnAnalyzerObject::AnalyzeSessionsWithLearningSet: Updating distance table";
+    double d = Distance(session_to_analyze, learning_set_session);
 
-        distance_table_[i].first = d;
-        distance_table_[i].second = session_id;
-        break;
+    if (IsSessionInDistanceTable(learning_set_session.id) == false) {
+      for (unsigned i = 0; i < distance_table_.size(); ++i) {
+        if ((d < distance_table_[i].distance) || (distance_table_[i].distance < 0)) {
+          BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::KnnAnalyzerObject::AnalyzeSessionsWithLearningSet: Updating distance table";
+
+          distance_table_[i].distance = d;
+          distance_table_[i].is_session_anomaly = learning_set_session.is_anomaly;
+          distance_table_[i].session_id = learning_set_session.id;
+          break;
+        }
       }
     }
 
     BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::KnnAnalyzerObject::AnalyzeSessionsWithLearningSet: New distance table: "
-        << "(" << distance_table_.at(0).first << "; " << distance_table_.at(0).second << "), "
-        << "(" << distance_table_.at(1).first << "; " << distance_table_.at(1).second << "), "
-        << "(" << distance_table_.at(2).first << "; " << distance_table_.at(2).second << "), ";
+        << "(" << distance_table_[0].distance << "; " << distance_table_[0].is_session_anomaly << "; " << distance_table_[0].session_id << "), "
+        << "(" << distance_table_[1].distance << "; " << distance_table_[1].is_session_anomaly << "; " << distance_table_[1].session_id << "), "
+        << "(" << distance_table_[2].distance << "; " << distance_table_[2].is_session_anomaly << "; " << distance_table_[2].session_id << "), ";
   }
 }
 
@@ -180,6 +182,14 @@ KnnAnalyzerObject::KnnAnalyzerObject(detail::SystemInterfacePtr system_interface
 system_interface_(system_interface),
 general_database_functions_(general_database_functions),
 apache_database_functions_(apache_database_functions) {
+}
+
+bool KnnAnalyzerObject::IsSessionInDistanceTable(const ::database::type::RowId &id) {
+  for (auto it = distance_table_.begin(); it != distance_table_.end(); ++it)
+    if (it->session_id == id)
+      return true;
+
+  return false;
 }
 
 }
