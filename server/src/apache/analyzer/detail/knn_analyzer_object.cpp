@@ -142,12 +142,12 @@ void KnnAnalyzerObject::AnalyzeSessionsWithLearningSet(const ::database::type::R
     double d = Distance(session_to_analyze,
                         apache_database_functions_->GetOneSessionStatistic(session_id));
 
-    for (auto dsi : distance_table_) {
-      if (dsi.first < d || dsi.second == -1) {
+    for (auto i = 0; i < distance_table_.size(); ++i) {
+      if (distance_table_[i].first < d || distance_table_[i].second == -1) {
         BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::KnnAnalyzerObject::AnalyzeSessionsWithLearningSet: Updating distance table";
 
-        dsi.first = d;
-        dsi.second = session_id;
+        distance_table_[i].first = d;
+        distance_table_[i].second = session_id;
         break;
       }
     }
