@@ -131,3 +131,27 @@ def review_detection_results_select_agent_and_virtualhost(request):
                    'virtualhost_name' : virtualhost_name,
                    'virtualhosts_names' : virtualhosts_names,
                    })
+
+def review_detection_results_show_results(request):
+    agent_name = request.GET.get('agent_name', '')
+    virtualhost_name = request.GET.get('virtualhost_name', '')
+    begin_date = request.GET.get('begin_date', '')
+    end_date = request.GET.get('end_date', '')
+    sessions = []
+    exception = None
+
+    try:
+        # get sessions without learning set from database
+        pass
+    except IOError as e:
+        exception = e.strerror
+
+    return render(request,
+                  'apache/review_detection_results/show_results.html',
+                  {'exception' : exception,
+                   'agent_name' : agent_name,
+                   'virtualhost_name' : virtualhost_name,
+                   'begin_date' : begin_date,
+                   'end_date' : end_date,
+                   'sessions' : sessions,
+                   })

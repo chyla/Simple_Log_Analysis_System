@@ -31,7 +31,7 @@
                     {% endfor %}
                 </select>
             </div>
-            
+
             <div class="col-sm-6 ws-success">
                 <label for="virtualhost_name" class="control-label">Virtualhost:</label>
                 <select name="virtualhost_name" class='input-max-width' onchange="this.form.submit()">
@@ -54,7 +54,7 @@
 
         {% if virtualhost_name != '' and  agent_name != ''%}
             <p class="action-buttons">
-                <a class="pure-button pure-button-primary" href="?agent_name={{ agent_name }}&virtualhost_name={{ virtualhost_name }}">Next</a>
+                <a class="pure-button pure-button-primary" href="{% url 'apache:configure_anomaly_detection_show_results' %}?agent_name={{ agent_name }}&virtualhost_name={{ virtualhost_name }}">Next</a>
             </p>
         {% endif %}
 

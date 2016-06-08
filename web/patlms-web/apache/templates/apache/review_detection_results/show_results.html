@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+<h1>Apache Logs</h1>
+
+<h2>Review detection results</h2>
+
+<div class="page-content">
+
+    <p>
+        <h3>Select date range</h3>
+        
+        <form class="pure-form ws-validate"  method="get" action="#">
+            <div class="col-sm-6 ws-success">
+                <label for="begin-date" class="control-label">Begin date:</label>
+                <input type="date" name="begin_date" id='begin_date' class='input-max-width' value="{{ begin_date }}" onchange="this.form.submit()">
+            </div>
+
+            <div class="col-sm-6 ws-success">
+                <label for="end-date" class="control-label">End date:</label>
+                <input type="date" name="end_date" id='end_date' class='input-max-width' value="{{ end_date }}" onchange="this.form.submit()">
+            </div>
+
+            <input type="hidden" name="agent_name" value="{{ agent_name }}">
+            <input type="hidden" name="virtualhost_name" value="{{ virtualhost_name }}">
+        </form>
+    </p>
+</div>
+
+<div class="clear-float"></div>
+
+<div>
+    <p>
+        <h3>Results</h3>
+    </p>
+    
+    <p>
+        {% if agent_name == '' or virtualhost_name == '' or begin_date == '' or end_date == '' or sessions|length == 0 %}
+            There is no data to display.
+        {% else %}
+            <table class="pure-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>IP</th>
+                        <th>Session start</th>
+                        <th>Session length (s)</th>
+                        <th>Bandwidth usage (bytes)</th>
+                        <th>Requests count</th>
+                        <th>Error requests (%)</th>
+                        <th>User-Agent</th>
+                        <th>Is anomaly</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                {% for s in sessions %}
+                    <tr {% cycle '' 'class="pure-table-odd"' %}>
+                        <td>{{ s.id }}</td>
+                        <td>{{ s.client_ip }}</td>
+                        <td>{{ s.session_start }}</td>
+                        <td>{{ s.session_length }}</td>
+                        <td>{{ s.bandwidth_usage }}</td>
+                        <td>{{ s.requests_count }}</td>
+                        <td>{{ s.error_percentage }}</td>
+                        <td>{{ s.useragent }}</td>
+                        <td>
+                            <input type="hidden" name="rows_ids" value="{{ s.id }}">
+                            <input type="checkbox" name="checks" value="{{ s.id }}" disabled
+                             {% if s.is_anomaly %}
+                                checked
+                             {% endif %}
+                             >
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+    </p>
+</div>
+
+{% endblock %}
