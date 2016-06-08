@@ -116,9 +116,9 @@ void KnnAnalyzerObject::AnalyzeSessions(const ::database::type::AgentName &agent
   BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::KnnAnalyzerObject::AnalyzeSessions: Found " << learning_set_count << " sessions in learning set";
 
   for (auto session : sessions_part) {
-    for (auto dsi : distance_table_) {
-      dsi.first = 0;
-      dsi.second = -1;
+    for (auto i = 0; i < distance_table_.size(); ++i) {
+      distance_table_[i].first = 0;
+      distance_table_[i].second = -1;
     }
 
     for (RowsCount i = 0; i < learning_set_count / MAX_ROWS_IN_MEMORY; ++i)
