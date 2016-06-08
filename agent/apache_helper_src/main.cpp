@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 
+#include <boost/log/trivial.hpp>
 #include <boost/program_options.hpp>
 #include <patlms/network/network.h>
 #include <patlms/util/configure_logger.h>
@@ -43,7 +44,7 @@ int main(int argc, char **argv) {
     }
   }
   catch (exception &ex) {
-    std::cout << "Exception: " << ex.what() << '\n';
+    BOOST_LOG_TRIVIAL(fatal) << "Exception catched: " << ex.what();
   }
 
   return 0;
