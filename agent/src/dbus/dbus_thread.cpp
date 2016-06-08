@@ -29,7 +29,7 @@ void DBusThread::StartLoop() {
   loop_running_ = true;
 
   while (loop_running_) {
-    if (IsCommandAvailable()) {
+    while (IsCommandAvailable()) {
       auto command = GetCommand();
       command->Execute();
     }
