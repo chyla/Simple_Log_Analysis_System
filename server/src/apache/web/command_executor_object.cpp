@@ -210,8 +210,8 @@ const ::web::type::JsonMessage CommandExecutorObject::GetApacheAnomalyDetectionC
     t["id"] = c.id;
     t["agent_name"] = c.agent_name;
     t["virtualhost_name"] = c.virtualhost_name;
-    t["begin_date"] = to_string(c.begin_date.GetYear()) + "-" + to_string(c.begin_date.GetMonth()) + "-" + to_string(c.begin_date.GetDay());
-    t["end_date"] = to_string(c.end_date.GetYear()) + "-" + to_string(c.end_date.GetMonth()) + "-" + to_string(c.end_date.GetDay());
+    t["begin_date"] = c.begin_date.ToString();
+    t["end_date"] = c.end_date.ToString();
 
     r.push_back(t);
   }
