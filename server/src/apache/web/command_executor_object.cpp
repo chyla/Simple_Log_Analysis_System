@@ -83,6 +83,17 @@ const ::web::type::JsonMessage CommandExecutorObject::Execute(const ::web::type:
 
     result = SetApacheAnomalyDetectionConfiguration(args.at(0), args.at(1), args.at(2), args.at(3));
   }
+  else if (command == "get_apache_sessions_without_learning_set") {
+    BOOST_LOG_TRIVIAL(info) << "apache::web::CommandExecutorObject::Execute: Found 'get_apache_sessions_without_learning_set' command";
+
+    auto args = json_object["args"];
+    if (args.size() != 4) {
+      BOOST_LOG_TRIVIAL(warning) << "apache::web::CommandExecutorObject::Execute: get_apache_sessions_without_learning_set require four arguments";
+      return GetInvalidArgumentErrorJson();
+    }
+
+    result = GetSessionsWithoutLearningSet(args.at(0), args.at(1), args.at(2), args.at(3));
+  }
 
   return result;
 }
@@ -94,7 +105,9 @@ bool CommandExecutorObject::IsCommandSupported(const ::web::type::Command &comma
       || (command == "get_apache_sessions")
       || (command == "set_apache_sessions_as_anomaly")
       || (command == "get_apache_anomaly_detection_configuration")
-      || (command == "set_apache_anomaly_detection_configuration");
+      || (command == "set_apache_anomaly_detection_configuration")
+      || (command == "get_apache_sessions_without_learning_set")
+      ;
 }
 
 CommandExecutorObject::CommandExecutorObject(::database::DatabasePtr database,
@@ -226,6 +239,47 @@ const ::web::type::JsonMessage CommandExecutorObject::SetApacheAnomalyDetectionC
 
   json j;
   j["status"] = "ok";
+
+  return j.dump();
+}
+
+const ::web::type::JsonMessage CommandExecutorObject::GetSessionsWithoutLearningSet(const std::string &agent_name,
+                                                                                    const std::string &virtualhost_name,
+                                                                                    const std::string &begin_date,
+                                                                                    const std::string &end_date) {
+  BOOST_LOG_TRIVIAL(debug) << "apache::web::CommandExecutorObject::GetSessionsWithoutLearningSet: Function call";
+
+  auto tbegin = ::type::Timestamp::Create(::type::Time(),
+                                          ::type::Date::Create(begin_date));
+  auto tend = ::type::Timestamp::Create(::type::Time::Create(23, 59, 59),
+                                        ::type::Date::Create(end_date));
+  auto count = apache_database_functions_->GetSessionStatisticsWithoutLearningSetCount(agent_name, virtualhost_name,
+                                                                                       tbegin, tend);
+
+  ::apache::type::ApacheSessions sessions = apache_database_functions_->GetSessionStatisticsWithoutLearningSet(agent_name, virtualhost_name,
+                                                                                                               tbegin, tend,
+                                                                                                               count, 0);
+
+  json j, r = json::array();
+  for (::apache::type::ApacheSessionEntry s : sessions) {
+    json t;
+    t["id"] = s.id;
+    t["agent_name"] = s.agent_name;
+    t["virtualhost"] = s.virtualhost;
+    t["client_ip"] = s.client_ip;
+    t["session_start"] = s.session_start.ToString();
+    t["session_length"] = s.session_length;
+    t["bandwidth_usage"] = s.bandwidth_usage;
+    t["requests_count"] = s.requests_count;
+    t["error_percentage"] = s.error_percentage;
+    t["useragent"] = s.useragent;
+    t["is_anomaly"] = s.is_anomaly;
+
+    r.push_back(t);
+  }
+
+  j["status"] = "ok";
+  j["result"] = r;
 
   return j.dump();
 }

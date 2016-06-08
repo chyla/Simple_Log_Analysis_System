@@ -103,6 +103,118 @@ bool DatabaseFunctions::AddSessionStatistics(const ::apache::type::ApacheSession
   return db_->GetApacheSessionStatistics(agent_name, virtualhost_name, from, to, limit, offset);
 }
 
+::database::type::RowsCount DatabaseFunctions::GetSessionStatisticsWithoutLearningSetCount(const std::string &agent_name, const std::string &virtualhost_name,
+                                                                                           const ::type::Timestamp &from, const ::type::Timestamp &to) {
+  BOOST_LOG_TRIVIAL(debug) << "apache::database::DatabaseFunctions::GetApacheSessionStatisticsWithoutLearningSetCount: Function call";
+
+  auto agent_id = general_database_functions_->GetAgentNameId(agent_name);
+  auto virtualhost_id = GetVirtualhostNameId(virtualhost_name);
+
+  string sql =
+      "select count(*) "
+      " from APACHE_SESSION_TABLE "
+      "  where"
+      "    ("
+      "      AGENT_NAME=?"
+      "      and"
+      "      VIRTUALHOST=?"
+      "    )"
+      "  and "
+      " ID not in ( select SESSION_ID from APACHE_LEARNING_SESSIONS where "
+      "                 AGENT_NAME_ID=" + to_string(agent_id) + " and VIRTUALHOST_NAME_ID=" + to_string(virtualhost_id) +
+      "            ) "
+      "  and " +
+      GetTimeRule(from, to) +
+      ";";
+
+  sqlite3_stmt *statement = nullptr;
+  sqlite_wrapper_->Prepare(sql, &statement);
+
+  sqlite_wrapper_->BindText(statement, 1, agent_name);
+  sqlite_wrapper_->BindText(statement, 2, virtualhost_name);
+
+  int ret = sqlite_wrapper_->Step(statement);
+  ::database::type::RowsCount count = 0;
+  if (ret == SQLITE_ROW)
+    count = sqlite_wrapper_->ColumnInt64(statement, 0);
+
+  sqlite_wrapper_->Finalize(statement);
+
+  return count;
+}
+
+::apache::type::ApacheSessions DatabaseFunctions::GetSessionStatisticsWithoutLearningSet(const std::string &agent_name, const std::string &virtualhost_name,
+                                                                                         const ::type::Timestamp &from, const ::type::Timestamp &to,
+                                                                                         unsigned limit, long long offset) {
+  BOOST_LOG_TRIVIAL(debug) << "apache::database::DatabaseFunctions::GetApacheSessionStatisticsWithoutLearningSet: Function call";
+  ::apache::type::ApacheSessions sessions;
+
+  auto agent_id = general_database_functions_->GetAgentNameId(agent_name);
+  auto virtualhost_id = GetVirtualhostNameId(virtualhost_name);
+
+  string sql =
+      "select ID, AGENT_NAME, VIRTUALHOST, CLIENT_IP, UTC_HOUR, UTC_MINUTE, UTC_SECOND, UTC_DAY, UTC_MONTH, UTC_YEAR, SESSION_LENGTH, BANDWIDTH_USAGE, REQUESTS_COUNT, ERRORS_COUNT, ERROR_PERCENTAGE, USER_AGENT, IS_ANOMALY "
+      " from APACHE_SESSION_TABLE "
+      "  where"
+      "    ("
+      "      AGENT_NAME=?"
+      "      and"
+      "      VIRTUALHOST=?"
+      "    )"
+      "  and "
+      " ID not in ( select SESSION_ID from APACHE_LEARNING_SESSIONS where "
+      "                 AGENT_NAME_ID=" + to_string(agent_id) + " and VIRTUALHOST_NAME_ID=" + to_string(virtualhost_id) +
+      "            ) "
+      "  and " +
+      GetTimeRule(from, to) +
+      "   limit " + to_string(limit) + " offset " + to_string(offset) +
+      ";";
+
+  sqlite3_stmt *statement = nullptr;
+  sqlite_wrapper_->Prepare(sql, &statement);
+
+  sqlite_wrapper_->BindText(statement, 1, agent_name);
+  sqlite_wrapper_->BindText(statement, 2, virtualhost_name);
+
+  int ret;
+  do {
+    ret = sqlite_wrapper_->Step(statement);
+
+    if (ret == SQLITE_ROW) {
+      BOOST_LOG_TRIVIAL(debug) << "database::Database::GetApacheLogs: Found new log entry in database";
+      ::apache::type::ApacheSessionEntry entry;
+
+      entry.id = sqlite_wrapper_->ColumnInt64(statement, 0);
+      entry.agent_name = sqlite_wrapper_->ColumnText(statement, 1);
+      entry.virtualhost = sqlite_wrapper_->ColumnText(statement, 2);
+      entry.client_ip = sqlite_wrapper_->ColumnText(statement, 3);
+
+      auto t = ::type::Timestamp::Create(sqlite_wrapper_->ColumnInt(statement, 4),
+                                         sqlite_wrapper_->ColumnInt(statement, 5),
+                                         sqlite_wrapper_->ColumnInt(statement, 6),
+                                         sqlite_wrapper_->ColumnInt(statement, 7),
+                                         sqlite_wrapper_->ColumnInt(statement, 8),
+                                         sqlite_wrapper_->ColumnInt(statement, 9));
+
+      entry.session_start = t;
+      entry.session_length = sqlite_wrapper_->ColumnInt64(statement, 10);
+      entry.bandwidth_usage = sqlite_wrapper_->ColumnInt64(statement, 11);
+      entry.requests_count = sqlite_wrapper_->ColumnInt64(statement, 12);
+      entry.errors_count = sqlite_wrapper_->ColumnInt64(statement, 13);
+      entry.error_percentage = sqlite_wrapper_->ColumnDouble(statement, 14);
+      entry.useragent = sqlite_wrapper_->ColumnText(statement, 15);
+      entry.is_anomaly = static_cast<bool> (sqlite_wrapper_->ColumnInt(statement, 16));
+
+      sessions.push_back(entry);
+    }
+  }
+  while (ret != SQLITE_DONE);
+
+  sqlite_wrapper_->Finalize(statement);
+
+  return sessions;
+}
+
 ::apache::type::ApacheSessionEntry DatabaseFunctions::GetOneSessionStatistic(::database::type::RowId id) {
   return db_->GetApacheOneSessionStatistic(id);
 }
@@ -404,6 +516,45 @@ DatabaseFunctions::DatabaseFunctions(::database::DatabasePtr db,
 db_(db),
 sqlite_wrapper_(sqlite_wrapper),
 general_database_functions_(general_database_functions) {
+}
+
+string DatabaseFunctions::GetTimeRule(const ::type::Timestamp &from, const ::type::Timestamp &to) const {
+  string from_day = to_string(from.GetDate().GetDay()),
+      from_month = to_string(from.GetDate().GetMonth()),
+      from_year = to_string(from.GetDate().GetYear()),
+      from_hour = to_string(from.GetTime().GetHour()),
+      from_minute = to_string(from.GetTime().GetMinute()),
+      from_second = to_string(from.GetTime().GetSecond()),
+      to_day = to_string(to.GetDate().GetDay()),
+      to_month = to_string(to.GetDate().GetMonth()),
+      to_year = to_string(to.GetDate().GetYear()),
+      to_hour = to_string(to.GetTime().GetHour()),
+      to_minute = to_string(to.GetTime().GetMinute()),
+      to_second = to_string(to.GetTime().GetSecond());
+
+  string rule =
+      "  ("
+      "    ("
+      "      (UTC_YEAR > " + from_year + ")"
+      "      or (UTC_YEAR = " + from_year + " and UTC_MONTH > " + from_month + ")"
+      "      or (UTC_YEAR = " + from_year + " and UTC_MONTH = " + from_month + " and UTC_DAY > " + from_day + ")"
+      "      or (UTC_YEAR = " + from_year + " and UTC_MONTH = " + from_month + " and UTC_DAY = " + from_day + " and UTC_HOUR > " + from_hour + ")"
+      "      or (UTC_YEAR = " + from_year + " and UTC_MONTH = " + from_month + " and UTC_DAY = " + from_day + " and UTC_HOUR = " + from_hour + " and UTC_MINUTE > " + from_minute + ")"
+      "      or (UTC_YEAR = " + from_year + " and UTC_MONTH = " + from_month + " and UTC_DAY = " + from_day + " and UTC_HOUR = " + from_hour + " and UTC_MINUTE = " + from_minute + " and UTC_SECOND >= " + from_second + ")"
+      "    )"
+      "  and"
+      "    ("
+      "      (UTC_YEAR < " + to_year + ")"
+      "      or (UTC_YEAR = " + to_year + " and UTC_MONTH < " + to_month + ")"
+      "      or (UTC_YEAR = " + to_year + " and UTC_MONTH = " + to_month + " and UTC_DAY < " + to_day + ")"
+      "      or (UTC_YEAR = " + to_year + " and UTC_MONTH = " + to_month + " and UTC_DAY = " + to_day + " and UTC_HOUR < " + to_hour + ")"
+      "      or (UTC_YEAR = " + to_year + " and UTC_MONTH = " + to_month + " and UTC_DAY = " + to_day + " and UTC_HOUR = " + to_hour + " and UTC_MINUTE < " + to_minute + ")"
+      "      or (UTC_YEAR = " + to_year + " and UTC_MONTH = " + to_month + " and UTC_DAY = " + to_day + " and UTC_HOUR = " + to_hour + " and UTC_MINUTE = " + to_minute + " and UTC_SECOND <= " + to_second + ")"
+      "    )"
+      "  )"
+      ;
+
+  return rule;
 }
 
 }

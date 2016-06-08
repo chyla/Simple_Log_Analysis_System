@@ -48,6 +48,11 @@ class DatabaseFunctions : public detail::DatabaseFunctionsInterface {
   ::apache::type::ApacheSessions GetSessionStatistics(const std::string &agent_name, const std::string &virtualhost_name,
                                                       const ::type::Timestamp &from, const ::type::Timestamp &to,
                                                       unsigned limit, ::database::type::RowsCount offset) override;
+  ::database::type::RowsCount GetSessionStatisticsWithoutLearningSetCount(const std::string &agent_name, const std::string &virtualhost_name,
+                                                                          const ::type::Timestamp &from, const ::type::Timestamp &to) override;
+  ::apache::type::ApacheSessions GetSessionStatisticsWithoutLearningSet(const std::string &agent_name, const std::string &virtualhost_name,
+                                                                        const ::type::Timestamp &from, const ::type::Timestamp &to,
+                                                                        unsigned limit, long long offset) override;
   ::apache::type::ApacheSessionEntry GetOneSessionStatistic(::database::type::RowId id) override;
   void MarkSessionStatisticAsAnomaly(const ::database::type::RowId &id) override;
 
@@ -86,6 +91,8 @@ class DatabaseFunctions : public detail::DatabaseFunctionsInterface {
   DatabaseFunctions(::database::DatabasePtr db,
                     ::database::detail::SQLiteWrapperInterfacePtr sqlite_wrapper,
                     ::database::detail::GeneralDatabaseFunctionsInterfacePtr general_database_functions);
+
+  std::string GetTimeRule(const ::type::Timestamp &from, const ::type::Timestamp &to) const;
 };
 
 }

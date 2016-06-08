@@ -34,7 +34,7 @@ class DatabaseFunctionsInterface {
   virtual void CreateTables() = 0;
 
   virtual const ::apache::type::AnomalyDetectionConfiguration GetAnomalyDetectionConfigurations() = 0;
-  
+
   virtual ::database::type::RowsCount GetLogsCount(std::string agent_name, std::string virtualhost_name,
                                                    ::type::Timestamp from, ::type::Timestamp to) = 0;
   virtual ::type::ApacheLogs GetLogs(std::string agent_name, std::string virtualhost_name,
@@ -47,6 +47,11 @@ class DatabaseFunctionsInterface {
   virtual ::apache::type::ApacheSessions GetSessionStatistics(const std::string &agent_name, const std::string &virtualhost_name,
                                                               const ::type::Timestamp &from, const ::type::Timestamp &to,
                                                               unsigned limit, ::database::type::RowsCount offset) = 0;
+  virtual ::database::type::RowsCount GetSessionStatisticsWithoutLearningSetCount(const std::string &agent_name, const std::string &virtualhost_name,
+                                                                                  const ::type::Timestamp &from, const ::type::Timestamp &to) = 0;
+  virtual ::apache::type::ApacheSessions GetSessionStatisticsWithoutLearningSet(const std::string &agent_name, const std::string &virtualhost_name,
+                                                                                const ::type::Timestamp &from, const ::type::Timestamp &to,
+                                                                                unsigned limit, long long offset) = 0;
   virtual ::apache::type::ApacheSessionEntry GetOneSessionStatistic(::database::type::RowId id) = 0;
   virtual void MarkSessionStatisticAsAnomaly(const ::database::type::RowId &id) = 0;
 

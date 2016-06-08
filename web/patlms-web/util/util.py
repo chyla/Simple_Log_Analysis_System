@@ -50,3 +50,6 @@ def get_apache_anomaly_detection_configuration():
 
 def set_apache_anomaly_detection_configuration(agent_name, virtualhost_name, begin_date, end_date):
     return connect_and_get_result_from_command('set_apache_anomaly_detection_configuration', [agent_name, virtualhost_name, begin_date, end_date])
+
+def get_apache_sessions_without_learning_set(agent_name, virtualhost_name, begin_date, end_date):
+    return connect_and_get_result_from_command('get_apache_sessions_without_learning_set', [agent_name, virtualhost_name, begin_date, end_date])

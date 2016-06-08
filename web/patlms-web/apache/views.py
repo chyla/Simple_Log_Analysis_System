@@ -141,8 +141,8 @@ def review_detection_results_show_results(request):
     exception = None
 
     try:
-        # get sessions without learning set from database
-        pass
+        if begin_date != '' and end_date != '':
+            sessions = util.get_apache_sessions_without_learning_set(agent_name, virtualhost_name, begin_date, end_date)
     except IOError as e:
         exception = e.strerror
 
