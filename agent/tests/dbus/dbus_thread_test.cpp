@@ -81,7 +81,7 @@ TEST_F(DBusThreadTest, StopLoopWhenNotStarted) {
 }
 
 TEST_F(DBusThreadTest, ExecuteCommandOnce) {
-  EXPECT_CALL(*system, Usleep(100)).Times(AtLeast(1));
+  EXPECT_CALL(*system, Usleep(100)).Times(1);
   shared_ptr<TestCommand> test_command = make_shared<TestCommand>();
 
   thread->AddCommand(test_command);
@@ -92,7 +92,7 @@ TEST_F(DBusThreadTest, ExecuteCommandOnce) {
 }
 
 TEST_F(DBusThreadTest, ExecuteCommandTwice) {
-  EXPECT_CALL(*system, Usleep(100)).Times(AtLeast(1));
+  EXPECT_CALL(*system, Usleep(100)).Times(1);
   shared_ptr<TestCommand> test_command = make_shared<TestCommand>();
 
   thread->AddCommand(test_command);
