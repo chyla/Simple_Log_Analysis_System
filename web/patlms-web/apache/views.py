@@ -97,7 +97,7 @@ def configure_anomaly_detection_save_settings(request):
 
     try:
         util.set_apache_sessions_as_anomaly(agent_name,
-                                            virttualhost_name,
+                                            virtualhost_name,
                                             [int(i) for i in all_rows_ids],
                                             [int(i) for i in anomalies])
     except IOError as e:
