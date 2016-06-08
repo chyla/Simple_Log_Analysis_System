@@ -17,6 +17,7 @@ namespace detail
 class System : public ::dbus::detail::SystemInterface
 {
  public:
+  MOCK_METHOD1(Usleep, void(unsigned));
   MOCK_METHOD1(Sleep, void(unsigned));
 };
 

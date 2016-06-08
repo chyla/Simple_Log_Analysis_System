@@ -34,7 +34,7 @@ void DBusThread::StartLoop() {
       command->Execute();
     }
 
-    system_->Sleep(1);
+    system_->Usleep(100);
   }
 }
 

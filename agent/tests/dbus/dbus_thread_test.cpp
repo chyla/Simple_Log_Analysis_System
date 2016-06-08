@@ -64,7 +64,7 @@ class DBusThreadTest : public ::testing::Test {
 };
 
 TEST_F(DBusThreadTest, StopCommand) {
-  EXPECT_CALL(*system, Sleep(1)).Times(AtLeast(1));
+  EXPECT_CALL(*system, Usleep(100)).Times(AtLeast(1));
 
   thread->AddCommand(stop_command);
   thread->StartLoop();
@@ -81,7 +81,7 @@ TEST_F(DBusThreadTest, StopLoopWhenNotStarted) {
 }
 
 TEST_F(DBusThreadTest, ExecuteCommandOnce) {
-  EXPECT_CALL(*system, Sleep(1)).Times(AtLeast(1));
+  EXPECT_CALL(*system, Usleep(100)).Times(AtLeast(1));
   shared_ptr<TestCommand> test_command = make_shared<TestCommand>();
 
   thread->AddCommand(test_command);
@@ -92,7 +92,7 @@ TEST_F(DBusThreadTest, ExecuteCommandOnce) {
 }
 
 TEST_F(DBusThreadTest, ExecuteCommandTwice) {
-  EXPECT_CALL(*system, Sleep(1)).Times(AtLeast(1));
+  EXPECT_CALL(*system, Usleep(100)).Times(AtLeast(1));
   shared_ptr<TestCommand> test_command = make_shared<TestCommand>();
 
   thread->AddCommand(test_command);

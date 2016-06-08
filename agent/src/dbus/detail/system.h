@@ -11,6 +11,7 @@ namespace detail
 
 class System : public SystemInterface {
  public:
+  void Usleep(unsigned ms);
   void Sleep(unsigned seconds);
 };
 
