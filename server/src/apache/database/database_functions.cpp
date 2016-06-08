@@ -382,9 +382,9 @@ void DatabaseFunctions::RemoveAllLearningSessions(const RowId &agent_id,
 
   string sql =
       "delete from APACHE_LEARNING_SESSIONS where "
-      "  AGENT_NAME_ID=" + to_string(agent_id) +
-      "and " +
-      "  VIRTUALHOST_NAME_ID=" + to_string(virtualhost_id) +
+      "    AGENT_NAME_ID=" + to_string(agent_id) +
+      "  and " +
+      "    VIRTUALHOST_NAME_ID=" + to_string(virtualhost_id) +
       ";";
 
   sqlite_wrapper_->Exec(sql);
