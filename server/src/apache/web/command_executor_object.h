@@ -6,6 +6,8 @@
 #include <memory>
 
 #include "src/database/database.h"
+#include "src/database/type/agent_name.h"
+#include "src/database/type/virtualhost_name.h"
 #include "src/database/detail/general_database_functions_interface.h"
 #include "src/apache/database/detail/database_functions_interface.h"
 
@@ -45,7 +47,9 @@ class CommandExecutorObject : public ::web::type::CommandExecutorObjectInterface
                                              const std::string &virtualhost_name,
                                              const std::string &begin_date,
                                              const std::string &end_date);
-  const ::web::type::JsonMessage SetApacheSessionsAsAnomaly(const std::vector<long long> &all,
+  const ::web::type::JsonMessage SetApacheSessionsAsAnomaly(const ::database::type::AgentName &agent_name,
+                                                            const ::database::type::VirtualhostName &virtualhost_name,
+                                                            const std::vector<long long> &all,
                                                             const std::vector<long long> &anomalies);
   const ::web::type::JsonMessage GetApacheAnomalyDetectionConfiguration();
   const ::web::type::JsonMessage SetApacheAnomalyDetectionConfiguration(const std::string &agent_name,

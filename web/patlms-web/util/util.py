@@ -42,8 +42,8 @@ def get_apache_virtualhost_names(agent_name):
 def get_apache_sessions(agent_name, virtualhost_name, begin_date, end_date):
     return connect_and_get_result_from_command('get_apache_sessions', [agent_name, virtualhost_name, begin_date, end_date])
 
-def set_apache_sessions_as_anomaly(all_rows_ids, anomalies_ids):
-    return connect_and_get_result_from_command('set_apache_sessions_as_anomaly', [all_rows_ids, anomalies_ids])
+def set_apache_sessions_as_anomaly(agent_name, virtualhost_name, all_rows_ids, anomalies_ids):
+    return connect_and_get_result_from_command('set_apache_sessions_as_anomaly', [agent_name, virtualhost_name, all_rows_ids, anomalies_ids])
 
 def get_apache_anomaly_detection_configuration():
     return connect_and_get_result_from_command('get_apache_anomaly_detection_configuration')

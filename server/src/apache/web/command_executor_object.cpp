@@ -60,12 +60,12 @@ const ::web::type::JsonMessage CommandExecutorObject::Execute(const ::web::type:
     BOOST_LOG_TRIVIAL(info) << "apache::web::CommandExecutorObject::Execute: Found 'set_apache_sessions_as_anomaly' command";
 
     auto args = json_object["args"];
-    if (args.size() != 2) {
+    if (args.size() != 4) {
       BOOST_LOG_TRIVIAL(warning) << "apache::web::CommandExecutorObject::Execute: set_apache_sessions_as_anomaly require two arguments";
       return GetInvalidArgumentErrorJson();
     }
 
-    result = SetApacheSessionsAsAnomaly(args.at(0), args.at(1));
+    result = SetApacheSessionsAsAnomaly(args.at(0), args.at(1), args.at(2), args.at(3));
   }
   else if (command == "get_apache_anomaly_detection_configuration") {
     BOOST_LOG_TRIVIAL(info) << "apache::web::CommandExecutorObject::Execute: Found 'get_apache_anomaly_detection_configuration' command";
@@ -166,11 +166,19 @@ const ::web::type::JsonMessage CommandExecutorObject::GetSessions(const std::str
   return j.dump();
 }
 
-const ::web::type::JsonMessage CommandExecutorObject::SetApacheSessionsAsAnomaly(const std::vector<long long> &all,
+const ::web::type::JsonMessage CommandExecutorObject::SetApacheSessionsAsAnomaly(const ::database::type::AgentName &agent_name,
+                                                                                 const ::database::type::VirtualhostName &virtualhost_name,
+                                                                                 const std::vector<long long> &all,
                                                                                  const std::vector<long long> &anomalies) {
   BOOST_LOG_TRIVIAL(debug) << "apache::web::CommandExecutorObject::SetApacheSessionsAsAnomaly: Function call";
 
   database_->SetApacheSessionAsAnomaly(all, anomalies);
+
+  auto agent_id = general_database_functions_->GetAgentNameId(agent_name);
+  auto virtualhost_id = apache_database_functions_->GetVirtualhostNameId(virtualhost_name);
+
+  apache_database_functions_->RemoveAllLearningSessions(agent_id, virtualhost_id);
+  apache_database_functions_->SetLearningSessions(agent_id, virtualhost_id, all);
 
   json j;
   j["status"] = "ok";
