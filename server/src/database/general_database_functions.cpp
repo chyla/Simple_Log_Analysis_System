@@ -195,6 +195,7 @@ void GeneralDatabaseFunctions::AddAgentName(const std::string &name) {
 
   try {
     sqlite_wrapper_->BindText(statement, 1, name);
+    sqlite_wrapper_->Step(statement);
   }
   catch (exception::DatabaseException &ex) {
     sqlite_wrapper_->Finalize(statement);
