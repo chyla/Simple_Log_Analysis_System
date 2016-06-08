@@ -6,6 +6,7 @@
 #include <memory>
 
 #include "src/database/database.h"
+#include "src/database/detail/general_database_functions_interface.h"
 #include "src/apache/database/detail/database_functions_interface.h"
 
 namespace apache
@@ -22,6 +23,7 @@ class CommandExecutorObject : public ::web::type::CommandExecutorObjectInterface
   virtual ~CommandExecutorObject() = default;
 
   static CommandExecutorObjectPtr Create(::database::DatabasePtr database,
+                                         ::database::detail::GeneralDatabaseFunctionsInterfacePtr general_database_functions,
                                          ::apache::database::detail::DatabaseFunctionsInterfacePtr apache_database_functions);
 
   const ::web::type::JsonMessage Execute(const ::web::type::JsonMessage &message);
@@ -30,9 +32,11 @@ class CommandExecutorObject : public ::web::type::CommandExecutorObjectInterface
 
  private:
   CommandExecutorObject(::database::DatabasePtr database,
+                        ::database::detail::GeneralDatabaseFunctionsInterfacePtr general_database_functions,
                         ::apache::database::detail::DatabaseFunctionsInterfacePtr apache_database_functions);
 
   ::database::DatabasePtr database_;
+  ::database::detail::GeneralDatabaseFunctionsInterfacePtr general_database_functions_;
   ::apache::database::detail::DatabaseFunctionsInterfacePtr apache_database_functions_;
 
   const ::web::type::JsonMessage GetHostnames();

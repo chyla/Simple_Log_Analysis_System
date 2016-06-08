@@ -16,9 +16,10 @@ namespace web
 {
 
 CommandExecutorObjectPtr CommandExecutorObject::Create(::database::DatabasePtr database,
+                                                       ::database::detail::GeneralDatabaseFunctionsInterfacePtr general_database_functions,
                                                        ::apache::database::detail::DatabaseFunctionsInterfacePtr apache_database_functions) {
   BOOST_LOG_TRIVIAL(debug) << "apache::web::CommandExecutorObject::Create: Function call";
-  auto p = CommandExecutorObjectPtr(new CommandExecutorObject(database, apache_database_functions));
+  auto p = CommandExecutorObjectPtr(new CommandExecutorObject(database, general_database_functions, apache_database_functions));
   return p;
 }
 
@@ -97,8 +98,10 @@ bool CommandExecutorObject::IsCommandSupported(const ::web::type::Command &comma
 }
 
 CommandExecutorObject::CommandExecutorObject(::database::DatabasePtr database,
+                                             ::database::detail::GeneralDatabaseFunctionsInterfacePtr general_database_functions,
                                              ::apache::database::detail::DatabaseFunctionsInterfacePtr apache_database_functions) :
 database_(database),
+general_database_functions_(general_database_functions),
 apache_database_functions_(apache_database_functions) {
 }
 
