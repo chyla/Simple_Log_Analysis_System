@@ -35,7 +35,7 @@ class DatabaseFunctions : public detail::DatabaseFunctionsInterface {
   void CreateTables() override;
 
   const ::apache::type::AnomalyDetectionConfiguration GetAnomalyDetectionConfigurations() override;
-  
+
   ::database::type::RowsCount GetLogsCount(std::string agent_name, std::string virtualhost_name,
                                            ::type::Timestamp from, ::type::Timestamp to) override;
   ::type::ApacheLogs GetLogs(std::string agent_name, std::string virtualhost_name,
@@ -49,6 +49,7 @@ class DatabaseFunctions : public detail::DatabaseFunctionsInterface {
                                                       const ::type::Timestamp &from, const ::type::Timestamp &to,
                                                       unsigned limit, ::database::type::RowsCount offset) override;
   ::apache::type::ApacheSessionEntry GetOneSessionStatistic(::database::type::RowId id) override;
+  void MarkSessionStatisticAsAnomaly(const ::database::type::RowId &id) override;
 
   void MarkStatisticsAsCreatedFor(::type::Date date) override;
   bool AreStatisticsCreatedFor(::type::Date date) override;

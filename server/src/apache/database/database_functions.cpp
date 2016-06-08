@@ -107,6 +107,14 @@ bool DatabaseFunctions::AddSessionStatistics(const ::apache::type::ApacheSession
   return db_->GetApacheOneSessionStatistic(id);
 }
 
+void DatabaseFunctions::MarkSessionStatisticAsAnomaly(const ::database::type::RowId &id) {
+  BOOST_LOG_TRIVIAL(debug) << "apache::database::DatabaseFunctions::MarkSessionStatisticAsAnomaly: Function call";
+
+  auto sql = "update APACHE_SESSION_TABLE set IS_ANOMALY=1 where ID=" + to_string(id) + ";";
+
+  sqlite_wrapper_->Exec(sql);
+}
+
 void DatabaseFunctions::MarkStatisticsAsCreatedFor(::type::Date date) {
   BOOST_LOG_TRIVIAL(debug) << "apache::database::DatabaseFunctions::MarkStatisticsAsCreatedFor: Function call";
 

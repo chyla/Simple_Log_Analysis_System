@@ -118,10 +118,11 @@ void KnnAnalyzerObject::AnalyzeSessions(const ::database::type::AgentName &agent
 
     AnalyzeSessionsWithLearningSet(agent_id, virtualhost_id, left_logs_count, left_offset, session);
 
-    session.is_anomaly =
-        (distance_table_.at(0).is_session_anomaly +
-        distance_table_.at(1).is_session_anomaly +
-        distance_table_.at(2).is_session_anomaly) > 1;
+    if (IsSessionAnomaly()) {
+      session.is_anomaly = true;
+      apache_database_functions_->MarkSessionStatisticAsAnomaly(session.id);
+    }
+
     BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::KnnAnalyzerObject::AnalyzeSessions: Is session with id " << session.id << " anomaly? - " << session.is_anomaly;
   }
 }
@@ -174,6 +175,12 @@ double KnnAnalyzerObject::Distance(const ::apache::type::ApacheSessionEntry &a,
   BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::KnnAnalyzerObject::Distance: Distance between session id=" << a.id << "; id2=" << b.id << " is " << d;
 
   return d;
+}
+
+bool KnnAnalyzerObject::IsSessionAnomaly() {
+  return (distance_table_.at(0).is_session_anomaly +
+      distance_table_.at(1).is_session_anomaly +
+      distance_table_.at(2).is_session_anomaly) > 1;
 }
 
 KnnAnalyzerObject::KnnAnalyzerObject(detail::SystemInterfacePtr system_interface,

@@ -68,6 +68,7 @@ class KnnAnalyzerObject : public KnnAnalyzerObjectInterface {
                                       ::database::type::RowsCount offset,
                                       const ::apache::type::ApacheSessionEntry &session_to_analyze);
 
+  bool IsSessionAnomaly();
   double Distance(const ::apache::type::ApacheSessionEntry &a, const ::apache::type::ApacheSessionEntry &b) const;
 
   ::type::Timestamp GetCurrentTimestamp() const;

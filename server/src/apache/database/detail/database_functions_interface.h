@@ -48,6 +48,7 @@ class DatabaseFunctionsInterface {
                                                               const ::type::Timestamp &from, const ::type::Timestamp &to,
                                                               unsigned limit, ::database::type::RowsCount offset) = 0;
   virtual ::apache::type::ApacheSessionEntry GetOneSessionStatistic(::database::type::RowId id) = 0;
+  virtual void MarkSessionStatisticAsAnomaly(const ::database::type::RowId &id) = 0;
 
   virtual void MarkStatisticsAsCreatedFor(::type::Date date) = 0;
   virtual bool AreStatisticsCreatedFor(::type::Date date) = 0;
