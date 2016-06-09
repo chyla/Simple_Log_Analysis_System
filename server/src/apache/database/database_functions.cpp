@@ -240,7 +240,7 @@ void DatabaseFunctions::ClearAnomalyMarksInLearningSet(const ::database::type::R
       "         select SESSION_ID from APACHE_LEARNING_SESSIONS where "
       "             AGENT_NAME_ID=" + to_string(agent_name_id) +
       "           and "
-      "             VIRTUALHOST_NAME_ID=1" + to_string(virtualhost_name_id) +
+      "             VIRTUALHOST_NAME_ID=" + to_string(virtualhost_name_id) +
       "         );";
 
   sqlite_wrapper_->Exec(sql);
