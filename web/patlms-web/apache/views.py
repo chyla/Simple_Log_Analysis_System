@@ -21,6 +21,28 @@ def status(request):
                                'configuration' : configuration,
                                })
 
+def configure_anomaly_detection_select_agent_and_virtualhost(request):
+    agent_name = request.GET.get('agent_name', '')
+    virtualhost_name = request.GET.get('virtualhost_name', '')
+    agent_names = None
+    virtualhosts_names = None
+    exception = None
+
+    try:
+        agent_names = util.get_apache_agent_names()
+        if agent_name != '':
+            virtualhosts_names = util.get_apache_virtualhost_names(agent_name)
+    except Exception as e:
+        exception = str(e)
+
+    return render_to_response('apache/configure_anomaly_detection/select_agent_and_virtualhost.html',
+                              {'exception' : exception,
+                               'agent_name' : agent_name,
+                               'virtualhost_name' : virtualhost_name,
+                               'agent_names' : agent_names,
+                               'virtualhosts_names' : virtualhosts_names,
+                               })
+
 def configure_anomaly_detection_select_agent_name(request):
     exception = None
     agent_names = None
