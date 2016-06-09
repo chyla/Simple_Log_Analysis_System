@@ -60,6 +60,8 @@ class CommandExecutorObject : public ::web::type::CommandExecutorObjectInterface
                                                                const std::string &virtualhost_name,
                                                                const std::string &begin_date,
                                                                const std::string &end_date);
+  const ::web::type::JsonMessage MarkLearningSetWithIqrMethod(const std::string &agent_name,
+                                                              const std::string &virtualhost_name);
 };
 
 }

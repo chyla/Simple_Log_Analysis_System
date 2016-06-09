@@ -67,10 +67,14 @@ def configure_anomaly_detection_correct_sessions_marks(request):
     sessions = []
     agent_name = request.GET.get('agent_name', '')
     virtualhost_name = request.GET.get('virtualhost_name', '')
-    begin_date = request.GET.get('begin-date', '')
-    end_date = request.GET.get('end-date', '')
+    begin_date = request.GET.get('begin_date', '')
+    end_date = request.GET.get('end_date', '')
+    mark_automatically = request.GET.get('mark_automatically', 'false')
 
     try:
+        if mark_automatically == 'true':
+            util.mark_learning_set_with_iqr_method(agent_name, virtualhost_name)
+
         sessions = util.get_apache_sessions(agent_name, virtualhost_name, begin_date, end_date)
         util.set_apache_anomaly_detection_configuration(agent_name, virtualhost_name, begin_date, end_date)
     except Exception as e:
@@ -90,8 +94,8 @@ def configure_anomaly_detection_save_settings(request):
     exception = None
     agent_name = request.POST.get('agent_name', '')
     virtualhost_name = request.POST.get('virtualhost_name', '')
-    begin_date = request.POST.get('begin-date', '')
-    end_date = request.POST.get('end-date', '')
+    begin_date = request.POST.get('begin_date', '')
+    end_date = request.POST.get('end_date', '')
     all_rows_ids = request.POST.getlist('rows_ids')
     anomalies = request.POST.getlist('checks')
 

@@ -5,7 +5,10 @@
 
 #include "database_functions.h"
 
+#include <algorithm>
+#include <cmath>
 #include <string>
+#include <utility>
 #include <boost/log/trivial.hpp>
 
 #include "src/database/exception/detail/item_not_found_exception.h"
@@ -225,6 +228,54 @@ void DatabaseFunctions::MarkSessionStatisticAsAnomaly(const ::database::type::Ro
   auto sql = "update APACHE_SESSION_TABLE set IS_ANOMALY=1 where ID=" + to_string(id) + ";";
 
   sqlite_wrapper_->Exec(sql);
+}
+
+void DatabaseFunctions::ClearAnomalyMarksInLearningSet(const ::database::type::RowId &agent_name_id,
+                                                       const ::database::type::RowId &virtualhost_name_id) {
+  BOOST_LOG_TRIVIAL(debug) << "apache::database::DatabaseFunctions::ClearAnomalyMarksInLearningSet: Function call";
+
+  auto sql =
+      "update APACHE_SESSION_TABLE set IS_ANOMALY=0 where "
+      "  ID in ( "
+      "         select SESSION_ID from APACHE_LEARNING_SESSIONS where "
+      "             AGENT_NAME_ID=" + to_string(agent_name_id) +
+      "           and "
+      "             VIRTUALHOST_NAME_ID=1" + to_string(virtualhost_name_id) +
+      "         );";
+
+  sqlite_wrapper_->Exec(sql);
+}
+
+void DatabaseFunctions::MarkLearningSetWithIqrMethod(const ::database::type::RowId &agent_name_id,
+                                                     const ::database::type::RowId &virtualhost_name_id) {
+  BOOST_LOG_TRIVIAL(debug) << "apache::database::DatabaseFunctions::MarkLearningSetWithIqrMethod: Function call";
+
+  typedef std::pair<::database::type::RowId, long long> IdQueriesPair;
+  std::vector<IdQueriesPair> id_queries;
+
+  auto count = GetLearningSessionsCount(agent_name_id, virtualhost_name_id);
+  auto learning_set_ids = GetLearningSessionsIds(agent_name_id, virtualhost_name_id, count, 0);
+
+  for (auto id : learning_set_ids) {
+    auto session = GetOneSessionStatistic(id);
+    id_queries.push_back(std::make_pair(session.id, session.requests_count));
+  }
+
+  sort(id_queries.begin(), id_queries.end(), [](const IdQueriesPair &a, const IdQueriesPair & b) {
+    return a.second < b.second;
+  });
+
+  auto q1_element = ceil(id_queries.size() * 1. / 4.);
+  auto q3_element = ceil(id_queries.size() * 3. / 4.);
+  auto iqr = id_queries.at(q3_element).second - id_queries.at(q1_element).second;
+
+  auto m = id_queries.at(q3_element).second + 1.5 * iqr;
+
+  ClearAnomalyMarksInLearningSet(agent_name_id, virtualhost_name_id);
+  for (auto element : id_queries) {
+    if (element.second > m)
+      MarkSessionStatisticAsAnomaly(element.first);
+  }
 }
 
 void DatabaseFunctions::MarkStatisticsAsCreatedFor(::type::Date date) {

@@ -18,13 +18,13 @@
     <p>
         <form class="pure-form ws-validate" method="get" action="{% url 'apache:configure_anomaly_detection_correct_sessions_marks' %}">
             <div class="col-sm-6 ws-success">
-                <label for="begin-date" class="control-label">Begin date:</label>
-                <input type="date" name="begin-date" id='begin-date' class='input-max-width'>
+                <label for="begin_date" class="control-label">Begin date:</label>
+                <input type="date" name="begin_date" id='begin_date' class='input-max-width'>
             </div>
 
             <div class="col-sm-6 ws-success">
-                <label for="end-date" class="control-label">End date:</label>
-                <input type="date" name="end-date" id='end-date' class='input-max-width'>
+                <label for="end_date" class="control-label">End date:</label>
+                <input type="date" name="end_date" id='end_date' class='input-max-width'>
             </div>
 
             <input type="hidden" name="agent_name" value="{{ agent_name }}">
