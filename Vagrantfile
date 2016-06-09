@@ -43,11 +43,23 @@ Vagrant.configure(2) do |config|
    config.vm.define "agentA" do |agentA|
      agentA.vm.hostname = "agentA"
      agentA.vm.network "private_network", ip: "192.168.173.20"
+
+     agentA.vm.provision "shell", inline: <<-SHELL
+       export DEBIAN_FRONTEND=noninteractive
+
+       sudo apt-get install -y apache2
+     SHELL
    end
 
    config.vm.define "agentB" do |agentB|
      agentB.vm.hostname = "agentB"
      agentB.vm.network "private_network", ip: "192.168.173.21"
+
+     agentB.vm.provision "shell", inline: <<-SHELL
+       export DEBIAN_FRONTEND=noninteractive
+
+       sudo apt-get install -y apache2
+     SHELL
    end
 
 end
