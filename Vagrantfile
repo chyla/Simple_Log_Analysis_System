@@ -12,6 +12,8 @@ Vagrant.configure(2) do |config|
   end
 
    config.vm.provision "shell", inline: <<-SHELL
+     set -v
+
      sudo su -c 'echo "nameserver 8.8.8.8" > /etc/resolv.conf'
 
      # global archives directory
@@ -45,6 +47,7 @@ Vagrant.configure(2) do |config|
      agentA.vm.network "private_network", ip: "192.168.173.20"
 
      agentA.vm.provision "shell", inline: <<-SHELL
+       set -v
        export DEBIAN_FRONTEND=noninteractive
 
        sudo apt-get install -y apache2
@@ -56,6 +59,7 @@ Vagrant.configure(2) do |config|
      agentB.vm.network "private_network", ip: "192.168.173.21"
 
      agentB.vm.provision "shell", inline: <<-SHELL
+       set -v
        export DEBIAN_FRONTEND=noninteractive
 
        sudo apt-get install -y apache2

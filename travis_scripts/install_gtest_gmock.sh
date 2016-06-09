@@ -1,6 +1,7 @@
 #!/bin/bash
 
 set -e
+set -v
 
 export DIR=~/patlms_bindir
 
