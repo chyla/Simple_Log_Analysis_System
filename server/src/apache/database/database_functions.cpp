@@ -271,8 +271,12 @@ void DatabaseFunctions::MarkLearningSetWithIqrMethod(const ::database::type::Row
 
   auto m = id_queries.at(q3_element).second + 1.5 * iqr;
 
+  BOOST_LOG_TRIVIAL(debug) << "apache::database::DatabaseFunctions::MarkLearningSetWithIqrMethod: Info: q1_element=" << q1_element << "; q3_element=" << q3_element << "; iqr=" << iqr << "; m=" << m;
+
   ClearAnomalyMarksInLearningSet(agent_name_id, virtualhost_name_id);
   for (auto element : id_queries) {
+    BOOST_LOG_TRIVIAL(debug) << "apache::database::DatabaseFunctions::MarkLearningSetWithIqrMethod: Loop: Comparing m to element.second=" << element.second;
+
     if (element.second > m)
       MarkSessionStatisticAsAnomaly(element.first);
   }
