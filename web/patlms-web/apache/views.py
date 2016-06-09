@@ -65,9 +65,10 @@ def configure_anomaly_detection_correct_sessions_marks(request):
 
     try:
         if mark_automatically == 'true':
-            sessions = util.get_apache_sessions_marked_with_iqr_method(agent_name, virtualhost_name, begin_date, end_date)
-        else:
-            sessions = util.get_apache_sessions(agent_name, virtualhost_name, begin_date, end_date)
+            util.mark_learning_set_with_iqr_method(agent_name, virtualhost_name)
+
+        sessions = util.get_apache_sessions(agent_name, virtualhost_name, begin_date, end_date)
+        util.set_apache_anomaly_detection_configuration(agent_name, virtualhost_name, begin_date, end_date)
     except Exception as e:
         exception = str(e)
 
@@ -91,7 +92,6 @@ def configure_anomaly_detection_save_settings(request):
     anomalies = request.POST.getlist('checks')
 
     try:
-        util.set_apache_anomaly_detection_configuration(agent_name, virtualhost_name, begin_date, end_date)
         util.set_apache_sessions_as_anomaly(agent_name,
                                             virtualhost_name,
                                             [int(i) for i in all_rows_ids],

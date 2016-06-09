@@ -54,5 +54,5 @@ def set_apache_anomaly_detection_configuration(agent_name, virtualhost_name, beg
 def get_apache_sessions_without_learning_set(agent_name, virtualhost_name, begin_date, end_date):
     return connect_and_get_result_from_command('get_apache_sessions_without_learning_set', [agent_name, virtualhost_name, begin_date, end_date])
 
-def get_apache_sessions_marked_with_iqr_method(agent_name, virtualhost_name, begin_date, end_date):
-    return connect_and_get_result_from_command('get_apache_sessions_marked_with_iqr_method', [agent_name, virtualhost_name, begin_date, end_date])
+def mark_learning_set_with_iqr_method(agent_name, virtualhost_name):
+    return connect_and_get_result_from_command('mark_learning_set_with_iqr_method', [agent_name, virtualhost_name])

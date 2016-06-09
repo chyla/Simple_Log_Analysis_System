@@ -57,8 +57,8 @@ class DatabaseFunctions : public detail::DatabaseFunctionsInterface {
   void MarkSessionStatisticAsAnomaly(const ::database::type::RowId &id) override;
   void ClearAnomalyMarksInLearningSet(const ::database::type::RowId &agent_name_id,
                                       const ::database::type::RowId &virtualhost_name_id) override;
-  ::apache::type::ApacheSessions GetSessionStatisticsMarkedWithIqrMethod(const std::string &agent_name, const std::string &virtualhost_name,
-                                                                         const ::type::Timestamp &from, const ::type::Timestamp &to) override;
+  void MarkLearningSetWithIqrMethod(const ::database::type::RowId &agent_name_id,
+                                    const ::database::type::RowId &virtualhost_name_id) override;
 
   void MarkStatisticsAsCreatedFor(::type::Date date) override;
   bool AreStatisticsCreatedFor(::type::Date date) override;
