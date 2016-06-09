@@ -37,6 +37,7 @@ Vagrant.configure(2) do |config|
    config.vm.define "server", primary: true do |server|
      server.vm.hostname = "server"
      server.vm.network "private_network", ip: "192.168.173.10"
+     server.vm.network "forwarded_port", guest: 8000, host: 8000
    end
 
    config.vm.define "agentA" do |agentA|
