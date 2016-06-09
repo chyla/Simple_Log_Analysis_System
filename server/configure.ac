@@ -15,7 +15,7 @@ m4_include([m4/ax_boost_log_setup.m4])
 
 AC_PREREQ([2.69])
 AC_INIT(PATLMS,
-	m4_esyscmd_s(git describe --dirty --always --tags),
+	m4_esyscmd_s(git describe --dirty --always --tags || ( echo "Not a git repository, can't check application version." 1>&2 && echo "unknown-version" )),
 	adam@chyla.org)
 AM_INIT_AUTOMAKE
 AC_CONFIG_HEADERS([config.h])
