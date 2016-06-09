@@ -43,20 +43,6 @@ def configure_anomaly_detection_select_agent_and_virtualhost(request):
                                'virtualhosts_names' : virtualhosts_names,
                                })
 
-def configure_anomaly_detection_select_agent_name(request):
-    exception = None
-    agent_names = None
-
-    try:
-        agent_names = util.get_apache_agent_names()
-    except Exception as e:
-        exception = str(e)
-
-    return render_to_response('apache/configure_anomaly_detection/select_agent_name.html',
-                              {'exception' : exception,
-                               'agent_names' : agent_names,
-                               })
-
 def configure_anomaly_detection_select_data_range(request):
     agent_name = request.GET.get('agent_name', '')
     virtualhost_name = request.GET.get('virtualhost_name', '')
@@ -66,22 +52,6 @@ def configure_anomaly_detection_select_data_range(request):
                               {'exception' : exception,
                                'agent_name' : agent_name,
                                'virtualhost_name' : virtualhost_name,
-                               })
-
-def configure_anomaly_detection_select_virtualhost(request):
-    agent_name = request.GET.get('agent_name', '')
-    exception = None
-    virtualhosts_names = None
-
-    try:
-        virtualhosts_names = util.get_apache_virtualhost_names(agent_name)
-    except Exception as e:
-        exception = str(e)
-
-    return render_to_response('apache/configure_anomaly_detection/select_virtualhost.html',
-                              {'exception' : exception,
-                               'agent_name' : agent_name,
-                               'virtualhosts_names' : virtualhosts_names,
                                })
 
 def configure_anomaly_detection_correct_sessions_marks(request):
