@@ -50,7 +50,7 @@ Vagrant.configure(2) do |config|
        set -v
        export DEBIAN_FRONTEND=noninteractive
 
-       sudo apt-get install -y apache2
+       sudo apt-get install -y apache2 httping
      SHELL
    end
 
@@ -62,7 +62,7 @@ Vagrant.configure(2) do |config|
        set -v
        export DEBIAN_FRONTEND=noninteractive
 
-       sudo apt-get install -y apache2
+       sudo apt-get install -y apache2 httping
      SHELL
    end
 
