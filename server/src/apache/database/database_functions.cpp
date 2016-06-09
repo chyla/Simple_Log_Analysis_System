@@ -246,36 +246,34 @@ void DatabaseFunctions::ClearAnomalyMarksInLearningSet(const ::database::type::R
   sqlite_wrapper_->Exec(sql);
 }
 
-void DatabaseFunctions::MarkLearningSetWithIqrMethod(const ::database::type::RowId &agent_name_id,
-                                                     const ::database::type::RowId &virtualhost_name_id) {
-  BOOST_LOG_TRIVIAL(debug) << "apache::database::DatabaseFunctions::MarkLearningSetWithIqrMethod: Function call";
+::apache::type::ApacheSessions DatabaseFunctions::GetSessionStatisticsMarkedWithIqrMethod(const std::string &agent_name, const std::string &virtualhost_name,
+                                                                                          const ::type::Timestamp &from, const ::type::Timestamp &to) {
+  BOOST_LOG_TRIVIAL(debug) << "apache::database::DatabaseFunctions::GetSessionStatisticsMarkedWithIqrMethod: Function call";
 
-  typedef std::pair<::database::type::RowId, long long> IdQueriesPair;
-  std::vector<IdQueriesPair> id_queries;
+  auto stats_count = GetSessionStatisticsCount(agent_name, virtualhost_name, from, to);
+  auto stats = GetSessionStatistics(agent_name, virtualhost_name, from, to, stats_count, 0);
 
-  auto count = GetLearningSessionsCount(agent_name_id, virtualhost_name_id);
-  auto learning_set_ids = GetLearningSessionsIds(agent_name_id, virtualhost_name_id, count, 0);
+  typedef std::pair<::database::type::RowId, ::apache::type::ApacheSessionEntry*> IdSession;
+  std::vector<IdSession> id_session;
 
-  for (auto id : learning_set_ids) {
-    auto session = GetOneSessionStatistic(id);
-    id_queries.push_back(std::make_pair(session.id, session.requests_count));
+  for (::apache::type::ApacheSessionEntry &session : stats) {
+    id_session.push_back(make_pair(session.id, &session));
   }
 
-  sort(id_queries.begin(), id_queries.end(), [](const IdQueriesPair &a, const IdQueriesPair & b) {
-    return a.second < b.second;
+  sort(id_session.begin(), id_session.end(), [](const IdSession &a, const IdSession & b) {
+    return a.second->requests_count < b.second->requests_count;
   });
 
-  auto q1_element = ceil(id_queries.size() * 1. / 4.);
-  auto q3_element = ceil(id_queries.size() * 3. / 4.);
-  auto iqr = id_queries.at(q3_element).second - id_queries.at(q1_element).second;
+  auto q1_element = ceil(id_session.size() * 1. / 4.);
+  auto q3_element = ceil(id_session.size() * 3. / 4.);
+  auto iqr = id_session.at(q3_element).second->requests_count - id_session.at(q1_element).second->requests_count;
 
-  auto m = id_queries.at(q3_element).second + 1.5 * iqr;
+  auto m = id_session.at(q3_element).second->requests_count + 1.5 * iqr;
 
-  ClearAnomalyMarksInLearningSet(agent_name_id, virtualhost_name_id);
-  for (auto element : id_queries) {
-    if (element.second > m)
-      MarkSessionStatisticAsAnomaly(element.first);
-  }
+  for (auto element : id_session)
+    element.second->is_anomaly = (element.second->requests_count > m);
+
+  return stats;
 }
 
 void DatabaseFunctions::MarkStatisticsAsCreatedFor(::type::Date date) {

@@ -56,8 +56,8 @@ class DatabaseFunctionsInterface {
   virtual void MarkSessionStatisticAsAnomaly(const ::database::type::RowId &id) = 0;
   virtual void ClearAnomalyMarksInLearningSet(const ::database::type::RowId &agent_name_id,
                                               const ::database::type::RowId &virtualhost_name_id) = 0;
-  virtual void MarkLearningSetWithIqrMethod(const ::database::type::RowId &agent_name_id,
-                                            const ::database::type::RowId &virtualhost_name_id) = 0;
+  virtual ::apache::type::ApacheSessions GetSessionStatisticsMarkedWithIqrMethod(const std::string &agent_name, const std::string &virtualhost_name,
+                                                                                 const ::type::Timestamp &from, const ::type::Timestamp &to) = 0;
 
   virtual void MarkStatisticsAsCreatedFor(::type::Date date) = 0;
   virtual bool AreStatisticsCreatedFor(::type::Date date) = 0;
