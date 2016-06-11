@@ -115,3 +115,38 @@ table {
   color: white !important;
   background: rgb(28, 184, 65);
 }
+
+.custab {
+  border: 1px solid #999999;
+  padding: 5px;
+  box-shadow: 3px 3px 2px #ccc;
+  transition: 0.5s;
+  font-size: 0.95em;
+  text-align: center;
+}
+
+.custab thead tr th {
+  border-bottom: 2px solid #999999;
+  text-align: center;
+}
+
+.custab:hover {
+  box-shadow: 3px 3px 0px #e5e5e5;
+  transition: 0.5s;
+}
+    
+.analysis_results_row_ok {
+  background-color: #bdeaac;
+}
+
+.analysis_results_row_ok:hover {
+  background-color: #d1eaca;
+}
+
+.analysis_results_row_anomaly {
+  background-color: #f2a7a7;
+}
+
+.analysis_results_row_anomaly:hover {
+  background-color: #f2b2b2;
+}
