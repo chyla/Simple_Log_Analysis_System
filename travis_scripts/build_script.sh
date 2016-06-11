@@ -34,6 +34,8 @@ make -j 3 check
 
 sed -i 's~<!-- <apparmor mode="disabled"/> -->~<apparmor mode="disabled"/>~' ${SERVER_INSTALL_DIR}/etc/patlms/dbus.config.template
 
+mkdir -p ${SERVER_INSTALL_DIR}/var/lib/patlms
+
 # build agent
 cd ${START_DIR}/agent
 ./autogen.sh
