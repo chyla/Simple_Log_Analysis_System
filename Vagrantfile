@@ -25,7 +25,7 @@ Vagrant.configure(2) do |config|
      sudo apt-get update
      sudo apt-get upgrade -y
      sudo apt-get install -y git vim
-     sudo apt-get install -y cmake autoconf automake libtool gcc g++ colorgcc sqlite3
+     sudo apt-get install -y valgrind cmake autoconf automake libtool gcc g++ colorgcc sqlite3
      sudo apt-get install -y libboost-all-dev libdbus-1-dev libsqlite3-dev
      sudo apt-get install -y python-pip python-virtualenv
      sudo pip install tox

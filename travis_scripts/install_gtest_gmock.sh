@@ -3,10 +3,8 @@
 set -e
 set -v
 
-export DIR=~/patlms_bindir
+. travis_scripts/variables.sh
 
-export GTEST_INSTALL_DIR=${DIR}/gtest
-export GMOCK_INSTALL_DIR=${DIR}/gmock
 export TMP_DIR=/tmp/gtest_gmock
 
 # Set compiler

@@ -5,12 +5,7 @@ set -v
 
 START_DIR=`pwd`
 
-export DIR=~/patlms_bindir
-export GTEST_INSTALL_DIR=${DIR}/gtest
-export GMOCK_INSTALL_DIR=${DIR}/gmock
-export PATLMS_INSTALL_DIR=${DIR}/libpatlms
-export AGENT_INSTALL_DIR=${DIR}/agent
-export SERVER_INSTALL_DIR=${DIR}/server
+. travis_scripts/variables.sh
 
 # Set compiler
 export CXX=$CXX_COMPILER
@@ -29,11 +24,6 @@ make
 make install
 make check
 
-# libpatlms flags
-export CPPFLAGS="$CPPFLAGS -I${PATLMS_INSTALL_DIR}/include"
-export LDFLAGS="$LDFLAGS -L${PATLMS_INSTALL_DIR}/lib"
-export LD_LIBRARY_PATH="${PATLMS_INSTALL_DIR}/lib"
-
 # build server
 cd ${START_DIR}/server
 ./autogen.sh
@@ -41,6 +31,8 @@ cd ${START_DIR}/server
 make
 make install
 make check
+
+sed -i 's~<!-- <apparmor mode="disabled"/> -->~<apparmor mode="disabled"/>~' /etc/patlms/dbus.config.template
 
 # build agent
 cd ${START_DIR}/agent
