@@ -28,8 +28,6 @@ class Apache : public ::dbus::Object {
 
   const char* GetPath();
 
-  void FlushCache();
-
  protected:
   const char* GetXmlInterface();
 
@@ -38,7 +36,6 @@ class Apache : public ::dbus::Object {
   ::database::detail::GeneralDatabaseFunctionsInterfacePtr general_database_functions_;
   ::apache::database::detail::DatabaseFunctionsInterfacePtr apache_database_functions_;
   ::database::DatabasePtr database_;
-  ::type::ApacheLogs log_entry_cache_;
 };
 
 typedef std::shared_ptr<Apache> ApachePtr;

@@ -2,8 +2,6 @@
 
 #include <boost/log/trivial.hpp>
 
-#define CACHE_CAPACITY 1
-
 namespace apache
 {
 
@@ -19,7 +17,6 @@ Apache::Apache(::database::DatabasePtr database,
 database_(database),
 general_database_functions_(general_database_functions),
 apache_database_functions_(apache_database_functions) {
-  log_entry_cache_.reserve(CACHE_CAPACITY);
 }
 
 Apache::~Apache() {
@@ -115,16 +112,10 @@ DBusHandlerResult Apache::OwnMessageHandler(DBusConnection *connection, DBusMess
     log_entry.bytes = bytes;
     log_entry.user_agent = user_agent;
 
-    log_entry_cache_.push_back(log_entry);
-
     general_database_functions_->AddAgentName(agent_name);
     apache_database_functions_->AddVirtualhostName(virtualhost);
 
-    BOOST_LOG_TRIVIAL(debug) << "objects::Apache::OwnMessageHandler: Now, elements in cache: " << log_entry_cache_.size();
-    if (log_entry_cache_.size() >= CACHE_CAPACITY) {
-      BOOST_LOG_TRIVIAL(debug) << "objects::Apache::OwnMessageHandler: Cache is full, flushing.";
-      FlushCache();
-    }
+    database_->AddApacheLogs({log_entry});
 
     DBusMessage *reply_msg = dbus_message_new_method_return(message);
     BOOST_LOG_TRIVIAL(debug) << "objects::Apache::OwnMessageHandler: Sending reply";
@@ -141,12 +132,6 @@ DBusHandlerResult Apache::OwnMessageHandler(DBusConnection *connection, DBusMess
   BOOST_LOG_TRIVIAL(warning) << "objects::Apache::OwnMessageHandler: Possible bug: DBUS_HANDLER_RESULT_NOT_YET_HANDLED";
 
   return DBUS_HANDLER_RESULT_NOT_YET_HANDLED;
-}
-
-void Apache::FlushCache() {
-  BOOST_LOG_TRIVIAL(debug) << "objects::Apache::FlushCache: Function call";
-  database_->AddApacheLogs(log_entry_cache_);
-  log_entry_cache_.clear();
 }
 
 }

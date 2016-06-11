@@ -193,9 +193,6 @@ main(int argc, char *argv[]) {
     if (bash_object)
       bash_object->FlushCache();
 
-    if (apache_object)
-      apache_object->FlushCache();
-
     if (sqlite_wrapper)
       sqlite_wrapper->Close();
 
