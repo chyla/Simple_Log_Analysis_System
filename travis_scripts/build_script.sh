@@ -20,9 +20,9 @@ export CPPFLAGS="$CPPFLAGS -I${GTEST_INSTALL_DIR}/include -I${GMOCK_INSTALL_DIR}
 cd libpatlms
 ./autogen.sh
 ./configure --prefix=${PATLMS_INSTALL_DIR}
-make
+make -j 3
 make install
-make check
+make -j 3 check
 
 # build server
 cd ${START_DIR}/server
@@ -30,7 +30,7 @@ cd ${START_DIR}/server
 ./configure --prefix=${SERVER_INSTALL_DIR}
 make -j 3
 make install
-make check
+make -j 3 check
 
 sed -i 's~<!-- <apparmor mode="disabled"/> -->~<apparmor mode="disabled"/>~' ${SERVER_INSTALL_DIR}/etc/patlms/dbus.config.template
 
@@ -40,7 +40,7 @@ cd ${START_DIR}/agent
 ./configure --prefix=${AGENT_INSTALL_DIR}
 make -j 3
 make install
-make check
+make -j 3 check
 
 # check web server
 cd ${START_DIR}/web
