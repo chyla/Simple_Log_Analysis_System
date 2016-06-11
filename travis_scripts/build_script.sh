@@ -35,6 +35,8 @@ make -j 3 check
 sed -i 's~<!-- <apparmor mode="disabled"/> -->~<apparmor mode="disabled"/>~' ${SERVER_INSTALL_DIR}/etc/patlms/dbus.config.template
 
 mkdir -p ${SERVER_INSTALL_DIR}/var/lib/patlms
+mkdir -p ${SERVER_INSTALL_DIR}/var/log/patlms
+mkdir -p ${SERVER_INSTALL_DIR}/var/run/patlms
 
 # build agent
 cd ${START_DIR}/agent
@@ -43,6 +45,10 @@ cd ${START_DIR}/agent
 make -j 3
 make install
 make -j 3 check
+
+mkdir -p ${AGENT_INSTALL_DIR}/var/lib/patlms
+mkdir -p ${AGENT_INSTALL_DIR}/var/log/patlms
+mkdir -p ${AGENT_INSTALL_DIR}/var/run/patlms
 
 # check web server
 cd ${START_DIR}/web
