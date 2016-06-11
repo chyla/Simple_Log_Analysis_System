@@ -125,22 +125,34 @@ table {
   text-align: center;
 }
 
+.custab:hover {
+  box-shadow: 3px 3px 0px #e5e5e5;
+  transition: 0.5s;
+}
+
+.custab thead {
+  background-color: #d9d9d9;
+}
+
 .custab thead tr th {
   border-bottom: 2px solid #999999;
   text-align: center;
 }
 
-.custab:hover {
-  box-shadow: 3px 3px 0px #e5e5e5;
-  transition: 0.5s;
+.custab tbody tr:hover {
+  background-color: #e2e3e3;
 }
-    
+
+.custab .odd {
+  background-color: #f2f2f2;
+}
+
 .analysis_results_row_ok {
   background-color: #bdeaac;
 }
 
 .analysis_results_row_ok:hover {
-  background-color: #d1eaca;
+  background-color: #d1eaca !important;
 }
 
 .analysis_results_row_anomaly {
@@ -148,5 +160,5 @@ table {
 }
 
 .analysis_results_row_anomaly:hover {
-  background-color: #f2b2b2;
+  background-color: #f2b2b2 !important;
 }

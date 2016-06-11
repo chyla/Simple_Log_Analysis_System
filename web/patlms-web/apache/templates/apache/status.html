@@ -11,20 +11,28 @@
     <p>
    
     {% if configuration %}
-        <table class="pure-table pure-table-bordered">
+        <table class="table table custab">
             <thead>
                 <tr>
-                    <th>Configured</th>
+                    <th>Agent</th>
+                    <th>Virtualhost</th>
                     <th>Data range</th>
+                    <th>Options</th>
                 </tr>
             </thead>
 
             <tbody>
                 {% for c in configuration %}
-                <tr {% cycle '' 'class="pure-table-odd"' %}>
-                    <td> {{ c.agent_name }}/{{ c.virtualhost_name }} </td>
+                <tr {% cycle '' 'class="custab odd"' %}>
+                    <td> {{ c.agent_name }} </td>
+                    <td> {{ c.virtualhost_name }} </td>
                     <td> {{ c.begin_date }} - {{ c.end_date }} </td>
-                </tr>
+                    <td> 
+                        <a href="#" class="btn btn-info btn-xs"> Categorize data </a>
+                        <a href="#" class="btn btn-warning btn-xs">Reconfigure</a>
+                        <a href="#" class="btn btn-danger btn-xs"> Remove </a>
+                    </td>
+                </tr>               
                 {% endfor %}
             </tbody>
         </table>
