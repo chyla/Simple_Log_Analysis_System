@@ -8,6 +8,7 @@ AM_LDFLAGS		= @BOOST_LDFLAGS@ @BOOST_LOG_LIB@ @BOOST_LOG_SETUP_LIB@ @PTHREAD_LIB
 check_PROGRAMS	= tests
 if CAN_RUN_TESTS
 tests_SOURCES	= main.cpp \
+			dbus/detail/dbus_wrapper.cpp \
 			network/network.cpp \
 			type/time.cpp \
 			type/date.cpp \
@@ -16,7 +17,11 @@ tests_SOURCES	= main.cpp \
 			util/distance.cpp \
 			util/remove_file.cpp
 
-OBJECT_FILES	= ../src/network/network.o \
+OBJECT_FILES	= \
+			../src/dbus/detail/dbus_wrapper.o \
+			../src/dbus/detail/dbus_error_guard.o \
+			../src/dbus/detail/dbus.o \
+			../src/network/network.o \
 			../src/network/detail/network_interface.o \
 			../src/network/detail/system.o \
 			../src/network/detail/system_interface.o \

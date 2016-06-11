@@ -50,7 +50,7 @@ class DBus : public ::dbus::detail::DBusInterface {
 
   MOCK_METHOD1(error_is_set, dbus_bool_t(const DBusError *error));
 
-  MOCK_METHOD1(connection_register_object_path, dbus_bool_t(DBusConnection *connection,
+  MOCK_METHOD4(connection_register_object_path, dbus_bool_t(DBusConnection *connection,
                                                             const char *path,
                                                             const DBusObjectPathVTable *vtable,
                                                             void *user_data));
@@ -74,6 +74,12 @@ class DBus : public ::dbus::detail::DBusInterface {
 
   MOCK_METHOD2(connection_unregister_object_path, dbus_bool_t(DBusConnection *connection,
                                                               const char *path));
+
+  MOCK_METHOD1(connection_unref, void(DBusConnection *connection));
+
+  MOCK_METHOD1(error_init, void(DBusError *error));
+
+  MOCK_METHOD1(error_free, void(DBusError *error));
 };
 
 }

@@ -14,6 +14,7 @@ lib_libpatlms_la_SOURCES  = \
 					dbus/detail/dbus_error_guard.cpp \
 					dbus/detail/bus_interface.cpp \
 					dbus/detail/dbus.cpp \
+					dbus/detail/dbus_wrapper.cpp \
 					network/network.cpp \
 					network/detail/network_interface.cpp \
 					network/detail/system.cpp \
@@ -40,7 +41,9 @@ pkginclude_dbus_detail_HEADERS = \
  					$(top_srcdir)/include/patlms/dbus/detail/dbus_error_guard.h \
 					$(top_srcdir)/include/patlms/dbus/detail/bus_interface.h \
 					$(top_srcdir)/include/patlms/dbus/detail/dbus.h \
-					$(top_srcdir)/include/patlms/dbus/detail/dbus_interface.h
+					$(top_srcdir)/include/patlms/dbus/detail/dbus_interface.h \
+					$(top_srcdir)/include/patlms/dbus/detail/dbus_wrapper.h \
+					$(top_srcdir)/include/patlms/dbus/detail/dbus_wrapper_interface.h
 
 pkginclude_dbus_exceptiondir = $(pkgincludedir)/dbus/exception
 pkginclude_dbus_exception_HEADERS = \

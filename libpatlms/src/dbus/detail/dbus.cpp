@@ -102,6 +102,22 @@ dbus_bool_t DBus::connection_unregister_object_path(DBusConnection *connection,
   return dbus_connection_unregister_object_path(connection, path);
 }
 
+void DBus::connection_unref(DBusConnection *connection) {
+  BOOST_LOG_TRIVIAL(debug) << "dbus::detail::DBus::connection_unref: Function call";
+
+  return dbus_connection_unref(connection);
+}
+
+void DBus::error_init(DBusError *error) {
+  BOOST_LOG_TRIVIAL(debug) << "dbus::detail::DBus::error_init: Function call";
+  dbus_error_init(error);
+}
+
+void DBus::error_free(DBusError *error) {
+  BOOST_LOG_TRIVIAL(debug) << "dbus::detail::DBus::error_free: Function call";
+  dbus_error_free(error);
+}
+
 }
 
 }

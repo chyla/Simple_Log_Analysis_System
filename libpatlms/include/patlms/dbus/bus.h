@@ -8,7 +8,7 @@
 
 #include <patlms/dbus/object.h>
 #include <patlms/dbus/detail/bus_interface.h>
-
+#include <patlms/dbus/detail/dbus_wrapper.h>
 
 namespace dbus
 {
@@ -33,10 +33,10 @@ class Bus : public detail::BusInterface
 
   explicit Bus(const Options &options);
 
-  bool Connect();
-  bool Disconnect();
+  void Connect();
+  void Disconnect();
 
-  bool RequestConnectionName(const std::string &method_name);
+  void RequestConnectionName(const std::string &method_name);
 
   void RegisterObject(ObjectPtr object);
   void UnregisterObject(ObjectPtr object);
@@ -45,11 +45,11 @@ class Bus : public detail::BusInterface
   void Loop();
   void StopLoop();
 
-  bool SendMessage(DBusMessage *message, DBusPendingCall **reply_handle);
+  void SendMessage(DBusMessage *message, DBusPendingCall **reply_handle);
 
  private:
   const Options options_;
-  DBusConnection *connection_;
+  detail::DBusWrapperPtr dbus_wrapper_;
   bool loop_running_;
 
   static DBusHandlerResult StaticMessageHandler(DBusConnection *connection, DBusMessage *message, void *user_data);

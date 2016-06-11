@@ -31,80 +31,34 @@ const std::string Bus::Options::GetAddress() const {
 
 Bus::Bus(const Bus::Options &options)
 : options_(options),
-connection_(nullptr),
 loop_running_(false) {
+  dbus_wrapper_ = detail::DBusWrapper::Create();
 }
 
-bool Bus::Connect() {
+void Bus::Connect() {
   BOOST_LOG_TRIVIAL(debug) << "dbus::Bus::Connect: Function call";
-
-  if (connection_) {
-    BOOST_LOG_TRIVIAL(debug) << "dbus::Bus::Connect: Connection already initialized";
-    return false;
-  }
-
-  DBusError error;
-  DBusErrorGuard error_guard(&error);
 
   std::string address = options_.GetAddress();
   BOOST_LOG_TRIVIAL(info) << "Connecting to: " << address;
-  connection_ = dbus_connection_open_private(address.c_str(), &error);
 
-  if (!connection_) {
-    BOOST_LOG_TRIVIAL(error) << "dbus::Bus::Connect: Failed to connect to the bus: " << (error.message != nullptr ? error.message : "");
-    return false;
-  }
-
-  BOOST_LOG_TRIVIAL(debug) << "dbus::Bus::Connect: dbus_bus_register function call";
-  bool reg = dbus_bus_register(connection_, &error);
-  if (!reg) {
-    BOOST_LOG_TRIVIAL(error) << "dbus::Bus::Connect: Failed to call dbus_bus_register: " << (error.message != nullptr ? error.message : "");
-    return false;
-  }
-
-  dbus_connection_set_exit_on_disconnect(connection_, false);
-
-  return true;
+  dbus_wrapper_->ConnectionOpenPrivate(address);
+  dbus_wrapper_->BusRegister();
+  dbus_wrapper_->ConnectionSetExitOnDisconnect(false);
 }
 
-bool Bus::Disconnect() {
+void Bus::Disconnect() {
   BOOST_LOG_TRIVIAL(debug) << "dbus::Bus::Disconnect: Function call";
-
-  if (!connection_) {
-    BOOST_LOG_TRIVIAL(debug) << "dbus::Bus::Disconnect: Not connected";
-    return false;
-  }
 
   BOOST_LOG_TRIVIAL(debug) << "dbus::Bus::Disconnect: Unregistering all objects";
   UnregisterAllObjects();
 
-  BOOST_LOG_TRIVIAL(debug) << "dbus::Bus::Disconnect: dbus_connection_close function call";
-  dbus_connection_close(connection_);
-  connection_ = nullptr;
-
-  return true;
+  dbus_wrapper_->ConnectionClose();
 }
 
-bool Bus::RequestConnectionName(const std::string &method_name) {
+void Bus::RequestConnectionName(const std::string &method_name) {
   BOOST_LOG_TRIVIAL(debug) << "dbus::Bus::RequestConnectionName: Function call";
 
-  if (!connection_) {
-    BOOST_LOG_TRIVIAL(error) << "dbus::Bus::RequestConnectionName: Not connected to the bus";
-    return false;
-  }
-
-  DBusError error;
-  DBusErrorGuard error_guard(&error);
-
-  BOOST_LOG_TRIVIAL(debug) << "dbus::Bus::RequestConnectionName: dbus_bus_request_name function call";
-  dbus_bus_request_name(connection_, method_name.c_str(), DBUS_NAME_FLAG_REPLACE_EXISTING, &error);
-
-  if (dbus_error_is_set(&error)) {
-    BOOST_LOG_TRIVIAL(error) << "dbus::Bus::RequestConnectionName: " << (error.message != nullptr ? error.message : "");
-    return false;
-  }
-
-  return true;
+  dbus_wrapper_->BusRequestName(method_name, DBUS_NAME_FLAG_REPLACE_EXISTING);
 }
 
 void Bus::RegisterObject(ObjectPtr object) {
@@ -117,8 +71,7 @@ void Bus::RegisterObject(ObjectPtr object) {
   };
 
   BOOST_LOG_TRIVIAL(debug) << "dbus::Bus::RegisterObject: Registering object";
-  dbus_connection_register_object_path(connection_, object->GetPath(),
-                                       &dbus_vtable, vobject);
+  dbus_wrapper_->ConnectionRegisterObjectPath(object->GetPath(), &dbus_vtable, vobject);
 
   registered_objects_.push_back(object);
 }
@@ -146,19 +99,13 @@ void Bus::UnregisterAllObjects() {
 void Bus::Loop() {
   BOOST_LOG_TRIVIAL(debug) << "dbus::Bus::Loop: Function call";
   DBusMessage* msg;
-  dbus_bool_t connected;
   DBusDispatchStatus dispatch_status;
 
   loop_running_ = true;
   while (loop_running_) {
-    connected = dbus_connection_read_write(connection_, 1000);
-    if (connected == false) {
-      BOOST_LOG_TRIVIAL(error) << "dbus::Bus::Loop: Connection is closed";
-      throw exception::DBusLoopException();
-    }
-    BOOST_LOG_TRIVIAL(debug) << "dbus::Bus::Loop: Timedout";
+    dbus_wrapper_->ConnectionReadWrite(1000);
 
-    msg = dbus_connection_borrow_message(connection_);
+    msg = dbus_wrapper_->ConnectionBorrowMessage();
 
     if (msg == nullptr) {
       BOOST_LOG_TRIVIAL(debug) << "dbus::Bus::Loop: Data not received";
@@ -167,10 +114,10 @@ void Bus::Loop() {
       BOOST_LOG_TRIVIAL(debug) << "dbus::Bus::Loop: Received new data";
 
       BOOST_LOG_TRIVIAL(debug) << "dbus::Bus::Loop: Returning message to D-Bus";
-      dbus_connection_return_message(connection_, msg);
+      dbus_wrapper_->ConnectionReturnMessage(msg);
 
       BOOST_LOG_TRIVIAL(debug) << "dbus::Bus::Loop: Processing message";
-      dispatch_status = dbus_connection_dispatch(connection_);
+      dispatch_status = dbus_wrapper_->ConnectionDispatch();
       if (dispatch_status == DBUS_DISPATCH_NEED_MEMORY) {
         BOOST_LOG_TRIVIAL(error) << "dbus::Bus::Loop: More memory is needed to continue";
         throw exception::DBusLoopException();
@@ -185,25 +132,13 @@ void Bus::StopLoop() {
   loop_running_ = false;
 }
 
-bool Bus::SendMessage(DBusMessage *message, DBusPendingCall **reply_handle) {
+void Bus::SendMessage(DBusMessage *message, DBusPendingCall **reply_handle) {
   BOOST_LOG_TRIVIAL(debug) << "dbus::Bus::SendMessage: Function call";
 
-  bool ret = dbus_connection_send_with_reply(connection_, message, reply_handle, -1);
-
-  if (!ret) {
-    BOOST_LOG_TRIVIAL(error) << "dbus::Bus::SendMessage: Failed to send message: out of memory";
-    return false;
-  }
-
-  if (*reply_handle == nullptr) {
-    BOOST_LOG_TRIVIAL(error) << "dbus::Bus::SendMessage: reply_handle is null";
-    return false;
-  }
+  dbus_wrapper_->ConnectionSendWithReply(message, reply_handle, -1);
 
   BOOST_LOG_TRIVIAL(error) << "dbus::Bus::SendMessage: flush connection";
-  dbus_connection_flush(connection_);
-
-  return true;
+  dbus_wrapper_->ConnectionFlush();
 }
 
 DBusHandlerResult Bus::StaticMessageHandler(DBusConnection *connection, DBusMessage *message, void *user_data) {
@@ -215,10 +150,7 @@ DBusHandlerResult Bus::StaticMessageHandler(DBusConnection *connection, DBusMess
 void Bus::DBusUnregisterObject(ObjectPtr object) {
   BOOST_LOG_TRIVIAL(debug) << "dbus::Bus::DBusUnregisterObject: Function call";
 
-  bool ret = dbus_connection_unregister_object_path(connection_,
-                                                    object->GetPath());
-  if (!ret)
-    BOOST_LOG_TRIVIAL(error) << "dbus::Bus::DBusUnregisterObject: Not enough memory";
+  dbus_wrapper_->ConnectionUnregisterObjectPath(object->GetPath());
 }
 
 }

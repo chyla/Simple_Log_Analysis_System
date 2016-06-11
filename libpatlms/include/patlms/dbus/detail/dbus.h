@@ -65,6 +65,12 @@ class DBus : public DBusInterface {
 
   dbus_bool_t connection_unregister_object_path(DBusConnection *connection,
                                                 const char *path) override;
+  
+  void connection_unref(DBusConnection *connection) override;
+
+  void error_init(DBusError *error) override;
+
+  void error_free(DBusError *error) override;
 };
 
 }

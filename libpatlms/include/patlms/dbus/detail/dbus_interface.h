@@ -3,8 +3,8 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef LIBPATLMS_DBUS_DETAIL_SQLITE_INTERFACE_H
-#define LIBPATLMS_DBUS_DETAIL_SQLITE_INTERFACE_H
+#ifndef LIBPATLMS_DBUS_DETAIL_DBUS_INTERFACE_H
+#define LIBPATLMS_DBUS_DETAIL_DBUS_INTERFACE_H
 
 #include <memory>
 #include <dbus/dbus.h>
@@ -61,6 +61,12 @@ class DBusInterface {
 
   virtual dbus_bool_t connection_unregister_object_path(DBusConnection *connection,
                                                         const char *path) = 0;
+
+  virtual void connection_unref(DBusConnection *connection) = 0;
+
+  virtual void error_init(DBusError *error) = 0;
+
+  virtual void error_free(DBusError *error) = 0;
 };
 
 typedef std::shared_ptr<DBusInterface> DBusInterfacePtr;

@@ -17,10 +17,10 @@ class BusInterface {
  public:
   virtual ~BusInterface();
   
-  virtual bool Connect() = 0;
-  virtual bool Disconnect() = 0;
+  virtual void Connect() = 0;
+  virtual void Disconnect() = 0;
 
-  virtual bool RequestConnectionName(const std::string &method_name) = 0;
+  virtual void RequestConnectionName(const std::string &method_name) = 0;
 
   virtual void RegisterObject(ObjectPtr object) = 0;
   virtual void UnregisterObject(ObjectPtr object) = 0;
@@ -28,7 +28,7 @@ class BusInterface {
 
   virtual void Loop() = 0;
 
-  virtual bool SendMessage(DBusMessage *message, DBusPendingCall **reply_handle) = 0;
+  virtual void SendMessage(DBusMessage *message, DBusPendingCall **reply_handle) = 0;
 };
 
 typedef std::shared_ptr<BusInterface> BusInterfacePtr;
