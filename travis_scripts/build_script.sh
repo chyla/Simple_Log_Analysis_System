@@ -28,7 +28,7 @@ make check
 cd ${START_DIR}/server
 ./autogen.sh
 ./configure --prefix=${SERVER_INSTALL_DIR}
-make
+make -j 3
 make install
 make check
 
@@ -38,7 +38,7 @@ sed -i 's~<!-- <apparmor mode="disabled"/> -->~<apparmor mode="disabled"/>~' /et
 cd ${START_DIR}/agent
 ./autogen.sh
 ./configure --prefix=${AGENT_INSTALL_DIR}
-make
+make -j 3
 make install
 make check
 
