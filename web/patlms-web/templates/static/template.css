@@ -119,14 +119,14 @@ table {
 .custab {
   border: 1px solid #999999;
   padding: 5px;
-  box-shadow: 3px 3px 2px #ccc;
+  box-shadow: 6px 6px 4px #ccc;
   transition: 0.5s;
   font-size: 0.95em;
   text-align: center;
 }
 
 .custab:hover {
-  box-shadow: 3px 3px 0px #e5e5e5;
+  box-shadow: 3px 3px 2px #e5e5e5;
   transition: 0.5s;
 }
 
