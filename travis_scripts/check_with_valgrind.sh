@@ -13,12 +13,13 @@ valgrind --tool=memcheck --leak-check=full --track-origins=yes --num-callers=20 
 
 PID=$!
 sleep 10
-kill $PID
+kill $PID || true
 
+cat $SERVER_INSTALL_DIR/var/log/patlms/server.log
 
 valgrind --tool=memcheck --leak-check=full --track-origins=yes --num-callers=20 $AGENT_INSTALL_DIR/bin/patlms-agent --nodaemon &
 
 PID=$!
 sleep 10
-kill $PID
+kill $PID || true
 
