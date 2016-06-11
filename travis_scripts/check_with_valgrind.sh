@@ -16,7 +16,7 @@ sleep 10
 kill $PID
 
 
-valgrind --tool=memcheck --leak-check=full --track-origins=yes --num-callers=20 $SERVER_INSTALL_DIR/bin/patlms-agent --nodaemon &
+valgrind --tool=memcheck --leak-check=full --track-origins=yes --num-callers=20 $AGENT_INSTALL_DIR/bin/patlms-agent --nodaemon &
 
 PID=$!
 sleep 10

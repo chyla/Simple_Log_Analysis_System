@@ -32,7 +32,7 @@ make -j 3
 make install
 make check
 
-sed -i 's~<!-- <apparmor mode="disabled"/> -->~<apparmor mode="disabled"/>~' /etc/patlms/dbus.config.template
+sed -i 's~<!-- <apparmor mode="disabled"/> -->~<apparmor mode="disabled"/>~' ${SERVER_INSTALL_DIR}/etc/patlms/dbus.config.template
 
 # build agent
 cd ${START_DIR}/agent
