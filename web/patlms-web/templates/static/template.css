@@ -137,10 +137,21 @@ table {
 .custab thead tr th {
   border-bottom: 2px solid #999999;
   text-align: center;
+  vertical-align: middle;
+}
+
+.custab tbody tr td {
+  text-align: center;
+  vertical-align: middle;
 }
 
 .custab tbody tr:hover {
   background-color: #e2e3e3;
+}
+
+.custab tbody a.btn {
+  font-weight: bold;
+  margin: 2pt;
 }
 
 .custab .odd {
