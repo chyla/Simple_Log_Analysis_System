@@ -24,7 +24,7 @@
             <input type="hidden" name="begin_date" value="{{ begin_date }}">
             <input type="hidden" name="end_date" value="{{ end_date }}">
 
-            <table class="pure-table">
+            <table class="table custab">
                 <thead>
                     <tr>
                         <th>ID</th>
@@ -41,7 +41,13 @@
 
                 <tbody>
                 {% for s in sessions %}
-                    <tr {% cycle '' 'class="pure-table-odd"' %}>
+                    <tr id="table_row_{{ s.id }}"
+                        {% if s.is_anomaly %}
+                            class="analysis_results_row_anomaly"
+                        {% else %}
+                            class="analysis_results_row_ok"
+                        {% endif %}
+                    >
                         <td>{{ s.id }}</td>
                         <td>{{ s.client_ip }}</td>
                         <td>{{ s.session_start }}</td>
@@ -52,10 +58,11 @@
                         <td>{{ s.useragent }}</td>
                         <td>
                             <input type="hidden" name="rows_ids" value="{{ s.id }}">
-                            <input type="checkbox" name="checks" value="{{ s.id }}"
+                            <input id="table_check_button_{{ s.id }}" type="checkbox" name="checks" value="{{ s.id }}"
                              {% if s.is_anomaly %}
                                 checked="checked" 
                              {% endif %}
+                                onclick="change_table_row_color({{ s.id }})"
                              >
                         </td>
                     </tr>
