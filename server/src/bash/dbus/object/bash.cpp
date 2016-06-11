@@ -2,8 +2,6 @@
 
 #include <boost/log/trivial.hpp>
 
-#define CACHE_CAPACITY 1
-
 namespace bash
 {
 
@@ -15,7 +13,6 @@ namespace object
 
 Bash::Bash(database::DatabasePtr database)
 : database_(database) {
-  log_entry_cache_.reserve(CACHE_CAPACITY);
 }
 
 Bash::~Bash() {
@@ -93,13 +90,7 @@ DBusHandlerResult Bash::OwnMessageHandler(DBusConnection *connection, DBusMessag
     log_entry.user_id = user_id;
     log_entry.command = command;
 
-    log_entry_cache_.push_back(log_entry);
-
-    BOOST_LOG_TRIVIAL(debug) << "objects::Bash::OwnMessageHandler: Now, elements in cache: " << log_entry_cache_.size();
-    if (log_entry_cache_.size() >= CACHE_CAPACITY) {
-      BOOST_LOG_TRIVIAL(debug) << "objects::Bash::OwnMessageHandler: Cache is full, flushing.";
-      FlushCache();
-    }
+    database_->AddBashLogs({log_entry});
 
     DBusMessage *reply_msg = dbus_message_new_method_return(message);
     BOOST_LOG_TRIVIAL(debug) << "objects::Bash::OwnMessageHandler: Sending reply";
@@ -116,12 +107,6 @@ DBusHandlerResult Bash::OwnMessageHandler(DBusConnection *connection, DBusMessag
   BOOST_LOG_TRIVIAL(warning) << "objects::Bash::OwnMessageHandler: Possible bug: DBUS_HANDLER_RESULT_NOT_YET_HANDLED";
 
   return DBUS_HANDLER_RESULT_NOT_YET_HANDLED;
-}
-
-void Bash::FlushCache() {
-  BOOST_LOG_TRIVIAL(debug) << "objects::Bash::FlushCache: Function call";
-  database_->AddBashLogs(log_entry_cache_);
-  log_entry_cache_.clear();
 }
 
 }

@@ -190,9 +190,6 @@ main(int argc, char *argv[]) {
     if (bus)
       bus->Disconnect();
 
-    if (bash_object)
-      bash_object->FlushCache();
-
     if (sqlite_wrapper)
       sqlite_wrapper->Close();
 

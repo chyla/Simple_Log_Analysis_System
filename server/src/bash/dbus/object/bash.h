@@ -25,15 +25,12 @@ class Bash : public ::dbus::Object {
 
   const char* GetPath();
 
-  void FlushCache();
-
  protected:
   const char* GetXmlInterface();
 
   DBusHandlerResult OwnMessageHandler(DBusConnection *connection, DBusMessage *message);
 
   ::database::DatabasePtr database_;
-  ::type::BashLogs log_entry_cache_;
 };
 
 typedef std::shared_ptr<Bash> BashPtr;
