@@ -19,8 +19,15 @@
     <!-- Pure.css -->
     <link rel="stylesheet" href="{% static "pure/pure-min.css" %}">
 
+    <!-- frend -->
+    <link rel="stylesheet" href="{% static "frend/global.min.css" %}">
+
+    <!-- font awesome -->
+    <link rel="stylesheet" href="{% static "font-awesome/css/font-awesome.min.css" %}">
+
     <!-- Custom styles for this template -->
-    <link href="{% static "template.css" %}" rel="stylesheet">
+    <link rel="stylesheet" href="{% static "template.css" %}">
+    <link rel="stylesheet" href="{% static "slas-frend.css" %}">
 
   </head>
 
@@ -55,12 +62,14 @@
       <div class="template">
 
         {% if exception %}
-        <div class="error">        
-            Ohhh, {{ exception }}!
-        </div>
+            <div class="error">
+                Ohhh, {{ exception }}!
+            </div>
         {% else %}
-            {% block content %}
-            {% endblock %}
+            <div class="page-content">
+                {% block content %}
+                {% endblock %}
+            </div>
         {% endif %}
 
       </div>
@@ -81,6 +90,14 @@
     </script>
     <!-- sorttable -->
     <script src="{% static "sorttable/sorttable.js" %}"></script>
+    <!-- frend -->
+    <script src="{% static "frend/initial.min.js" %}"></script>
+    <script>
+        loadJS('{% static "frend/global.min.js" %}');
+        loadJS('{% static "frend/offcanvas/froffcanvas.min.js" %}', function () {
+            var offcanvas = Froffcanvas();
+        });
+    </script>
     <!-- SLAS -->
     <script src="{% static "slas.js" %}"></script>
   </body>

@@ -1,6 +1,11 @@
 body {
-  padding-top: 50px;
-  background-color: #fafafa;
+  padding-top: 50px !important;
+  background-color: #fafafa !important;
+  color: #333 !important;
+  line-height: 1.4285 !important;
+  font-size: 14px !important;
+  font-family: "Helvetica Neue",Helvetica,Arial,sans-serif !important;
+  letter-spacing: 0px !important;
 }
 
 .template {
@@ -57,7 +62,7 @@ body {
 
 /* other */
 h1, h2, h3 {
-  padding-bottom: .2em;
+  padding-bottom: .1em;
 }
 
 h1 {
@@ -66,6 +71,7 @@ h1 {
 }
 
 h2 {
+  padding-top: .5em;
   font-size: 2em;
 }
 
@@ -77,8 +83,26 @@ table {
   width: 100%;
 }
 
+.next-page-section {
+  padding-top: 1em;
+}
+
+.page-content a,
+.page-content a:hover,
+.page-content a:focus,
+.page-content button {
+  background-image: none;
+  background-position: 0;
+  background-repeat: no-repeat;
+  background-size: 0;
+  text-shadow: none;
+  color: #fff;
+  text-decoration: none;
+  transition: none;
+}
+
 .action-buttons {
-  float: right;
+  float: left;
   padding: 1em;
   line-height: 2.5em;
 }
@@ -172,4 +196,15 @@ table {
 
 .analysis_results_row_anomaly:hover {
   background-color: #f2b2b2 !important;
+}
+
+.help-button,
+.help-button a,
+.help-button a:hover,
+.help-button button,
+.help-button button:focus {
+  float: right;
+  color: black;
+  text-decoration: none;
+  outline:0;
 }

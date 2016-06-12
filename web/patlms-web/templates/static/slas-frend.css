@@ -1,0 +1,39 @@
+/*	Panel */
+.fr-offcanvas--is-ready {
+  border: 1px solid;
+  background-color: #fff;
+  left: 100%;
+  overflow: auto;
+  max-width: 400px;
+  position: fixed;
+  top: 55px;
+  bottom: 5px;
+  transform: translateX(0);
+  width: 100%;
+  will-change: translateX;
+}
+
+/*	Panel - Visible */
+.fr-offcanvas--is-ready[aria-hidden="false"] {
+  transform: translateX(-100%);
+}
+
+section.slas-offcanvas {
+  background-color: #fff;
+  visibility: hidden;
+  outline: 0;
+}
+
+section.slas-offcanvas button {
+  color: white;
+}
+
+section.slas-offcanvas p,
+section.slas-offcanvas p a,
+section.slas-offcanvas p a:hover,
+section.slas-offcanvas p a:focus {
+  text-shadow: 0px 0 #fff,0px 0 #fff;
+  background-image: none;
+  outline: 0;
+  color: black;
+}
