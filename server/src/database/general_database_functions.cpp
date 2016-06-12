@@ -10,6 +10,7 @@
 
 #include "exception/detail/cant_execute_sql_statement_exception.h"
 #include "exception/detail/item_not_found_exception.h"
+#include "exception/detail/item_not_found_exception.h"
 #include "database.h"
 
 using namespace std;
@@ -212,11 +213,8 @@ type::AgentNames GeneralDatabaseFunctions::GetAgentNames() {
 ::database::type::RowId GeneralDatabaseFunctions::AddAndGetAgentNameId(const std::string &name) {
   BOOST_LOG_TRIVIAL(debug) << "database::GeneralDatabaseFunctions::AddAndGetAgentNameId: Function call";
 
+  AddAgentName(name);
   auto id = GetAgentNameId(name);
-  if (id == -1) {
-    AddAgentName(name);
-    id = GetAgentNameId(name);
-  }
 
   return id;
 }
@@ -243,6 +241,9 @@ type::AgentNames GeneralDatabaseFunctions::GetAgentNames() {
   }
 
   sqlite_wrapper_->Finalize(statement);
+
+  if (id < 0)
+    throw ::database::exception::detail::ItemNotFoundException();
 
   return id;
 }
