@@ -16,7 +16,7 @@
     <h2>Configuration</h2>
 
     <p>
-   
+
     {% if configuration %}
         <table class="table table custab sortable">
             <thead>
@@ -34,12 +34,12 @@
                     <td> {{ c.agent_name }} </td>
                     <td> {{ c.virtualhost_name }} </td>
                     <td> {{ c.begin_date }} - {{ c.end_date }} </td>
-                    <td> 
+                    <td>
                         <a href="#" class="btn btn-info btn-xs"> Categorize data </a>
                         <a href="#" class="btn btn-warning btn-xs">Reconfigure</a>
-                        <a href="#" class="btn btn-danger btn-xs"> Remove </a>
+                        <button aria-controls="modal-remove-configuration-id-{{ c.id }}" class="btn btn-danger btn-xs js-fr-dialogmodal-open"> Remove </a>
                     </td>
-                </tr>               
+                </tr>
                 {% endfor %}
             </tbody>
         </table>
@@ -86,5 +86,24 @@
         Close
     </button>
 </section>
+
+{% for c in configuration %}
+    <section class="fr-dialogmodal js-fr-dialogmodal" id="modal-remove-configuration-id-{{ c.id }}">
+        <div class="fr-dialogmodal-modal js-fr-dialogmodal-modal" aria-labelledby="Remove configuration">
+            <div role="document">
+                <h2>Remove configuration</h2>
+
+                <p>
+                    Do you really want to remove configuration for&nbsp;<b>{{ c.virtualhost_name }}</b> on&nbsp;<b>{{ c.agent_name }}</b>?
+                </p>
+
+                <div class="action-buttons">
+                    <button class="pure-button button-no js-fr-dialogmodal-close" aria-label="No" type="button">No</button>
+                    <a class="pure-button button-yes" href="#">Yes</a>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endfor %}
 
 {% endblock %}
