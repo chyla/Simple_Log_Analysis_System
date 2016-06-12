@@ -90,7 +90,8 @@ table {
 .page-content a,
 .page-content a:hover,
 .page-content a:focus,
-.page-content button {
+.page-content button,
+.page-content button:focus {
   background-image: none;
   background-position: 0;
   background-repeat: no-repeat;
@@ -99,6 +100,7 @@ table {
   color: #fff;
   text-decoration: none;
   transition: none;
+  outline: 0;
 }
 
 .action-buttons {
@@ -133,11 +135,23 @@ table {
   border-radius: 4px;
   text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
 }
-        
+
 .button-success,
 .button-success a:hover {
   color: white !important;
   background: rgb(28, 184, 65);
+}
+
+.button-yes,
+.button-yes a:hover {
+  color: white !important;
+  background: rgb(28, 184, 65);
+}
+
+.button-no,
+.button-no a:hover {
+  color: white !important;
+  background: rgb(202, 60, 60);
 }
 
 .custab {
@@ -183,6 +197,13 @@ table {
   margin: 2pt;
 }
 
+.custab tbody button.btn,
+.custab tbody button.btn:focus {
+  font-weight: bold;
+  margin: 2pt;
+  outline: 0;
+}
+
 .custab .odd {
   background-color: #f2f2f2;
 }
@@ -211,5 +232,5 @@ table {
   float: right;
   color: black;
   text-decoration: none;
-  outline:0;
+  outline: 0;
 }

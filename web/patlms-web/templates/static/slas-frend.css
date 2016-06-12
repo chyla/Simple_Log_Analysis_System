@@ -37,3 +37,54 @@ section.slas-offcanvas p a:focus {
   outline: 0;
   color: black;
 }
+
+/* dialogmodal */
+.fr-dialogmodal {
+  visibility: hidden;
+}
+
+.fr-dialogmodal--is-ready .fr-dialogmodal-modal {
+  padding: 1.625em 1.25em 0;
+  background-color: #fff;
+  outline: 0;
+}
+
+.fr-dialogmodal--is-ready .fr-dialogmodal-modal h2 {
+  border-bottom: 2px solid #4b4b4b;
+}
+
+.fr-dialogmodal--is-ready .fr-dialogmodal-modal p,
+.fr-dialogmodal--is-ready .fr-dialogmodal-modal p a,
+.fr-dialogmodal--is-ready .fr-dialogmodal-modal p a:hover,
+.fr-dialogmodal--is-ready .fr-dialogmodal-modal p a:focus {
+  text-shadow: 0px 0 #fff,0px 0 #fff;
+  background-image: none;
+  outline: 0;
+  color: black;
+  padding: 0.5em;
+}
+
+.fr-dialogmodal--is-ready {
+  height: 100%;
+  left: 0;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 10;
+}
+
+.fr-dialogmodal--is-ready .fr-dialogmodal-modal {
+  left: 50%;
+  position: absolute;
+  top: 50%;
+  -webkit-transform: translateX(-50%) translateY(-50%); /* Modal blurs when using translate3d */
+      transform: translateX(-50%) translateY(-50%); /* Modal blurs when using translate3d */
+}
+
+.fr-dialogmodal--is-ready[aria-hidden="true"] {
+  visibility: hidden;
+}
+
+.fr-dialogmodal--is-ready[aria-hidden="false"] {
+  visibility: visible;
+}
