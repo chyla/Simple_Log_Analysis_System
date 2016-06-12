@@ -35,9 +35,18 @@
                     <td> {{ c.virtualhost_name }} </td>
                     <td> {{ c.begin_date }} - {{ c.end_date }} </td>
                     <td>
-                        <a href="#" class="btn btn-info btn-xs"> Categorize data </a>
-                        <a href="#" class="btn btn-warning btn-xs">Reconfigure</a>
-                        <button aria-controls="modal-remove-configuration-id-{{ c.id }}" class="btn btn-danger btn-xs js-fr-dialogmodal-open"> Remove </a>
+                        <a href="#" class="btn btn-info btn-xs">
+                            <i class="fa fa-university" aria-hidden="true"></i>
+                            Categorize data
+                        </a>
+                        <a href="#" class="btn btn-warning btn-xs">
+                            <i class="fa fa-repeat" aria-hidden="true"></i>
+                            Reconfigure
+                        </a>
+                        <button aria-controls="modal-remove-configuration-id-{{ c.id }}" class="btn btn-danger btn-xs js-fr-dialogmodal-open">
+                            <i class="fa fa-trash" aria-hidden="true"></i>
+                            Remove
+                        </a>
                     </td>
                 </tr>
                 {% endfor %}
@@ -50,8 +59,14 @@
     </p>
     
     <div class="action-buttons">
-        <a class="pure-button pure-button-primary" href="{% url 'apache:configure_anomaly_detection' %}">Configure anomaly detection</a>
-        <a class="pure-button pure-button-primary" href="{% url 'apache:configure_actions' %}">Configure actions</a>
+        <a class="pure-button pure-button-primary" href="{% url 'apache:configure_anomaly_detection' %}">
+            <i class="fa fa-plus" aria-hidden="true"></i>
+            Create anomaly detection configuration
+        </a>
+        <a class="pure-button pure-button-primary" href="{% url 'apache:configure_actions' %}">
+            <i class="fa fa-wrench" aria-hidden="true"></i>
+            Configure actions
+        </a>
     </div>
 
     <div class="clear-float"></div>
@@ -64,7 +79,10 @@
     <h2>Results</h2>
     
     <div class="action-buttons">
-        <a class="pure-button button-success" href="{% url 'apache:review_detection_results' %}">Review detection results</a>
+        <a class="pure-button button-success" href="{% url 'apache:review_detection_results' %}">
+            <i class="fa fa-desktop" aria-hidden="true"></i>
+            Review detection results
+        </a>
     </div>
 
     <div class="clear-float"></div>
@@ -98,8 +116,14 @@
                 </p>
 
                 <div class="action-buttons">
-                    <button class="pure-button button-no js-fr-dialogmodal-close" aria-label="No" type="button">No</button>
-                    <a class="pure-button button-yes" href="#">Yes</a>
+                    <button class="pure-button button-no js-fr-dialogmodal-close" aria-label="No" type="button">
+                        <i class="fa fa-times" aria-hidden="true"></i>
+                        No
+                    </button>
+                    <a class="pure-button button-yes" href="#">
+                        <i class="fa fa-check" aria-hidden="true"></i>
+                        Yes
+                    </a>
                 </div>
             </div>
         </div>
