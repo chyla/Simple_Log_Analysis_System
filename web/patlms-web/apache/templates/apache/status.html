@@ -39,14 +39,14 @@
                             <i class="fa fa-university" aria-hidden="true"></i>
                             Categorize data
                         </a>
-                        <a href="#" class="btn btn-warning btn-xs">
+                        <button aria-controls="modal-reconfigure-id-{{ c.id }}" class="btn btn-warning btn-xs js-fr-dialogmodal-open">
                             <i class="fa fa-repeat" aria-hidden="true"></i>
                             Reconfigure
-                        </a>
+                        </button>
                         <button aria-controls="modal-remove-configuration-id-{{ c.id }}" class="btn btn-danger btn-xs js-fr-dialogmodal-open">
                             <i class="fa fa-trash" aria-hidden="true"></i>
                             Remove
-                        </a>
+                        </button>
                     </td>
                 </tr>
                 {% endfor %}
@@ -113,6 +113,31 @@
 
                 <p>
                     Do you really want to remove configuration for&nbsp;<b>{{ c.virtualhost_name }}</b> on&nbsp;<b>{{ c.agent_name }}</b>?
+                </p>
+
+                <div class="action-buttons">
+                    <button class="pure-button button-no js-fr-dialogmodal-close" aria-label="No" type="button">
+                        <i class="fa fa-times" aria-hidden="true"></i>
+                        No
+                    </button>
+                    <a class="pure-button button-yes" href="#">
+                        <i class="fa fa-check" aria-hidden="true"></i>
+                        Yes
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endfor %}
+
+{% for c in configuration %}
+    <section class="fr-dialogmodal js-fr-dialogmodal" id="modal-reconfigure-id-{{ c.id }}">
+        <div class="fr-dialogmodal-modal js-fr-dialogmodal-modal" aria-labelledby="Reconfigure">
+            <div role="document">
+                <h2>Reconfigure</h2>
+
+                <p>
+                    Do you really want to remove current configuration and create new&nbsp;for&nbsp;<b>{{ c.virtualhost_name }}</b> on&nbsp;<b>{{ c.agent_name }}</b>?
                 </p>
 
                 <div class="action-buttons">
