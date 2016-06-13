@@ -53,7 +53,8 @@ void DatabaseFunctions::CreateTables() {
                         "  REQUEST text, "
                         "  STATUS_CODE integer, "
                         "  BYTES integer, "
-                        "  USER_AGENT text "
+                        "  USER_AGENT text, "
+                        "  USED_IN_STATISTICS integer default 0"
                         ");");
 
   sqlite_wrapper_->Exec("create table if not exists APACHE_LAST_RUN_TABLE ( "
@@ -89,21 +90,108 @@ const ::apache::type::AnomalyDetectionConfiguration DatabaseFunctions::GetAnomal
   return db_->GetApacheAnomalyDetectionConfiguration();
 }
 
-::database::type::RowsCount DatabaseFunctions::GetLogsCount(std::string agent_name, std::string virtualhost_name,
-                                                            ::type::Timestamp from, ::type::Timestamp to) {
+::database::type::RowsCount DatabaseFunctions::GetUnusedLogsCount(std::string agent_name, std::string virtualhost_name) {
   BOOST_LOG_TRIVIAL(debug) << "apache::database::DatabaseFunctions::GetLogsCount: Function call";
 
-  return db_->GetApacheLogsCount(agent_name, virtualhost_name, from, to);
+  string sql =
+      "select count(*) from APACHE_LOGS_TABLE "
+      "  where "
+      "    ( "
+      "      AGENT_NAME=? "
+      "      and "
+      "      VIRTUALHOST=? "
+      "    )"
+      "  and "
+      "  USED_IN_STATISTICS=0 "
+      ";";
+
+  sqlite3_stmt *statement;
+  sqlite_wrapper_->Prepare(sql, &statement);
+
+  sqlite_wrapper_->BindText(statement, 1, agent_name);
+
+  sqlite_wrapper_->BindText(statement, 2, virtualhost_name);
+
+  sqlite_wrapper_->Step(statement);
+
+  auto count = sqlite_wrapper_->ColumnInt64(statement, 0);
+
+  sqlite_wrapper_->Finalize(statement);
+
+  return count;
 }
 
-::type::ApacheLogs DatabaseFunctions::GetLogs(std::string agent_name, std::string virtualhost_name,
-                                              ::type::Timestamp from, ::type::Timestamp to,
-                                              unsigned limit, ::database::type::RowsCount offset) {
-  BOOST_LOG_TRIVIAL(debug) << "apache::database::DatabaseFunctions::GetLogs: Function call";
+::type::ApacheLogs DatabaseFunctions::GetUnusedLogs(std::string agent_name, std::string virtualhost_name,
+                                                    unsigned limit, ::database::type::RowsCount offset) {
+  BOOST_LOG_TRIVIAL(debug) << "apache::database::DatabaseFunctions::GetUnusedLogs: Function call";
 
-  return db_->GetApacheLogs(agent_name, virtualhost_name,
-                            from, to,
-                            limit, offset);
+  string sql =
+      "select ID, AGENT_NAME, VIRTUALHOST, CLIENT_IP, UTC_HOUR, UTC_MINUTE, UTC_SECOND, UTC_DAY, UTC_MONTH, UTC_YEAR, REQUEST, STATUS_CODE, BYTES, USER_AGENT from APACHE_LOGS_TABLE"
+      "  where"
+      "    ("
+      "      AGENT_NAME=?"
+      "      and"
+      "      VIRTUALHOST=?"
+      "    )"
+      "  and "
+      "  USED_IN_STATISTICS=0 "
+      "   limit " + to_string(limit) + " offset " + to_string(offset) +
+      ";";
+
+  sqlite3_stmt *statement;
+  sqlite_wrapper_->Prepare(sql, &statement);
+
+  sqlite_wrapper_->BindText(statement, 1, agent_name);
+  sqlite_wrapper_->BindText(statement, 2, virtualhost_name);
+
+  ::type::ApacheLogs logs;
+  int ret;
+  do {
+    ret = sqlite_wrapper_->Step(statement);
+
+    if (ret == SQLITE_ROW) {
+      BOOST_LOG_TRIVIAL(debug) << "apache::database::DatabaseFunctions::GetUnusedLogs: Found new log entry in database";
+      ::type::ApacheLogEntry log_entry;
+
+      log_entry.id = sqlite_wrapper_->ColumnInt64(statement, 0);
+      log_entry.agent_name = sqlite_wrapper_->ColumnText(statement, 1);
+      log_entry.virtualhost = sqlite_wrapper_->ColumnText(statement, 2);
+      log_entry.client_ip = sqlite_wrapper_->ColumnText(statement, 3);
+
+      log_entry.time.Set(sqlite_wrapper_->ColumnInt(statement, 4),
+                         sqlite_wrapper_->ColumnInt(statement, 5),
+                         sqlite_wrapper_->ColumnInt(statement, 6),
+                         sqlite_wrapper_->ColumnInt(statement, 7),
+                         sqlite_wrapper_->ColumnInt(statement, 8),
+                         sqlite_wrapper_->ColumnInt(statement, 9));
+
+      log_entry.request = sqlite_wrapper_->ColumnText(statement, 10);
+      log_entry.status_code = sqlite_wrapper_->ColumnInt(statement, 11);
+      log_entry.bytes = sqlite_wrapper_->ColumnInt(statement, 12);
+      log_entry.user_agent = sqlite_wrapper_->ColumnText(statement, 13);
+
+      logs.push_back(log_entry);
+    }
+  }
+  while (ret != SQLITE_DONE);
+
+  sqlite_wrapper_->Finalize(statement);
+  
+  return logs;
+}
+
+void DatabaseFunctions::MarkLogsAsUsed(const ::type::ApacheLogs &logs) {
+  BOOST_LOG_TRIVIAL(debug) << "apache::database::DatabaseFunctions::MarkLogsAsUsed: Function call";
+
+  string sql = "update APACHE_LOGS_TABLE set USED_IN_STATISTICS=1 where ID in ( ";
+
+  for (auto log : logs) {
+    sql += to_string(log.id) + ", ";
+  }
+
+  sql += "-1 );";
+
+  sqlite_wrapper_->Exec(sql);
 }
 
 bool DatabaseFunctions::AddSessionStatistics(const ::apache::type::ApacheSessions &sessions) {

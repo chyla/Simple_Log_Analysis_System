@@ -47,28 +47,10 @@ class PrepareStatisticsAnalyzerObject : public PrepareStatisticsAnalyzerObjectIn
                                   SystemInterfacePtr system_interface);
 
   void CreateStatistics(const ::database::type::AgentName &agent_name,
-                        const ::database::type::VirtualhostName &virtualhost_name,
-                        const ::type::Timestamp &now);
-
-  void CreateStatisticsForPastDays(const ::database::type::AgentName &agent_name,
-                                   const ::database::type::VirtualhostName &virtualhost_name,
-                                   const ::type::Timestamp &last_statistics_calculation,
-                                   const ::type::Timestamp &now);
-
-  void CreateStatisticsForToday(const ::database::type::AgentName &agent_name,
-                                const ::database::type::VirtualhostName &virtualhost_name,
-                                const ::type::Timestamp &last_statistics_calculation,
-                                const ::type::Timestamp &now);
-
-  void CalculateStatisticsPartially(const ::database::type::AgentName &agent_name,
-                                    const ::database::type::VirtualhostName &virtualhost_name,
-                                    const ::type::Timestamp &from,
-                                    const ::type::Timestamp &to);
+                        const ::database::type::VirtualhostName &virtualhost_name);
 
   void CalculateStatistics(const ::database::type::AgentName &agent_name,
                            const ::database::type::VirtualhostName &virtualhost_name,
-                           const ::type::Timestamp &from,
-                           const ::type::Timestamp &to,
                            ::database::type::RowsCount count,
                            ::database::type::RowId offset);
 

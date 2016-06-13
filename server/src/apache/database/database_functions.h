@@ -36,11 +36,10 @@ class DatabaseFunctions : public detail::DatabaseFunctionsInterface {
 
   const ::apache::type::AnomalyDetectionConfiguration GetAnomalyDetectionConfigurations() override;
 
-  ::database::type::RowsCount GetLogsCount(std::string agent_name, std::string virtualhost_name,
-                                           ::type::Timestamp from, ::type::Timestamp to) override;
-  ::type::ApacheLogs GetLogs(std::string agent_name, std::string virtualhost_name,
-                             ::type::Timestamp from, ::type::Timestamp to,
-                             unsigned limit, ::database::type::RowsCount offset) override;
+  ::database::type::RowsCount GetUnusedLogsCount(std::string agent_name, std::string virtualhost_name) override;
+  ::type::ApacheLogs GetUnusedLogs(std::string agent_name, std::string virtualhost_name,
+                                   unsigned limit, ::database::type::RowsCount offset) override;
+  void MarkLogsAsUsed(const ::type::ApacheLogs &logs) override;
 
   bool AddSessionStatistics(const ::apache::type::ApacheSessions &sessions) override;
   ::database::type::RowsCount GetSessionStatisticsCount(const std::string &agent_name, const std::string &virtualhost_name,

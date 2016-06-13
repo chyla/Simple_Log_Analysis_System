@@ -74,10 +74,6 @@ class Database {
 
   bool IsApacheStatisticsCreatedFor(int day, int month, int year) __attribute__((deprecated));
 
-  long long GetApacheLogsCount(std::string agent_name, std::string virtualhost_name, ::type::Timestamp from, ::type::Timestamp to);
-
-  ::type::ApacheLogs GetApacheLogs(std::string agent_name, std::string virtualhost_name, ::type::Timestamp from, ::type::Timestamp to, unsigned limit, long long offset);
-
   type::AgentNames GetApacheAgentNames();
 
   type::VirtualhostNames GetApacheVirtualhostNames(std::string agent_name);

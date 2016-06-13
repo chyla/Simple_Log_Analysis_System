@@ -35,11 +35,10 @@ class DatabaseFunctionsInterface {
 
   virtual const ::apache::type::AnomalyDetectionConfiguration GetAnomalyDetectionConfigurations() = 0;
 
-  virtual ::database::type::RowsCount GetLogsCount(std::string agent_name, std::string virtualhost_name,
-                                                   ::type::Timestamp from, ::type::Timestamp to) = 0;
-  virtual ::type::ApacheLogs GetLogs(std::string agent_name, std::string virtualhost_name,
-                                     ::type::Timestamp from, ::type::Timestamp to,
-                                     unsigned limit, ::database::type::RowsCount offset) = 0;
+  virtual ::database::type::RowsCount GetUnusedLogsCount(std::string agent_name, std::string virtualhost_name) = 0;
+  virtual ::type::ApacheLogs GetUnusedLogs(std::string agent_name, std::string virtualhost_name,
+                                           unsigned limit, ::database::type::RowsCount offset) = 0;
+  virtual void MarkLogsAsUsed(const ::type::ApacheLogs &logs) = 0;
 
   virtual bool AddSessionStatistics(const ::apache::type::ApacheSessions &sessions) = 0;
   virtual ::database::type::RowsCount GetSessionStatisticsCount(const std::string &agent_name, const std::string &virtualhost_name,
