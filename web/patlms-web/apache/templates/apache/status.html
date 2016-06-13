@@ -35,14 +35,14 @@
                     <td> {{ c.virtualhost_name }} </td>
                     <td> {{ c.begin_date }} - {{ c.end_date }} </td>
                     <td>
-                        <a href="#" class="btn btn-info btn-xs">
+                        <a href="{% url 'apache:configure_anomaly_detection_correct_sessions_marks' %}?agent_name={{ c.agent_name }}&virtualhost_name={{ c.virtualhost_name }}&begin_date={{ c.begin_date }}&end_date={{ c.end_date }}" class="btn btn-info btn-xs">
                             <i class="fa fa-university" aria-hidden="true"></i>
                             Categorize data
                         </a>
-                        <button aria-controls="modal-reconfigure-id-{{ c.id }}" class="btn btn-warning btn-xs js-fr-dialogmodal-open">
+                        <a aria-controls="modal-reconfigure-id-{{ c.id }}" class="btn btn-warning btn-xs js-fr-dialogmodal-open">
                             <i class="fa fa-repeat" aria-hidden="true"></i>
                             Reconfigure
-                        </button>
+                        </a>
                         <button aria-controls="modal-remove-configuration-id-{{ c.id }}" class="btn btn-danger btn-xs js-fr-dialogmodal-open">
                             <i class="fa fa-trash" aria-hidden="true"></i>
                             Remove
@@ -173,7 +173,7 @@
                         <i class="fa fa-times" aria-hidden="true"></i>
                         No
                     </button>
-                    <a class="pure-button button-yes" href="#">
+                    <a class="pure-button button-yes" href="{% url 'apache:configure_anomaly_detection_select_data_range' %}?agent_name={{ c.agent_name }}&virtualhost_name={{ c.virtualhost_name }}" >
                         <i class="fa fa-check" aria-hidden="true"></i>
                         Yes
                     </a>
