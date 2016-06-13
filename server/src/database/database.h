@@ -33,11 +33,9 @@ class Database {
 
   bool IsOpen() const;
 
-  void CreateDateTable() __attribute__ ((deprecated));
+  void CreateDateTable() __attribute__((deprecated));
 
   void CreateBashLogsTable();
-
-  void CreateApacheLogsTable();
 
   void CreateApacheSessionTable();
 
@@ -45,11 +43,11 @@ class Database {
 
   void CreateApacheAnomalyDetectionConfigurationTable();
 
-  void AddDate(int day, int month, int year) __attribute__ ((deprecated));
+  void AddDate(int day, int month, int year) __attribute__((deprecated));
 
-  type::RowId GetDateId(int day, int month, int year) __attribute__ ((deprecated));
+  type::RowId GetDateId(int day, int month, int year) __attribute__((deprecated));
 
-  ::type::Date GetDateById(type::RowId id) __attribute__ ((deprecated));
+  ::type::Date GetDateById(type::RowId id) __attribute__((deprecated));
 
   bool AddBashLogs(const ::type::BashLogs &log_entries);
 
@@ -72,9 +70,9 @@ class Database {
 
   const ::apache::type::AnomalyDetectionConfiguration GetApacheAnomalyDetectionConfiguration();
 
-  void MarkApacheStatisticsAsCreatedFor(int day, int month, int year) __attribute__ ((deprecated));
+  void MarkApacheStatisticsAsCreatedFor(int day, int month, int year) __attribute__((deprecated));
 
-  bool IsApacheStatisticsCreatedFor(int day, int month, int year) __attribute__ ((deprecated));
+  bool IsApacheStatisticsCreatedFor(int day, int month, int year) __attribute__((deprecated));
 
   long long GetApacheLogsCount(std::string agent_name, std::string virtualhost_name, ::type::Timestamp from, ::type::Timestamp to);
 

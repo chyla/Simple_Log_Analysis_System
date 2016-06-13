@@ -39,6 +39,23 @@ DatabaseFunctionsPtr DatabaseFunctions::Create(::database::DatabasePtr db,
 void DatabaseFunctions::CreateTables() {
   BOOST_LOG_TRIVIAL(debug) << "apache::database::DatabaseFunctions::CreateTables: Function call";
 
+  sqlite_wrapper_->Exec("create table if not exists APACHE_LOGS_TABLE("
+                        "  ID integer primary key, "
+                        "  AGENT_NAME text,"
+                        "  VIRTUALHOST text, "
+                        "  CLIENT_IP text, "
+                        "  UTC_HOUR integer, "
+                        "  UTC_MINUTE integer, "
+                        "  UTC_SECOND integer, "
+                        "  UTC_DAY integer, "
+                        "  UTC_MONTH integer, "
+                        "  UTC_YEAR integer, "
+                        "  REQUEST text, "
+                        "  STATUS_CODE integer, "
+                        "  BYTES integer, "
+                        "  USER_AGENT text "
+                        ");");
+
   sqlite_wrapper_->Exec("create table if not exists APACHE_LAST_RUN_TABLE ( "
                         "  ID integer primary key not null, "
                         "  RUN_TYPE integer not null, "

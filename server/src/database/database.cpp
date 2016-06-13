@@ -80,35 +80,6 @@ void Database::CreateBashLogsTable() {
   StatementCheckForError(ret, "Create BASH_LOGS_TABLE error");
 }
 
-void Database::CreateApacheLogsTable() {
-  BOOST_LOG_TRIVIAL(debug) << "database::Database::CreateApacheLogsTable: Function call";
-
-  if (is_open_ == false) {
-    BOOST_LOG_TRIVIAL(error) << "database::Database::CreateBashLogsTable: Database is not open.";
-    throw exception::detail::CantExecuteSqlStatementException();
-  }
-
-  const char *sql =
-      "create table if not exists APACHE_LOGS_TABLE("
-      "  ID integer primary key, "
-      "  AGENT_NAME text,"
-      "  VIRTUALHOST text, "
-      "  CLIENT_IP text, "
-      "  UTC_HOUR integer, "
-      "  UTC_MINUTE integer, "
-      "  UTC_SECOND integer, "
-      "  UTC_DAY integer, "
-      "  UTC_MONTH integer, "
-      "  UTC_YEAR integer, "
-      "  REQUEST text, "
-      "  STATUS_CODE integer, "
-      "  BYTES integer, "
-      "  USER_AGENT text "
-      ");";
-  int ret = sqlite_interface_->Exec(db_handle_, sql, nullptr, nullptr, nullptr);
-  StatementCheckForError(ret, "Create APACHE_LOGS_TABLE error");
-}
-
 void Database::CreateApacheSessionTable() {
   BOOST_LOG_TRIVIAL(debug) << "database::Database::CreateApacheSessionTable: Function call";
 
@@ -440,8 +411,8 @@ bool Database::AddApacheSessionStatistics(const ::apache::type::ApacheSessions &
 
   for (const ::apache::type::ApacheSessionEntry &entry : sessions) {
     const char *sql = "insert into APACHE_SESSION_TABLE(AGENT_NAME, VIRTUALHOST, CLIENT_IP, UTC_HOUR, UTC_MINUTE, UTC_SECOND, UTC_DAY, UTC_MONTH,"
-                      "                                 UTC_YEAR, SESSION_LENGTH, BANDWIDTH_USAGE, REQUESTS_COUNT, ERRORS_COUNT, ERROR_PERCENTAGE, USER_AGENT, IS_ANOMALY)"
-                      " values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        "                                 UTC_YEAR, SESSION_LENGTH, BANDWIDTH_USAGE, REQUESTS_COUNT, ERRORS_COUNT, ERROR_PERCENTAGE, USER_AGENT, IS_ANOMALY)"
+        " values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     sqlite3_stmt *statement;
     ret = sqlite_interface_->Prepare(db_handle_, sql, -1, &statement, nullptr);
     StatementCheckForErrorAndRollback(ret, "Prepare insert error");
