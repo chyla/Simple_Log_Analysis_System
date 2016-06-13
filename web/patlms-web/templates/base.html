@@ -63,7 +63,15 @@
 
         {% if exception %}
             <div class="error">
-                Ohhh, {{ exception }}!
+                <h1>
+                    Oops!
+                </h1>
+                <h2>
+                    Error occurred.
+                </h2>
+                <div class="error-details">
+                    Details: {{ exception }}.
+                </div>
             </div>
         {% else %}
             <div class="page-content">
