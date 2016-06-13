@@ -10,15 +10,18 @@ def configure_actions(request):
 def status(request):
     exception = None
     configuration = None
+    available_classification_for_agent_host_names = None
 
     try:
         configuration = util.get_apache_anomaly_detection_configuration()
+        available_classification_for_agent_host_names = util.get_agents_and_virtualhosts_names_filtered_by_sessions_classification_exists()
     except Exception as e:
         exception = str(e)
 
     return render_to_response("apache/status.html",
                               {'exception' : exception,
                                'configuration' : configuration,
+                               'available_classification_for_agent_host_names' : available_classification_for_agent_host_names,
                                })
 
 def configure_anomaly_detection_select_agent_and_virtualhost(request):

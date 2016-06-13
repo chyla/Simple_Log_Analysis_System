@@ -53,11 +53,12 @@
             </tbody>
         </table>
     {% else %}
+        <i class="fa fa-exclamation" aria-hidden="true"></i>
         No configuration found.
     {% endif %}
-    
+
     </p>
-    
+
     <div class="action-buttons">
         <a class="pure-button pure-button-primary" href="{% url 'apache:configure_anomaly_detection' %}">
             <i class="fa fa-plus" aria-hidden="true"></i>
@@ -76,14 +77,41 @@
 
 <div class="next-page-section">
 
-    <h2>Results</h2>
-    
-    <div class="action-buttons">
-        <a class="pure-button button-success" href="{% url 'apache:review_detection_results' %}">
-            <i class="fa fa-desktop" aria-hidden="true"></i>
-            Review detection results
-        </a>
-    </div>
+    <h2>View sessions classification</h2>
+
+    {% if available_classification_for_agent_host_names|length > 0 %}
+            <table class="table table custab sortable">
+            <thead>
+                <tr>
+                    <th><button class="custab-head-button">Agent</button></th>
+                    <th><button class="custab-head-button">Virtualhost</button></th>
+                    <th class="sorttable_nosort"><button class="custab-head-button">Options</button></th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for d in available_classification_for_agent_host_names %}
+                    {% for virtualhost_name in d.virtualhosts_names %}
+                        <tr {% cycle '' 'class="custab odd"' %}>
+                            <td> {{ d.agent_name }} </td>
+                            <td> {{ virtualhost_name }} </td>
+                            <td>
+                                <a class="pure-button button-success" href="{% url 'apache:configure_anomaly_detection_show_results' %}?agent_name={{ d.agent_name }}&virtualhost_name={{ virtualhost_name }}">
+                                    <i class="fa fa-desktop" aria-hidden="true"></i>
+                                    View
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+    <p>
+        <i class="fa fa-exclamation" aria-hidden="true"></i>
+        Results not found.
+    </p>
+    {% endif %}
 
     <div class="clear-float"></div>
 

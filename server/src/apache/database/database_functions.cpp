@@ -176,7 +176,7 @@ const ::apache::type::AnomalyDetectionConfiguration DatabaseFunctions::GetAnomal
   while (ret != SQLITE_DONE);
 
   sqlite_wrapper_->Finalize(statement);
-  
+
   return logs;
 }
 
@@ -209,6 +209,43 @@ bool DatabaseFunctions::AddSessionStatistics(const ::apache::type::ApacheSession
                                                                        const ::type::Timestamp &from, const ::type::Timestamp &to,
                                                                        unsigned limit, ::database::type::RowsCount offset) {
   return db_->GetApacheSessionStatistics(agent_name, virtualhost_name, from, to, limit, offset);
+}
+
+bool DatabaseFunctions::IsSessionStatisticsWithoutLearningSetExists(const std::string &agent_name, const std::string &virtualhost_name) {
+  BOOST_LOG_TRIVIAL(debug) << "apache::database::DatabaseFunctions::IsSessionStatisticsWithoutLearningSetExists: Function call";
+
+  auto agent_id = general_database_functions_->GetAgentNameId(agent_name);
+  auto virtualhost_id = GetVirtualhostNameId(virtualhost_name);
+
+  string sql =
+      "select count(1) "
+      " from APACHE_SESSION_TABLE "
+      "  where"
+      "    ("
+      "      AGENT_NAME=?"
+      "      and"
+      "      VIRTUALHOST=?"
+      "    )"
+      "  and "
+      " ID not in ( select SESSION_ID from APACHE_LEARNING_SESSIONS where "
+      "                 AGENT_NAME_ID=" + to_string(agent_id) + " and VIRTUALHOST_NAME_ID=" + to_string(virtualhost_id) +
+      "            ) "
+      ";";
+
+  sqlite3_stmt *statement = nullptr;
+  sqlite_wrapper_->Prepare(sql, &statement);
+
+  sqlite_wrapper_->BindText(statement, 1, agent_name);
+  sqlite_wrapper_->BindText(statement, 2, virtualhost_name);
+
+  int ret = sqlite_wrapper_->Step(statement);
+  ::database::type::RowsCount count = 0;
+  if (ret == SQLITE_ROW)
+    count = sqlite_wrapper_->ColumnInt64(statement, 0);
+
+  sqlite_wrapper_->Finalize(statement);
+
+  return count;
 }
 
 ::database::type::RowsCount DatabaseFunctions::GetSessionStatisticsWithoutLearningSetCount(const std::string &agent_name, const std::string &virtualhost_name,

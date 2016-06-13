@@ -3,7 +3,8 @@
 #include <boost/log/trivial.hpp>
 #include <json/json.hpp>
 #include <algorithm>
-
+#include <vector>
+#include <string>
 #include <patlms/type/time.h>
 
 using namespace std;
@@ -105,6 +106,11 @@ const ::web::type::JsonMessage CommandExecutorObject::Execute(const ::web::type:
 
     result = MarkLearningSetWithIqrMethod(args.at(0), args.at(1));
   }
+  else if (command == "get_agents_and_virtualhosts_names_filtered_by_sessions_classification_exists") {
+    BOOST_LOG_TRIVIAL(info) << "apache::web::CommandExecutorObject::Execute: Found 'get_agents_and_virtualhosts_names_filtered_by_sessions_classification_exists' command";
+
+    result = GetAgentsAndVirtualhostsNamesFilteredBySessionsClassificationExists();
+  }
 
   return result;
 }
@@ -119,6 +125,7 @@ bool CommandExecutorObject::IsCommandSupported(const ::web::type::Command &comma
       || (command == "set_apache_anomaly_detection_configuration")
       || (command == "get_apache_sessions_without_learning_set")
       || (command == "mark_learning_set_with_iqr_method")
+      || (command == "get_agents_and_virtualhosts_names_filtered_by_sessions_classification_exists")
       ;
 }
 
@@ -307,6 +314,35 @@ const ::web::type::JsonMessage CommandExecutorObject::MarkLearningSetWithIqrMeth
 
   json j;
   j["status"] = "ok";
+
+  return j.dump();
+}
+
+const ::web::type::JsonMessage CommandExecutorObject::GetAgentsAndVirtualhostsNamesFilteredBySessionsClassificationExists() {
+  BOOST_LOG_TRIVIAL(debug) << "apache::web::CommandExecutorObject::MarkLearningSetWithIqrMethod: Function call";
+
+  json j, r = json::array();
+
+  auto agent_names = general_database_functions_->GetAgentNames();
+  for (auto agent : agent_names) {
+    auto t = json::array();
+
+    auto hosts_names = apache_database_functions_->GetVirtualhostNames(agent);
+    for (auto host : hosts_names) {
+      if (apache_database_functions_->IsSessionStatisticsWithoutLearningSetExists(agent, host))
+        t.push_back(host);
+    }
+
+    if (t.size() > 0) {
+      json m;
+      m["agent_name"] = agent;
+      m["virtualhosts_names"] = t;
+      r.push_back(m);
+    }
+  }
+
+  j["status"] = "ok";
+  j["result"] = r;
 
   return j.dump();
 }

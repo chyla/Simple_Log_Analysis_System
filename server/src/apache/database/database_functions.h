@@ -49,6 +49,7 @@ class DatabaseFunctions : public detail::DatabaseFunctionsInterface {
                                                       unsigned limit, ::database::type::RowsCount offset) override;
   ::database::type::RowsCount GetSessionStatisticsWithoutLearningSetCount(const std::string &agent_name, const std::string &virtualhost_name,
                                                                           const ::type::Timestamp &from, const ::type::Timestamp &to) override;
+  bool IsSessionStatisticsWithoutLearningSetExists(const std::string &agent_name, const std::string &virtualhost_name) override;
   ::apache::type::ApacheSessions GetSessionStatisticsWithoutLearningSet(const std::string &agent_name, const std::string &virtualhost_name,
                                                                         const ::type::Timestamp &from, const ::type::Timestamp &to,
                                                                         unsigned limit, long long offset) override;

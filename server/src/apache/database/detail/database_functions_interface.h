@@ -48,6 +48,7 @@ class DatabaseFunctionsInterface {
                                                               unsigned limit, ::database::type::RowsCount offset) = 0;
   virtual ::database::type::RowsCount GetSessionStatisticsWithoutLearningSetCount(const std::string &agent_name, const std::string &virtualhost_name,
                                                                                   const ::type::Timestamp &from, const ::type::Timestamp &to) = 0;
+  virtual bool IsSessionStatisticsWithoutLearningSetExists(const std::string &agent_name, const std::string &virtualhost_name) = 0;
   virtual ::apache::type::ApacheSessions GetSessionStatisticsWithoutLearningSet(const std::string &agent_name, const std::string &virtualhost_name,
                                                                                 const ::type::Timestamp &from, const ::type::Timestamp &to,
                                                                                 unsigned limit, long long offset) = 0;

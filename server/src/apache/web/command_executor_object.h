@@ -62,6 +62,7 @@ class CommandExecutorObject : public ::web::type::CommandExecutorObjectInterface
                                                                const std::string &end_date);
   const ::web::type::JsonMessage MarkLearningSetWithIqrMethod(const std::string &agent_name,
                                                               const std::string &virtualhost_name);
+  const ::web::type::JsonMessage GetAgentsAndVirtualhostsNamesFilteredBySessionsClassificationExists();
 };
 
 }
