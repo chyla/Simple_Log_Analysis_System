@@ -13,7 +13,8 @@ const Options Options::Create(const std::string &agent_name,
                               unsigned dbus_port,
                               const std::string &dbus_family,
                               bool help_message,
-                              bool daemon) {
+                              bool daemon,
+                              bool debug) {
   Options options;
   options.agent_name_ = agent_name;
   options.run_as_user_ = run_as_user;
@@ -26,6 +27,7 @@ const Options Options::Create(const std::string &agent_name,
   options.dbus_family_ = dbus_family;
   options.help_message_ = help_message;
   options.daemon_ = daemon;
+  options.debug_ = debug;
 
   return options;
 }
@@ -72,6 +74,10 @@ bool Options::IsHelpMessage() const {
 
 bool Options::IsDaemon() const {
   return daemon_;
+}
+
+bool Options::IsDebug() const {
+  return debug_;
 }
 
 }

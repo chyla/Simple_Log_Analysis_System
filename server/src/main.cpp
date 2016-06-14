@@ -97,7 +97,7 @@ main(int argc, char *argv[]) {
   }
 
   try {
-    util::ConfigureLogger(options.GetLogfilePath());
+    util::ConfigureLogger(options.GetLogfilePath(), options.IsDebug());
   }
   catch (std::exception &ex) {
     std::cerr << "Error: Can't configure logger: " << ex.what() << '\n';

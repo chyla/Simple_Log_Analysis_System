@@ -40,7 +40,7 @@ main(int argc, char *argv[]) {
     p.SetConfigFilePath(SYSCONFFILE);
     program_options::Options options = p.Parse();
 
-    util::ConfigureLogger(options.GetLogfilePath());
+    util::ConfigureLogger(options.GetLogfilePath(), options.IsDebug());
 
     BOOST_LOG_TRIVIAL(info) << "Agent";
 #ifdef HAVE_CONFIG_H

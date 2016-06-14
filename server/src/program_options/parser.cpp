@@ -21,10 +21,11 @@ help_options_("Help options") {
       ("dbus_family", value<string>(), "D-Bus bus family")
       ("pidfile", value<string>(), "pidfile path")
       ("logfile", value<string>(), "logfile path")
-      ("nodaemon", "don't start as daemon")
       ("databasefile", value<string>(), "database file path")
       ("web_address", value<string>(), "web listen address")
       ("web_port", value<unsigned>(), "web listen port")
+      ("nodaemon", "don't start as daemon")
+      ("enable-debug", "change log-level to debug")
       ;
 
   help_options_.add_options()
@@ -78,7 +79,8 @@ Options Parser::Parse() {
                                     !static_cast<bool> (variables.count("nodaemon")),
                                     variables["databasefile"].as<string>(),
                                     variables["web_address"].as<string>(),
-                                    variables["web_port"].as<unsigned>());
+                                    variables["web_port"].as<unsigned>(),
+                                    static_cast<bool> (variables.count("enable-debug")));
 
   return options;
 }

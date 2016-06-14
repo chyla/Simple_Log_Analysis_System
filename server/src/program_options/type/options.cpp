@@ -23,7 +23,8 @@ const Options Options::Create(const std::string &run_as_user,
                               bool daemon,
                               const std::string &databasefile_path,
                               const std::string &web_address,
-                              unsigned web_port) {
+                              unsigned web_port,
+                              bool debug) {
   Options options;
   options.run_as_user_ = run_as_user;
   options.pidfile_path_ = pidfile_path;
@@ -36,6 +37,7 @@ const Options Options::Create(const std::string &run_as_user,
   options.databasefile_path_ = databasefile_path;
   options.web_address_ = web_address;
   options.web_port_ = web_port;
+  options.debug_ = debug;
 
   return options;
 }
@@ -70,6 +72,10 @@ bool Options::IsShowHelpMessage() const {
 
 bool Options::IsDaemon() const {
   return daemon_;
+}
+
+bool Options::IsDebug() const {
+  return debug_;
 }
 
 const std::string& Options::GetDatabasefilePath() const {

@@ -19,7 +19,8 @@ class Options {
                               unsigned dbus_port,
                               const std::string &dbus_family,
                               bool help_message,
-                              bool daemon);
+                              bool daemon, 
+                              bool debug);
 
   const std::string& GetAgentName() const;
   const std::string& GetRunAsUser() const;
@@ -34,6 +35,7 @@ class Options {
 
   bool IsHelpMessage() const;
   bool IsDaemon() const;
+  bool IsDebug() const;
 
  private:
   Options() = default;
@@ -51,6 +53,7 @@ class Options {
 
   bool help_message_;
   bool daemon_;
+  bool debug_;
 };
 
 }

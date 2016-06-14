@@ -6,7 +6,7 @@
 namespace util
 {
 
-void ConfigureLogger(const std::string &log_file);
+void ConfigureLogger(const std::string &log_file, bool enable_debug = false);
 
 }
 

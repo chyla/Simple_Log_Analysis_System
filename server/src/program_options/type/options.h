@@ -23,7 +23,8 @@ class Options {
                               bool daemon,
                               const std::string &databasefile_path,
                               const std::string &web_address,
-                              unsigned web_port);
+                              unsigned web_port,
+                              bool debug);
 
   const std::string& GetRunAsUser() const;
   const std::string& GetPidfilePath() const;
@@ -35,6 +36,7 @@ class Options {
 
   bool IsShowHelpMessage() const;
   bool IsDaemon() const;
+  bool IsDebug() const;
 
   const std::string& GetDatabasefilePath() const;
 
@@ -56,6 +58,7 @@ class Options {
 
   bool show_help_message_;
   bool daemon_;
+  bool debug_;
 };
 
 }
