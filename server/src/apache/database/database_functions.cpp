@@ -407,8 +407,8 @@ void DatabaseFunctions::MarkLearningSetWithIqrMethod(const ::database::type::Row
     return a.second < b.second;
   });
 
-  auto q1_element = ceil(id_queries.size() * 1. / 4.);
-  auto q3_element = ceil(id_queries.size() * 3. / 4.);
+  auto q1_element = ceil(id_queries.size() * 1. / 4.) - 1;
+  auto q3_element = ceil(id_queries.size() * 3. / 4.) - 1;
   auto iqr = id_queries.at(q3_element).second - id_queries.at(q1_element).second;
 
   auto m = id_queries.at(q3_element).second + 1.5 * iqr;
