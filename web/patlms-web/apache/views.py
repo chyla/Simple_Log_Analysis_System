@@ -4,7 +4,6 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response, render, redirect
 from django.core.urlresolvers import reverse
 import util
-import datetime
 
 
 def configure_actions(request):
@@ -52,13 +51,50 @@ def configure_anomaly_detection_select_agent_and_virtualhost(request):
 def configure_anomaly_detection_select_data_range(request):
     agent_name = request.GET.get('agent_name', '')
     virtualhost_name = request.GET.get('virtualhost_name', '')
+    begin_date = request.GET.get('begin_date', util.get_default_begin_date())
+    end_date = request.GET.get('end_date', util.get_default_end_date())
+    sessions = []
     exception = None
 
-    return render_to_response('apache/configure_anomaly_detection/select_data_range.html',
-                              {'exception' : exception,
-                               'agent_name' : agent_name,
-                               'virtualhost_name' : virtualhost_name,
-                               })
+    try:
+        sessions = util.get_apache_sessions(agent_name, virtualhost_name, begin_date, end_date)
+    except Exception as e:
+        exception = str(e)
+
+    return render(request,
+                  'apache/configure_anomaly_detection/select_data_range.html',
+                  {'exception' : exception,
+                   'agent_name' : agent_name,
+                   'virtualhost_name' : virtualhost_name,
+                   'begin_date' : begin_date,
+                   'end_date' : end_date,
+                   'sessions' : sessions,
+                   })
+
+def configure_anomaly_detection_select_data_range_save_settings(request):
+    agent_name = request.POST.get('agent_name', '')
+    virtualhost_name = request.POST.get('virtualhost_name', '')
+    begin_date = request.POST.get('begin_date', '')
+    end_date = request.POST.get('end_date', '')
+    redirect_to_correct_session_marks = request.POST.get('redirect_to_correct_session_marks', '')
+    exception = None
+
+    print redirect_to_correct_session_marks
+
+    try:
+        sessions = util.set_apache_anomaly_detection_configuration(agent_name, virtualhost_name, begin_date, end_date)
+    except Exception as e:
+        return render(request,
+                      'apache/configure_anomaly_detection/select_data_range.html',
+                      {'exception' : str(e),
+                       })
+
+    if redirect_to_correct_session_marks == 'on':
+        url = reverse('apache:configure_anomaly_detection_correct_sessions_marks')
+        return redirect((url + "?agent_name={}&virtualhost_name={}").format(agent_name, virtualhost_name),
+                        permanent=False)
+    else:
+        return redirect('apache:status', permanent=False)
 
 def configure_anomaly_detection_correct_sessions_marks(request, *args, **kwargs):
     exception = None
@@ -119,8 +155,8 @@ def configure_anomaly_detection_save_settings(request):
 def review_detection_results_show_results(request):
     agent_name = request.GET.get('agent_name', '')
     virtualhost_name = request.GET.get('virtualhost_name', '')
-    begin_date = request.GET.get('begin_date', (datetime.datetime.now() - datetime.timedelta(30)).strftime("%Y-%m-%d"))
-    end_date = request.GET.get('end_date', (datetime.datetime.now()).strftime("%Y-%m-%d"))
+    begin_date = request.GET.get('begin_date', util.get_default_begin_date())
+    end_date = request.GET.get('end_date', util.get_default_end_date())
     sessions = []
     exception = None
 

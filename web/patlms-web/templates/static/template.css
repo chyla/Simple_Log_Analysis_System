@@ -104,10 +104,14 @@ table {
 }
 
 
+input.slas-form-input {
+  margin: 0.5em;
+}
+
 .action-buttons,
 .action-buttons-left,
 .action-buttons-right {
-  padding: 1em;
+  padding: 0.5em;
   line-height: 2.5em;
 }
 

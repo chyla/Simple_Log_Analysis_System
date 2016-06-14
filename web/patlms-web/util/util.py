@@ -1,10 +1,18 @@
 import json
 import copy
+import datetime
 
 from network import Network
 from server_config import SERVER_ADDRESS, SERVER_PORT
 from exception import CommandException
 
+def get_default_begin_date():
+    past = datetime.datetime.now() - datetime.timedelta(30)
+    return past.strftime("%Y-%m-%d")
+
+def get_default_end_date():
+    past = datetime.datetime.now()
+    return past.strftime("%Y-%m-%d")
 
 def connect_and_get_result_from_command(command, args=None):
     n = Network.connect_ipv4(SERVER_ADDRESS, SERVER_PORT)
