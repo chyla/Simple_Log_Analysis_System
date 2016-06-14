@@ -14,6 +14,20 @@
     <p>
         Please select incorrect sessions:
     </p>
+
+    <div class="action-buttons-right">
+        <form class="pure-form" method="post" action="{% url 'apache:configure_anomaly_detection_correct_sessions_marks_automatically_mark_anomalies' %}">
+            {% csrf_token %}
+            
+            <input type="hidden" name="agent_name" value="{{ agent_name }}">
+            <input type="hidden" name="virtualhost_name" value="{{ virtualhost_name }}">
+
+            <button type="submit" class="pure-button pure-button-primary">
+                <i class="fa fa-magic" aria-hidden="true"></i>
+                Automatically mark sessions as anomalies
+            </button>
+        </form>
+    </div>
     
     <p>
         <form class="pure-form" method="post" action="{% url 'apache:configure_anomaly_detection_save_settings' %}">
@@ -21,8 +35,6 @@
             
             <input type="hidden" name="agent_name" value="{{ agent_name }}">
             <input type="hidden" name="virtualhost_name" value="{{ virtualhost_name }}">
-            <input type="hidden" name="begin_date" value="{{ begin_date }}">
-            <input type="hidden" name="end_date" value="{{ end_date }}">
 
             <table class="table custab">
                 <thead>
@@ -70,11 +82,7 @@
                 </tbody>
             </table>
 
-            <p class="action-buttons">
-                <a class="pure-button pure-button-primary" href="?agent_name={{ agent_name }}&virtualhost_name={{ virtualhost_name }}&begin_date={{ begin_date }}&end_date={{ end_date }}&mark_automatically=true">
-                    <i class="fa fa-magic" aria-hidden="true"></i>
-                    Automatically mark sessions as anomalies
-                </a>
+            <p class="action-buttons-right">
                 <button type="submit" class="pure-button button-success">
                     <i class="fa fa-check" aria-hidden="true"></i>
                     Finish

@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
+from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response, render, redirect
+from django.core.urlresolvers import reverse
 import util
 import datetime
 
@@ -58,21 +60,14 @@ def configure_anomaly_detection_select_data_range(request):
                                'virtualhost_name' : virtualhost_name,
                                })
 
-def configure_anomaly_detection_correct_sessions_marks(request):
+def configure_anomaly_detection_correct_sessions_marks(request, *args, **kwargs):
     exception = None
     sessions = []
     agent_name = request.GET.get('agent_name', '')
     virtualhost_name = request.GET.get('virtualhost_name', '')
-    begin_date = request.GET.get('begin_date', '')
-    end_date = request.GET.get('end_date', '')
-    mark_automatically = request.GET.get('mark_automatically', 'false')
 
     try:
-        if mark_automatically == 'true':
-            util.mark_learning_set_with_iqr_method(agent_name, virtualhost_name)
-
-        sessions = util.get_apache_sessions(agent_name, virtualhost_name, begin_date, end_date)
-        util.set_apache_anomaly_detection_configuration(agent_name, virtualhost_name, begin_date, end_date)
+        sessions = util.get_learning_set_sessions(agent_name, virtualhost_name)
     except Exception as e:
         exception = str(e)
 
@@ -81,17 +76,28 @@ def configure_anomaly_detection_correct_sessions_marks(request):
                   {'exception' : exception,
                    'agent_name' : agent_name,
                    'virtualhost_name' : virtualhost_name,
-                   'begin_date' : begin_date,
-                   'end_date' : end_date,
                    'sessions' : sessions,
                    })
+
+def configure_anomaly_detection_correct_sessions_marks_automatically_mark_anomalies(request):
+    exception = None
+    sessions = []
+    agent_name = request.POST.get('agent_name', '')
+    virtualhost_name = request.POST.get('virtualhost_name', '')
+
+    try:
+        util.mark_learning_set_with_iqr_method(agent_name, virtualhost_name)
+    except Exception as e:
+        exception = str(e)
+
+    url = reverse('apache:configure_anomaly_detection_correct_sessions_marks')
+    return redirect((url + "?agent_name={}&virtualhost_name={}").format(agent_name, virtualhost_name),
+                    permanent=False)
 
 def configure_anomaly_detection_save_settings(request):
     exception = None
     agent_name = request.POST.get('agent_name', '')
     virtualhost_name = request.POST.get('virtualhost_name', '')
-    begin_date = request.POST.get('begin_date', '')
-    end_date = request.POST.get('end_date', '')
     all_rows_ids = request.POST.getlist('rows_ids')
     anomalies = request.POST.getlist('checks')
 
@@ -106,7 +112,7 @@ def configure_anomaly_detection_save_settings(request):
     if exception:
         return redirect('apache:configure_anomaly_detection_correct_sessions_marks',
                         permanent=False,
-                        args=(agent_name, virtualhost_name, begin_date, end_date, exception))
+                        args=(agent_name, virtualhost_name, exception))
     else:
         return redirect('apache:status', permanent=False)
 

@@ -111,6 +111,17 @@ const ::web::type::JsonMessage CommandExecutorObject::Execute(const ::web::type:
 
     result = GetAgentsAndVirtualhostsNamesFilteredBySessionsClassificationExists();
   }
+  else if (command == "get_learning_set_sessions") {
+    BOOST_LOG_TRIVIAL(info) << "apache::web::CommandExecutorObject::Execute: Found 'get_learning_set_sessions' command";
+
+    auto args = json_object["args"];
+    if (args.size() != 2) {
+      BOOST_LOG_TRIVIAL(warning) << "apache::web::CommandExecutorObject::Execute: get_learning_set_sessions requires two arguments";
+      return GetInvalidArgumentErrorJson();
+    }
+
+    result = GetLearningSetSessions(args.at(0), args.at(1));
+  }
 
   return result;
 }
@@ -126,6 +137,7 @@ bool CommandExecutorObject::IsCommandSupported(const ::web::type::Command &comma
       || (command == "get_apache_sessions_without_learning_set")
       || (command == "mark_learning_set_with_iqr_method")
       || (command == "get_agents_and_virtualhosts_names_filtered_by_sessions_classification_exists")
+      || (command == "get_learning_set_sessions")
       ;
 }
 
@@ -339,6 +351,40 @@ const ::web::type::JsonMessage CommandExecutorObject::GetAgentsAndVirtualhostsNa
       m["virtualhosts_names"] = t;
       r.push_back(m);
     }
+  }
+
+  j["status"] = "ok";
+  j["result"] = r;
+
+  return j.dump();
+}
+
+const ::web::type::JsonMessage CommandExecutorObject::GetLearningSetSessions(const std::string &agent_name,
+                                                                             const std::string &virtualhost_name) {
+  BOOST_LOG_TRIVIAL(debug) << "apache::web::CommandExecutorObject::GetLearningSetSessions: Function call";
+
+  auto agent = general_database_functions_->GetAgentNameId(agent_name);
+  auto virtualhost = apache_database_functions_->GetVirtualhostNameId(virtualhost_name);
+
+  auto count = apache_database_functions_->GetLearningSessionsCount(agent, virtualhost);
+  ::apache::type::ApacheSessions sessions = apache_database_functions_->GetLearningSessions(agent, virtualhost, count, 0);
+
+  json j, r = json::array();
+  for (::apache::type::ApacheSessionEntry s : sessions) {
+    json t;
+    t["id"] = s.id;
+    t["agent_name"] = s.agent_name;
+    t["virtualhost"] = s.virtualhost;
+    t["client_ip"] = s.client_ip;
+    t["session_start"] = s.session_start.ToString();
+    t["session_length"] = s.session_length;
+    t["bandwidth_usage"] = s.bandwidth_usage;
+    t["requests_count"] = s.requests_count;
+    t["error_percentage"] = s.error_percentage;
+    t["useragent"] = s.useragent;
+    t["is_anomaly"] = s.is_anomaly;
+
+    r.push_back(t);
   }
 
   j["status"] = "ok";

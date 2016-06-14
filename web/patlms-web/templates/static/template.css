@@ -103,10 +103,20 @@ table {
   outline: 0;
 }
 
-.action-buttons {
-  float: left;
+
+.action-buttons,
+.action-buttons-left,
+.action-buttons-right {
   padding: 1em;
   line-height: 2.5em;
+}
+
+.action-buttons-left {
+  float: left;
+}
+
+.action-buttons-right {
+  float: right;
 }
 
 .clear-float {

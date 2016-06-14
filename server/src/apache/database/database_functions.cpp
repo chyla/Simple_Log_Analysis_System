@@ -617,6 +617,65 @@ std::string DatabaseFunctions::GetVirtualhostNameById(const ::database::type::Ro
   return name;
 }
 
+::apache::type::ApacheSessions DatabaseFunctions::GetLearningSessions(const ::database::type::RowId &agent, const ::database::type::RowId &virtualhost,
+                                                                      unsigned limit, ::database::type::RowsCount offset) {
+  BOOST_LOG_TRIVIAL(debug) << "database::Database::GetApacheSessionStatistics: Function call";
+  ::apache::type::ApacheSessions sessions;
+  int ret;
+
+  string sql =
+      "select APACHE_SESSION_TABLE.ID, AGENT_NAME, VIRTUALHOST, CLIENT_IP, UTC_HOUR, UTC_MINUTE, UTC_SECOND, UTC_DAY, UTC_MONTH, UTC_YEAR, SESSION_LENGTH, BANDWIDTH_USAGE, REQUESTS_COUNT, ERRORS_COUNT, ERROR_PERCENTAGE, USER_AGENT, IS_ANOMALY "
+      " from APACHE_SESSION_TABLE "
+      " join APACHE_LEARNING_SESSIONS on APACHE_SESSION_TABLE.ID=APACHE_LEARNING_SESSIONS.SESSION_ID "
+      "  where"
+      "    ("
+      "      APACHE_LEARNING_SESSIONS.AGENT_NAME_ID=" + to_string(agent) +
+      "      and"
+      "      APACHE_LEARNING_SESSIONS.VIRTUALHOST_NAME_ID=" + to_string(virtualhost) +
+      "    )"
+      "   limit " + to_string(limit) + " offset " + to_string(offset) +
+      ";";
+
+  sqlite3_stmt *statement;
+  sqlite_wrapper_->Prepare(sql, &statement);
+
+  do {
+    ret = sqlite_wrapper_->Step(statement);
+
+    if (ret == SQLITE_ROW) {
+      BOOST_LOG_TRIVIAL(debug) << "database::Database::GetApacheLogs: Found new log entry in database";
+      ::apache::type::ApacheSessionEntry entry;
+
+      entry.id = sqlite_wrapper_->ColumnInt64(statement, 0);
+      entry.agent_name = sqlite_wrapper_->ColumnText(statement, 1);
+      entry.virtualhost = sqlite_wrapper_->ColumnText(statement, 2);
+      entry.client_ip = sqlite_wrapper_->ColumnText(statement, 3);
+
+      entry.session_start.Set(sqlite_wrapper_->ColumnInt(statement, 4),
+                              sqlite_wrapper_->ColumnInt(statement, 5),
+                              sqlite_wrapper_->ColumnInt(statement, 6),
+                              sqlite_wrapper_->ColumnInt(statement, 7),
+                              sqlite_wrapper_->ColumnInt(statement, 8),
+                              sqlite_wrapper_->ColumnInt(statement, 9));
+
+      entry.session_length = sqlite_wrapper_->ColumnInt64(statement, 10);
+      entry.bandwidth_usage = sqlite_wrapper_->ColumnInt64(statement, 11);
+      entry.requests_count = sqlite_wrapper_->ColumnInt64(statement, 12);
+      entry.errors_count = sqlite_wrapper_->ColumnInt64(statement, 13);
+      entry.error_percentage = sqlite_wrapper_->ColumnDouble(statement, 14);
+      entry.useragent = sqlite_wrapper_->ColumnText(statement, 15);
+      entry.is_anomaly = static_cast<bool> (sqlite_wrapper_->ColumnInt(statement, 16));
+
+      sessions.push_back(entry);
+    }
+  }
+  while (ret != SQLITE_DONE);
+
+  sqlite_wrapper_->Finalize(statement);
+
+  return sessions;
+}
+
 ::database::type::RowIds DatabaseFunctions::GetLearningSessionsIds(const RowId &agent_id,
                                                                    const RowId &virtualhost_id,
                                                                    unsigned limit, RowId offset) {

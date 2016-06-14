@@ -76,6 +76,8 @@ class DatabaseFunctions : public detail::DatabaseFunctionsInterface {
   ::database::type::RowId GetVirtualhostNameId(const std::string &name) override;
   std::string GetVirtualhostNameById(const ::database::type::RowId &id) override;
 
+  ::apache::type::ApacheSessions GetLearningSessions(const ::database::type::RowId &agent, const ::database::type::RowId &virtualhost,
+                                                     unsigned limit, ::database::type::RowsCount offset) override;
   ::database::type::RowIds GetLearningSessionsIds(const ::database::type::RowId &agent_id,
                                                   const ::database::type::RowId &virtualhost_id,
                                                   unsigned limit, ::database::type::RowId offset) override;

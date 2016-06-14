@@ -75,6 +75,8 @@ class DatabaseFunctionsInterface {
   virtual ::database::type::RowId GetVirtualhostNameId(const std::string &name) = 0;
   virtual std::string GetVirtualhostNameById(const ::database::type::RowId &id) = 0;
 
+  virtual ::apache::type::ApacheSessions GetLearningSessions(const ::database::type::RowId &agent, const ::database::type::RowId &virtualhost,
+                                                             unsigned limit, ::database::type::RowsCount offset) = 0;
   virtual ::database::type::RowIds GetLearningSessionsIds(const ::database::type::RowId &agent_id,
                                                           const ::database::type::RowId &virtualhost_id,
                                                           unsigned limit, ::database::type::RowId offset) = 0;

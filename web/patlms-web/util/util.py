@@ -59,3 +59,6 @@ def mark_learning_set_with_iqr_method(agent_name, virtualhost_name):
 
 def get_agents_and_virtualhosts_names_filtered_by_sessions_classification_exists():
     return connect_and_get_result_from_command('get_agents_and_virtualhosts_names_filtered_by_sessions_classification_exists')
+
+def get_learning_set_sessions(agent_name, virtualhost_name):
+    return connect_and_get_result_from_command('get_learning_set_sessions', [agent_name, virtualhost_name])
