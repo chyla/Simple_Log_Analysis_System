@@ -65,6 +65,7 @@ class CommandExecutorObject : public ::web::type::CommandExecutorObjectInterface
   const ::web::type::JsonMessage GetAgentsAndVirtualhostsNamesFilteredBySessionsClassificationExists();
   const ::web::type::JsonMessage GetLearningSetSessions(const std::string &agent_name,
                                                         const std::string &virtualhost_name);
+  const ::web::type::JsonMessage RemoveConfiguration(const std::string &id);
 };
 
 }

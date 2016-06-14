@@ -85,6 +85,13 @@ void DatabaseFunctions::CreateTables() {
                         ");");
 }
 
+void DatabaseFunctions::RemoveAnomalyDetectionConfiguration(const ::database::type::RowId &id) {
+  BOOST_LOG_TRIVIAL(debug) << "apache::database::DatabaseFunctions::RemoveAnomalyDetectionConfiguration: Function call";
+
+  sqlite_wrapper_->Exec("delete from APACHE_ANOMALY_DETECTION_CONFIGURATION_TABLE "
+                        " where ID=" + to_string(id));
+}
+
 const ::apache::type::AnomalyDetectionConfiguration DatabaseFunctions::GetAnomalyDetectionConfigurations() {
   BOOST_LOG_TRIVIAL(debug) << "apache::database::DatabaseFunctions::GetApacheAnomalyDetectionConfiguration: Function call";
   return db_->GetApacheAnomalyDetectionConfiguration();

@@ -33,6 +33,7 @@ class DatabaseFunctionsInterface {
 
   virtual void CreateTables() = 0;
 
+  virtual void RemoveAnomalyDetectionConfiguration(const ::database::type::RowId &id) = 0;
   virtual const ::apache::type::AnomalyDetectionConfiguration GetAnomalyDetectionConfigurations() = 0;
 
   virtual ::database::type::RowsCount GetUnusedLogsCount(std::string agent_name, std::string virtualhost_name) = 0;

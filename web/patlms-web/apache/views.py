@@ -20,11 +20,12 @@ def status(request):
     except Exception as e:
         exception = str(e)
 
-    return render_to_response("apache/status.html",
-                              {'exception' : exception,
-                               'configuration' : configuration,
-                               'available_classification_for_agent_host_names' : available_classification_for_agent_host_names,
-                               })
+    return render(request,
+                  "apache/status.html",
+                  {'exception' : exception,
+                   'configuration' : configuration,
+                   'available_classification_for_agent_host_names' : available_classification_for_agent_host_names,
+                   })
 
 def configure_anomaly_detection_select_agent_and_virtualhost(request):
     agent_name = request.GET.get('agent_name', '')
@@ -175,3 +176,20 @@ def review_detection_results_show_results(request):
                    'end_date' : end_date,
                    'sessions' : sessions,
                    })
+
+def remove_configuration(request):
+    exception = None
+    configuration_id = request.POST.get('configuration_id', '')
+
+    try:
+        util.remove_configuration(configuration_id)
+    except Exception as e:
+        exception = str(e)
+
+    if exception:
+        return render(request,
+                      'apache/status.html',
+                      {'exception' : exception,
+                       });
+    else:
+        return redirect('apache:status', permanent=False)

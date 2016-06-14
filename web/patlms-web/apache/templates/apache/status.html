@@ -143,16 +143,23 @@
                     Do you really want to remove configuration for&nbsp;<b>{{ c.virtualhost_name }}</b> on&nbsp;<b>{{ c.agent_name }}</b>?
                 </p>
 
-                <div class="action-buttons">
-                    <button class="pure-button button-no js-fr-dialogmodal-close" aria-label="No" type="button">
-                        <i class="fa fa-times" aria-hidden="true"></i>
-                        No
-                    </button>
-                    <a class="pure-button button-yes" href="#">
-                        <i class="fa fa-check" aria-hidden="true"></i>
-                        Yes
-                    </a>
-                </div>
+
+                <form class="pure-form" method="post" action="{% url 'apache:remove_configuration' %}">
+                    {% csrf_token %}                        
+                    <div class="action-buttons">
+                        <button class="pure-button button-no js-fr-dialogmodal-close" aria-label="No" type="button">
+                            <i class="fa fa-times" aria-hidden="true"></i>
+                            No
+                        </button>
+
+                        <input type="hidden" name="configuration_id" value="{{ c.id }}">
+
+                        <button type="submit" class="pure-button button-yes" href="#">
+                            <i class="fa fa-check" aria-hidden="true"></i>
+                            Yes
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     </section>

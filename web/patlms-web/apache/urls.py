@@ -17,4 +17,6 @@ urlpatterns = [
     url(r'^configure_anomaly_detection_save_settings$', views.configure_anomaly_detection_save_settings, name='configure_anomaly_detection_save_settings'),
 
     url(r'^review_detection_results/show_results', views.review_detection_results_show_results, name='configure_anomaly_detection_show_results'),
+
+    url(r'^review_detection_results/remove_configuration', views.remove_configuration, name='remove_configuration'),
 ]

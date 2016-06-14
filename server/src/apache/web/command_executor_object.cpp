@@ -122,6 +122,17 @@ const ::web::type::JsonMessage CommandExecutorObject::Execute(const ::web::type:
 
     result = GetLearningSetSessions(args.at(0), args.at(1));
   }
+  else if (command == "remove_configuration") {
+    BOOST_LOG_TRIVIAL(info) << "apache::web::CommandExecutorObject::Execute: Found 'remove_configuration' command";
+
+    auto args = json_object["args"];
+    if (args.size() != 1) {
+      BOOST_LOG_TRIVIAL(warning) << "apache::web::CommandExecutorObject::Execute: remove_configuration require one argument";
+      return GetInvalidArgumentErrorJson();
+    }
+
+    result = RemoveConfiguration(args.at(0));
+  }
 
   return result;
 }
@@ -138,6 +149,7 @@ bool CommandExecutorObject::IsCommandSupported(const ::web::type::Command &comma
       || (command == "mark_learning_set_with_iqr_method")
       || (command == "get_agents_and_virtualhosts_names_filtered_by_sessions_classification_exists")
       || (command == "get_learning_set_sessions")
+      || (command == "remove_configuration")
       ;
 }
 
@@ -260,7 +272,7 @@ const ::web::type::JsonMessage CommandExecutorObject::SetApacheAnomalyDetectionC
                                                                                              const std::string &end_date) {
   auto agent_id = general_database_functions_->GetAgentNameId(agent_name);
   auto virtualhost_id = apache_database_functions_->GetVirtualhostNameId(virtualhost_name);
-  
+
   ::apache::type::AnomalyDetectionConfigurationEntry c;
   c.agent_name = agent_name;
   c.virtualhost_name = virtualhost_name;
@@ -277,7 +289,7 @@ const ::web::type::JsonMessage CommandExecutorObject::SetApacheAnomalyDetectionC
   ::apache::type::ApacheSessions sessions = database_->GetApacheSessionStatistics(agent_name, virtualhost_name,
                                                                                   tbegin, tend,
                                                                                   count, 0);
-  
+
   ::database::type::RowIds sessions_ids;
   for (auto s : sessions)
     sessions_ids.push_back(s.id);
@@ -288,7 +300,7 @@ const ::web::type::JsonMessage CommandExecutorObject::SetApacheAnomalyDetectionC
 
   apache_database_functions_->RemoveAllLearningSessions(agent_id, virtualhost_id);
   apache_database_functions_->SetLearningSessions(agent_id, virtualhost_id, sessions_ids);
-  
+
   json j;
   j["status"] = "ok";
 
@@ -410,6 +422,27 @@ const ::web::type::JsonMessage CommandExecutorObject::GetLearningSetSessions(con
 
   j["status"] = "ok";
   j["result"] = r;
+
+  return j.dump();
+}
+
+const ::web::type::JsonMessage CommandExecutorObject::RemoveConfiguration(const std::string &id) {
+  BOOST_LOG_TRIVIAL(debug) << "apache::web::CommandExecutorObject::RemoveConfiguration: Function call";
+
+  ::database::type::RowId row_id = std::stoll(id);
+
+  for (auto c : apache_database_functions_->GetAnomalyDetectionConfigurations()) {
+    if (c.id == row_id) {
+      apache_database_functions_->RemoveAllLearningSessions(general_database_functions_->GetAgentNameId(c.agent_name),
+                                                            apache_database_functions_->GetVirtualhostNameId(c.virtualhost_name));
+      break;
+    }
+  }
+
+  apache_database_functions_->RemoveAnomalyDetectionConfiguration(row_id);
+
+  json j;
+  j["status"] = "ok";
 
   return j.dump();
 }

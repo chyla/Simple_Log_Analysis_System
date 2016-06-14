@@ -34,6 +34,7 @@ class DatabaseFunctions : public detail::DatabaseFunctionsInterface {
 
   void CreateTables() override;
 
+  void RemoveAnomalyDetectionConfiguration(const ::database::type::RowId &id) override;
   const ::apache::type::AnomalyDetectionConfiguration GetAnomalyDetectionConfigurations() override;
 
   ::database::type::RowsCount GetUnusedLogsCount(std::string agent_name, std::string virtualhost_name) override;
