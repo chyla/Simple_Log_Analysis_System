@@ -2,6 +2,7 @@
 
 from django.shortcuts import render_to_response, render, redirect
 import util
+import datetime
 
 
 def configure_actions(request):
@@ -112,8 +113,8 @@ def configure_anomaly_detection_save_settings(request):
 def review_detection_results_show_results(request):
     agent_name = request.GET.get('agent_name', '')
     virtualhost_name = request.GET.get('virtualhost_name', '')
-    begin_date = request.GET.get('begin_date', '')
-    end_date = request.GET.get('end_date', '')
+    begin_date = request.GET.get('begin_date', (datetime.datetime.now() - datetime.timedelta(30)).strftime("%Y-%m-%d"))
+    end_date = request.GET.get('end_date', (datetime.datetime.now()).strftime("%Y-%m-%d"))
     sessions = []
     exception = None
 
