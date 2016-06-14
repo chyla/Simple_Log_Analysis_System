@@ -25,7 +25,8 @@ class ProgramOptionsCommandExecutorObjectTest : public ::testing::Test {
                             false,
                             "/var/lib/database_file",
                             "127.0.0.1",
-                            8124)) {
+                            8124,
+                            false)) {
   }
 
   void SetUp() {
