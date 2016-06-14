@@ -258,16 +258,37 @@ const ::web::type::JsonMessage CommandExecutorObject::SetApacheAnomalyDetectionC
                                                                                              const std::string &virtualhost_name,
                                                                                              const std::string &begin_date,
                                                                                              const std::string &end_date) {
+  auto agent_id = general_database_functions_->GetAgentNameId(agent_name);
+  auto virtualhost_id = apache_database_functions_->GetVirtualhostNameId(virtualhost_name);
+  
   ::apache::type::AnomalyDetectionConfigurationEntry c;
   c.agent_name = agent_name;
   c.virtualhost_name = virtualhost_name;
   c.begin_date = ::type::Date::Create(begin_date);
   c.end_date = ::type::Date::Create(end_date);
 
+  auto tbegin = ::type::Timestamp::Create(::type::Time(),
+                                          ::type::Date::Create(begin_date));
+  auto tend = ::type::Timestamp::Create(::type::Time::Create(23, 59, 59),
+                                        ::type::Date::Create(end_date));
+  auto count = database_->GetApacheSessionStatisticsCount(agent_name, virtualhost_name,
+                                                          tbegin, tend);
+
+  ::apache::type::ApacheSessions sessions = database_->GetApacheSessionStatistics(agent_name, virtualhost_name,
+                                                                                  tbegin, tend,
+                                                                                  count, 0);
+  
+  ::database::type::RowIds sessions_ids;
+  for (auto s : sessions)
+    sessions_ids.push_back(s.id);
+
   database_->AddDate(c.begin_date.GetDay(), c.begin_date.GetMonth(), c.begin_date.GetYear());
   database_->AddDate(c.end_date.GetDay(), c.end_date.GetMonth(), c.end_date.GetYear());
   database_->SetApacheAnomalyDetectionConfiguration(c);
 
+  apache_database_functions_->RemoveAllLearningSessions(agent_id, virtualhost_id);
+  apache_database_functions_->SetLearningSessions(agent_id, virtualhost_id, sessions_ids);
+  
   json j;
   j["status"] = "ok";
 
