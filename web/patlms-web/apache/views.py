@@ -109,28 +109,6 @@ def configure_anomaly_detection_save_settings(request):
     else:
         return redirect('apache:status', permanent=False)
 
-def review_detection_results_select_agent_and_virtualhost(request):
-    agent_name = request.GET.get('agent_name', '')
-    virtualhost_name = request.GET.get('virtualhost_name', '')
-    exception = None
-    agent_names = None
-    virtualhosts_names = None
-
-    try:
-        agent_names = util.get_apache_agent_names()
-        virtualhosts_names = util.get_apache_virtualhost_names(agent_name)
-    except Exception as e:
-        exception = str(e)
-
-    return render(request,
-                  'apache/review_detection_results/select_agent_and_virtualhost.html',
-                  {'exception' : exception,
-                   'agent_name' : agent_name,
-                   'agent_names' : agent_names,
-                   'virtualhost_name' : virtualhost_name,
-                   'virtualhosts_names' : virtualhosts_names,
-                   })
-
 def review_detection_results_show_results(request):
     agent_name = request.GET.get('agent_name', '')
     virtualhost_name = request.GET.get('virtualhost_name', '')
