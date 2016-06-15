@@ -7,8 +7,7 @@
 
 <h2>Anomaly Detection Configuration</h2>
 
-
-<div class="page-content">
+<div>
     <h3>Select date range</h3>
 
     <p>
@@ -17,31 +16,31 @@
                 <label for="begin_date" class="control-label">Begin date:</label>
                 <input type="date" name="begin_date" class='input-max-width slas-form-input' value="{{ begin_date }}" onchange="this.form.submit()">
             </div>
-
+    
             <div class="col-sm-6 ws-success">
                 <label for="end_date" class="control-label">End date:</label>
                 <input type="date" name="end_date" class='input-max-width slas-form-input' value="{{ end_date }}" onchange="this.form.submit()">
             </div>
-
+    
             <input type="hidden" name="agent_name" value="{{ agent_name }}">
             <input type="hidden" name="virtualhost_name" value="{{ virtualhost_name }}">
         </form>
-
+    
         <form class="pure-form ws-validate" method="post" action="{% url 'apache:configure_anomaly_detection_select_data_range_save_settings' %}">
             {% csrf_token %}
-
+    
             <input type="hidden" name="begin_date" id='begin_date' value="{{ begin_date }}">
             <input type="hidden" name="end_date" id='end_date' value="{{ end_date }}">
             <input type="hidden" name="agent_name" value="{{ agent_name }}">
             <input type="hidden" name="virtualhost_name" value="{{ virtualhost_name }}">
-
+    
             <div class="col-sm-12 ws-success ">
                 <label>
                     <input class="slas-form-input" id="redirect_to_correct_session_marks" name="redirect_to_correct_session_marks" type="checkbox">
                     Categorize sessions now
                 </label>
             </div>
-
+    
             <p class="action-buttons-left">
                 <button type="submit" class="pure-button button-success">
                     <i class="fa fa-check" aria-hidden="true"></i>
@@ -50,9 +49,11 @@
             </p>
         </form>
     </p>
-    
-    <div class="clear-float"></div>
+</div>
 
+<div class="clear-float"></div>
+
+<div class="next-page-section">
     <h3>Sessions preview</h3>
     <p>
         {% if sessions|length == 0 %}
@@ -72,7 +73,7 @@
                         <th>Is anomaly</th>
                     </tr>
                 </thead>
-
+    
                 <tbody>
                 {% for s in sessions %}
                     <tr

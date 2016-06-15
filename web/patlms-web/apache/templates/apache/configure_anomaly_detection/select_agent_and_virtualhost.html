@@ -7,9 +7,9 @@
 
 <h2>Anomaly Detection Configuration</h2>
 
-<p>
-    <h3>Select agent and virtualhost</h3>
+<h3>Select agent and virtualhost</h3>
 
+<p>
     <form class="pure-form ws-validate" method="get" action="#">
         <div class="col-sm-6 ws-success">
             <label for="agent_name" class="control-label">Agent name:</label>
@@ -51,8 +51,11 @@
     </form>
 
     {% if virtualhost_name != '' and  agent_name != ''%}
-        <p class="action-buttons">
-            <a class="pure-button pure-button-primary" href="{% url 'apache:configure_anomaly_detection_select_data_range' %}?agent_name={{ agent_name }}&virtualhost_name={{ virtualhost_name }}">Next</a>
+        <p class="action-buttons-left">
+            <a class="pure-button pure-button-primary" href="{% url 'apache:configure_anomaly_detection_select_data_range' %}?agent_name={{ agent_name }}&virtualhost_name={{ virtualhost_name }}">
+                Next
+                <i class="fa fa-arrow-right" aria-hidden="true"></i>
+            </a>
         </p>
     {% endif %}
 

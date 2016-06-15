@@ -69,15 +69,13 @@
             Configure actions
         </a>
     </div>
-
-    <div class="clear-float"></div>
-
 </div>
 
+<div class="clear-float"></div>
 
 <div class="next-page-section">
 
-    <h2>View sessions classification</h2>
+    <h2>Sessions classification</h2>
 
     {% if available_classification_for_agent_host_names|length > 0 %}
             <table class="table table custab sortable">
@@ -96,7 +94,7 @@
                             <td> {{ d.agent_name }} </td>
                             <td> {{ virtualhost_name }} </td>
                             <td>
-                                <a class="pure-button button-success" href="{% url 'apache:configure_anomaly_detection_show_results' %}?agent_name={{ d.agent_name }}&virtualhost_name={{ virtualhost_name }}">
+                                <a class="btn btn-success btn-xs" href="{% url 'apache:configure_anomaly_detection_show_results' %}?agent_name={{ d.agent_name }}&virtualhost_name={{ virtualhost_name }}">
                                     <i class="fa fa-desktop" aria-hidden="true"></i>
                                     View
                                 </a>
@@ -112,8 +110,6 @@
         Results not found.
     </p>
     {% endif %}
-
-    <div class="clear-float"></div>
 
 </div>
 

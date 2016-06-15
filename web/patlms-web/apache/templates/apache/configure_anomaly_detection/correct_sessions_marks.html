@@ -7,90 +7,82 @@
 
 <h2>Anomaly Detection Configuration</h2>
 
+<h3>Categorize data</h3>
 
-<div class="page-content">
-    <h3>Categorize data</h3>
+<div class="action-buttons-right">
+    <form class="pure-form" method="post" action="{% url 'apache:configure_anomaly_detection_correct_sessions_marks_automatically_mark_anomalies' %}">
+        {% csrf_token %}
+        
+        <input type="hidden" name="agent_name" value="{{ agent_name }}">
+        <input type="hidden" name="virtualhost_name" value="{{ virtualhost_name }}">
 
-    <p>
-        Please select incorrect sessions:
-    </p>
-
-    <div class="action-buttons-right">
-        <form class="pure-form" method="post" action="{% url 'apache:configure_anomaly_detection_correct_sessions_marks_automatically_mark_anomalies' %}">
-            {% csrf_token %}
-            
-            <input type="hidden" name="agent_name" value="{{ agent_name }}">
-            <input type="hidden" name="virtualhost_name" value="{{ virtualhost_name }}">
-
-            <button type="submit" class="pure-button pure-button-primary">
-                <i class="fa fa-magic" aria-hidden="true"></i>
-                Automatically mark sessions as anomalies
-            </button>
-        </form>
-    </div>
-    
-    <p>
-        <form class="pure-form" method="post" action="{% url 'apache:configure_anomaly_detection_save_settings' %}">
-            {% csrf_token %}
-            
-            <input type="hidden" name="agent_name" value="{{ agent_name }}">
-            <input type="hidden" name="virtualhost_name" value="{{ virtualhost_name }}">
-
-            <table class="table custab">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>IP</th>
-                        <th>Session start</th>
-                        <th>Session length (s)</th>
-                        <th>Bandwidth usage (bytes)</th>
-                        <th>Requests count</th>
-                        <th>Error requests (%)</th>
-                        <th>User-Agent</th>
-                        <th>Is anomaly</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                {% for s in sessions %}
-                    <tr id="table_row_{{ s.id }}"
-                        {% if s.is_anomaly %}
-                            class="analysis_results_row_anomaly"
-                        {% else %}
-                            class="analysis_results_row_ok"
-                        {% endif %}
-                    >
-                        <td>{{ s.id }}</td>
-                        <td>{{ s.client_ip }}</td>
-                        <td>{{ s.session_start }}</td>
-                        <td>{{ s.session_length }}</td>
-                        <td>{{ s.bandwidth_usage }}</td>
-                        <td>{{ s.requests_count }}</td>
-                        <td>{{ s.error_percentage | floatformat }}</td>
-                        <td>{{ s.useragent }}</td>
-                        <td>
-                            <input type="hidden" name="rows_ids" value="{{ s.id }}">
-                            <input id="table_check_button_{{ s.id }}" type="checkbox" name="checks" value="{{ s.id }}"
-                             {% if s.is_anomaly %}
-                                checked="checked" 
-                             {% endif %}
-                                onclick="change_table_row_color({{ s.id }})"
-                             >
-                        </td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-
-            <p class="action-buttons-right">
-                <button type="submit" class="pure-button button-success">
-                    <i class="fa fa-check" aria-hidden="true"></i>
-                    Finish
-                </button>
-            </p>
-        </form>
-    </p>
-
+        <button type="submit" class="pure-button pure-button-primary">
+            <i class="fa fa-magic" aria-hidden="true"></i>
+            Automatically mark sessions as anomalies
+        </button>
+    </form>
 </div>
+
+<p>
+    <form class="pure-form" method="post" action="{% url 'apache:configure_anomaly_detection_save_settings' %}">
+        {% csrf_token %}
+        
+        <input type="hidden" name="agent_name" value="{{ agent_name }}">
+        <input type="hidden" name="virtualhost_name" value="{{ virtualhost_name }}">
+
+        <table class="table custab">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>IP</th>
+                    <th>Session start</th>
+                    <th>Session length (s)</th>
+                    <th>Bandwidth usage (bytes)</th>
+                    <th>Requests count</th>
+                    <th>Error requests (%)</th>
+                    <th>User-Agent</th>
+                    <th>Is anomaly</th>
+                </tr>
+            </thead>
+
+            <tbody>
+            {% for s in sessions %}
+                <tr id="table_row_{{ s.id }}"
+                    {% if s.is_anomaly %}
+                        class="analysis_results_row_anomaly"
+                    {% else %}
+                        class="analysis_results_row_ok"
+                    {% endif %}
+                >
+                    <td>{{ s.id }}</td>
+                    <td>{{ s.client_ip }}</td>
+                    <td>{{ s.session_start }}</td>
+                    <td>{{ s.session_length }}</td>
+                    <td>{{ s.bandwidth_usage }}</td>
+                    <td>{{ s.requests_count }}</td>
+                    <td>{{ s.error_percentage | floatformat }}</td>
+                    <td>{{ s.useragent }}</td>
+                    <td>
+                        <input type="hidden" name="rows_ids" value="{{ s.id }}">
+                        <input id="table_check_button_{{ s.id }}" type="checkbox" name="checks" value="{{ s.id }}"
+                         {% if s.is_anomaly %}
+                            checked="checked" 
+                         {% endif %}
+                            onclick="change_table_row_color({{ s.id }})"
+                         >
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        <p class="action-buttons-left">
+            <button type="submit" class="pure-button button-success">
+                <i class="fa fa-check" aria-hidden="true"></i>
+                Done
+            </button>
+        </p>
+    </form>
+</p>
 
 {% endblock %}
