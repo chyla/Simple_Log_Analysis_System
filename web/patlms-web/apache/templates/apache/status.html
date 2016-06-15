@@ -30,7 +30,7 @@
 
             <tbody>
                 {% for c in configuration %}
-                <tr {% cycle '' 'class="custab odd"' %}>
+                <tr {% cycle '' 'class="custab-odd"' %}>
                     <td> {{ c.agent_name }} </td>
                     <td> {{ c.virtualhost_name }} </td>
                     <td> {{ c.begin_date }} - {{ c.end_date }} </td>
@@ -90,7 +90,7 @@
             <tbody>
                 {% for d in available_classification_for_agent_host_names %}
                     {% for virtualhost_name in d.virtualhosts_names %}
-                        <tr {% cycle '' 'class="custab odd"' %}>
+                        <tr {% cycle '' 'class="custab-odd"' %}>
                             <td> {{ d.agent_name }} </td>
                             <td> {{ virtualhost_name }} </td>
                             <td>
