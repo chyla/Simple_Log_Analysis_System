@@ -13,7 +13,6 @@
 #include <patlms/type/apache_log_entry.h>
 
 #include "prepare_statistics_analyzer_object_interface.h"
-#include "system_interface.h"
 #include "src/apache/database/detail/database_functions_interface.h"
 #include "src/database/type/row_id.h"
 #include "src/database/type/rows_count.h"
@@ -37,14 +36,11 @@ class PrepareStatisticsAnalyzerObject : public PrepareStatisticsAnalyzerObjectIn
   virtual ~PrepareStatisticsAnalyzerObject() = default;
 
   static PrepareStatisticsAnalyzerObjectPtr Create(::apache::database::detail::DatabaseFunctionsInterfacePtr database_functions);
-  static PrepareStatisticsAnalyzerObjectPtr Create(::apache::database::detail::DatabaseFunctionsInterfacePtr database_functions,
-                                                   SystemInterfacePtr system_interface);
 
   void Prepare(const ::type::Timestamp &now) override;
 
  private:
-  PrepareStatisticsAnalyzerObject(::apache::database::detail::DatabaseFunctionsInterfacePtr database_functions,
-                                  SystemInterfacePtr system_interface);
+  PrepareStatisticsAnalyzerObject(::apache::database::detail::DatabaseFunctionsInterfacePtr database_functions);
 
   void CreateStatistics(const ::database::type::AgentName &agent_name,
                         const ::database::type::VirtualhostName &virtualhost_name);
@@ -70,7 +66,6 @@ class PrepareStatisticsAnalyzerObject : public PrepareStatisticsAnalyzerObjectIn
   ::apache::type::ApacheSessions calculated_sessions_statistics_;
 
   ::apache::database::detail::DatabaseFunctionsInterfacePtr database_functions_;
-  SystemInterfacePtr system_interface_;
   std::map<UniqueSessionId, ::apache::type::ApacheSessionEntry> sessions_statistics_;
 };
 

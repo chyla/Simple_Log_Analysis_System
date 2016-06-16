@@ -27,15 +27,7 @@ namespace detail
 
 KnnAnalyzerObjectPtr KnnAnalyzerObject::Create(::database::detail::GeneralDatabaseFunctionsInterfacePtr general_database_functions,
                                                ::apache::database::DatabaseFunctionsPtr apache_database_functions) {
-  auto system = System::Create();
-
-  return Create(system, general_database_functions, apache_database_functions);
-}
-
-KnnAnalyzerObjectPtr KnnAnalyzerObject::Create(detail::SystemInterfacePtr system_interface,
-                                               ::database::detail::GeneralDatabaseFunctionsInterfacePtr general_database_functions,
-                                               ::apache::database::DatabaseFunctionsPtr apache_database_functions) {
-  return KnnAnalyzerObjectPtr(new KnnAnalyzerObject(system_interface, general_database_functions, apache_database_functions));
+  return KnnAnalyzerObjectPtr(new KnnAnalyzerObject(general_database_functions, apache_database_functions));
 }
 
 void KnnAnalyzerObject::Analyze(const ::type::Timestamp &now) {
@@ -153,10 +145,8 @@ bool KnnAnalyzerObject::IsSessionAnomaly() {
   return i > 0;
 }
 
-KnnAnalyzerObject::KnnAnalyzerObject(detail::SystemInterfacePtr system_interface,
-                                     ::database::detail::GeneralDatabaseFunctionsInterfacePtr general_database_functions,
+KnnAnalyzerObject::KnnAnalyzerObject(::database::detail::GeneralDatabaseFunctionsInterfacePtr general_database_functions,
                                      ::apache::database::DatabaseFunctionsPtr apache_database_functions) :
-system_interface_(system_interface),
 general_database_functions_(general_database_functions),
 apache_database_functions_(apache_database_functions) {
 }

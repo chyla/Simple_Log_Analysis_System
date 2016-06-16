@@ -28,16 +28,8 @@ namespace detail
 
 PrepareStatisticsAnalyzerObjectPtr PrepareStatisticsAnalyzerObject::Create(DatabaseFunctionsInterfacePtr database_functions) {
   BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::PrepareStatisticsAnalyzerObject::Create: Function call";
-  auto system = System::Create();
 
-  return PrepareStatisticsAnalyzerObjectPtr(new PrepareStatisticsAnalyzerObject(database_functions, system));
-}
-
-PrepareStatisticsAnalyzerObjectPtr PrepareStatisticsAnalyzerObject::Create(DatabaseFunctionsInterfacePtr database_functions,
-                                                                           SystemInterfacePtr system_interface) {
-  BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::PrepareStatisticsAnalyzerObject::Create: Function call";
-
-  return PrepareStatisticsAnalyzerObjectPtr(new PrepareStatisticsAnalyzerObject(database_functions, system_interface));
+  return PrepareStatisticsAnalyzerObjectPtr(new PrepareStatisticsAnalyzerObject(database_functions));
 }
 
 void PrepareStatisticsAnalyzerObject::Prepare(const ::type::Timestamp &now) {
@@ -61,10 +53,8 @@ void PrepareStatisticsAnalyzerObject::Prepare(const ::type::Timestamp &now) {
   }
 }
 
-PrepareStatisticsAnalyzerObject::PrepareStatisticsAnalyzerObject(DatabaseFunctionsInterfacePtr database_functions,
-                                                                 SystemInterfacePtr system_interface) :
-database_functions_(database_functions),
-system_interface_(system_interface) {
+PrepareStatisticsAnalyzerObject::PrepareStatisticsAnalyzerObject(DatabaseFunctionsInterfacePtr database_functions) :
+database_functions_(database_functions) {
 }
 
 void PrepareStatisticsAnalyzerObject::CreateStatistics(const AgentName &agent_name,

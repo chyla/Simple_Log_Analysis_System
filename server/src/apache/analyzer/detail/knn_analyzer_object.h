@@ -14,7 +14,6 @@
 
 #include <patlms/type/timestamp.h>
 
-#include "system_interface.h"
 #include "prepare_statistics/nearest_neighbours_table.h"
 #include "src/database/detail/general_database_functions_interface.h"
 #include "src/apache/database/database_functions.h"
@@ -40,15 +39,10 @@ class KnnAnalyzerObject : public KnnAnalyzerObjectInterface {
   static KnnAnalyzerObjectPtr Create(::database::detail::GeneralDatabaseFunctionsInterfacePtr general_database_functions,
                                      ::apache::database::DatabaseFunctionsPtr apache_database_functions);
 
-  static KnnAnalyzerObjectPtr Create(detail::SystemInterfacePtr system_interface,
-                                     ::database::detail::GeneralDatabaseFunctionsInterfacePtr general_database_functions,
-                                     ::apache::database::DatabaseFunctionsPtr apache_database_functions);
-
   void Analyze(const ::type::Timestamp &now);
 
  private:
-  KnnAnalyzerObject(detail::SystemInterfacePtr system_interface,
-                    ::database::detail::GeneralDatabaseFunctionsInterfacePtr general_database_functions,
+  KnnAnalyzerObject(::database::detail::GeneralDatabaseFunctionsInterfacePtr general_database_functions,
                     ::apache::database::DatabaseFunctionsPtr apache_database_functions);
 
   void AnalyzeVirtualhost(const ::database::type::AgentName &agent_name,
@@ -75,7 +69,6 @@ class KnnAnalyzerObject : public KnnAnalyzerObjectInterface {
   ::type::Timestamp GetCurrentTimestamp() const;
   ::type::Timestamp GetLastAnalyzeTimestamp(const ::type::Timestamp &now) const;
 
-  detail::SystemInterfacePtr system_interface_;
   ::database::detail::GeneralDatabaseFunctionsInterfacePtr general_database_functions_;
   ::apache::database::DatabaseFunctionsPtr apache_database_functions_;
 
