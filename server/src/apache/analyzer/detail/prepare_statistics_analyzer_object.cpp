@@ -95,7 +95,7 @@ void PrepareStatisticsAnalyzerObject::CalculateStatistics(const AgentName &agent
     usi.second = log_entry.user_agent;
 
     BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::PrepareStatisticsAnalyzerObject::CalculateStatistics: Found new log with id: " << log_entry.id;
-    BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::PrepareStatisticsAnalyzerObject::CalculateStatistics: Log client ip and agent name: " << log_entry.client_ip << " ; " << log_entry.agent_name;
+    BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::PrepareStatisticsAnalyzerObject::CalculateStatistics: Log client ip and user agent: " << log_entry.client_ip << " ; " << log_entry.user_agent;
 
     if (sessions_statistics_.find(usi) != sessions_statistics_.end()) {
       BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::PrepareStatisticsAnalyzerObject::CalculateStatistics: Session statistic found in memory";
