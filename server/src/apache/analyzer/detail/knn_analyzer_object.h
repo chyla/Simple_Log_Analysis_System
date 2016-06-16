@@ -15,6 +15,7 @@
 #include <patlms/type/timestamp.h>
 
 #include "system_interface.h"
+#include "prepare_statistics/nearest_neighbours_table.h"
 #include "src/database/detail/general_database_functions_interface.h"
 #include "src/apache/database/database_functions.h"
 #include "src/database/type/agent_name.h"
@@ -78,21 +79,7 @@ class KnnAnalyzerObject : public KnnAnalyzerObjectInterface {
   ::database::detail::GeneralDatabaseFunctionsInterfacePtr general_database_functions_;
   ::apache::database::DatabaseFunctionsPtr apache_database_functions_;
 
-  struct AnomalyDistance {
-    double distance;
-    bool is_session_anomaly;
-    ::database::type::RowId session_id;
-
-    void ClearValues() {
-      distance = -1;
-      is_session_anomaly = false;
-      session_id = 0;
-    }
-  };
-
-  std::array<AnomalyDistance, 3> distance_table_;
-
-  bool IsSessionInDistanceTable(const ::database::type::RowId &id);
+  prepare_statistics::NearestNeighboursTable neighbours_table_;
 };
 
 }

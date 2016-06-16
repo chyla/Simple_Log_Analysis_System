@@ -12,6 +12,7 @@ patlms_server_SOURCES	= main.cpp \
 				apache/analyzer/detail/knn_analyzer_object.cpp \
 				apache/analyzer/detail/prepare_statistics_analyzer_object.cpp \
 				apache/analyzer/detail/system.cpp \
+				apache/analyzer/detail/prepare_statistics/nearest_neighbours_table.cpp \
 				database/database.cpp \
 				database/sqlite_wrapper.cpp \
 				database/general_database_functions.cpp \

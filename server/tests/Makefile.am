@@ -9,6 +9,7 @@ if CAN_RUN_TESTS
 tests_SOURCES	= main.cpp \
 		    analyzer/analyzer.cpp \
 		    apache/database/database_functions.cpp \
+		    apache/analyzer/detail/prepare_statistics/nearest_neighbours_table.cpp \
 		    database/database.cpp \
 		    database/sqlite_wrapper.cpp \
 		    database/general_database_functions.cpp \
@@ -19,6 +20,7 @@ tests_SOURCES	= main.cpp \
 OBJECT_FILES	= \
 		    ../src/analyzer/analyzer.o \
 		    ../src/apache/database/database_functions.o \
+		    ../src/apache/analyzer/detail/prepare_statistics/nearest_neighbours_table.o \
 		    ../src/database/database.o \
 		    ../src/database/sqlite_wrapper.o \
 		    ../src/database/general_database_functions.o \

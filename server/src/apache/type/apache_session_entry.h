@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-#include <patlms/type/time.h>
+#include <patlms/type/timestamp.h>
 
 #include "src/database/type/row_id.h"
 #include "src/database/type/agent_name.h"
