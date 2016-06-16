@@ -102,7 +102,7 @@ void PrepareStatisticsAnalyzerObject::CalculateStatistics(const AgentName &agent
   UniqueSessionId usi;
   for (auto log_entry : logs) {
     usi.first = log_entry.client_ip;
-    usi.second = log_entry.agent_name;
+    usi.second = log_entry.user_agent;
 
     BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::PrepareStatisticsAnalyzerObject::CalculateStatistics: Found new log with id: " << log_entry.id;
     BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::PrepareStatisticsAnalyzerObject::CalculateStatistics: Log client ip and agent name: " << log_entry.client_ip << " ; " << log_entry.agent_name;
