@@ -36,10 +36,23 @@ def configure_anomaly_detection_select_agent_and_virtualhost(request):
     exception = None
 
     try:
-        agent_names = util.get_apache_agent_names()
-        if agent_name != '':
-            virtualhosts_names = util.get_apache_virtualhost_names(agent_name)
         configuration = util.get_apache_anomaly_detection_configuration()
+
+        agents = set(util.get_apache_agent_names())
+        vhs = {}
+        for agent in agents:
+            vhs[agent] = set(util.get_apache_virtualhost_names(agent))
+
+        for config in configuration:
+            agent = config['agent_name']
+            vh = config['virtualhost_name']
+
+            vhs[agent].discard(vh)
+
+        agent_names = [x for x in agents if len(vhs[x]) > 0]
+
+        if agent_name != '':
+            virtualhosts_names = vhs[agent_name]
     except Exception as e:
         exception = str(e)
 
