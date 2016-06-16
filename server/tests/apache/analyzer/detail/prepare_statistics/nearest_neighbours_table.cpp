@@ -102,8 +102,8 @@ TEST_F(NearestNeighboursTableTest, TwoElements) {
 
   EXPECT_EQ(2, neighbours.size());
 
-  EXPECT_EQ(n2, neighbours.at(0));
-  EXPECT_EQ(n1, neighbours.at(1));
+  EXPECT_EQ(n1, neighbours.at(0));
+  EXPECT_EQ(n2, neighbours.at(1));
 }
 
 TEST_F(NearestNeighboursTableTest, ThreeElements) {
@@ -117,9 +117,9 @@ TEST_F(NearestNeighboursTableTest, ThreeElements) {
 
   EXPECT_EQ(3, neighbours.size());
 
-  EXPECT_EQ(n3, neighbours.at(0));
+  EXPECT_EQ(n1, neighbours.at(0));
   EXPECT_EQ(n2, neighbours.at(1));
-  EXPECT_EQ(n1, neighbours.at(2));
+  EXPECT_EQ(n3, neighbours.at(2));
 }
 
 TEST_F(NearestNeighboursTableTest, FourElements) {
@@ -134,9 +134,9 @@ TEST_F(NearestNeighboursTableTest, FourElements) {
 
   EXPECT_EQ(3, neighbours.size());
 
-  EXPECT_EQ(n3, neighbours.at(0));
+  EXPECT_EQ(n1, neighbours.at(0));
   EXPECT_EQ(n2, neighbours.at(1));
-  EXPECT_EQ(n1, neighbours.at(2));
+  EXPECT_EQ(n3, neighbours.at(2));
 }
 
 TEST_F(NearestNeighboursTableTest, MaxThenMiddle) {
@@ -151,9 +151,9 @@ TEST_F(NearestNeighboursTableTest, MaxThenMiddle) {
 
   EXPECT_EQ(3, neighbours.size());
 
-  EXPECT_EQ(n3, neighbours.at(0));
+  EXPECT_EQ(n1, neighbours.at(0));
   EXPECT_EQ(n2, neighbours.at(1));
-  EXPECT_EQ(n1, neighbours.at(2));
+  EXPECT_EQ(n3, neighbours.at(2));
 }
 
 TEST_F(NearestNeighboursTableTest, ChangeSession) {

@@ -53,12 +53,13 @@ void NearestNeighboursTable::Add(const ::apache::type::ApacheSessionEntry &sessi
 
   sort(nearest_neighbours_.begin(), nearest_neighbours_.end(),
        [](const Neighbour &a, const Neighbour & b) {
-         return a.distance > b.distance;
+         return a.distance < b.distance;
        });
 
   if (nearest_neighbours_.size() > static_cast<unsigned> (number_of_neighbours_)) {
-    BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::prepare_statistics::NearestNeighboursTable::Add: Removing item with id=" << nearest_neighbours_.at(0).session_id;
-    nearest_neighbours_.erase(nearest_neighbours_.begin());
+    auto position_to_erase = nearest_neighbours_.end() - 1;
+    BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::prepare_statistics::NearestNeighboursTable::Add: Removing item with id=" << position_to_erase->session_id;
+    nearest_neighbours_.erase(position_to_erase);
   }
 
   BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::prepare_statistics::NearestNeighboursTable::Add: New table size " << nearest_neighbours_.size();
