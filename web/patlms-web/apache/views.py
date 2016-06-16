@@ -32,12 +32,14 @@ def configure_anomaly_detection_select_agent_and_virtualhost(request):
     virtualhost_name = request.GET.get('virtualhost_name', '')
     agent_names = None
     virtualhosts_names = None
+    configuration = None
     exception = None
 
     try:
         agent_names = util.get_apache_agent_names()
         if agent_name != '':
             virtualhosts_names = util.get_apache_virtualhost_names(agent_name)
+        configuration = util.get_apache_anomaly_detection_configuration()
     except Exception as e:
         exception = str(e)
 
@@ -47,6 +49,7 @@ def configure_anomaly_detection_select_agent_and_virtualhost(request):
                                'virtualhost_name' : virtualhost_name,
                                'agent_names' : agent_names,
                                'virtualhosts_names' : virtualhosts_names,
+                               'configuration' : configuration,
                                })
 
 def configure_anomaly_detection_select_data_range(request):

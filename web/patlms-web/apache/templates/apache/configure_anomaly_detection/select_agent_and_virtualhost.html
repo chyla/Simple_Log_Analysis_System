@@ -14,6 +14,36 @@
 
 <h2>Anomaly Detection Configuration</h2>
 
+<h3>Current configuration</h3>
+
+<p>
+    {% if configuration %}
+        <table class="table table custab sortable">
+            <thead>
+                <tr>
+                    <th><button class="custab-head-button">Agent</button></th>
+                    <th><button class="custab-head-button">Virtualhost</button></th>
+                    <th><button class="custab-head-button">Data range</button></th>
+                </tr>
+            </thead>
+    
+            <tbody>
+                {% for c in configuration %}
+                <tr {% cycle '' 'class="custab-odd"' %}>
+                    <td> {{ c.agent_name }} </td>
+                    <td> {{ c.virtualhost_name }} </td>
+                    <td> {{ c.begin_date }} - {{ c.end_date }} </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <i class="fa fa-exclamation" aria-hidden="true"></i>
+        No configuration found.
+    {% endif %}
+</p>
+    
+
 <h3>Select agent and virtualhost</h3>
 
 <p>
