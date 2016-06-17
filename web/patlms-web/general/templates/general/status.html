@@ -7,11 +7,11 @@
 
 <p>
 
-<table class="table custab sortable">
+<table class="table custab">
     <thead>
         <tr>
-            <th><button class="custab-head-button">Option</button></th>
-            <th class="sorttable_nosort">Value</th>
+            <th>Option</th>
+            <th>Value</th>
         </tr>
     </thead>
 
@@ -32,6 +32,17 @@
             <td>
             {% if process_id %}
                 {{ process_pidfile }}
+            {% else %}
+                unknown
+            {% endif %}
+            </td>
+        </tr>
+        
+        <tr>
+            <td>Server version:</td>
+            <td>
+            {% if server_version %}
+                {{ server_version }}
             {% else %}
                 unknown
             {% endif %}

@@ -3,6 +3,8 @@
 #include <json/json.hpp>
 #include <unistd.h>
 
+#include "config.h"
+
 using namespace std;
 using namespace nlohmann;
 using namespace program_options::type;
@@ -29,13 +31,18 @@ const ::web::type::JsonMessage CommandExecutorObject::Execute(const ::web::type:
   else if (command == "get_server_process_pidfile") {
     result = GetServerProcessPidfile();
   }
+  else if (command == "get_server_version") {
+    result = GetServerVersion();
+  }
 
   return result;
 }
 
 bool CommandExecutorObject::IsCommandSupported(const ::web::type::Command &command) {
   return (command == "get_server_process_pid")
-      || (command == "get_server_process_pidfile");
+      || (command == "get_server_process_pidfile")
+      || (command == "get_server_version")
+      ;
 }
 
 CommandExecutorObject::CommandExecutorObject(const Options &options)
@@ -53,6 +60,13 @@ const ::web::type::JsonMessage CommandExecutorObject::GetServerProcessPidfile() 
   json j;
   j["status"] = "ok";
   j["result"] = options_.GetPidfilePath();
+  return j.dump();
+}
+
+const ::web::type::JsonMessage CommandExecutorObject::GetServerVersion() const {
+  json j;
+  j["status"] = "ok";
+  j["result"] = VERSION;
   return j.dump();
 }
 

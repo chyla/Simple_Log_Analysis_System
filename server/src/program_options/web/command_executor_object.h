@@ -31,6 +31,7 @@ class CommandExecutorObject : public ::web::type::CommandExecutorObjectInterface
   CommandExecutorObject(const type::Options &options);
   const ::web::type::JsonMessage GetServerProcessPid() const;
   const ::web::type::JsonMessage GetServerProcessPidfile() const;
+  const ::web::type::JsonMessage GetServerVersion() const;
 };
 
 }

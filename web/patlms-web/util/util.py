@@ -41,6 +41,9 @@ def get_process_id_from_server():
 def get_process_pidfile_path_from_server():
     return connect_and_get_result_from_command('get_server_process_pidfile')
 
+def get_server_version():
+    return connect_and_get_result_from_command('get_server_version')
+
 def get_apache_agent_names():
     return connect_and_get_result_from_command('get_apache_agent_names')
 
