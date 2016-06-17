@@ -7,6 +7,7 @@
 
 #include <boost/log/trivial.hpp>
 #include <patlms/util/distance.h>
+#include <patlms/util/run_partially.h>
 
 #include "system.h"
 #include "session_length.h"
@@ -66,13 +67,9 @@ void PrepareStatisticsAnalyzerObject::CreateStatistics(const AgentName &agent_na
 
   BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::PrepareStatisticsAnalyzerObject::CreateStatistics: Found " << summary_logs_count << " logs";
 
-  for (RowsCount i = 0; i < summary_logs_count / MAX_ROWS_IN_MEMORY; ++i)
-    CalculateStatistics(agent_name, virtualhost_name, MAX_ROWS_IN_MEMORY, i);
-
-  auto left_offset = summary_logs_count - (summary_logs_count % MAX_ROWS_IN_MEMORY);
-  auto left_logs_count = summary_logs_count % MAX_ROWS_IN_MEMORY;
-
-  CalculateStatistics(agent_name, virtualhost_name, left_logs_count, left_offset);
+  util::RunPartially(MAX_ROWS_IN_MEMORY, summary_logs_count, [&](long long part_count, long long offset) {
+    CalculateStatistics(agent_name, virtualhost_name, part_count, offset);
+  });
 
   SaveAllSessions();
 }

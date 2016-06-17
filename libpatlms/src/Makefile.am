@@ -28,6 +28,7 @@ lib_libpatlms_la_SOURCES  = \
 					util/configure_logger.cpp \
 					util/create_pidfile.cpp \
 					util/remove_file.cpp \
+					util/run_partially.cpp \
 					util/detail/system.cpp
 
 pkginclude_dbusdir = $(pkgincludedir)/dbus
@@ -103,7 +104,8 @@ pkginclude_util_HEADERS = \
 					$(top_srcdir)/include/patlms/util/configure_logger.h \
 					$(top_srcdir)/include/patlms/util/create_pidfile.h \
 					$(top_srcdir)/include/patlms/util/distance.h \
-					$(top_srcdir)/include/patlms/util/remove_file.h
+					$(top_srcdir)/include/patlms/util/remove_file.h \
+					$(top_srcdir)/include/patlms/util/run_partially.h
 
 pkginclude_util_detaildir = $(pkgincludedir)/util/detail
 pkginclude_util_detail_HEADERS = \

@@ -15,7 +15,8 @@ tests_SOURCES	= main.cpp \
 			util/path.cpp \
 			util/create_pidfile.cpp \
 			util/distance.cpp \
-			util/remove_file.cpp
+			util/remove_file.cpp \
+			util/run_partially.cpp
 
 OBJECT_FILES	= \
 			../src/dbus/detail/dbus_wrapper.o \
@@ -30,7 +31,8 @@ OBJECT_FILES	= \
 			../src/util/path.o \
 			../src/util/create_pidfile.o \
 			../src/util/distance.o \
-			../src/util/remove_file.o
+			../src/util/remove_file.o \
+			../src/util/run_partially.o
 
 tests_LDADD	= $(OBJECT_FILES) \
 			@GTEST_LIBS@ \

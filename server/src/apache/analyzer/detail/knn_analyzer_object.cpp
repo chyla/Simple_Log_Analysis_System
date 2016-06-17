@@ -8,6 +8,7 @@
 #include <boost/log/trivial.hpp>
 #include <cmath>
 #include <limits>
+#include <patlms/util/run_partially.h>
 
 #include "system.h"
 
@@ -66,13 +67,9 @@ void KnnAnalyzerObject::AnalyzeVirtualhost(const ::database::type::AgentName &ag
   auto sessions_count = apache_database_functions_->GetSessionStatisticsCount(agent_name, virtualhost_name, from, to);
   BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::KnnAnalyzerObject::AnalyzeVirtualhost: Found " << sessions_count << " sessions to analyze";
 
-  for (RowsCount i = 0; i < sessions_count / MAX_ROWS_IN_MEMORY; ++i)
-    AnalyzeSessions(agent_name, virtualhost_name, from, to, MAX_ROWS_IN_MEMORY, i);
-
-  auto left_offset = sessions_count - (sessions_count % MAX_ROWS_IN_MEMORY);
-  auto left_logs_count = sessions_count % MAX_ROWS_IN_MEMORY;
-
-  AnalyzeSessions(agent_name, virtualhost_name, from, to, left_logs_count, left_offset);
+  util::RunPartially(MAX_ROWS_IN_MEMORY, sessions_count, [&](long long part_count, long long offset) {
+    AnalyzeSessions(agent_name, virtualhost_name, from, to, part_count, offset);
+  });
 }
 
 void KnnAnalyzerObject::AnalyzeSessions(const ::database::type::AgentName &agent_name,
@@ -101,13 +98,9 @@ void KnnAnalyzerObject::AnalyzeSessions(const ::database::type::AgentName &agent
   for (auto session : sessions_part) {
     neighbours_table_.SetSession(session);
 
-    for (RowsCount i = 0; i < learning_set_count / MAX_ROWS_IN_MEMORY; ++i)
-      AnalyzeSessionsWithLearningSet(agent_id, virtualhost_id, MAX_ROWS_IN_MEMORY, i, session);
-
-    auto left_offset = learning_set_count - (learning_set_count % MAX_ROWS_IN_MEMORY);
-    auto left_logs_count = learning_set_count % MAX_ROWS_IN_MEMORY;
-
-    AnalyzeSessionsWithLearningSet(agent_id, virtualhost_id, left_logs_count, left_offset, session);
+    util::RunPartially(MAX_ROWS_IN_MEMORY, learning_set_count, [&](long long part_count, long long offset) {
+      AnalyzeSessionsWithLearningSet(agent_id, virtualhost_id, part_count, offset, session);
+    });
 
     if (IsSessionAnomaly()) {
       session.is_anomaly = true;
