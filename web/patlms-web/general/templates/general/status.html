@@ -7,7 +7,14 @@
 
 <p>
 
-<table class="pure-table pure-table-bordered">
+<table class="table custab sortable">
+    <thead>
+        <tr>
+            <th><button class="custab-head-button">Option</button></th>
+            <th class="sorttable_nosort">Value</th>
+        </tr>
+    </thead>
+
     <tbody>
         <tr>
             <td>Process ID:</td>
@@ -20,7 +27,7 @@
             </td>
         </tr>
 
-        <tr>
+        <tr class="custab-odd">
             <td>Pidfile location:</td>
             <td>
             {% if process_id %}
