@@ -100,7 +100,7 @@ DBusMessage* DBusWrapper::ConnectionBorrowMessage() {
 
   auto msg = dbus_interface_->connection_borrow_message(connection_);
   if (msg == nullptr)
-    BOOST_LOG_TRIVIAL(warning) << "dbus::detail::DBusWrapper::ConnectionBorrowMessage: Message pointer is null";
+    BOOST_LOG_TRIVIAL(debug) << "dbus::detail::DBusWrapper::ConnectionBorrowMessage: Message pointer is null";
 
   return msg;
 }
