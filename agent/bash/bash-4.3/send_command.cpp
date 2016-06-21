@@ -12,21 +12,26 @@
 #include <sys/socket.h>
 #include <sys/un.h>
 
-#warning Correct bash socket path
-#define SOCK_MOD_PATH "/var/run/patlms/bash.socket"
-#define MAX_PATH 109
+#include "slas_parser.hpp"
 
 extern "C"
 {
 
 void SendCommand(const char *command) {
+  static const slas::Options *options = nullptr;
+  if (options == nullptr) {
+    slas::Parser p;
+    p.SetConfigFilePath(BASH_SLAS_CONF_PATH);
+    options = new slas::Options(p.Parse());
+  }
+
   int fd, res;
   struct sockaddr_un saddr;
 
   fd = socket(PF_UNIX, SOCK_STREAM, 0);
 
   saddr.sun_family = AF_UNIX;
-  strcpy(saddr.sun_path, SOCK_MOD_PATH);
+  strcpy(saddr.sun_path, options->GetBashSocketPath().c_str());
 
   res = connect(fd, (struct sockaddr *) &saddr, sizeof (struct sockaddr_un));
 

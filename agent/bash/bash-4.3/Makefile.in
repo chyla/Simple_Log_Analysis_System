@@ -41,6 +41,7 @@ infodir = @infodir@
 includedir = @includedir@
 datadir = @datadir@
 localedir = @localedir@
+sysconfdir = @sysconfdir@
 
 docdir = @docdir@
 
@@ -141,7 +142,7 @@ LIBS_FOR_BUILD =
 STATIC_LD = @STATIC_LD@
 LOCAL_LDFLAGS = @LOCAL_LDFLAGS@
 
-SYSTEM_FLAGS = -DPROGRAM='"$(Program)"' -DCONF_HOSTTYPE='"$(Machine)"' -DCONF_OSTYPE='"$(OS)"' -DCONF_MACHTYPE='"$(MACHTYPE)"' -DCONF_VENDOR='"$(VENDOR)"' $(LOCALE_DEFS)
+SYSTEM_FLAGS = -DPROGRAM='"$(Program)"' -DCONF_HOSTTYPE='"$(Machine)"' -DCONF_OSTYPE='"$(OS)"' -DCONF_MACHTYPE='"$(MACHTYPE)"' -DCONF_VENDOR='"$(VENDOR)"' $(LOCALE_DEFS) -DBASH_SLAS_CONF_PATH='"$(DESTDIR)$(sysconfdir)/bash_slas.conf"'
 
 BASE_CCFLAGS = $(PROFILE_FLAGS) $(SYSTEM_FLAGS) $(LOCAL_DEFS) \
 	  $(DEFS) $(LOCAL_CFLAGS) $(INCLUDES)
@@ -430,7 +431,7 @@ LIBRARY_LDFLAGS = $(READLINE_LDFLAGS) $(HISTORY_LDFLAGS) $(GLOB_LDFLAGS) \
 		  $(TILDE_LDFLAGS) $(MALLOC_LDFLAGS) $(SHLIB_LDFLAGS) \
 		  @BOOST_LDFLAGS@
 
-CXXFLAGS = @CXXFLAGS@ @PTHREAD_CFLAGS@ @BOOST_CPPFLAGS@ @DBUS_CFLAGS@
+CXXFLAGS = @CXXFLAGS@ @PTHREAD_CFLAGS@ @BOOST_CPPFLAGS@ @DBUS_CFLAGS@ $(BASE_CCFLAGS)
 
 #
 # The shell itself
@@ -446,7 +447,7 @@ CSOURCES = shell.c eval.c parse.y general.c make_cmd.c print_cmd.c y.tab.c \
 	   list.c stringlib.c locale.c findcmd.c redir.c \
 	   pcomplete.c pcomplib.c syntax.c xmalloc.c
 
-CPPSOURCES = send_command.cpp
+CPPSOURCES = send_command.cpp slas_parser.cpp
 
 HSOURCES = shell.h flags.h trap.h hashcmd.h hashlib.h jobs.h builtins.h \
 	   general.h variables.h config.h $(ALLOC_HEADERS) alias.h \
@@ -475,7 +476,7 @@ OBJECTS	 = shell.o eval.o y.tab.o general.o make_cmd.o print_cmd.o $(GLOBO) \
 	   alias.o array.o arrayfunc.o assoc.o braces.o bracecomp.o bashhist.o \
 	   bashline.o $(SIGLIST_O) list.o stringlib.o locale.o findcmd.o redir.o \
 	   pcomplete.o pcomplib.o syntax.o xmalloc.o $(SIGNAMES_O) \
-	   send_command.o
+	   send_command.o slas_parser.o
 
 # Where the source code of the shell builtins resides.
 BUILTIN_SRCDIR=$(srcdir)/builtins
@@ -568,7 +569,7 @@ OTHER_INSTALLED_DOCS = CHANGES COMPAT NEWS POSIX RBASH README
 
 $(Program):  .build $(OBJECTS) $(BUILTINS_DEP) $(LIBDEP)
 	$(RM) $@
-	$(PURIFY) $(CC) $(BUILTINS_LDFLAGS) $(LIBRARY_LDFLAGS) $(LDFLAGS) -o $(Program) $(OBJECTS) $(LIBS)
+	$(PURIFY) $(CXX) $(BUILTINS_LDFLAGS) $(LIBRARY_LDFLAGS) $(LDFLAGS) -o $(Program) $(OBJECTS) $(LIBS)
 	ls -l $(Program)
 	-$(SIZE) $(Program)
 
@@ -779,6 +780,7 @@ installdirs:
 	@${SHELL} $(SUPPORT_SRC)mkinstalldirs $(DESTDIR)$(man1dir)
 	@${SHELL} $(SUPPORT_SRC)mkinstalldirs $(DESTDIR)$(infodir)
 	@${SHELL} $(SUPPORT_SRC)mkinstalldirs $(DESTDIR)$(docdir)
+	@${SHELL} $(SUPPORT_SRC)mkinstalldirs $(DESTDIR)$(sysconfdir)
 	-( cd $(PO_DIR) ; $(MAKE) $(MFLAGS) DESTDIR=$(DESTDIR) $@ )
 
 install:	.made installdirs
@@ -791,6 +793,7 @@ install:	.made installdirs
 		infodir=$(infodir) htmldir=$(htmldir) DESTDIR=$(DESTDIR) $@ )
 	-( cd $(DEFDIR) ; $(MAKE) $(MFLAGS) DESTDIR=$(DESTDIR) $@ )
 	-( cd $(PO_DIR) ; $(MAKE) $(MFLAGS) DESTDIR=$(DESTDIR) $@ )
+	$(INSTALL_DATA) bash_slas.conf $(DESTDIR)$(sysconfdir)/bash_slas.conf
 
 install-strip:
 	$(MAKE) $(MFLAGS) INSTALL_PROGRAM='$(INSTALL_PROGRAM) -s' \
