@@ -687,6 +687,7 @@ AX_BOOST_LOG_SETUP
 PKG_CHECK_MODULES([DBUS], dbus-1 >= 1.6.18)
 
 AC_MSG_CHECKING([Checking for PATLMS library])
+AC_LANG_SAVE
 AC_LANG_CPLUSPLUS
 save_LIBS=$LIBS
 save_CPPFLAGS=$CPPFLAGS
@@ -717,7 +718,7 @@ AC_LINK_IFELSE([AC_LANG_SOURCE([
               )
 LIBS=$save_LIBS
 CPPFLAGS=$save_CPPFLAGS
-AC_LANG_C
+AC_LANG_RESTORE
 
 if test "x$ax_patlms_library" != "xyes"; then
   AC_MSG_ERROR([cannot find the PATLMS library])
