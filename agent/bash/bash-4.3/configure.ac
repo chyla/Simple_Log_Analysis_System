@@ -32,6 +32,7 @@ m4_include([m4/ax_boost_date_time.m4])
 m4_include([m4/ax_boost_regex.m4])
 m4_include([m4/ax_boost_log.m4])
 m4_include([m4/ax_boost_log_setup.m4])
+m4_include([m4/bash-aclocal.m4])
 
 AC_REVISION([for Bash 4.3, version 4.063])dnl
 
