@@ -21,6 +21,8 @@ dnl Process this file with autoconf to produce a configure script.
 #   You should have received a copy of the GNU General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+m4_include([m4/ax_cxx_compile_stdcxx_11.m4])
+
 AC_REVISION([for Bash 4.3, version 4.063])dnl
 
 define(bashvers, 4.3)
@@ -415,6 +417,11 @@ AC_PROG_CC
 dnl test for Unix variants
 AC_ISC_POSIX
 AC_MINIX
+
+dnl test for C++ compiler
+AC_PROG_CXX
+AX_CXX_COMPILE_STDCXX_11([noext])
+AC_SUBST(CXXFLAGS)
 
 AC_SYS_LARGEFILE
 
