@@ -1,6 +1,6 @@
-diff -ur bash-4.3/eval.c bash-4.3-mod/eval.c
---- bash-4.3/eval.c	2013-10-14 13:22:43.000000000 +0000
-+++ bash-4.3-mod/eval.c	2016-01-19 22:49:34.689710365 +0000
+diff -ur bash-4.3-orig/eval.c bash-4.3/eval.c
+--- bash-4.3-orig/eval.c	2016-06-21 08:37:00.419384081 +0000
++++ bash-4.3/eval.c	2016-06-21 08:31:10.747403786 +0000
 @@ -45,6 +45,14 @@
  #  include "bashhist.h"
  #endif
@@ -10,13 +10,13 @@ diff -ur bash-4.3/eval.c bash-4.3-mod/eval.c
 +#include <sys/un.h>
 +
 +#warning Correct bash socket path
-+#define SOCK_MOD_PATH "/var/lib/patlms/bash.socket"
++#define SOCK_MOD_PATH "/var/run/patlms/bash.socket"
 +#define MAX_PATH 109
 +
  extern int EOF_reached;
  extern int indirection_level;
  extern int posixly_correct;
-@@ -152,11 +159,41 @@
+@@ -152,11 +160,40 @@
  	    }
  	  else if (current_command = global_command)
  	    {
@@ -35,12 +35,11 @@ diff -ur bash-4.3/eval.c bash-4.3-mod/eval.c
 +                  char buf[MAX_PATH];
 +                  WORD_LIST *wl = current_command->value.Simple->words;
 +
-+                  do {
++                  if (wl) {
 +                    const char *word = wl->word->word;          
 +                    sprintf(buf, "%s ", word);
 +                    send(fd, buf, strlen(buf), 0);
-+                    wl = wl->next;
-+                  } while (wl);
++                  }
 +
 +                  close(fd);
 +                }
