@@ -47,8 +47,7 @@ class PrepareStatisticsAnalyzerObject : public PrepareStatisticsAnalyzerObjectIn
 
   void CalculateStatistics(const ::database::type::AgentName &agent_name,
                            const ::database::type::VirtualhostName &virtualhost_name,
-                           ::database::type::RowsCount count,
-                           ::database::type::RowId offset);
+                           ::database::type::RowsCount count);
 
   ::type::Timestamp GetLastStatisticsCalculationTimestamp();
 

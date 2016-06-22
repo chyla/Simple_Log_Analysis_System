@@ -68,7 +68,7 @@ void PrepareStatisticsAnalyzerObject::CreateStatistics(const AgentName &agent_na
   BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::PrepareStatisticsAnalyzerObject::CreateStatistics: Found " << summary_logs_count << " logs";
 
   util::RunPartially(MAX_ROWS_IN_MEMORY, summary_logs_count, [&](long long part_count, long long offset) {
-    CalculateStatistics(agent_name, virtualhost_name, part_count, offset);
+    CalculateStatistics(agent_name, virtualhost_name, part_count);
   });
 
   SaveAllSessions();
@@ -76,13 +76,11 @@ void PrepareStatisticsAnalyzerObject::CreateStatistics(const AgentName &agent_na
 
 void PrepareStatisticsAnalyzerObject::CalculateStatistics(const AgentName &agent_name,
                                                           const VirtualhostName &virtualhost_name,
-                                                          RowsCount count,
-                                                          RowId offset) {
+                                                          RowsCount count) {
   BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::PrepareStatisticsAnalyzerObject::CalculateStatistics: Function call";
-  BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::PrepareStatisticsAnalyzerObject::CalculateStatistics: Calculating statistics for " << count << " logs with offset " << offset;
+  BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::PrepareStatisticsAnalyzerObject::CalculateStatistics: Calculating statistics for " << count << " logs ";
 
-  auto logs = database_functions_->GetUnusedLogs(agent_name, virtualhost_name,
-                                                 count, offset);
+  auto logs = database_functions_->GetUnusedLogs(agent_name, virtualhost_name, count, 0);
 
   BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::PrepareStatisticsAnalyzerObject::CalculateStatistics: Received " << logs.size() << " logs to calculate statistics";
 
