@@ -17,6 +17,7 @@ namespace slas
 Parser::Parser()
 : options_("Options") {
   options_.add_options()
+      ("logfile", value<string>(), "logfile path")
       ("bash_socket_path", value<string>(), "Bash socket path")
       ("enable-debug", value<bool>(), "change log-level to debug")
       ;
@@ -35,7 +36,8 @@ const Options Parser::Parse() {
 
   notify(variables);
 
-  return Options(variables["bash_socket_path"].as<string>(),
+  return Options(variables["logfile"].as<string>(),
+                 variables["bash_socket_path"].as<string>(),
                  variables["enable-debug"].as<bool>());
 }
 

@@ -14,19 +14,27 @@ namespace slas
 class Options {
  public:
 
-  Options(const std::string &bash_socket_path,
+  Options(const std::string &logfile_path,
+          const std::string &bash_socket_path,
           bool debug) :
+  logfile_path_(logfile_path),
   bash_socket_path_(bash_socket_path),
   debug_(debug) {
   }
 
+  inline const std::string& GetLogfilePath() const;
   inline const std::string& GetBashSocketPath() const;
   inline bool IsDebug() const;
 
  private:
+  std::string logfile_path_;
   std::string bash_socket_path_;
   bool debug_;
 };
+
+const std::string& Options::GetLogfilePath() const {
+  return logfile_path_;
+}
 
 const std::string& Options::GetBashSocketPath() const {
   return bash_socket_path_;
