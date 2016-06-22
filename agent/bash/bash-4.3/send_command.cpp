@@ -12,6 +12,8 @@
 #include <sys/socket.h>
 #include <sys/un.h>
 
+#include <patlms/util/configure_logger.h>
+
 #include "slas_parser.hpp"
 
 extern "C"
@@ -24,6 +26,8 @@ void SendCommand(const char *command) {
     p.SetConfigFilePath(BASH_SLAS_CONF_PATH);
     options = new slas::Options(p.Parse());
   }
+
+  util::ConfigureLogger(options->GetLogfilePath(), options->IsDebug());
 
   int fd, res;
   struct sockaddr_un saddr;
