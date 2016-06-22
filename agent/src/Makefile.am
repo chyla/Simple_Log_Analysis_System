@@ -11,8 +11,6 @@ patlms_agent_SOURCES	= main.cpp \
 				bash/bash_log_receiver.cpp \
 				bash/detail/bash_dbus_thread_command.cpp \
 				bash/detail/bash_proxy.cpp \
-				bash/detail/system.cpp \
-				bash/detail/system_interface.cpp \
 				dbus/dbus_thread.cpp \
 				dbus/dbus_thread_command.cpp \
 				dbus/detail/system.cpp \

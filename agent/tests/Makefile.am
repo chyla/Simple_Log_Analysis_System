@@ -7,14 +7,11 @@ AM_LDFLAGS		= @BOOST_LDFLAGS@
 check_PROGRAMS	= tests
 if CAN_RUN_TESTS
 tests_SOURCES	= main.cpp \
-			dbus/dbus_thread_test.cpp \
-			bash/bash_log_receiver_test.cpp
+			dbus/dbus_thread_test.cpp
 
 OBJECT_FILES	= ../src/bash/bash_log_receiver.o \
 			../src/bash/detail/bash_proxy.o \
 			../src/bash/detail/bash_dbus_thread_command.o \
-			../src/bash/detail/system_interface.o \
-			../src/bash/detail/system.o \
 			../src/dbus/dbus_thread.o \
 			../src/dbus/dbus_thread_command.o \
 			../src/dbus/detail/system.o \

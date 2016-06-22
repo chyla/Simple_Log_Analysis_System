@@ -1,11 +1,9 @@
 #ifndef BASH_LOG_RECEIVER_H
 #define BASH_LOG_RECEIVER_H
 
-
-
+#include <patlms/network/network.h>
 #include <patlms/dbus/detail/bus_interface.h>
 
-#include "detail/system_interface.h"
 #include "detail/bash_log_receiver_interface.h"
 #include "src/dbus/detail/dbus_thread_interface.h"
 
@@ -20,7 +18,8 @@ class BashLogReceiver : public detail::BashLogReceiverInterface {
 
   static std::shared_ptr<BashLogReceiver> Create(std::shared_ptr<dbus::detail::BusInterface> bus,
                                                  std::shared_ptr<dbus::detail::DBusThreadInterface> dbus_thread,
-                                                 std::shared_ptr<bash::detail::SystemInterface> system);
+                                                 ::network::detail::NetworkInterfacePtr network,
+                                                 ::network::detail::SystemInterfacePtr system);
 
   virtual ~BashLogReceiver();
 
@@ -36,11 +35,13 @@ class BashLogReceiver : public detail::BashLogReceiverInterface {
  private:
   BashLogReceiver(std::shared_ptr<dbus::detail::BusInterface> bus,
                   std::shared_ptr<dbus::detail::DBusThreadInterface> dbus_thread,
-                  std::shared_ptr<bash::detail::SystemInterface> system);
+                  network::detail::NetworkInterfacePtr network,
+                  ::network::detail::SystemInterfacePtr system);
 
   std::shared_ptr<dbus::detail::BusInterface> bus_;
   std::shared_ptr<dbus::detail::DBusThreadInterface> dbus_thread_;
-  std::shared_ptr<bash::detail::SystemInterface> system_;
+  ::network::detail::NetworkInterfacePtr network_;
+  ::network::detail::SystemInterfacePtr system_;
 
   int socket_fd_;
   bool running_;

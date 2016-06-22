@@ -5,16 +5,14 @@
 
 #include "send_command.h"
 
-#include <cstdio>
-
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <sys/un.h>
-
+#include <boost/log/trivial.hpp>
 #include <patlms/util/configure_logger.h>
+#include <patlms/network/network.h>
 
 #include "slas_parser.hpp"
+
+using namespace std;
+using namespace network;
 
 extern "C"
 {
@@ -29,22 +27,19 @@ void SendCommand(const char *command) {
 
   util::ConfigureLogger(options->GetLogfilePath(), options->IsDebug());
 
-  int fd, res;
-  struct sockaddr_un saddr;
+  NetworkPtr network = Network::Create();
+  int socket_fd = -1;
 
-  fd = socket(PF_UNIX, SOCK_STREAM, 0);
+  try {
+    socket_fd = network->Socket(PF_UNIX);
+    network->ConnectUnix(socket_fd, options->GetBashSocketPath());
 
-  saddr.sun_family = AF_UNIX;
-  strcpy(saddr.sun_path, options->GetBashSocketPath().c_str());
+    network->SendText(socket_fd, command);
 
-  res = connect(fd, (struct sockaddr *) &saddr, sizeof (struct sockaddr_un));
-
-  if (res == 0) {
-    send(fd, command, strlen(command) + 1, 0);
-    close(fd);
+    network->Close(socket_fd);
   }
-  else {
-    fprintf(stderr, "Can't connect to log server.");
+  catch (exception &ex) {
+    BOOST_LOG_TRIVIAL(fatal) << "slas::SendCommand: Exception catched: " << ex.what();
   }
 }
 
