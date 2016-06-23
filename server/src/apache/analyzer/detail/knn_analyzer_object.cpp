@@ -133,9 +133,16 @@ bool KnnAnalyzerObject::IsSessionAnomaly() {
   const auto &neighbours = neighbours_table_.Get();
 
   for (const auto &n : neighbours)
+    BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::KnnAnalyzerObject::IsSessionAnomaly: Final nearest neighbour id=" << n.session_id;
+  
+  for (const auto &n : neighbours)
     i = i - 1 + 2 * static_cast<int> (n.is_session_anomaly);
 
-  return i > 0;
+  bool anomaly =  i > 0;
+  
+  BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::KnnAnalyzerObject::IsSessionAnomaly: Anomaly: " << anomaly;
+
+  return anomaly;
 }
 
 KnnAnalyzerObject::KnnAnalyzerObject(::database::detail::GeneralDatabaseFunctionsInterfacePtr general_database_functions,
