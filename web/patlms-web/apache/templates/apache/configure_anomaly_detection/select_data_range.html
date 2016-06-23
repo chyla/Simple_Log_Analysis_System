@@ -5,64 +5,66 @@
 
 <h1>Apache Logs</h1>
 
-<div class="help-button">
-    <button class="js-fr-offcanvas-open" aria-controls="help_box">
-        <i class="fa fa-question-circle" aria-hidden="true"></i>
-        Help
-    </button>
-</div>
-
-<h2>Anomaly Detection Configuration</h2>
-
-<div>
-    <h3>Select date range</h3>
-
-    <p>
-        <form class="pure-form ws-validate" method="get" action="{% url 'apache:configure_anomaly_detection_select_data_range' %}">
-            <div class="col-sm-6 ws-success">
-                <label for="begin_date" class="control-label">Begin date:</label>
-                <input type="date" name="begin_date" class='input-max-width slas-form-input' value="{{ begin_date }}" onchange="this.form.submit()">
-            </div>
-    
-            <div class="col-sm-6 ws-success">
-                <label for="end_date" class="control-label">End date:</label>
-                <input type="date" name="end_date" class='input-max-width slas-form-input' value="{{ end_date }}" onchange="this.form.submit()">
-            </div>
-    
-            <input type="hidden" name="agent_name" value="{{ agent_name }}">
-            <input type="hidden" name="virtualhost_name" value="{{ virtualhost_name }}">
-        </form>
-    
-        <form class="pure-form ws-validate" method="post" action="{% url 'apache:configure_anomaly_detection_select_data_range_save_settings' %}">
-            {% csrf_token %}
-    
-            <input type="hidden" name="begin_date" id='begin_date' value="{{ begin_date }}">
-            <input type="hidden" name="end_date" id='end_date' value="{{ end_date }}">
-            <input type="hidden" name="agent_name" value="{{ agent_name }}">
-            <input type="hidden" name="virtualhost_name" value="{{ virtualhost_name }}">
-    
-            <div class="col-sm-12 ws-success ">
-                <label>
-                    <input class="slas-form-input" id="redirect_to_correct_session_marks" name="redirect_to_correct_session_marks" type="checkbox">
-                    Categorize sessions now
-                </label>
-            </div>
-    
-            <p class="action-buttons-left">
-                <button type="submit" class="pure-button button-success">
-                    <i class="fa fa-check" aria-hidden="true"></i>
-                    Done
-                </button>
-            </p>
-        </form>
-    </p>
+<div class="col-sm-12">
+    <div class="help-button">
+        <button class="js-fr-offcanvas-open" aria-controls="help_box">
+            <i class="fa fa-question-circle" aria-hidden="true"></i>
+            Help
+        </button>
+    </div>
 </div>
 
 <div class="clear-float"></div>
+<h2>Anomaly Detection Configuration</h2>
 
-<div class="next-page-section">
-    <h3>Sessions preview</h3>
-    <p>
+<div class="clear-float"></div>
+<h3>Select date range</h3>
+
+<div class="col-sm-12">
+    <form class="pure-form ws-validate" method="get" action="{% url 'apache:configure_anomaly_detection_select_data_range' %}">
+        <div class="col-sm-6 ws-success">
+            <label for="begin_date" class="control-label">Begin date:</label>
+            <input type="date" name="begin_date" class='input-max-width slas-form-input' value="{{ begin_date }}" onchange="this.form.submit()">
+        </div>
+
+        <div class="col-sm-6 ws-success">
+            <label for="end_date" class="control-label">End date:</label>
+            <input type="date" name="end_date" class='input-max-width slas-form-input' value="{{ end_date }}" onchange="this.form.submit()">
+        </div>
+
+        <input type="hidden" name="agent_name" value="{{ agent_name }}">
+        <input type="hidden" name="virtualhost_name" value="{{ virtualhost_name }}">
+    </form>
+
+    <form class="pure-form ws-validate" method="post" action="{% url 'apache:configure_anomaly_detection_select_data_range_save_settings' %}">
+        {% csrf_token %}
+
+        <input type="hidden" name="begin_date" id='begin_date' value="{{ begin_date }}">
+        <input type="hidden" name="end_date" id='end_date' value="{{ end_date }}">
+        <input type="hidden" name="agent_name" value="{{ agent_name }}">
+        <input type="hidden" name="virtualhost_name" value="{{ virtualhost_name }}">
+
+        <div class="col-sm-12 ws-success ">
+            <label>
+                <input class="slas-form-input" id="redirect_to_correct_session_marks" name="redirect_to_correct_session_marks" type="checkbox">
+                Categorize sessions now
+            </label>
+        </div>
+
+        <p class="action-buttons-left">
+            <button type="submit" class="pure-button button-success">
+                <i class="fa fa-check" aria-hidden="true"></i>
+                Done
+            </button>
+        </p>
+    </form>
+</div>
+
+<div class="clear-float"></div>
+<h3>Sessions preview</h3>
+
+<div class="col-sm-12">
+    <div class="next-page-section">
         {% if sessions|length == 0 %}
             There is no data to display.
         {% else %}
@@ -110,7 +112,7 @@
                 </tbody>
             </table>
         {% endif %}
-    </p>
+    </div>
 </div>
 
 <section class="fr-offcanvas fr-offcanvas--right js-fr-offcanvas slas-offcanvas" id="help_box">

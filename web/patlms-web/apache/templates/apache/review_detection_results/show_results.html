@@ -5,18 +5,22 @@
 
 <h1>Apache Logs</h1>
 
-<div class="help-button">
-    <button class="js-fr-offcanvas-open" aria-controls="help_box">
-        <i class="fa fa-question-circle" aria-hidden="true"></i>
-        Help
-    </button>
+<div class="col-sm-12">
+    <div class="help-button">
+        <button class="js-fr-offcanvas-open" aria-controls="help_box">
+            <i class="fa fa-question-circle" aria-hidden="true"></i>
+            Help
+        </button>
+    </div>
 </div>
 
+<div class="clear-float"></div>
 <h2>Sessions classification</h2>
 
+<div class="clear-float"></div>
 <h3>Select date range</h3>
 
-<p>
+<div class="col-sm-12">
     <form class="pure-form ws-validate"  method="get" action="#">
         <div class="col-sm-6 ws-success">
             <label for="begin-date" class="control-label">Begin date:</label>
@@ -31,11 +35,12 @@
         <input type="hidden" name="agent_name" value="{{ agent_name }}">
         <input type="hidden" name="virtualhost_name" value="{{ virtualhost_name }}">
     </form>
-</p>
+</div>
 
+<div class="clear-float"></div>
 <h3>Results</h3>
 
-<p>
+<div class="col-sm-12">
     {% if agent_name == '' or virtualhost_name == '' or begin_date == '' or end_date == '' or sessions|length == 0 %}
         There is no data to display.
     {% else %}
@@ -83,7 +88,7 @@
             </tbody>
         </table>
     {% endif %}
-</p>
+</div>
 
 <section class="fr-offcanvas fr-offcanvas--right js-fr-offcanvas slas-offcanvas" id="help_box">
     <p>

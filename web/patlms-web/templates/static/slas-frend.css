@@ -7,7 +7,7 @@
   max-width: 400px;
   position: fixed;
   top: 55px;
-  bottom: 5px;
+  bottom: 3px;
   transform: translateX(0);
   width: 100%;
   will-change: translateX;

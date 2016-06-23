@@ -13,12 +13,9 @@
 </div>
 
 <div class="clear-float"></div>
+<h2>Configuration</h2>
 
-<div>
-    <h2>Configuration</h2>
-
-    <p>
-
+<div class="col-sm-12">
     {% if configuration %}
         <table class="table table custab sortable">
             <thead>
@@ -74,11 +71,9 @@
 </div>
 
 <div class="clear-float"></div>
+<h2>Sessions classification</h2>
 
-<div class="next-page-section">
-
-    <h2>Sessions classification</h2>
-
+<div class="col-sm-12">
     {% if available_classification_for_agent_host_names|length > 0 %}
             <table class="table table custab sortable">
             <thead>
@@ -112,7 +107,6 @@
         Results not found.
     </p>
     {% endif %}
-
 </div>
 
 <section class="fr-offcanvas fr-offcanvas--right js-fr-offcanvas slas-offcanvas" id="help_box">

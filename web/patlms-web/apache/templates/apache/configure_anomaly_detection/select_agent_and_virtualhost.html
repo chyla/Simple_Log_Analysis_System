@@ -5,18 +5,22 @@
 
 <h1>Apache Logs</h1>
 
-<div class="help-button">
-    <button class="js-fr-offcanvas-open" aria-controls="help_box">
-        <i class="fa fa-question-circle" aria-hidden="true"></i>
-        Help
-    </button>
+<div class="col-sm-12">
+    <div class="help-button">
+        <button class="js-fr-offcanvas-open" aria-controls="help_box">
+            <i class="fa fa-question-circle" aria-hidden="true"></i>
+            Help
+        </button>
+    </div>
 </div>
 
+<div class="clear-float"></div>
 <h2>Anomaly Detection Configuration</h2>
 
+<div class="clear-float"></div>
 <h3>Current configuration</h3>
 
-<p>
+<div class="col-sm-12">
     {% if configuration %}
         <table class="table table custab sortable">
             <thead>
@@ -41,12 +45,12 @@
         <i class="fa fa-exclamation" aria-hidden="true"></i>
         No configuration found.
     {% endif %}
-</p>
-    
+</div>
 
+<div class="clear-float"></div>
 <h3>Select agent and virtualhost</h3>
 
-<p>
+<div class="col-sm-12">
     <form class="pure-form ws-validate" method="get" action="#">
         <div class="col-sm-6 ws-success">
             <label for="agent_name" class="control-label">Agent name:</label>
@@ -95,8 +99,7 @@
             </a>
         </p>
     {% endif %}
-
-</p>
+</div>
 
 <section class="fr-offcanvas fr-offcanvas--right js-fr-offcanvas slas-offcanvas" id="help_box">
     <p>

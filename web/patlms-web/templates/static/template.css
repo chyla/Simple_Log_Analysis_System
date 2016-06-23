@@ -62,7 +62,7 @@ body {
 
 /* other */
 h1, h2, h3 {
-  padding-bottom: .1em;
+  padding-bottom: .3em;
 }
 
 h1 {
@@ -71,12 +71,13 @@ h1 {
 }
 
 h2 {
-  padding-top: .5em;
+  padding-top: .7em;
   font-size: 2em;
 }
 
 h3 {
   font-size: 1.5em;
+  padding-top: 0.7em;
 }
 
 table {
