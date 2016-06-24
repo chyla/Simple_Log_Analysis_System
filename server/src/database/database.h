@@ -33,8 +33,6 @@ class Database {
 
   bool IsOpen() const;
 
-  void CreateDateTable() __attribute__((deprecated));
-
   void CreateBashLogsTable();
 
   void CreateApacheSessionTable();

@@ -34,27 +34,6 @@ bool Database::IsOpen() const {
   return is_open_;
 }
 
-void Database::CreateDateTable() {
-  BOOST_LOG_TRIVIAL(debug) << "database::Database::CreateDateTable: Function call";
-
-  if (is_open_ == false) {
-    BOOST_LOG_TRIVIAL(error) << "database::Database::CreateDateTable: Database is not open.";
-    throw exception::detail::CantExecuteSqlStatementException();
-  }
-
-  const char *sql =
-      " create table if not exists DATE_TABLE("
-      "   ID integer primary key, "
-      "   DAY integer, "
-      "   MONTH integer, "
-      "   YEAR integer, "
-      "   unique(DAY, MONTH, YEAR) "
-      " );";
-
-  int ret = sqlite_interface_->Exec(db_handle_, sql, nullptr, nullptr, nullptr);
-  StatementCheckForError(ret, "Create BASH_LOGS_TABLE error");
-}
-
 void Database::CreateBashLogsTable() {
   BOOST_LOG_TRIVIAL(debug) << "database::Database::CreateBashLogsTable: Function call";
 
