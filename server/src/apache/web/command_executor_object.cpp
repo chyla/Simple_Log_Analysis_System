@@ -294,8 +294,8 @@ const ::web::type::JsonMessage CommandExecutorObject::SetApacheAnomalyDetectionC
   for (auto s : sessions)
     sessions_ids.push_back(s.id);
 
-  database_->AddDate(c.begin_date.GetDay(), c.begin_date.GetMonth(), c.begin_date.GetYear());
-  database_->AddDate(c.end_date.GetDay(), c.end_date.GetMonth(), c.end_date.GetYear());
+  general_database_functions_->AddDate(c.begin_date);
+  general_database_functions_->AddDate(c.end_date);
   database_->SetApacheAnomalyDetectionConfiguration(c);
 
   apache_database_functions_->RemoveAllLearningSessions(agent_id, virtualhost_id);

@@ -114,23 +114,6 @@ void Database::CreateApacheAnomalyDetectionConfigurationTable() {
   StatementCheckForError(ret, "Create APACHE_ANOMALY_DETECTION_CONFIGURATION_TABLE error");
 }
 
-void Database::AddDate(int day, int month, int year) {
-  BOOST_LOG_TRIVIAL(debug) << "database::Database::AddDate: Function call";
-
-  if (is_open_ == false) {
-    BOOST_LOG_TRIVIAL(error) << "database::Database::AddDate: Database is not open.";
-    throw exception::detail::CantExecuteSqlStatementException();
-  }
-
-  string sql =
-      " insert or ignore into DATE_TABLE (DAY, MONTH, YEAR) "
-      " values ( "
-      + to_string(day) + ", " + to_string(month) + ", " + to_string(year)
-      + " );";
-  int ret = sqlite_interface_->Exec(db_handle_, sql.c_str(), nullptr, nullptr, nullptr);
-  StatementCheckForError(ret, "Insert or ignore date error");
-}
-
 type::RowId Database::GetDateId(int day, int month, int year) {
   BOOST_LOG_TRIVIAL(debug) << "database::Database::GetDateId: Function call";
   int ret;

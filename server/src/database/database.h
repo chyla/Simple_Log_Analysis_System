@@ -39,8 +39,6 @@ class Database {
 
   void CreateApacheAnomalyDetectionConfigurationTable();
 
-  void AddDate(int day, int month, int year) __attribute__((deprecated));
-
   type::RowId GetDateId(int day, int month, int year) __attribute__((deprecated));
 
   ::type::Date GetDateById(type::RowId id) __attribute__((deprecated));

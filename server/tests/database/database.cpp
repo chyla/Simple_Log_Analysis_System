@@ -1304,26 +1304,6 @@ TEST(DatabaseTest, GetApacheSessionStatistics_WhenPrepareFail) {
   EXPECT_THROW(database->GetApacheSessionStatistics("agentname", "vh1", from, to, 100, 0), database::exception::detail::CantExecuteSqlStatementException);
 }
 
-TEST(DatabaseTest, AddDate) {
-  unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-
-  EXPECT_CALL(*sqlite_mock, Exec(DB_HANDLE_EXAMPLE_PTR_VALUE, NotNull(), IsNull(), IsNull(), IsNull())).WillOnce(Return(SQLITE_OK));
-
-  DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
-  database->AddDate(1, 1, 2016);
-}
-
-TEST(DatabaseTest, AddDate_WhenExecFail) {
-  unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-
-  EXPECT_CALL(*sqlite_mock, Exec(DB_HANDLE_EXAMPLE_PTR_VALUE, NotNull(), IsNull(), IsNull(), IsNull())).WillOnce(Return(SQLITE_NOMEM));
-
-  DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
-  EXPECT_THROW(database->AddDate(1, 1, 2016), database::exception::detail::CantExecuteSqlStatementException);
-}
-
 TEST(DatabaseTest, GetDateId) {
   unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
 
