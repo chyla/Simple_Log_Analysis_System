@@ -114,40 +114,6 @@ void Database::CreateApacheAnomalyDetectionConfigurationTable() {
   StatementCheckForError(ret, "Create APACHE_ANOMALY_DETECTION_CONFIGURATION_TABLE error");
 }
 
-type::RowId Database::GetDateId(int day, int month, int year) {
-  BOOST_LOG_TRIVIAL(debug) << "database::Database::GetDateId: Function call";
-  int ret;
-  long long id = -1;
-
-  if (is_open_ == false) {
-    BOOST_LOG_TRIVIAL(error) << "database::Database::GetDateId: Database is not open";
-    throw exception::detail::CantExecuteSqlStatementException();
-  }
-
-  string sql =
-      "select id from DATE_TABLE "
-      "  where"
-      "    DAY=" + to_string(day) + " and "
-      "    MONTH=" + to_string(month) + " and "
-      "    YEAR=" + to_string(year) +
-      ";";
-
-  sqlite3_stmt *statement;
-  ret = sqlite_interface_->Prepare(db_handle_, sql.c_str(), -1, &statement, nullptr);
-  StatementCheckForError(ret, "Prepare error");
-
-  ret = sqlite_interface_->Step(statement);
-  StatementCheckForError(ret, "Step error");
-
-  if (ret == SQLITE_ROW)
-    id = sqlite_interface_->ColumnInt64(statement, 0);
-
-  ret = sqlite_interface_->Finalize(statement);
-  StatementCheckForError(ret, "Finalize error");
-
-  return id;
-}
-
 ::type::Date Database::GetDateById(type::RowId id) {
   BOOST_LOG_TRIVIAL(debug) << "database::Database::GetDateById: Function call";
   int ret, day, month, year;
