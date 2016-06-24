@@ -460,7 +460,7 @@ void DatabaseFunctions::SetLastRun(const ::type::Timestamp &timestamp) {
   auto date_id = general_database_functions_->AddAndGetDateId(timestamp.GetDate());
   auto time_id = general_database_functions_->AddAndGetTimeId(timestamp.GetTime());
 
-  sqlite_wrapper_->Exec("insert or replace into APACHE_LAST_RUN_TABLE (ID, RUN_TYPE, DATE_ID, TIME_ID) "
+  sqlite_wrapper_->Exec("insert or replace into APACHE_LAST_RUN_TABLE (ID, DATE_ID, TIME_ID) "
                         "values ("
                         " 0, "
                         + to_string(date_id) + ", "
