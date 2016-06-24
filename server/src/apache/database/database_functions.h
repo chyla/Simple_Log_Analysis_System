@@ -65,9 +65,9 @@ class DatabaseFunctions : public detail::DatabaseFunctionsInterface {
 
   virtual ::database::type::VirtualhostNames GetVirtualhostNames(::database::type::AgentName agent_name) override;
 
-  bool IsLastRunSet(const ::apache::type::LastRunType &type) override;
-  void SetLastRun(const ::apache::type::LastRunType &type, const ::type::Timestamp &date) override;
-  ::type::Timestamp GetLastRun(const ::apache::type::LastRunType &type) override;
+  bool IsLastRunSet() override;
+  void SetLastRun(const ::type::Timestamp &date) override;
+  ::type::Timestamp GetLastRun() override;
 
   void AddVirtualhostName(const std::string &name) override;
   ::database::type::RowId AddAndGetVirtualhostNameId(const std::string &name) override;

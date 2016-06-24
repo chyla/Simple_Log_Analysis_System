@@ -12,7 +12,6 @@
 #include <patlms/type/apache_log_entry.h>
 
 #include "src/apache/type/apache_session_entry.h"
-#include "src/apache/type/last_run_type.h"
 #include "src/database/type/rows_count.h"
 #include "src/database/type/agent_name.h"
 #include "src/database/type/virtualhost_name.h"
@@ -64,9 +63,9 @@ class DatabaseFunctionsInterface {
 
   virtual ::database::type::VirtualhostNames GetVirtualhostNames(::database::type::AgentName agent_name) = 0;
 
-  virtual bool IsLastRunSet(const ::apache::type::LastRunType &type) = 0;
-  virtual void SetLastRun(const ::apache::type::LastRunType &type, const ::type::Timestamp &date) = 0;
-  virtual ::type::Timestamp GetLastRun(const ::apache::type::LastRunType &type) = 0;
+  virtual bool IsLastRunSet() = 0;
+  virtual void SetLastRun(const ::type::Timestamp &date) = 0;
+  virtual ::type::Timestamp GetLastRun() = 0;
 
   virtual void AddVirtualhostName(const std::string &name) = 0;
   virtual ::database::type::RowId AddAndGetVirtualhostNameId(const std::string &name) = 0;

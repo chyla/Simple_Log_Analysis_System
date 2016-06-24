@@ -59,12 +59,10 @@ void DatabaseFunctions::CreateTables() {
 
   sqlite_wrapper_->Exec("create table if not exists APACHE_LAST_RUN_TABLE ( "
                         "  ID integer primary key not null, "
-                        "  RUN_TYPE integer not null, "
                         "  DATE_ID integer not null, "
                         "  TIME_ID integer not null, "
                         "  foreign key(DATE_ID) references DATE_TABLE(ID), "
-                        "  foreign key(TIME_ID) references TIME_TABLE(ID), "
-                        "  unique (RUN_TYPE) "
+                        "  foreign key(TIME_ID) references TIME_TABLE(ID) "
                         ");");
 
   sqlite_wrapper_->Exec("create table if not exists APACHE_VIRTUALHOSTS_NAMES ( "
@@ -443,20 +441,20 @@ void DatabaseFunctions::MarkLearningSetWithIqrMethod(const ::database::type::Row
   return db_->GetApacheVirtualhostNames(agent_name);
 }
 
-bool DatabaseFunctions::IsLastRunSet(const ::apache::type::LastRunType &type) {
+bool DatabaseFunctions::IsLastRunSet() {
   BOOST_LOG_TRIVIAL(debug) << "apache::database::DatabaseFunctions::IsLastRunSet: Function call";
 
   const string sql =
       "select ID from APACHE_LAST_RUN_TABLE "
       "  where"
-      "    RUN_TYPE=0;";
+      "    ID=0;";
 
   auto id = sqlite_wrapper_->GetFirstInt64Column(sql, -1);
 
   return id != -1;
 }
 
-void DatabaseFunctions::SetLastRun(const ::apache::type::LastRunType &type, const ::type::Timestamp &timestamp) {
+void DatabaseFunctions::SetLastRun(const ::type::Timestamp &timestamp) {
   BOOST_LOG_TRIVIAL(debug) << "apache::database::DatabaseFunctions::SetLastRun: Function call";
 
   auto date_id = general_database_functions_->AddAndGetDateId(timestamp.GetDate());
@@ -464,30 +462,29 @@ void DatabaseFunctions::SetLastRun(const ::apache::type::LastRunType &type, cons
 
   sqlite_wrapper_->Exec("insert or replace into APACHE_LAST_RUN_TABLE (ID, RUN_TYPE, DATE_ID, TIME_ID) "
                         "values ("
-                        " ( select ID from APACHE_LAST_RUN_TABLE where RUN_TYPE=0 ), "
-                        + to_string(static_cast<int> (type)) + ", "
+                        " 0, "
                         + to_string(date_id) + ", "
                         + to_string(time_id)
                         + ");");
 }
 
-::type::Timestamp DatabaseFunctions::GetLastRun(const ::apache::type::LastRunType &type) {
+::type::Timestamp DatabaseFunctions::GetLastRun() {
   BOOST_LOG_TRIVIAL(debug) << "apache::database::DatabaseFunctions::GetLastRun: Function call";
 
   const string date_sql =
       "select DATE_ID from APACHE_LAST_RUN_TABLE "
-      "  where"
-      "    RUN_TYPE=0"
+      "  where "
+      "    ID=0 "
       ";";
 
   const string time_sql =
       "select TIME_ID from APACHE_LAST_RUN_TABLE "
-      "  where"
-      "    RUN_TYPE=0"
+      "  where "
+      "    ID=0 "
       ";";
 
-  ::database::type::RowId date_id = sqlite_wrapper_->GetFirstInt64Column(date_sql);
-  ::database::type::RowId time_id = sqlite_wrapper_->GetFirstInt64Column(time_sql);
+  auto date_id = sqlite_wrapper_->GetFirstInt64Column(date_sql);
+  auto time_id = sqlite_wrapper_->GetFirstInt64Column(time_sql);
 
   return ::type::Timestamp::Create(general_database_functions_->GetTimeById(time_id),
                                    general_database_functions_->GetDateById(date_id));

@@ -32,10 +32,10 @@ KnnAnalyzerObjectPtr KnnAnalyzerObject::Create(::database::detail::GeneralDataba
 }
 
 void KnnAnalyzerObject::Analyze(const ::type::Timestamp &now) {
-  auto is_stats = apache_database_functions_->IsLastRunSet(LastRunType::ANALYZING);
+  auto is_stats = apache_database_functions_->IsLastRunSet();
 
   if (is_stats) {
-    auto last_analyze = apache_database_functions_->GetLastRun(LastRunType::ANALYZING);
+    auto last_analyze = apache_database_functions_->GetLastRun();
     BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::KnnAnalyzerObject::Analyze: Found last run time " << last_analyze;
 
     for (auto agent_name : general_database_functions_->GetAgentNames()) {

@@ -127,9 +127,9 @@ void PrepareStatisticsAnalyzerObject::CalculateStatistics(const AgentName &agent
 Timestamp PrepareStatisticsAnalyzerObject::GetLastStatisticsCalculationTimestamp() {
   Timestamp last_statistics_calculation;
 
-  auto is_stats = database_functions_->IsLastRunSet(LastRunType::STATISTICS_CALCULATION);
+  auto is_stats = database_functions_->IsLastRunSet();
   if (is_stats) {
-    last_statistics_calculation = database_functions_->GetLastRun(LastRunType::STATISTICS_CALCULATION);
+    last_statistics_calculation = database_functions_->GetLastRun();
     BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::PrepareStatisticsAnalyzerObject::GetLastRunTimestamp: Found last statistics calculation time " << last_statistics_calculation;
   }
   else {

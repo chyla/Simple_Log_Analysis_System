@@ -48,7 +48,7 @@ void ApacheAnalyzerObject::Analyze() {
     statistics->Prepare(now);
     knn_analyzer->Analyze(now);
 
-    database_functions_->SetLastRun(::apache::type::LastRunType::STATISTICS_CALCULATION, now);
+    database_functions_->SetLastRun(now);
   }
   else {
     BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::ApacheAnalyzerObject::Analyze: ShouldRun: false";
@@ -67,12 +67,12 @@ system_interface_(system_interface) {
 bool ApacheAnalyzerObject::ShouldRun(const ::type::Timestamp &now) {
   BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::ApacheAnalyzerObject::ShouldRun: Function call";
 
-  if (database_functions_->IsLastRunSet(::apache::type::LastRunType::STATISTICS_CALCULATION) == false) {
+  if (database_functions_->IsLastRunSet() == false) {
     BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::ApacheAnalyzerObject::ShouldRun: Last run not set, returning true";
     return true;
   }
 
-  auto last_run = database_functions_->GetLastRun(::apache::type::LastRunType::STATISTICS_CALCULATION);
+  auto last_run = database_functions_->GetLastRun();
   return (last_run.GetDate() != now.GetDate()) ||
       (::util::Distance(last_run.GetTime(), now.GetTime()) > detail::SESSION_LENGTH);
 }
