@@ -45,48 +45,6 @@ class apache_database_DatabaseFunctionsTest : public ::testing::Test {
   }
 };
 
-TEST_F(apache_database_DatabaseFunctionsTest, MarkStatisticsAsCreatedFor) {
-  EXPECT_CALL(*general_database_functions, AddAndGetDateId(example_date)).WillOnce(Return(1));
-  EXPECT_CALL(*sqlite_wrapper, Exec(_, nullptr, nullptr));
-
-  database_functions->MarkStatisticsAsCreatedFor(example_date);
-}
-
-TEST_F(apache_database_DatabaseFunctionsTest, AreStatisticsCreatedFor) {
-  EXPECT_CALL(*general_database_functions, GetDateId(example_date)).WillOnce(Return(1));
-  EXPECT_CALL(*sqlite_wrapper, Prepare(_, NotNull())).WillOnce(SetArgPointee<1>(DB_STATEMENT_EXAMPLE_PTR_VALUE));
-  EXPECT_CALL(*sqlite_wrapper, Step(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_ROW));
-  EXPECT_CALL(*sqlite_wrapper, ColumnInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 0)).WillOnce(Return(1));
-  EXPECT_CALL(*sqlite_wrapper, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE));
-
-  EXPECT_TRUE(database_functions->AreStatisticsCreatedFor(example_date));
-}
-
-TEST_F(apache_database_DatabaseFunctionsTest, AreStatisticsCreatedFor_WhenDateNotExists) {
-  EXPECT_CALL(*general_database_functions, GetDateId(example_date)).WillOnce(Return(-1));
-
-  EXPECT_FALSE(database_functions->AreStatisticsCreatedFor(example_date));
-}
-
-TEST_F(apache_database_DatabaseFunctionsTest, AreStatisticsCreatedFor_WhenRowNotExist) {
-  EXPECT_CALL(*general_database_functions, GetDateId(example_date)).WillOnce(Return(1));
-  EXPECT_CALL(*sqlite_wrapper, Prepare(_, NotNull())).WillOnce(SetArgPointee<1>(DB_STATEMENT_EXAMPLE_PTR_VALUE));
-  EXPECT_CALL(*sqlite_wrapper, Step(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_DONE));
-  EXPECT_CALL(*sqlite_wrapper, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE));
-
-  EXPECT_FALSE(database_functions->AreStatisticsCreatedFor(example_date));
-}
-
-TEST_F(apache_database_DatabaseFunctionsTest, AreStatisticsCreatedFor_WhenStatisticsNotExists) {
-  EXPECT_CALL(*general_database_functions, GetDateId(example_date)).WillOnce(Return(1));
-  EXPECT_CALL(*sqlite_wrapper, Prepare(_, NotNull())).WillOnce(SetArgPointee<1>(DB_STATEMENT_EXAMPLE_PTR_VALUE));
-  EXPECT_CALL(*sqlite_wrapper, Step(DB_STATEMENT_EXAMPLE_PTR_VALUE)).WillOnce(Return(SQLITE_ROW));
-  EXPECT_CALL(*sqlite_wrapper, ColumnInt(DB_STATEMENT_EXAMPLE_PTR_VALUE, 0)).WillOnce(Return(0));
-  EXPECT_CALL(*sqlite_wrapper, Finalize(DB_STATEMENT_EXAMPLE_PTR_VALUE));
-
-  EXPECT_FALSE(database_functions->AreStatisticsCreatedFor(example_date));
-}
-
 TEST_F(apache_database_DatabaseFunctionsTest, AddVirtualhostName) {
   EXPECT_CALL(*sqlite_wrapper, Prepare(_, NotNull())).WillOnce(SetArgPointee<1>(DB_STATEMENT_EXAMPLE_PTR_VALUE));
   EXPECT_CALL(*sqlite_wrapper, BindText(DB_STATEMENT_EXAMPLE_PTR_VALUE, 1, StrEq(example_virtualhost_name.c_str())));

@@ -112,25 +112,6 @@ void Database::CreateApacheSessionTable() {
   StatementCheckForError(ret, "Create APACHE_SESSION_TABLE error");
 }
 
-void Database::CreateApacheSessionExistsTable() {
-  BOOST_LOG_TRIVIAL(debug) << "database::Database::CreateApacheSessionTable: Function call";
-
-  if (is_open_ == false) {
-    BOOST_LOG_TRIVIAL(error) << "database::Database::CreateApacheSessionTable: Database is not open.";
-    throw exception::detail::CantExecuteSqlStatementException();
-  }
-
-  const char *sql =
-      "create table if not exists APACHE_SESSION_EXISTS_TABLE("
-      "  ID integer primary key, "
-      "  DATE_ID integer not null unique, "
-      "  EXIST integer not null unique, "
-      "  foreign key(DATE_ID) references DATE_TABLE(ID) "
-      ");";
-  int ret = sqlite_interface_->Exec(db_handle_, sql, nullptr, nullptr, nullptr);
-  StatementCheckForError(ret, "Create APACHE_SESSION_EXISTS_TABLE error");
-}
-
 void Database::CreateApacheAnomalyDetectionConfigurationTable() {
   BOOST_LOG_TRIVIAL(debug) << "database::Database::CreateApacheAnomalyDetectionConfigurationTable: Function call";
 
@@ -737,57 +718,6 @@ const ::apache::type::AnomalyDetectionConfiguration Database::GetApacheAnomalyDe
   StatementCheckForError(ret, "Finalize error");
 
   return configuration;
-}
-
-void Database::MarkApacheStatisticsAsCreatedFor(int day, int month, int year) {
-  BOOST_LOG_TRIVIAL(debug) << "database::Database::MarkApacheStatisticsAsCreatedFor: Function call";
-
-  if (is_open_ == false) {
-    BOOST_LOG_TRIVIAL(error) << "database::Database::MarkApacheStatisticsAsCreatedFor: Database is not open.";
-    throw exception::detail::CantExecuteSqlStatementException();
-  }
-
-  string sql =
-      "insert or replace into APACHE_SESSION_EXISTS_TABLE (DATE_ID, EXIST) "
-      "values ("
-      "  ( select ID from DATE_TABLE where DAY=" + to_string(day) + " and MONTH=" + to_string(month) + " and YEAR=" + to_string(year) + "),"
-      "  1 "
-      ");";
-
-  int ret = sqlite_interface_->Exec(db_handle_, sql.c_str(), nullptr, nullptr, nullptr);
-  StatementCheckForError(ret, "Create BASH_LOGS_TABLE error");
-}
-
-bool Database::IsApacheStatisticsCreatedFor(int day, int month, int year) {
-  BOOST_LOG_TRIVIAL(debug) << "database::Database::IsApacheStatisticsCreatedFor: Function call";
-  int ret;
-  bool created = false;
-
-  if (is_open_ == false) {
-    BOOST_LOG_TRIVIAL(error) << "database::Database::IsApacheStatisticsCreatedFor: Database is not open";
-    throw exception::detail::CantExecuteSqlStatementException();
-  }
-
-  string sql =
-      "select EXIST from APACHE_SESSION_EXISTS_TABLE "
-      "  where"
-      "    DATE_ID=( select ID from DATE_TABLE where DAY=" + to_string(day) + " and MONTH=" + to_string(month) + " and YEAR=" + to_string(year) + " )"
-      ";";
-
-  sqlite3_stmt *statement;
-  ret = sqlite_interface_->Prepare(db_handle_, sql.c_str(), -1, &statement, nullptr);
-  StatementCheckForError(ret, "Prepare insert error");
-
-  ret = sqlite_interface_->Step(statement);
-  StatementCheckForError(ret, "Step error");
-
-  if (ret == SQLITE_ROW)
-    created = static_cast<bool> (sqlite_interface_->ColumnInt(statement, 0));
-
-  ret = sqlite_interface_->Finalize(statement);
-  StatementCheckForError(ret, "Finalize error");
-
-  return created;
 }
 
 type::AgentNames Database::GetApacheAgentNames() {

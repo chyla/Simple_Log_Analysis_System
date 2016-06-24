@@ -61,9 +61,6 @@ class DatabaseFunctions : public detail::DatabaseFunctionsInterface {
   void MarkLearningSetWithIqrMethod(const ::database::type::RowId &agent_name_id,
                                     const ::database::type::RowId &virtualhost_name_id) override;
 
-  void MarkStatisticsAsCreatedFor(::type::Date date) override;
-  bool AreStatisticsCreatedFor(::type::Date date) override;
-
   virtual ::database::type::AgentNames GetAgentNames() override;
 
   virtual ::database::type::VirtualhostNames GetVirtualhostNames(::database::type::AgentName agent_name) override;

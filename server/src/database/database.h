@@ -39,8 +39,6 @@ class Database {
 
   void CreateApacheSessionTable();
 
-  void CreateApacheSessionExistsTable();
-
   void CreateApacheAnomalyDetectionConfigurationTable();
 
   void AddDate(int day, int month, int year) __attribute__((deprecated));
@@ -69,10 +67,6 @@ class Database {
   void SetApacheAnomalyDetectionConfiguration(const ::apache::type::AnomalyDetectionConfigurationEntry &configuration);
 
   const ::apache::type::AnomalyDetectionConfiguration GetApacheAnomalyDetectionConfiguration();
-
-  void MarkApacheStatisticsAsCreatedFor(int day, int month, int year) __attribute__((deprecated));
-
-  bool IsApacheStatisticsCreatedFor(int day, int month, int year) __attribute__((deprecated));
 
   type::AgentNames GetApacheAgentNames();
 

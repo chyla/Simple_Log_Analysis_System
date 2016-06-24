@@ -60,9 +60,6 @@ class DatabaseFunctionsInterface {
   virtual void MarkLearningSetWithIqrMethod(const ::database::type::RowId &agent_name_id,
                                             const ::database::type::RowId &virtualhost_name_id) = 0;
 
-  virtual void MarkStatisticsAsCreatedFor(::type::Date date) = 0;
-  virtual bool AreStatisticsCreatedFor(::type::Date date) = 0;
-
   virtual ::database::type::AgentNames GetAgentNames() = 0;
 
   virtual ::database::type::VirtualhostNames GetVirtualhostNames(::database::type::AgentName agent_name) = 0;
