@@ -81,6 +81,26 @@ void DatabaseFunctions::CreateTables() {
                         "  foreign key(SESSION_ID) references APACHE_SESSION_TABLE(ID), "
                         "  unique(AGENT_NAME_ID, VIRTUALHOST_NAME_ID, SESSION_ID) "
                         ");");
+
+  sqlite_wrapper_->Exec("create table if not exists APACHE_SESSION_TABLE ("
+                        "  ID integer primary key, "
+                        "  AGENT_NAME text,"
+                        "  VIRTUALHOST text, "
+                        "  CLIENT_IP text, "
+                        "  UTC_HOUR integer, "
+                        "  UTC_MINUTE integer, "
+                        "  UTC_SECOND integer, "
+                        "  UTC_DAY integer, "
+                        "  UTC_MONTH integer, "
+                        "  UTC_YEAR integer, "
+                        "  SESSION_LENGTH integer, "
+                        "  BANDWIDTH_USAGE integer, "
+                        "  REQUESTS_COUNT integer, "
+                        "  ERRORS_COUNT integer, "
+                        "  ERROR_PERCENTAGE real, "
+                        "  USER_AGENT text, "
+                        "  IS_ANOMALY integer "
+                        ");");
 }
 
 void DatabaseFunctions::RemoveAnomalyDetectionConfiguration(const ::database::type::RowId &id) {

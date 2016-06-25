@@ -59,38 +59,6 @@ void Database::CreateBashLogsTable() {
   StatementCheckForError(ret, "Create BASH_LOGS_TABLE error");
 }
 
-void Database::CreateApacheSessionTable() {
-  BOOST_LOG_TRIVIAL(debug) << "database::Database::CreateApacheSessionTable: Function call";
-
-  if (is_open_ == false) {
-    BOOST_LOG_TRIVIAL(error) << "database::Database::CreateApacheSessionTable: Database is not open.";
-    throw exception::detail::CantExecuteSqlStatementException();
-  }
-
-  const char *sql =
-      "create table if not exists APACHE_SESSION_TABLE("
-      "  ID integer primary key, "
-      "  AGENT_NAME text,"
-      "  VIRTUALHOST text, "
-      "  CLIENT_IP text, "
-      "  UTC_HOUR integer, "
-      "  UTC_MINUTE integer, "
-      "  UTC_SECOND integer, "
-      "  UTC_DAY integer, "
-      "  UTC_MONTH integer, "
-      "  UTC_YEAR integer, "
-      "  SESSION_LENGTH integer, "
-      "  BANDWIDTH_USAGE integer, "
-      "  REQUESTS_COUNT integer, "
-      "  ERRORS_COUNT integer, "
-      "  ERROR_PERCENTAGE real, "
-      "  USER_AGENT text, "
-      "  IS_ANOMALY integer "
-      ");";
-  int ret = sqlite_interface_->Exec(db_handle_, sql, nullptr, nullptr, nullptr);
-  StatementCheckForError(ret, "Create APACHE_SESSION_TABLE error");
-}
-
 void Database::CreateApacheAnomalyDetectionConfigurationTable() {
   BOOST_LOG_TRIVIAL(debug) << "database::Database::CreateApacheAnomalyDetectionConfigurationTable: Function call";
 

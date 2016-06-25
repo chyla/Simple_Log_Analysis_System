@@ -35,8 +35,6 @@ class Database {
 
   void CreateBashLogsTable();
 
-  void CreateApacheSessionTable();
-
   void CreateApacheAnomalyDetectionConfigurationTable();
 
   ::type::Date GetDateById(type::RowId id) __attribute__((deprecated));

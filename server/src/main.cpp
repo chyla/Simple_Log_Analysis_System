@@ -56,7 +56,6 @@ database::DatabasePtr CreateDatabase(database::SQLiteWrapperPtr sqlite_wrapper) 
   database::DatabasePtr database = database::Database::Create();
   database->Open(sqlite_wrapper->GetSQLiteHandle());
   database->CreateBashLogsTable();
-  database->CreateApacheSessionTable();
   database->CreateApacheAnomalyDetectionConfigurationTable();
 
   return database;
