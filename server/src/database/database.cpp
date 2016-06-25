@@ -59,29 +59,6 @@ void Database::CreateBashLogsTable() {
   StatementCheckForError(ret, "Create BASH_LOGS_TABLE error");
 }
 
-void Database::CreateApacheAnomalyDetectionConfigurationTable() {
-  BOOST_LOG_TRIVIAL(debug) << "database::Database::CreateApacheAnomalyDetectionConfigurationTable: Function call";
-
-  if (is_open_ == false) {
-    BOOST_LOG_TRIVIAL(error) << "database::Database::CreateApacheAnomalyDetectionConfigurationTable: Database is not open.";
-    throw exception::detail::CantExecuteSqlStatementException();
-  }
-
-  const char *sql =
-      "create table if not exists APACHE_ANOMALY_DETECTION_CONFIGURATION_TABLE("
-      "  ID integer primary key, "
-      "  AGENT_NAME text not null, "
-      "  VIRTUALHOST_NAME text not null, "
-      "  BEGIN_DATE_ID integer not null, "
-      "  END_DATE_ID integer not null, "
-      "  foreign key(BEGIN_DATE_ID) references DATE_TABLE(ID), "
-      "  foreign key(BEGIN_DATE_ID) references DATE_TABLE(ID),"
-      "  unique (AGENT_NAME, VIRTUALHOST_NAME) "
-      ");";
-  int ret = sqlite_interface_->Exec(db_handle_, sql, nullptr, nullptr, nullptr);
-  StatementCheckForError(ret, "Create APACHE_ANOMALY_DETECTION_CONFIGURATION_TABLE error");
-}
-
 ::type::Date Database::GetDateById(type::RowId id) {
   BOOST_LOG_TRIVIAL(debug) << "database::Database::GetDateById: Function call";
   int ret, day, month, year;

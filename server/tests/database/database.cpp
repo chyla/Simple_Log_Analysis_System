@@ -1411,23 +1411,3 @@ TEST(DatabaseTest, SetApacheSessionAsAnomaly_WhenExecFail) {
   ::database::type::RowIds ids{1};
   EXPECT_THROW(database->SetApacheSessionAsAnomaly(ids, ids), database::exception::detail::CantExecuteSqlStatementException);
 }
-
-TEST(DatabaseTest, CreateApacheAnomalyDetectionConfigurationTable) {
-  unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-
-  EXPECT_CALL(*sqlite_mock, Exec(DB_HANDLE_EXAMPLE_PTR_VALUE, NotNull(), IsNull(), IsNull(), IsNull())).WillOnce(Return(SQLITE_OK));
-
-  DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
-  database->CreateApacheAnomalyDetectionConfigurationTable();
-}
-
-TEST(DatabaseTest, CreateApacheAnomalyDetectionConfigurationTable_WhenExecFail) {
-  unique_ptr<mock::database::SQLite> sqlite_mock(new mock::database::SQLite());
-
-  EXPECT_CALL(*sqlite_mock, Exec(DB_HANDLE_EXAMPLE_PTR_VALUE, NotNull(), IsNull(), IsNull(), IsNull())).WillOnce(Return(SQLITE_NOMEM));
-
-  DatabasePtr database = Database::Create(move(sqlite_mock));
-  database->Open(DB_HANDLE_EXAMPLE_PTR_VALUE);
-  EXPECT_THROW(database->CreateApacheAnomalyDetectionConfigurationTable(), database::exception::detail::CantExecuteSqlStatementException);
-}
