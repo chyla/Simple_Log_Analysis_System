@@ -8,6 +8,8 @@
 
 #include <memory>
 
+#include <patlms/type/apache_log_entry.h>
+
 #include "detail/database_functions_interface.h"
 
 #include "src/database/detail/general_database_functions_interface.h"
@@ -37,6 +39,7 @@ class DatabaseFunctions : public detail::DatabaseFunctionsInterface {
   void RemoveAnomalyDetectionConfiguration(const ::database::type::RowId &id) override;
   const ::apache::type::AnomalyDetectionConfiguration GetAnomalyDetectionConfigurations() override;
 
+  void AddLogs(const ::type::ApacheLogs &log_entries) override;
   ::database::type::RowsCount GetUnusedLogsCount(std::string agent_name, std::string virtualhost_name) override;
   ::type::ApacheLogs GetUnusedLogs(std::string agent_name, std::string virtualhost_name,
                                    unsigned limit, ::database::type::RowsCount offset) override;

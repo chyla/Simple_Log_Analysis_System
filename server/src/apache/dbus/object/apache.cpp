@@ -115,7 +115,7 @@ DBusHandlerResult Apache::OwnMessageHandler(DBusConnection *connection, DBusMess
     general_database_functions_->AddAgentName(agent_name);
     apache_database_functions_->AddVirtualhostName(virtualhost);
 
-    database_->AddApacheLogs({log_entry});
+    apache_database_functions_->AddLogs({log_entry});
 
     DBusMessage *reply_msg = dbus_message_new_method_return(message);
     BOOST_LOG_TRIVIAL(debug) << "objects::Apache::OwnMessageHandler: Sending reply";

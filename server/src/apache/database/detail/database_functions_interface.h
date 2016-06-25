@@ -35,6 +35,7 @@ class DatabaseFunctionsInterface {
   virtual void RemoveAnomalyDetectionConfiguration(const ::database::type::RowId &id) = 0;
   virtual const ::apache::type::AnomalyDetectionConfiguration GetAnomalyDetectionConfigurations() = 0;
 
+  virtual void AddLogs(const ::type::ApacheLogs &log_entries) = 0;
   virtual ::database::type::RowsCount GetUnusedLogsCount(std::string agent_name, std::string virtualhost_name) = 0;
   virtual ::type::ApacheLogs GetUnusedLogs(std::string agent_name, std::string virtualhost_name,
                                            unsigned limit, ::database::type::RowsCount offset) = 0;

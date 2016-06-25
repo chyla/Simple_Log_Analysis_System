@@ -13,6 +13,7 @@
 
 #include "src/database/exception/detail/item_not_found_exception.h"
 #include "src/database/exception/detail/cant_execute_sql_statement_exception.h"
+#include "src/database/sqlite_wrapper.h"
 
 using ::type::Timestamp;
 using ::type::Time;
@@ -124,6 +125,52 @@ void DatabaseFunctions::RemoveAnomalyDetectionConfiguration(const ::database::ty
 const ::apache::type::AnomalyDetectionConfiguration DatabaseFunctions::GetAnomalyDetectionConfigurations() {
   BOOST_LOG_TRIVIAL(debug) << "apache::database::DatabaseFunctions::GetApacheAnomalyDetectionConfiguration: Function call";
   return db_->GetApacheAnomalyDetectionConfiguration();
+}
+
+void DatabaseFunctions::AddLogs(const ::type::ApacheLogs &log_entries) {
+  BOOST_LOG_TRIVIAL(debug) << "apache::DatabaseFunctions::AddLogs: Function call";
+
+  sqlite_wrapper_->Exec("begin transaction");
+
+  try {
+    for (const ::type::ApacheLogEntry &entry : log_entries) {
+      const char *sql = "insert into APACHE_LOGS_TABLE(AGENT_NAME, VIRTUALHOST, CLIENT_IP, UTC_HOUR, UTC_MINUTE, UTC_SECOND, UTC_DAY, UTC_MONTH, UTC_YEAR, REQUEST, STATUS_CODE, BYTES, USER_AGENT) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+      sqlite3_stmt *statement;
+      sqlite_wrapper_->Prepare(sql, &statement);
+      
+      try {
+        sqlite_wrapper_->BindText(statement, 1, entry.agent_name);
+        sqlite_wrapper_->BindText(statement, 2, entry.virtualhost);
+        sqlite_wrapper_->BindText(statement, 3, entry.client_ip);
+
+        sqlite_wrapper_->BindInt(statement, 4, entry.time.GetTime().GetHour());
+        sqlite_wrapper_->BindInt(statement, 5, entry.time.GetTime().GetMinute());
+        sqlite_wrapper_->BindInt(statement, 6, entry.time.GetTime().GetSecond());
+        sqlite_wrapper_->BindInt(statement, 7, entry.time.GetDate().GetDay());
+        sqlite_wrapper_->BindInt(statement, 8, entry.time.GetDate().GetMonth());
+        sqlite_wrapper_->BindInt(statement, 9, entry.time.GetDate().GetYear());
+
+        sqlite_wrapper_->BindText(statement, 10, entry.request);
+        sqlite_wrapper_->BindInt(statement, 11, entry.status_code);
+        sqlite_wrapper_->BindInt(statement, 12, entry.bytes);
+        sqlite_wrapper_->BindText(statement, 13, entry.user_agent);
+
+        sqlite_wrapper_->Step(statement);
+      }
+      catch (exception::DatabaseException &ex) {
+        sqlite_wrapper_->Finalize(statement);
+        throw;
+      }
+    
+      sqlite_wrapper_->Finalize(statement);
+    }
+
+    sqlite_wrapper_->Exec("end transaction");
+  }
+  catch (exception::DatabaseException &ex) {
+    sqlite_wrapper_->Exec("rollback");
+    throw;
+  }
 }
 
 ::database::type::RowsCount DatabaseFunctions::GetUnusedLogsCount(std::string agent_name, std::string virtualhost_name) {

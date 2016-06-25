@@ -39,8 +39,6 @@ class Database {
 
   bool AddBashLogs(const ::type::BashLogs &log_entries);
 
-  bool AddApacheLogs(const ::type::ApacheLogs &log_entries);
-
   bool AddApacheSessionStatistics(const ::apache::type::ApacheSessions &sessions);
 
   long long GetApacheSessionStatisticsCount(const std::string &agent_name, const std::string &virtualhost_name,
