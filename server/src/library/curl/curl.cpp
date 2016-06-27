@@ -5,10 +5,10 @@
 
 #include "curl.h"
 
-namespace mailer
+namespace library
 {
 
-namespace detail
+namespace curl
 {
 
 CURL* Curl::EasyInit() {

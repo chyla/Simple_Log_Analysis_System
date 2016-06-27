@@ -9,7 +9,10 @@
 #include <memory>
 #include <curl/curl.h>
 
-namespace mailer
+namespace library
+{
+
+namespace curl
 {
 
 namespace detail
@@ -35,6 +38,8 @@ class CurlInterface {
 };
 
 typedef std::shared_ptr<CurlInterface> CurlInterfacePtr;
+
+}
 
 }
 

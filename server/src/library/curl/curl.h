@@ -6,15 +6,15 @@
 #ifndef MAILER_DETAIL_CURL_H
 #define MAILER_DETAIL_CURL_H
 
-#include "curl_interface.h"
+#include "detail/curl_interface.h"
 
-namespace mailer
+namespace library
 {
 
-namespace detail
+namespace curl
 {
 
-class Curl : public CurlInterface {
+class Curl : public detail::CurlInterface {
  public:
   virtual ~Curl() = default;
 

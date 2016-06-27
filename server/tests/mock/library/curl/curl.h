@@ -6,20 +6,20 @@
 #ifndef MOCK_MAILER_DETAIL_CURL_H
 #define MOCK_MAILER_DETAIL_CURL_H
 
-#include "src/mailer/detail/curl_interface.h"
+#include "src/library/curl/detail/curl_interface.h"
 
 #include <gmock/gmock.h>
 
 namespace mock
 {
 
-namespace mailer
+namespace library
 {
 
-namespace detail
+namespace curl
 {
 
-class Curl : public ::mailer::detail::CurlInterface {
+class Curl : public ::library::curl::detail::CurlInterface {
  public:
   virtual ~Curl() = default;
 
