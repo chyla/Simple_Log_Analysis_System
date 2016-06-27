@@ -14,9 +14,14 @@ namespace library
 namespace curl
 {
 
+class Curl;
+typedef std::shared_ptr<Curl> CurlPtr;
+
 class Curl : public detail::CurlInterface {
  public:
   virtual ~Curl() = default;
+
+  static CurlPtr Create();
 
   CURL* EasyInit() override;
 
@@ -33,7 +38,6 @@ class Curl : public detail::CurlInterface {
   void EasyCleanup(CURL *handle) override;
 };
 
-typedef std::shared_ptr<Curl> CurlPtr;
 
 }
 

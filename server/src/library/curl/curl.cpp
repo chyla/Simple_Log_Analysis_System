@@ -11,6 +11,10 @@ namespace library
 namespace curl
 {
 
+CurlPtr Curl::Create() {
+  return std::make_shared<Curl>();
+}
+
 CURL* Curl::EasyInit() {
   return curl_easy_init();
 }
