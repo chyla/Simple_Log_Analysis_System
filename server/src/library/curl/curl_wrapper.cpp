@@ -10,6 +10,7 @@
 #include "curl.h"
 #include "exception/detail/curl_object_not_created_exception.h"
 #include "exception/detail/curl_general_exception.h"
+#include "exception/detail/slist_append_exception.h"
 
 using namespace std;
 
@@ -29,12 +30,12 @@ CurlWrapperPtr CurlWrapper::Create(detail::CurlInterfacePtr curl_interface) {
 }
 
 CURL* CurlWrapper::Init() {
-  BOOST_LOG_TRIVIAL(debug) << "mailer::CurlWrapper::CurlWrapper: Constructor call";
+  BOOST_LOG_TRIVIAL(debug) << "curl::CurlWrapper::CurlWrapper: Constructor call";
 
   auto curl_handler = curl_interface_->EasyInit();
 
   if (curl_handler == nullptr) {
-    BOOST_LOG_TRIVIAL(error) << "mailer::CurlWrapper::CurlWrapper: Curl object not created";
+    BOOST_LOG_TRIVIAL(error) << "curl::CurlWrapper::CurlWrapper: Curl object not created";
     throw exception::detail::CurlObjectNotCreatedException();
   }
 
@@ -42,12 +43,12 @@ CURL* CurlWrapper::Init() {
 }
 
 void CurlWrapper::SetOpt(CURL* curl_handler, CURLoption option, void *parameter) {
-  BOOST_LOG_TRIVIAL(debug) << "mailer::CurlWrapper::SetOpt: Function call";
+  BOOST_LOG_TRIVIAL(debug) << "curl::CurlWrapper::SetOpt: Function call";
 
   auto return_code = curl_interface_->EasySetOpt(curl_handler, option, parameter);
 
   if (return_code != CURLE_OK) {
-    BOOST_LOG_TRIVIAL(error) << "mailer::CurlWrapper::SetOpt: EasySetOpt fail,"
+    BOOST_LOG_TRIVIAL(error) << "curl::CurlWrapper::SetOpt: EasySetOpt fail,"
         " error code: " << return_code << ";"
         " message: " << curl_interface_->EasyStrError(return_code);
     throw exception::detail::CurlGeneralException();
@@ -55,12 +56,12 @@ void CurlWrapper::SetOpt(CURL* curl_handler, CURLoption option, void *parameter)
 }
 
 void CurlWrapper::Perform(CURL* curl_handler) {
-  BOOST_LOG_TRIVIAL(debug) << "mailer::CurlWrapper::Perform: Function call";
+  BOOST_LOG_TRIVIAL(debug) << "curl::CurlWrapper::Perform: Function call";
 
   auto return_code = curl_interface_->EasyPerform(curl_handler);
 
   if (return_code != CURLE_OK) {
-    BOOST_LOG_TRIVIAL(error) << "mailer::CurlWrapper::Perform: EasyPerform fail,"
+    BOOST_LOG_TRIVIAL(error) << "curl::CurlWrapper::Perform: EasyPerform fail,"
         " error code: " << return_code << ";"
         " message: " << curl_interface_->EasyStrError(return_code);
     throw exception::detail::CurlGeneralException();
@@ -68,9 +69,28 @@ void CurlWrapper::Perform(CURL* curl_handler) {
 }
 
 void CurlWrapper::Cleanup(CURL* curl_handler) {
-  BOOST_LOG_TRIVIAL(debug) << "mailer::CurlWrapper::~CurlWrapper: Function call";
+  BOOST_LOG_TRIVIAL(debug) << "curl::CurlWrapper::Cleanup: Function call";
 
   curl_interface_->EasyCleanup(curl_handler);
+}
+
+curl_slist* CurlWrapper::SListAppend(curl_slist *list, const std::string &text) {
+  BOOST_LOG_TRIVIAL(debug) << "curl::CurlWrapper::SListAppend: Function call";
+
+  auto new_list = curl_interface_->SListAppend(list, text.c_str());
+
+  if (new_list == nullptr) {
+    BOOST_LOG_TRIVIAL(error) << "curl::CurlWrapper::SListAppend: list == nullptr";
+    throw exception::detail::SListAppendException();
+  }
+
+  return new_list;
+}
+
+void CurlWrapper::SListFreeAll(curl_slist *list) {
+  BOOST_LOG_TRIVIAL(debug) << "curl::CurlWrapper::SListFreeAll: Function call";
+
+  curl_interface_->SListFreeAll(list);
 }
 
 CurlWrapper::CurlWrapper(detail::CurlInterfacePtr curl_interface) :

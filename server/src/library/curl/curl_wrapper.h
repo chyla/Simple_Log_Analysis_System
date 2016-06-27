@@ -31,6 +31,10 @@ class CurlWrapper : public detail::CurlWrapperInterface {
   void Perform(CURL* curl_handler) override;
 
   void Cleanup(CURL* curl_handler) override;
+  
+  curl_slist* SListAppend(curl_slist *list, const std::string &text) override;
+
+  void SListFreeAll(curl_slist *list) override;
 
  private:
   CurlWrapper(detail::CurlInterfacePtr curl_interface);

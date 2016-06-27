@@ -9,6 +9,7 @@
 #include "curl_interface.h"
 
 #include <memory>
+#include <string>
 
 namespace library
 {
@@ -30,6 +31,11 @@ class CurlWrapperInterface {
   virtual void Perform(CURL* curl_handler) = 0;
 
   virtual void Cleanup(CURL* curl_handler) = 0;
+
+  virtual curl_slist* SListAppend(curl_slist *list, const std::string &text) = 0;
+
+  virtual void SListFreeAll(curl_slist *list) = 0;
+
 };
 
 typedef std::shared_ptr<CurlWrapperInterface> CurlWrapperInterfacePtr;
