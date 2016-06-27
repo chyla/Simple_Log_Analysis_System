@@ -3,12 +3,13 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef MOCK_MAILER_DETAIL_CURL_H
-#define MOCK_MAILER_DETAIL_CURL_H
+#ifndef MOCK_LIBRARY_CURL_CURL_H
+#define MOCK_LIBRARY_CURL_CURL_H
 
 #include "src/library/curl/detail/curl_interface.h"
 
 #include <gmock/gmock.h>
+#include <memory>
 
 namespace mock
 {
@@ -19,9 +20,16 @@ namespace library
 namespace curl
 {
 
+class Curl;
+typedef std::shared_ptr<Curl> CurlPtr;
+
 class Curl : public ::library::curl::detail::CurlInterface {
  public:
   virtual ~Curl() = default;
+
+  static CurlPtr Create() {
+    return std::make_shared<Curl>();
+  }
 
   MOCK_METHOD0(EasyInit, CURL*());
 
@@ -44,4 +52,4 @@ class Curl : public ::library::curl::detail::CurlInterface {
 
 }
 
-#endif /* MOCK_MAILER_DETAIL_CURL_H */
+#endif /* MOCK_LIBRARY_CURL_CURL_H */

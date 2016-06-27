@@ -3,8 +3,8 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef MAILER_DETAIL_CURL_INTERFACE_H
-#define MAILER_DETAIL_CURL_INTERFACE_H
+#ifndef LIBRARY_CURL_DETAIL_CURL_INTERFACE_H
+#define LIBRARY_CURL_DETAIL_CURL_INTERFACE_H
 
 #include <memory>
 #include <curl/curl.h>
@@ -45,4 +45,4 @@ typedef std::shared_ptr<CurlInterface> CurlInterfacePtr;
 
 }
 
-#endif /* MAILER_DETAIL_CURL_INTERFACE_H */
+#endif /* LIBRARY_CURL_DETAIL_CURL_INTERFACE_H */

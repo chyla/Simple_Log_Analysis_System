@@ -1,6 +1,6 @@
 AUTOMAKE_OPTIONS	= subdir-objects
 
-AM_CPPFLAGS		= $(PTHREAD_CFLAGS) @BOOST_CPPFLAGS@ -DSYSCONFDIR="\"$(sysconfdir)\"" -DLOGDIR="\"$(localstatedir)/log/\"" $(DBUS_CFLAGS) $(SQLite3_CFLAGS) -I${top_srcdir}/third_party
+AM_CPPFLAGS		= $(PTHREAD_CFLAGS) @BOOST_CPPFLAGS@ -DSYSCONFDIR="\"$(sysconfdir)\"" -DLOGDIR="\"$(localstatedir)/log/\"" $(DBUS_CFLAGS) $(SQLite3_CFLAGS) @LIBCURL_CPPFLAGS@ -I${top_srcdir}/third_party
 
 AM_LDFLAGS		= @BOOST_LDFLAGS@
 
@@ -13,6 +13,7 @@ tests_SOURCES	= main.cpp \
 		    database/database.cpp \
 		    database/sqlite_wrapper.cpp \
 		    database/general_database_functions.cpp \
+		    library/curl/curl_wrapper.cpp \
 		    web/command_executor.cpp \
 		    web/command_receiver.cpp \
 		    program_options/web/command_executor_object.cpp
@@ -25,6 +26,8 @@ OBJECT_FILES	= \
 		    ../src/database/sqlite_wrapper.o \
 		    ../src/database/general_database_functions.o \
 		    ../src/database/detail/sqlite.o \
+		    ../src/library/curl/curl.o \
+		    ../src/library/curl/curl_wrapper.o \
 		    ../src/web/command_executor.o \
 		    ../src/web/command_receiver.o \
 		    ../src/program_options/type/options.o \
@@ -45,7 +48,8 @@ tests_LDADD	= $(OBJECT_FILES) \
 			@PTHREAD_CFLAGS@ \
 			$(DBUS_LIBS) \
 			$(SQLite3_LIBS) \
-			@LIBPATLMS_LIBS@
+			@LIBPATLMS_LIBS@ \
+			@LIBCURL@
 else
 tests_SOURCES	= main.cpp
 endif
