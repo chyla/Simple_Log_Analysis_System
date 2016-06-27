@@ -172,7 +172,7 @@ PKG_CHECK_MODULES([DBUS], dbus-1 >= 1.6.18)
 
 PKG_CHECK_MODULES([SQLite3], sqlite3 >= 3.8.2)
 
-LIBCURL_CHECK_CONFIG(["yes"], 7.38, [], [AC_MSG_ERROR([libcurl not found])])
+LIBCURL_CHECK_CONFIG(["yes"], 7.35, [], [AC_MSG_ERROR([libcurl not found])])
 AC_MSG_CHECKING([whether libcurl supports SMTP protocol])
 if test "x$libcurl_protocol_SMTP" != "xyes"; then
     AC_MSG_RESULT([no])
