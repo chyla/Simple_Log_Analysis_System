@@ -33,6 +33,8 @@ class Curl : public CurlInterface {
   void EasyCleanup(CURL *handle) override;
 };
 
+typedef std::shared_ptr<Curl> CurlPtr;
+
 }
 
 }

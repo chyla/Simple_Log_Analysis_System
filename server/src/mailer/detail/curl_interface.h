@@ -6,6 +6,7 @@
 #ifndef MAILER_DETAIL_CURL_INTERFACE_H
 #define MAILER_DETAIL_CURL_INTERFACE_H
 
+#include <memory>
 #include <curl/curl.h>
 
 namespace mailer
@@ -32,6 +33,8 @@ class CurlInterface {
 
   virtual void EasyCleanup(CURL *handle) = 0;
 };
+
+typedef std::shared_ptr<CurlInterface> CurlInterfacePtr;
 
 }
 
