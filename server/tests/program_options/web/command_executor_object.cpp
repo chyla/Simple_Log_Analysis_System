@@ -26,6 +26,13 @@ class ProgramOptionsCommandExecutorObjectTest : public ::testing::Test {
                             "/var/lib/database_file",
                             "127.0.0.1",
                             8124,
+                            true,
+                            "address",
+                            9955,
+                            "user",
+                            "password",
+                            "from",
+                            "to",
                             false)) {
   }
 

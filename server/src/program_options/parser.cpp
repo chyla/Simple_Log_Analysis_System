@@ -24,6 +24,13 @@ help_options_("Help options") {
       ("databasefile", value<string>(), "database file path")
       ("web_address", value<string>(), "web listen address")
       ("web_port", value<unsigned>(), "web listen port")
+      ("mail_smtp_secure", value<bool>(), "use SSL")
+      ("mail_server_address", value<string>(), "smtp server address")
+      ("mail_server_port", value<unsigned>(), "mail server port")
+      ("mail_server_user", value<string>(), "mail server user")
+      ("mail_server_password", value<string>(), "mail server user password")
+      ("mail_to", value<string>(), "mail to")
+      ("mail_from", value<string>(), "mail from")
       ("nodaemon", "don't start as daemon")
       ("enable-debug", "change log-level to debug")
       ;
@@ -80,6 +87,13 @@ Options Parser::Parse() {
                                     variables["databasefile"].as<string>(),
                                     variables["web_address"].as<string>(),
                                     variables["web_port"].as<unsigned>(),
+                                    variables["mail_smtp_secure"].as<bool>(),
+                                    variables["mail_server_address"].as<string>(),
+                                    variables["mail_server_port"].as<unsigned>(),
+                                    variables["mail_server_user"].as<string>(),
+                                    variables["mail_server_password"].as<string>(),
+                                    variables["mail_to"].as<string>(),
+                                    variables["mail_from"].as<string>(),
                                     static_cast<bool> (variables.count("enable-debug")));
 
   return options;

@@ -24,6 +24,13 @@ const Options Options::Create(const std::string &run_as_user,
                               const std::string &databasefile_path,
                               const std::string &web_address,
                               unsigned web_port,
+                              bool mail_smtp_secure,
+                              std::string mail_server_address,
+                              unsigned mail_server_port,
+                              std::string mail_server_user,
+                              std::string mail_server_password,
+                              std::string mail_to,
+                              std::string mail_from,
                               bool debug) {
   Options options;
   options.run_as_user_ = run_as_user;
@@ -37,6 +44,13 @@ const Options Options::Create(const std::string &run_as_user,
   options.databasefile_path_ = databasefile_path;
   options.web_address_ = web_address;
   options.web_port_ = web_port;
+  options.mail_smtp_secure_ = mail_smtp_secure;
+  options.mail_server_address_ = mail_server_address;
+  options.mail_server_port_ = mail_server_port;
+  options.mail_server_user_ = mail_server_user;
+  options.mail_server_password_ = mail_server_password;
+  options.mail_to_ = mail_to;
+  options.mail_from_ = mail_from;
   options.debug_ = debug;
 
   return options;
@@ -88,6 +102,34 @@ const std::string& Options::GetWebAddress() const {
 
 const unsigned& Options::GetWebPort() const {
   return web_port_;
+}
+
+bool Options::IsMailSmtpSecure() const {
+  return mail_smtp_secure_;
+}
+
+const std::string& Options::GetMailServerAddress() const {
+  return mail_server_address_;
+}
+
+unsigned Options::GetMailServerPort() const {
+  return mail_server_port_;
+}
+
+const std::string& Options::GetMailServerUser() const {
+  return mail_server_user_;
+}
+
+const std::string& Options::GetMailServerPassword() const {
+  return mail_server_password_;
+}
+
+const std::string& Options::GetMailTo() const {
+  return mail_to_;
+}
+
+const std::string& Options::GetMailFrom() const {
+  return mail_from_;
 }
 
 }

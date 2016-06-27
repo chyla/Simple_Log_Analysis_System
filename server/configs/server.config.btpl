@@ -26,6 +26,17 @@ dbus_family=ipv4
 web_address=127.0.0.1
 web_port=1033
 
+#
+# SMTP server configuration
+#
+mail_smtp_secure=1
+mail_server_address=example.com
+mail_server_port=465
+mail_server_user=user
+mail_server_password=password
+mail_to=<admin@example.com>
+mail_from=<slas@example.com>
+
 # Files configuration
 pidfile=%localstatedir%/run/%package%/patlms-server.pid
 logfile=%localstatedir%/log/%package%/server.log
