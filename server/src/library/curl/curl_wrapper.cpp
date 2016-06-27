@@ -28,16 +28,23 @@ CurlWrapperPtr CurlWrapper::Create(detail::CurlInterfacePtr curl_interface) {
   return CurlWrapperPtr(new CurlWrapper(curl_interface));
 }
 
-CurlWrapper::~CurlWrapper() {
-  BOOST_LOG_TRIVIAL(debug) << "mailer::CurlWrapper::~CurlWrapper: Function call";
+CURL* CurlWrapper::Init() {
+  BOOST_LOG_TRIVIAL(debug) << "mailer::CurlWrapper::CurlWrapper: Constructor call";
 
-  curl_interface_->EasyCleanup(curl_handler_);
+  auto curl_handler = curl_interface_->EasyInit();
+
+  if (curl_handler == nullptr) {
+    BOOST_LOG_TRIVIAL(error) << "mailer::CurlWrapper::CurlWrapper: Curl object not created";
+    throw exception::detail::CurlObjectNotCreatedException();
+  }
+
+  return curl_handler;
 }
 
-void CurlWrapper::SetOpt(CURLoption option, void *parameter) {
+void CurlWrapper::SetOpt(CURL* curl_handler, CURLoption option, void *parameter) {
   BOOST_LOG_TRIVIAL(debug) << "mailer::CurlWrapper::SetOpt: Function call";
 
-  auto return_code = curl_interface_->EasySetOpt(curl_handler_, option, parameter);
+  auto return_code = curl_interface_->EasySetOpt(curl_handler, option, parameter);
 
   if (return_code != CURLE_OK) {
     BOOST_LOG_TRIVIAL(error) << "mailer::CurlWrapper::SetOpt: EasySetOpt fail,"
@@ -47,10 +54,10 @@ void CurlWrapper::SetOpt(CURLoption option, void *parameter) {
   }
 }
 
-void CurlWrapper::Perform() {
+void CurlWrapper::Perform(CURL* curl_handler) {
   BOOST_LOG_TRIVIAL(debug) << "mailer::CurlWrapper::Perform: Function call";
 
-  auto return_code = curl_interface_->EasyPerform(curl_handler_);
+  auto return_code = curl_interface_->EasyPerform(curl_handler);
 
   if (return_code != CURLE_OK) {
     BOOST_LOG_TRIVIAL(error) << "mailer::CurlWrapper::Perform: EasyPerform fail,"
@@ -60,18 +67,17 @@ void CurlWrapper::Perform() {
   }
 }
 
+void CurlWrapper::Cleanup(CURL* curl_handler) {
+  BOOST_LOG_TRIVIAL(debug) << "mailer::CurlWrapper::~CurlWrapper: Function call";
+
+  curl_interface_->EasyCleanup(curl_handler);
+}
+
 CurlWrapper::CurlWrapper(detail::CurlInterfacePtr curl_interface) :
 curl_interface_(curl_interface) {
-  BOOST_LOG_TRIVIAL(debug) << "mailer::CurlWrapper::CurlWrapper: Constructor call";
-
-  curl_handler_ = curl_interface->EasyInit();
-
-  if (curl_handler_ == nullptr) {
-    BOOST_LOG_TRIVIAL(error) << "mailer::CurlWrapper::CurlWrapper: Curl object not created";
-    throw exception::detail::CurlObjectNotCreatedException();
-  }
 }
 
 }
 
 }
+

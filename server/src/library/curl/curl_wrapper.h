@@ -19,20 +19,23 @@ typedef std::shared_ptr<CurlWrapper> CurlWrapperPtr;
 
 class CurlWrapper : public detail::CurlWrapperInterface {
  public:
-  virtual ~CurlWrapper();
+  virtual ~CurlWrapper() = default;
 
   static CurlWrapperPtr Create();
   static CurlWrapperPtr Create(detail::CurlInterfacePtr curl_interface);
 
-  void SetOpt(CURLoption option, void *parameter) override;
+  CURL* Init() override;
+  
+  void SetOpt(CURL* curl_handler, CURLoption option, void *parameter) override;
 
-  void Perform() override;
+  void Perform(CURL* curl_handler) override;
+
+  void Cleanup(CURL* curl_handler) override;
 
  private:
   CurlWrapper(detail::CurlInterfacePtr curl_interface);
 
   detail::CurlInterfacePtr curl_interface_;
-  CURL *curl_handler_;
 };
 
 }

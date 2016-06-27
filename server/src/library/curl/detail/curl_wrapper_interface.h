@@ -23,9 +23,13 @@ class CurlWrapperInterface {
  public:
   virtual ~CurlWrapperInterface() = default;
 
-  virtual void SetOpt(CURLoption option, void *parameter) = 0;
+  virtual CURL* Init() = 0;
 
-  virtual void Perform() = 0;
+  virtual void SetOpt(CURL* curl_handler, CURLoption option, void *parameter) = 0;
+
+  virtual void Perform(CURL* curl_handler) = 0;
+
+  virtual void Cleanup(CURL* curl_handler) = 0;
 };
 
 typedef std::shared_ptr<CurlWrapperInterface> CurlWrapperInterfacePtr;
