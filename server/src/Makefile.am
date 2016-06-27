@@ -17,6 +17,7 @@ patlms_server_SOURCES	= main.cpp \
 				database/sqlite_wrapper.cpp \
 				database/general_database_functions.cpp \
 				database/detail/sqlite.cpp \
+				mailer/detail/curl.cpp \
 				program_options/parser.cpp \
 				program_options/type/options.cpp \
 				program_options/web/command_executor_object.cpp \
