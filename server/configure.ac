@@ -12,6 +12,7 @@ m4_include([m4/ax_boost_date_time.m4])
 m4_include([m4/ax_boost_regex.m4])
 m4_include([m4/ax_boost_log.m4])
 m4_include([m4/ax_boost_log_setup.m4])
+m4_include([m4/libcurl.m4])
 
 AC_PREREQ([2.69])
 AC_INIT(PATLMS,
@@ -170,6 +171,21 @@ AX_BOOST_LOG_SETUP
 PKG_CHECK_MODULES([DBUS], dbus-1 >= 1.6.18)
 
 PKG_CHECK_MODULES([SQLite3], sqlite3 >= 3.8.2)
+
+LIBCURL_CHECK_CONFIG(["yes"], 7.38, [], [AC_MSG_ERROR([libcurl not found])])
+AC_MSG_CHECKING([whether libcurl supports SMTP protocol])
+if test "x$libcurl_protocol_SMTP" != "xyes"; then
+    AC_MSG_RESULT([no])
+    AC_MSG_ERROR([Support for SMTP in curl is required])
+fi
+AC_MSG_RESULT([yes])
+
+AC_MSG_CHECKING([whether libcurl supports ssl])
+if test "x$libcurl_feature_SSL" != "xyes"; then
+    AC_MSG_RESULT([no])
+    AC_MSG_ERROR([Support for SSL in curl is required])
+fi
+AC_MSG_RESULT([yes])
 
 AC_MSG_CHECKING([Checking for PATLMS library])
 save_LIBS=$LIBS

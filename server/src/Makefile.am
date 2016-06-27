@@ -1,6 +1,6 @@
 AUTOMAKE_OPTIONS	= subdir-objects
 
-AM_CPPFLAGS		= $(PTHREAD_CFLAGS) @BOOST_CPPFLAGS@ -DSYSCONFFILE="\"$(appconffile)\"" $(DBUS_CFLAGS) $(SQLite3_CFLAGS) -I${top_srcdir}/third_party
+AM_CPPFLAGS		= $(PTHREAD_CFLAGS) @BOOST_CPPFLAGS@ -DSYSCONFFILE="\"$(appconffile)\"" $(DBUS_CFLAGS) $(SQLite3_CFLAGS) @LIBCURL_CPPFLAGS@ -I${top_srcdir}/third_party
 
 AM_LDFLAGS		= @BOOST_LDFLAGS@ $(DBUS_LIBS)
 
@@ -39,4 +39,5 @@ patlms_server_LDADD	= \
 				@PTHREAD_LIBS@ \
 				@PTHREAD_CFLAGS@ \
 				$(DBUS_LIBS) \
-				$(SQLite3_LIBS)
+				$(SQLite3_LIBS) \
+				@LIBCURL@
