@@ -87,7 +87,8 @@ main(int argc, char *argv[]) {
     return 1;
   }
   catch (std::exception &ex) {
-    std::cerr << "Error: Missing or wrong program option.\n\n";
+    std::cerr << "Error: Missing or wrong program option.\n";
+    std::cerr << "Error detail: " << ex.what() << "\n\n";
     std::cout << "Usage: " << argv[0] << " " << "[options]\n";
     std::cerr << p.GetHelpMessage() << "\n";
     return 1;
