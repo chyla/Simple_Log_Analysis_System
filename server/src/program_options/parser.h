@@ -29,6 +29,8 @@ class Parser {
   std::string config_file_path_;
 
   options_description general_options_, help_options_, all_options_;
+
+  type::SecurityOption ToSecurityOption(const std::string &s);
 };
 
 }

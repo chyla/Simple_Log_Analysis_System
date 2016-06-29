@@ -24,7 +24,7 @@ const Options Options::Create(const std::string &run_as_user,
                               const std::string &databasefile_path,
                               const std::string &web_address,
                               unsigned web_port,
-                              bool mail_smtp_secure,
+                              SecurityOption mail_server_secure,
                               std::string mail_server_address,
                               unsigned mail_server_port,
                               std::string mail_server_user,
@@ -44,7 +44,7 @@ const Options Options::Create(const std::string &run_as_user,
   options.databasefile_path_ = databasefile_path;
   options.web_address_ = web_address;
   options.web_port_ = web_port;
-  options.mail_smtp_secure_ = mail_smtp_secure;
+  options.mail_server_secure_ = mail_server_secure;
   options.mail_server_address_ = mail_server_address;
   options.mail_server_port_ = mail_server_port;
   options.mail_server_user_ = mail_server_user;
@@ -104,8 +104,8 @@ const unsigned& Options::GetWebPort() const {
   return web_port_;
 }
 
-bool Options::IsMailSmtpSecure() const {
-  return mail_smtp_secure_;
+SecurityOption Options::GetMailServerSecure() const {
+  return mail_server_secure_;
 }
 
 const std::string& Options::GetMailServerAddress() const {

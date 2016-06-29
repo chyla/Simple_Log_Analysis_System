@@ -3,6 +3,8 @@
 
 #include <string>
 
+#include "security_option.h"
+
 namespace program_options
 {
 
@@ -24,7 +26,7 @@ class Options {
                               const std::string &databasefile_path,
                               const std::string &web_address,
                               unsigned web_port,
-                              bool mail_smtp_secure,
+                              SecurityOption mail_server_secure,
                               std::string mail_server_address,
                               unsigned mail_server_port,
                               std::string mail_server_user,
@@ -50,7 +52,7 @@ class Options {
   const std::string& GetWebAddress() const;
   const unsigned& GetWebPort() const;
 
-  bool IsMailSmtpSecure() const;
+  SecurityOption GetMailServerSecure() const;
   const std::string& GetMailServerAddress() const;
   unsigned GetMailServerPort() const;
   const std::string& GetMailServerUser() const;
@@ -67,7 +69,7 @@ class Options {
   std::string web_address_;
   unsigned web_port_;
 
-  bool mail_smtp_secure_;
+  SecurityOption mail_server_secure_;
   std::string mail_server_address_;
   unsigned mail_server_port_;
   std::string mail_server_user_;

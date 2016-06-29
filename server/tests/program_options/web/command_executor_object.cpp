@@ -26,7 +26,7 @@ class ProgramOptionsCommandExecutorObjectTest : public ::testing::Test {
                             "/var/lib/database_file",
                             "127.0.0.1",
                             8124,
-                            true,
+                            SecurityOption::NONE,
                             "address",
                             9955,
                             "user",

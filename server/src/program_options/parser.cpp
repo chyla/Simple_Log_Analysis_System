@@ -24,7 +24,7 @@ help_options_("Help options") {
       ("databasefile", value<string>(), "database file path")
       ("web_address", value<string>(), "web listen address")
       ("web_port", value<unsigned>(), "web listen port")
-      ("mail_smtp_secure", value<bool>(), "use SSL")
+      ("mail_server_secure", value<string>(), "connection type NONE, SSL, STARTTLS")
       ("mail_server_address", value<string>(), "smtp server address")
       ("mail_server_port", value<unsigned>(), "mail server port")
       ("mail_server_user", value<string>(), "mail server user")
@@ -87,7 +87,7 @@ Options Parser::Parse() {
                                     variables["databasefile"].as<string>(),
                                     variables["web_address"].as<string>(),
                                     variables["web_port"].as<unsigned>(),
-                                    variables["mail_smtp_secure"].as<bool>(),
+                                    ToSecurityOption(variables["mail_server_secure"].as<string>()),
                                     variables["mail_server_address"].as<string>(),
                                     variables["mail_server_port"].as<unsigned>(),
                                     variables["mail_server_user"].as<string>(),
@@ -97,6 +97,15 @@ Options Parser::Parse() {
                                     static_cast<bool> (variables.count("enable-debug")));
 
   return options;
+}
+
+type::SecurityOption Parser::ToSecurityOption(const std::string &s) {
+  std::map<string, type::SecurityOption> stso;
+  stso["STARTTLS"] = type::SecurityOption::STARTTLS;
+  stso["SSL"] = type::SecurityOption::SSL;
+  stso["NONE"] = type::SecurityOption::NONE;
+
+  return stso.at(s);
 }
 
 }
