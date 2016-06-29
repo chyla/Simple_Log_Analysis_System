@@ -50,6 +50,32 @@ inline Day ToDay(int day_of_week) {
   }
 }
 
+inline const std::string ToString(const Day &day) {
+  switch (day)
+  {
+  case Day::SUNDAY:
+    return "Sun";
+
+  case Day::MONDAY:
+    return "Mon";
+
+  case Day::TUESDAY:
+    return "Tue";
+
+  case Day::WEDNESDAY:
+    return "Wed";
+
+  case Day::THURSDAY:
+    return "Thu";
+
+  case Day::FRIDAY:
+    return "Fri";
+
+  case Day::SATURDAY:
+    return "Sat";
+  }
+}
+
 }
 
 #endif /* DAY_H */
