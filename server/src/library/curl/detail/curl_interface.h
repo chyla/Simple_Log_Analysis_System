@@ -7,6 +7,7 @@
 #define LIBRARY_CURL_DETAIL_CURL_INTERFACE_H
 
 #include <memory>
+#include <string>
 #include <curl/curl.h>
 
 namespace library
@@ -25,6 +26,16 @@ class CurlInterface {
   virtual CURL* EasyInit() = 0;
 
   virtual CURLcode EasySetOpt(CURL *handle, CURLoption option, void *parameter) = 0;
+
+  virtual CURLcode EasySetOpt(CURL *handle, CURLoption option, size_t(*f)(void*, size_t, size_t, void*)) = 0;
+
+  virtual CURLcode EasySetOpt(CURL *handle, CURLoption option, const std::string &parameter) = 0;
+
+  virtual CURLcode EasySetOpt(CURL *handle, CURLoption option, const char *parameter) = 0;
+
+  virtual CURLcode EasySetOpt(CURL *handle, CURLoption option, long parameter) = 0;
+
+  virtual CURLcode EasySetOpt(CURL *handle, CURLoption option, curl_slist *parameter) = 0;
 
   virtual curl_slist* SListAppend(curl_slist *list, const char *string) = 0;
 

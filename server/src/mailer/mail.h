@@ -32,6 +32,7 @@ class Mail : public detail::MailInterface {
 
   const ::mailer::type::RawMailText Compose() const override;
 
+  const ::mailer::type::MailAddress &GetFrom() const override;
   const ::mailer::type::MailRecipients& GetToRecipients() const override;
   const ::mailer::type::MailRecipients& GetCcRecipients() const override;
 

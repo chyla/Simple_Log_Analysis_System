@@ -28,6 +28,16 @@ class CurlWrapperInterface {
 
   virtual void SetOpt(CURL* curl_handler, CURLoption option, void *parameter) = 0;
 
+  virtual void SetOpt(CURL* curl_handler, CURLoption option, size_t(*f)(void*, size_t, size_t, void*)) = 0;
+
+  virtual void SetOpt(CURL* curl_handler, CURLoption option, const std::string &parameter) = 0;
+
+  virtual void SetOpt(CURL* curl_handler, CURLoption option, const char *parameter) = 0;
+
+  virtual void SetOpt(CURL* curl_handler, CURLoption option, long parameter) = 0;
+
+  virtual void SetOpt(CURL* curl_handler, CURLoption option, curl_slist *parameter) = 0;
+
   virtual void Perform(CURL* curl_handler) = 0;
 
   virtual void Cleanup(CURL* curl_handler) = 0;

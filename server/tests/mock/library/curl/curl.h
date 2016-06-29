@@ -35,6 +35,16 @@ class Curl : public ::library::curl::detail::CurlInterface {
 
   MOCK_METHOD3(EasySetOpt, CURLcode(CURL *handle, CURLoption option, void *parameter));
 
+  MOCK_METHOD3(EasySetOpt, CURLcode(CURL *handle, CURLoption option, size_t(*f)(void*, size_t, size_t, void*)));
+
+  MOCK_METHOD3(EasySetOpt, CURLcode(CURL *handle, CURLoption option, const std::string &parameter));
+
+  MOCK_METHOD3(EasySetOpt, CURLcode(CURL *handle, CURLoption option, const char *parameter));
+
+  MOCK_METHOD3(EasySetOpt, CURLcode(CURL *handle, CURLoption option, long parameter));
+
+  MOCK_METHOD3(EasySetOpt, CURLcode(CURL *handle, CURLoption option, curl_slist *parameter));
+
   MOCK_METHOD2(SListAppend, curl_slist*(curl_slist *list, const char *string));
 
   MOCK_METHOD1(EasyPerform, CURLcode(CURL *easy_handle));

@@ -38,6 +38,7 @@ class MailInterface {
   virtual void SetSubject(const ::mailer::type::MailSubject &subject) = 0;
   virtual void SetBody(const ::mailer::type::MailBody &body) = 0;
 
+  virtual const ::mailer::type::MailAddress &GetFrom() const = 0;
   virtual const ::mailer::type::MailRecipients& GetToRecipients() const = 0;
   virtual const ::mailer::type::MailRecipients& GetCcRecipients() const = 0;
 

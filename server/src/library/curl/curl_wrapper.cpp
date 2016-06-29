@@ -20,6 +20,20 @@ namespace library
 namespace curl
 {
 
+template<class T>
+void SetOptTemplate(detail::CurlInterfacePtr curl_interface, CURL* curl_handler, CURLoption option, T parameter) {
+  BOOST_LOG_TRIVIAL(debug) << "curl::CurlWrapper::SetOpt: Function call";
+
+  auto return_code = curl_interface->EasySetOpt(curl_handler, option, parameter);
+
+  if (return_code != CURLE_OK) {
+    BOOST_LOG_TRIVIAL(error) << "curl::CurlWrapper::SetOpt: EasySetOpt fail,"
+        " error code: " << return_code << ";"
+        " message: " << curl_interface->EasyStrError(return_code);
+    throw exception::detail::CurlGeneralException();
+  }
+}
+
 CurlWrapperPtr CurlWrapper::Create() {
   auto curl_interface = Curl::Create();
   return CurlWrapperPtr(new CurlWrapper(curl_interface));
@@ -43,16 +57,27 @@ CURL* CurlWrapper::Init() {
 }
 
 void CurlWrapper::SetOpt(CURL* curl_handler, CURLoption option, void *parameter) {
-  BOOST_LOG_TRIVIAL(debug) << "curl::CurlWrapper::SetOpt: Function call";
+  SetOptTemplate(curl_interface_, curl_handler, option, parameter);
+}
 
-  auto return_code = curl_interface_->EasySetOpt(curl_handler, option, parameter);
+void CurlWrapper::SetOpt(CURL* curl_handler, CURLoption option, size_t(*f)(void*, size_t, size_t, void*)) {
+  SetOptTemplate(curl_interface_, curl_handler, option, f);
+}
 
-  if (return_code != CURLE_OK) {
-    BOOST_LOG_TRIVIAL(error) << "curl::CurlWrapper::SetOpt: EasySetOpt fail,"
-        " error code: " << return_code << ";"
-        " message: " << curl_interface_->EasyStrError(return_code);
-    throw exception::detail::CurlGeneralException();
-  }
+void CurlWrapper::SetOpt(CURL* curl_handler, CURLoption option, const std::string &parameter) {
+  SetOptTemplate(curl_interface_, curl_handler, option, parameter);
+}
+
+void CurlWrapper::SetOpt(CURL* curl_handler, CURLoption option, const char *parameter) {
+  SetOptTemplate(curl_interface_, curl_handler, option, parameter);
+}
+
+void CurlWrapper::SetOpt(CURL* curl_handler, CURLoption option, long parameter) {
+  SetOptTemplate(curl_interface_, curl_handler, option, parameter);
+}
+
+void CurlWrapper::SetOpt(CURL* curl_handler, CURLoption option, curl_slist *parameter) {
+  SetOptTemplate(curl_interface_, curl_handler, option, parameter);
 }
 
 void CurlWrapper::Perform(CURL* curl_handler) {

@@ -27,6 +27,16 @@ class Curl : public detail::CurlInterface {
 
   CURLcode EasySetOpt(CURL *handle, CURLoption option, void *parameter) override;
 
+  CURLcode EasySetOpt(CURL *handle, CURLoption option, size_t(*f)(void*, size_t, size_t, void*)) override;
+
+  CURLcode EasySetOpt(CURL *handle, CURLoption option, const std::string &parameter) override;
+
+  CURLcode EasySetOpt(CURL *handle, CURLoption option, const char *parameter) override;
+
+  CURLcode EasySetOpt(CURL *handle, CURLoption option, long parameter) override;
+
+  CURLcode EasySetOpt(CURL *handle, CURLoption option, curl_slist *parameter) override;
+
   curl_slist* SListAppend(curl_slist *list, const char *string) override;
 
   CURLcode EasyPerform(CURL *easy_handle) override;

@@ -20,6 +20,7 @@ patlms_server_SOURCES	= main.cpp \
 				library/curl/curl.cpp \
 				library/curl/curl_wrapper.cpp \
 				mailer/mail.cpp \
+				mailer/mailer.cpp \
 				program_options/parser.cpp \
 				program_options/type/options.cpp \
 				program_options/web/command_executor_object.cpp \

@@ -35,6 +35,16 @@ class CurlWrapper : public ::library::curl::detail::CurlWrapperInterface {
 
   MOCK_METHOD3(SetOpt, void(CURL* curl_handler, CURLoption option, void *parameter));
 
+  MOCK_METHOD3(SetOpt, void(CURL* curl_handler, CURLoption option, size_t(*f)(void*, size_t, size_t, void*)));
+
+  MOCK_METHOD3(SetOpt, void(CURL* curl_handler, CURLoption option, const std::string &parameter));
+
+  MOCK_METHOD3(SetOpt, void(CURL* curl_handler, CURLoption option, const char *parameter));
+
+  MOCK_METHOD3(SetOpt, void(CURL* curl_handler, CURLoption option, long parameter));
+
+  MOCK_METHOD3(SetOpt, void(CURL* curl_handler, CURLoption option, curl_slist *parameter));
+
   MOCK_METHOD1(Perform, void(CURL* curl_handler));
 
   MOCK_METHOD1(Cleanup, void(CURL* curl_handler));

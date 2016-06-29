@@ -23,6 +23,26 @@ CURLcode Curl::EasySetOpt(CURL *handle, CURLoption option, void *parameter) {
   return curl_easy_setopt(handle, option, parameter);
 }
 
+CURLcode Curl::EasySetOpt(CURL *handle, CURLoption option, size_t(*f)(void*, size_t, size_t, void*)) {
+  return curl_easy_setopt(handle, option, f);
+}
+
+CURLcode Curl::EasySetOpt(CURL *handle, CURLoption option, const std::string &parameter) {
+  return curl_easy_setopt(handle, option, parameter.c_str());
+}
+
+CURLcode Curl::EasySetOpt(CURL *handle, CURLoption option, const char *parameter) {
+  return curl_easy_setopt(handle, option, parameter);
+}
+
+CURLcode Curl::EasySetOpt(CURL *handle, CURLoption option, long parameter) {
+  return curl_easy_setopt(handle, option, parameter);
+}
+
+CURLcode Curl::EasySetOpt(CURL *handle, CURLoption option, curl_slist *parameter) {
+  return curl_easy_setopt(handle, option, parameter);
+}
+
 curl_slist* Curl::SListAppend(curl_slist *list, const char *string) {
   return curl_slist_append(list, string);
 }
