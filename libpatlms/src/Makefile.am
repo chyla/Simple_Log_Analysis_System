@@ -54,6 +54,7 @@ pkginclude_typedir = $(pkgincludedir)/type
 pkginclude_type_HEADERS = \
 					$(top_srcdir)/include/patlms/type/time.h \
 					$(top_srcdir)/include/patlms/type/date.h \
+					$(top_srcdir)/include/patlms/type/day.h \
 					$(top_srcdir)/include/patlms/type/timestamp.h \
 					$(top_srcdir)/include/patlms/type/bash_log_entry.h \
 					$(top_srcdir)/include/patlms/type/apache_log_entry.h
@@ -65,7 +66,8 @@ pkginclude_type_exception_HEADERS = \
 pkginclude_type_exception_detaildir = $(pkgincludedir)/type/exception/detail
 pkginclude_type_exception_detail_HEADERS = \
  					$(top_srcdir)/include/patlms/type/exception/detail/wrong_path_exception.h \
- 					$(top_srcdir)/include/patlms/type/exception/detail/wrong_time_value_exception.h
+ 					$(top_srcdir)/include/patlms/type/exception/detail/wrong_time_value_exception.h \
+ 					$(top_srcdir)/include/patlms/type/exception/detail/wrong_day_of_week_exception.h
 
 pkginclude_networkdir = $(pkgincludedir)/network
 pkginclude_network_HEADERS = \
