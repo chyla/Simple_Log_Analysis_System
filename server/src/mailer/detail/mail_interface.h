@@ -17,6 +17,7 @@
 #include "src/mailer/type/raw_mail_text.h"
 #include "src/mailer/type/mail_subject.h"
 #include "src/mailer/type/mail_body.h"
+#include "src/mailer/type/mail_recipients.h"
 
 namespace mailer
 {
@@ -36,6 +37,9 @@ class MailInterface {
 
   virtual void SetSubject(const ::mailer::type::MailSubject &subject) = 0;
   virtual void SetBody(const ::mailer::type::MailBody &body) = 0;
+
+  virtual const ::mailer::type::MailRecipients& GetToRecipients() const = 0;
+  virtual const ::mailer::type::MailRecipients& GetCcRecipients() const = 0;
 
   virtual const ::mailer::type::RawMailText Compose() const = 0;
 };

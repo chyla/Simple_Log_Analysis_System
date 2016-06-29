@@ -32,6 +32,9 @@ class Mail : public detail::MailInterface {
 
   const ::mailer::type::RawMailText Compose() const override;
 
+  const ::mailer::type::MailRecipients& GetToRecipients() const override;
+  const ::mailer::type::MailRecipients& GetCcRecipients() const override;
+
  private:
   ::type::Day day_;
   ::type::Timestamp timestamp_;

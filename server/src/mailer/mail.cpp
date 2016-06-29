@@ -58,10 +58,18 @@ const ::mailer::type::RawMailText Mail::Compose() const {
   raw_mail += "Subject: " + subject_ + "\r\n";
 
   raw_mail += "\r\n";
-  
+
   raw_mail += body_;
-  
+
   return raw_mail;
+}
+
+const ::mailer::type::MailRecipients& Mail::GetToRecipients() const {
+  return to_;
+}
+
+const ::mailer::type::MailRecipients& Mail::GetCcRecipients() const {
+  return cc_;
 }
 
 const std::string Mail::MonthToString(int month) const {
