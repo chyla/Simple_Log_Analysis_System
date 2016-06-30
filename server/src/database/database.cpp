@@ -185,7 +185,7 @@ bool Database::AddApacheSessionStatistics(const ::apache::type::ApacheSessions &
 
   for (const ::apache::type::ApacheSessionEntry &entry : sessions) {
     const char *sql = "insert into APACHE_SESSION_TABLE(AGENT_NAME, VIRTUALHOST, CLIENT_IP, UTC_HOUR, UTC_MINUTE, UTC_SECOND, UTC_DAY, UTC_MONTH,"
-        "                                 UTC_YEAR, SESSION_LENGTH, BANDWIDTH_USAGE, REQUESTS_COUNT, ERRORS_COUNT, ERROR_PERCENTAGE, USER_AGENT, IS_ANOMALY)"
+        "                                 UTC_YEAR, SESSION_LENGTH, BANDWIDTH_USAGE, REQUESTS_COUNT, ERRORS_COUNT, ERROR_PERCENTAGE, USER_AGENT, CLASSIFICATION)"
         " values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     sqlite3_stmt *statement;
     ret = sqlite_interface_->Prepare(db_handle_, sql, -1, &statement, nullptr);
@@ -236,8 +236,8 @@ bool Database::AddApacheSessionStatistics(const ::apache::type::ApacheSessions &
     ret = sqlite_interface_->BindText(statement, 15, entry.useragent.c_str(), -1, nullptr);
     StatementCheckForErrorAndRollback(ret, "Bind useragent error");
 
-    ret = sqlite_interface_->BindInt(statement, 16, static_cast<int> (entry.is_anomaly));
-    StatementCheckForErrorAndRollback(ret, "Bind is_anomaly error");
+    ret = sqlite_interface_->BindInt(statement, 16, static_cast<int> (entry.classification));
+    StatementCheckForErrorAndRollback(ret, "Bind classification error");
 
     ret = sqlite_interface_->Step(statement);
     if (ret == SQLITE_BUSY) {
@@ -280,7 +280,7 @@ long long Database::GetApacheSessionStatisticsCount(const std::string &agent_nam
   }
 
   string sql =
-      "select ID, AGENT_NAME, VIRTUALHOST, CLIENT_IP, UTC_HOUR, UTC_MINUTE, UTC_SECOND, UTC_DAY, UTC_MONTH, UTC_YEAR, SESSION_LENGTH, BANDWIDTH_USAGE, REQUESTS_COUNT, ERRORS_COUNT, ERROR_PERCENTAGE, USER_AGENT, IS_ANOMALY "
+      "select ID, AGENT_NAME, VIRTUALHOST, CLIENT_IP, UTC_HOUR, UTC_MINUTE, UTC_SECOND, UTC_DAY, UTC_MONTH, UTC_YEAR, SESSION_LENGTH, BANDWIDTH_USAGE, REQUESTS_COUNT, ERRORS_COUNT, ERROR_PERCENTAGE, USER_AGENT, CLASSIFICATION "
       " from APACHE_SESSION_TABLE "
       "  where"
       "    ("
@@ -333,7 +333,7 @@ long long Database::GetApacheSessionStatisticsCount(const std::string &agent_nam
       entry.errors_count = sqlite_interface_->ColumnInt64(statement, 13);
       entry.error_percentage = sqlite_interface_->ColumnDouble(statement, 14);
       entry.useragent = TextHelper(sqlite_interface_->ColumnText(statement, 15));
-      entry.is_anomaly = static_cast<bool> (sqlite_interface_->ColumnInt(statement, 16));
+      entry.classification = static_cast< ::database::type::Classification> (sqlite_interface_->ColumnInt(statement, 16));
 
       sessions.push_back(entry);
     }
@@ -356,10 +356,12 @@ void Database::SetApacheSessionAsAnomaly(type::RowIds all, type::RowIds anomalie
 
   string sql = "begin transaction; ";
   for (auto id : all)
-    sql += "update APACHE_SESSION_TABLE set IS_ANOMALY=0 where ID=" + to_string(id) + "; ";
+    sql += "update APACHE_SESSION_TABLE set CLASSIFICATION=" + std::to_string(static_cast<int> (::database::type::Classification::NORMAL)) +
+    " where ID=" + to_string(id) + "; ";
 
   for (auto id : anomalies)
-    sql += "update APACHE_SESSION_TABLE set IS_ANOMALY=1 where ID=" + to_string(id) + "; ";
+    sql += "update APACHE_SESSION_TABLE set CLASSIFICATION=" + std::to_string(static_cast<int> (::database::type::Classification::ANOMALY)) +
+    " where ID=" + to_string(id) + "; ";
 
   sql += "end transaction; ";
 
@@ -378,7 +380,7 @@ void Database::SetApacheSessionAsAnomaly(type::RowIds all, type::RowIds anomalie
   }
 
   string sql =
-      "select ID, AGENT_NAME, VIRTUALHOST, CLIENT_IP, UTC_HOUR, UTC_MINUTE, UTC_SECOND, UTC_DAY, UTC_MONTH, UTC_YEAR, SESSION_LENGTH, BANDWIDTH_USAGE, REQUESTS_COUNT, ERRORS_COUNT, ERROR_PERCENTAGE, USER_AGENT, IS_ANOMALY "
+      "select ID, AGENT_NAME, VIRTUALHOST, CLIENT_IP, UTC_HOUR, UTC_MINUTE, UTC_SECOND, UTC_DAY, UTC_MONTH, UTC_YEAR, SESSION_LENGTH, BANDWIDTH_USAGE, REQUESTS_COUNT, ERRORS_COUNT, ERROR_PERCENTAGE, USER_AGENT, CLASSIFICATION "
       " from APACHE_SESSION_TABLE "
       "  where"
       "    ID=" + to_string(id) +
@@ -416,7 +418,7 @@ void Database::SetApacheSessionAsAnomaly(type::RowIds all, type::RowIds anomalie
     entry.errors_count = sqlite_interface_->ColumnInt64(statement, 13);
     entry.error_percentage = sqlite_interface_->ColumnDouble(statement, 14);
     entry.useragent = TextHelper(sqlite_interface_->ColumnText(statement, 15));
-    entry.is_anomaly = static_cast<bool> (sqlite_interface_->ColumnInt(statement, 16));
+    entry.classification = static_cast< ::database::type::Classification> (sqlite_interface_->ColumnInt(statement, 16));
   }
 
   ret = sqlite_interface_->Finalize(statement);

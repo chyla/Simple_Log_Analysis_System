@@ -32,7 +32,7 @@ class NearestNeighboursTableTest : public ::testing::Test {
     session.session_length = 50;
 
     s1.id = 2;
-    s1.is_anomaly = false;
+    s1.classification = ::database::type::Classification::NORMAL;
     s1.bandwidth_usage = 150;
     s1.error_percentage = 150;
     s1.requests_count = 150;
@@ -43,7 +43,7 @@ class NearestNeighboursTableTest : public ::testing::Test {
     n1.session_id = 2;
 
     s2.id = 3;
-    s2.is_anomaly = true;
+    s2.classification = ::database::type::Classification::ANOMALY;
     s2.bandwidth_usage = 200;
     s2.error_percentage = 200;
     s2.requests_count = 200;
@@ -54,7 +54,7 @@ class NearestNeighboursTableTest : public ::testing::Test {
     n2.session_id = 3;
 
     s3.id = 4;
-    s3.is_anomaly = false;
+    s3.classification = ::database::type::Classification::NORMAL;
     s3.bandwidth_usage = 250;
     s3.error_percentage = 250;
     s3.requests_count = 250;
@@ -65,7 +65,7 @@ class NearestNeighboursTableTest : public ::testing::Test {
     n3.session_id = 4;
 
     s4.id = 5;
-    s4.is_anomaly = false;
+    s4.classification = ::database::type::Classification::ANOMALY;
     s4.bandwidth_usage = 300;
     s4.error_percentage = 300;
     s4.requests_count = 300;

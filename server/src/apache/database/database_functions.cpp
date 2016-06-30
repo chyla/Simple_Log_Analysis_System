@@ -100,7 +100,7 @@ void DatabaseFunctions::CreateTables() {
                         "  ERRORS_COUNT integer, "
                         "  ERROR_PERCENTAGE real, "
                         "  USER_AGENT text, "
-                        "  IS_ANOMALY integer "
+                        "  CLASSIFICATION integer default 0 "
                         ");");
 
   sqlite_wrapper_->Exec("create table if not exists APACHE_ANOMALY_DETECTION_CONFIGURATION_TABLE ("
@@ -137,7 +137,7 @@ void DatabaseFunctions::AddLogs(const ::type::ApacheLogs &log_entries) {
       const char *sql = "insert into APACHE_LOGS_TABLE(AGENT_NAME, VIRTUALHOST, CLIENT_IP, UTC_HOUR, UTC_MINUTE, UTC_SECOND, UTC_DAY, UTC_MONTH, UTC_YEAR, REQUEST, STATUS_CODE, BYTES, USER_AGENT) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
       sqlite3_stmt *statement;
       sqlite_wrapper_->Prepare(sql, &statement);
-      
+
       try {
         sqlite_wrapper_->BindText(statement, 1, entry.agent_name);
         sqlite_wrapper_->BindText(statement, 2, entry.virtualhost);
@@ -161,7 +161,7 @@ void DatabaseFunctions::AddLogs(const ::type::ApacheLogs &log_entries) {
         sqlite_wrapper_->Finalize(statement);
         throw;
       }
-    
+
       sqlite_wrapper_->Finalize(statement);
     }
 
@@ -381,7 +381,7 @@ bool DatabaseFunctions::IsSessionStatisticsWithoutLearningSetExists(const std::s
   auto virtualhost_id = GetVirtualhostNameId(virtualhost_name);
 
   string sql =
-      "select ID, AGENT_NAME, VIRTUALHOST, CLIENT_IP, UTC_HOUR, UTC_MINUTE, UTC_SECOND, UTC_DAY, UTC_MONTH, UTC_YEAR, SESSION_LENGTH, BANDWIDTH_USAGE, REQUESTS_COUNT, ERRORS_COUNT, ERROR_PERCENTAGE, USER_AGENT, IS_ANOMALY "
+      "select ID, AGENT_NAME, VIRTUALHOST, CLIENT_IP, UTC_HOUR, UTC_MINUTE, UTC_SECOND, UTC_DAY, UTC_MONTH, UTC_YEAR, SESSION_LENGTH, BANDWIDTH_USAGE, REQUESTS_COUNT, ERRORS_COUNT, ERROR_PERCENTAGE, USER_AGENT, CLASSIFICATION "
       " from APACHE_SESSION_TABLE "
       "  where"
       "    ("
@@ -431,7 +431,7 @@ bool DatabaseFunctions::IsSessionStatisticsWithoutLearningSetExists(const std::s
       entry.errors_count = sqlite_wrapper_->ColumnInt64(statement, 13);
       entry.error_percentage = sqlite_wrapper_->ColumnDouble(statement, 14);
       entry.useragent = sqlite_wrapper_->ColumnText(statement, 15);
-      entry.is_anomaly = static_cast<bool> (sqlite_wrapper_->ColumnInt(statement, 16));
+      entry.classification = static_cast< ::database::type::Classification> (sqlite_wrapper_->ColumnInt(statement, 16));
 
       sessions.push_back(entry);
     }
@@ -450,7 +450,9 @@ bool DatabaseFunctions::IsSessionStatisticsWithoutLearningSetExists(const std::s
 void DatabaseFunctions::MarkSessionStatisticAsAnomaly(const ::database::type::RowId &id) {
   BOOST_LOG_TRIVIAL(debug) << "apache::database::DatabaseFunctions::MarkSessionStatisticAsAnomaly: Function call";
 
-  auto sql = "update APACHE_SESSION_TABLE set IS_ANOMALY=1 where ID=" + to_string(id) + ";";
+  auto sql = "update APACHE_SESSION_TABLE "
+      "set CLASSIFICATION=" + std::to_string(static_cast<int> (::database::type::Classification::ANOMALY)) +
+      " where ID=" + to_string(id) + ";";
 
   sqlite_wrapper_->Exec(sql);
 }
@@ -460,7 +462,8 @@ void DatabaseFunctions::ClearAnomalyMarksInLearningSet(const ::database::type::R
   BOOST_LOG_TRIVIAL(debug) << "apache::database::DatabaseFunctions::ClearAnomalyMarksInLearningSet: Function call";
 
   auto sql =
-      "update APACHE_SESSION_TABLE set IS_ANOMALY=0 where "
+      "update APACHE_SESSION_TABLE set CLASSIFICATION=" + std::to_string(static_cast<int> (::database::type::Classification::ANOMALY)) +
+      " where "
       "  ID in ( "
       "         select SESSION_ID from APACHE_LEARNING_SESSIONS where "
       "             AGENT_NAME_ID=" + to_string(agent_name_id) +
@@ -668,7 +671,7 @@ std::string DatabaseFunctions::GetVirtualhostNameById(const ::database::type::Ro
   int ret;
 
   string sql =
-      "select APACHE_SESSION_TABLE.ID, AGENT_NAME, VIRTUALHOST, CLIENT_IP, UTC_HOUR, UTC_MINUTE, UTC_SECOND, UTC_DAY, UTC_MONTH, UTC_YEAR, SESSION_LENGTH, BANDWIDTH_USAGE, REQUESTS_COUNT, ERRORS_COUNT, ERROR_PERCENTAGE, USER_AGENT, IS_ANOMALY "
+      "select APACHE_SESSION_TABLE.ID, AGENT_NAME, VIRTUALHOST, CLIENT_IP, UTC_HOUR, UTC_MINUTE, UTC_SECOND, UTC_DAY, UTC_MONTH, UTC_YEAR, SESSION_LENGTH, BANDWIDTH_USAGE, REQUESTS_COUNT, ERRORS_COUNT, ERROR_PERCENTAGE, USER_AGENT, CLASSIFICATION "
       " from APACHE_SESSION_TABLE "
       " join APACHE_LEARNING_SESSIONS on APACHE_SESSION_TABLE.ID=APACHE_LEARNING_SESSIONS.SESSION_ID "
       "  where"
@@ -708,7 +711,7 @@ std::string DatabaseFunctions::GetVirtualhostNameById(const ::database::type::Ro
       entry.errors_count = sqlite_wrapper_->ColumnInt64(statement, 13);
       entry.error_percentage = sqlite_wrapper_->ColumnDouble(statement, 14);
       entry.useragent = sqlite_wrapper_->ColumnText(statement, 15);
-      entry.is_anomaly = static_cast<bool> (sqlite_wrapper_->ColumnInt(statement, 16));
+      entry.classification = static_cast< ::database::type::Classification> (sqlite_wrapper_->ColumnInt(statement, 16));
 
       sessions.push_back(entry);
     }

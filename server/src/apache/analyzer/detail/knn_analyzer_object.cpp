@@ -120,11 +120,11 @@ void KnnAnalyzerObject::AnalyzeSessions(const ::database::type::AgentName &agent
       is_anomaly_detected_ = true;
       stats.anomaly_sessions_ids.push_back(session.id);
 
-      session.is_anomaly = true;
+      session.classification = ::database::type::Classification::ANOMALY;
       apache_database_functions_->MarkSessionStatisticAsAnomaly(session.id);
     }
 
-    BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::KnnAnalyzerObject::AnalyzeSessions: Is session with id " << session.id << " anomaly? - " << session.is_anomaly;
+    BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::KnnAnalyzerObject::AnalyzeSessions: Is session with id " << session.id << " anomaly? - " << (session.classification == ::database::type::Classification::ANOMALY);
   }
 }
 

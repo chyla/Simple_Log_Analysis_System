@@ -3,6 +3,7 @@
 from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response, render, redirect
 from django.core.urlresolvers import reverse
+from util.type import Classification
 import util
 
 
@@ -86,6 +87,9 @@ def configure_anomaly_detection_select_data_range(request):
                    'begin_date' : begin_date,
                    'end_date' : end_date,
                    'sessions' : sessions,
+                   'CLASSIFICATION_ANOMALY' : Classification.ANOMALY,
+                   'CLASSIFICATION_NORMAL' : Classification.NORMAL,
+                   'CLASSIFICATION_UNKNOWN' : Classification.UNKNOWN,
                    })
 
 def configure_anomaly_detection_select_data_range_save_settings(request):
@@ -130,6 +134,9 @@ def configure_anomaly_detection_correct_sessions_marks(request, *args, **kwargs)
                    'agent_name' : agent_name,
                    'virtualhost_name' : virtualhost_name,
                    'sessions' : sessions,
+                   'CLASSIFICATION_ANOMALY' : Classification.ANOMALY,
+                   'CLASSIFICATION_NORMAL' : Classification.NORMAL,
+                   'CLASSIFICATION_UNKNOWN' : Classification.UNKNOWN,
                    })
 
 def configure_anomaly_detection_correct_sessions_marks_automatically_mark_anomalies(request):
@@ -191,6 +198,9 @@ def review_detection_results_show_results(request):
                    'begin_date' : begin_date,
                    'end_date' : end_date,
                    'sessions' : sessions,
+                   'CLASSIFICATION_ANOMALY' : Classification.ANOMALY,
+                   'CLASSIFICATION_NORMAL' : Classification.NORMAL,
+                   'CLASSIFICATION_UNKNOWN' : Classification.UNKNOWN,
                    })
 
 def remove_configuration(request):

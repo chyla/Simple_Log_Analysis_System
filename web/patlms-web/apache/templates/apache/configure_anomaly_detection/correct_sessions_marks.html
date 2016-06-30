@@ -59,10 +59,12 @@
             <tbody>
             {% for s in sessions %}
                 <tr id="table_row_{{ s.id }}"
-                    {% if s.is_anomaly %}
+                    {% if s.classification == CLASSIFICATION_ANOMALY %}
                         class="analysis_results_row_anomaly"
-                    {% else %}
-                        class="analysis_results_row_ok"
+                    {% elif s.classification == CLASSIFICATION_NORMAL %}
+                        class="analysis_results_row_normal"
+                    {% elif s.classification == CLASSIFICATION_UNKNOWN %}
+                        class="analysis_results_row_unknown"
                     {% endif %}
                 >
                     <td>{{ s.id }}</td>
@@ -76,7 +78,7 @@
                     <td>
                         <input type="hidden" name="rows_ids" value="{{ s.id }}">
                         <input id="table_check_button_{{ s.id }}" type="checkbox" name="checks" value="{{ s.id }}"
-                         {% if s.is_anomaly %}
+                         {% if s.classification == CLASSIFICATION_ANOMALY %}
                             checked="checked" 
                          {% endif %}
                             onclick="change_table_row_color({{ s.id }})"

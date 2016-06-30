@@ -164,7 +164,7 @@ ApacheSessionEntry PrepareStatisticsAnalyzerObject::CreateSession(const ApacheLo
   session.client_ip = log_entry.client_ip;
   session.errors_count = static_cast<int> (IsErrorCode(log_entry.status_code));
   session.error_percentage = session.errors_count * 100;
-  session.is_anomaly = false;
+  session.classification = ::database::type::Classification::UNKNOWN;
   session.requests_count = 1;
   session.session_length = 0;
   session.session_start = log_entry.time;

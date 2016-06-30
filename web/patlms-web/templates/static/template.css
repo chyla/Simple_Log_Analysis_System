@@ -230,11 +230,19 @@ input.slas-form-input {
   background-color: #f2f2f2;
 }
 
-.analysis_results_row_ok {
+.analysis_results_row_unknown {
+  background-color: #d6d6d6;
+}
+
+.analysis_results_row_unknown:hover {
+  background-color: #e0e0e0 !important;
+}
+
+.analysis_results_row_normal {
   background-color: #bdeaac;
 }
 
-.analysis_results_row_ok:hover {
+.analysis_results_row_normal:hover {
   background-color: #d1eaca !important;
 }
 
@@ -244,6 +252,24 @@ input.slas-form-input {
 
 .analysis_results_row_anomaly:hover {
   background-color: #f2b2b2 !important;
+}
+
+.btn-classification-unknown {
+  color: #fff;
+  background-color: #919191;
+  border-color: #919191;
+}
+
+.btn-classification-normal {
+  color: #fff;
+  background-color: #5cb85c;
+  border-color: #4cae4c;
+}
+
+.btn-classification-anomaly {
+  color: #fff;
+  background-color: #d9534f;
+  border-color: #d43f3a;
 }
 
 .help-button,

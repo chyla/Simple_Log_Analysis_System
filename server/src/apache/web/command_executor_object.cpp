@@ -211,7 +211,7 @@ const ::web::type::JsonMessage CommandExecutorObject::GetSessions(const std::str
     t["requests_count"] = s.requests_count;
     t["error_percentage"] = s.error_percentage;
     t["useragent"] = s.useragent;
-    t["is_anomaly"] = s.is_anomaly;
+    t["classification"] = static_cast<int>(s.classification);
 
     r.push_back(t);
   }
@@ -337,7 +337,7 @@ const ::web::type::JsonMessage CommandExecutorObject::GetSessionsWithoutLearning
     t["requests_count"] = s.requests_count;
     t["error_percentage"] = s.error_percentage;
     t["useragent"] = s.useragent;
-    t["is_anomaly"] = s.is_anomaly;
+    t["classification"] = static_cast<int>(s.classification);
 
     r.push_back(t);
   }
@@ -415,7 +415,7 @@ const ::web::type::JsonMessage CommandExecutorObject::GetLearningSetSessions(con
     t["requests_count"] = s.requests_count;
     t["error_percentage"] = s.error_percentage;
     t["useragent"] = s.useragent;
-    t["is_anomaly"] = s.is_anomaly;
+    t["classification"] = static_cast<int>(s.classification);
 
     r.push_back(t);
   }

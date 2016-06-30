@@ -55,17 +55,19 @@
                     <th>Requests count</th>
                     <th>Error requests (%)</th>
                     <th>User-Agent</th>
-                    <th>Is anomaly</th>
+                    <th>Classification</th>
                 </tr>
             </thead>
 
             <tbody>
             {% for s in sessions %}
                 <tr
-                {% if s.is_anomaly %}
+                {% if s.classification == CLASSIFICATION_ANOMALY %}
                     class="analysis_results_row_anomaly"
-                {% else %}
-                    class="analysis_results_row_ok"
+                {% elif s.classification == CLASSIFICATION_NORMAL %}
+                    class="analysis_results_row_normal"
+                {% elif s.classification == CLASSIFICATION_UNKNOWN %}
+                    class="analysis_results_row_unknown"
                 {% endif %}
                 >
                     <td>{{ s.id }}</td>
@@ -77,10 +79,12 @@
                     <td>{{ s.error_percentage | floatformat }}</td>
                     <td>{{ s.useragent }}</td>
                     <td>
-                        {% if s.is_anomaly %}
-                            <a href="#" class="btn btn-danger btn-xs"> ANOMALY </a>
-                        {% else %}
-                            <a href="#" class="btn btn-success btn-xs"> NO </a>
+                        {% if s.classification == CLASSIFICATION_ANOMALY %}
+                            <a href="#" class="btn btn-classification-anomaly btn-xs"> ANOMALY </a>
+                        {% elif s.classification == CLASSIFICATION_NORMAL %}
+                            <a href="#" class="btn btn-classification-normal btn-xs"> NORMAL </a>
+                        {% elif s.classification == CLASSIFICATION_UNKNOWN %}
+                            <a href="#" class="btn btn-classification-unknown btn-xs"> UNKNOWN </a>
                         {% endif %}
                     </td>
                 </tr>

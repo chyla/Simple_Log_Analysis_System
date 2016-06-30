@@ -10,6 +10,7 @@
 #include "src/database/type/agent_name.h"
 #include "src/database/type/virtualhost_name.h"
 #include "src/database/type/rows_count.h"
+#include "src/database/type/classification.h"
 
 namespace apache
 {
@@ -29,7 +30,7 @@ struct ApacheSessionEntry {
   ::database::type::RowsCount errors_count;
   double error_percentage;
   std::string useragent;
-  bool is_anomaly;
+  ::database::type::Classification classification;
 };
 
 typedef std::vector<ApacheSessionEntry> ApacheSessions;
