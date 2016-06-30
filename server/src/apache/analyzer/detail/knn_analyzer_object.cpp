@@ -51,6 +51,14 @@ void KnnAnalyzerObject::Analyze(const ::type::Timestamp &now) {
   }
 }
 
+bool KnnAnalyzerObject::IsAnomalyDetected() const {
+  return is_anomaly_detected_;
+}
+
+::apache::analyzer::type::KnnAnalyzerSummary KnnAnalyzerObject::GetAnalyzeSummary() const {
+  return analyze_summary_;
+}
+
 void KnnAnalyzerObject::AnalyzeVirtualhost(const ::database::type::AgentName &agent_name,
                                            const ::database::type::VirtualhostName &virtualhost_name,
                                            const ::type::Timestamp &last_analyze_timestamp,
@@ -66,6 +74,8 @@ void KnnAnalyzerObject::AnalyzeVirtualhost(const ::database::type::AgentName &ag
 
   auto sessions_count = apache_database_functions_->GetSessionStatisticsCount(agent_name, virtualhost_name, from, to);
   BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::KnnAnalyzerObject::AnalyzeVirtualhost: Found " << sessions_count << " sessions to analyze";
+
+  analyze_summary_.push_back(type::KnnVirtualhostAnalyzeStatistics());
 
   util::RunPartially(MAX_ROWS_IN_MEMORY, sessions_count, [&](long long part_count, long long offset) {
     AnalyzeSessions(agent_name, virtualhost_name, from, to, part_count, offset);
@@ -92,6 +102,10 @@ void KnnAnalyzerObject::AnalyzeSessions(const ::database::type::AgentName &agent
   BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::KnnAnalyzerObject::AnalyzeSessions: Agent ID: " << agent_id;
   BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::KnnAnalyzerObject::AnalyzeSessions: Virtualhost ID " << virtualhost_id;
 
+  type::KnnVirtualhostAnalyzeStatistics &stats = analyze_summary_.at(analyze_summary_.size() - 1);
+  stats.agent_id = agent_id;
+  stats.virtualhost_id = virtualhost_id;
+
   auto learning_set_count = apache_database_functions_->GetLearningSessionsCount(agent_id, virtualhost_id);
   BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::KnnAnalyzerObject::AnalyzeSessions: Found " << learning_set_count << " sessions in learning set";
 
@@ -103,6 +117,9 @@ void KnnAnalyzerObject::AnalyzeSessions(const ::database::type::AgentName &agent
     });
 
     if (IsSessionAnomaly()) {
+      is_anomaly_detected_ = true;
+      stats.anomaly_sessions_ids.push_back(session.id);
+
       session.is_anomaly = true;
       apache_database_functions_->MarkSessionStatisticAsAnomaly(session.id);
     }
@@ -134,12 +151,12 @@ bool KnnAnalyzerObject::IsSessionAnomaly() {
 
   for (const auto &n : neighbours)
     BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::KnnAnalyzerObject::IsSessionAnomaly: Final nearest neighbour id=" << n.session_id;
-  
+
   for (const auto &n : neighbours)
     i = i - 1 + 2 * static_cast<int> (n.is_session_anomaly);
 
-  bool anomaly =  i > 0;
-  
+  bool anomaly = i > 0;
+
   BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::KnnAnalyzerObject::IsSessionAnomaly: Anomaly: " << anomaly;
 
   return anomaly;
@@ -148,7 +165,8 @@ bool KnnAnalyzerObject::IsSessionAnomaly() {
 KnnAnalyzerObject::KnnAnalyzerObject(::database::detail::GeneralDatabaseFunctionsInterfacePtr general_database_functions,
                                      ::apache::database::DatabaseFunctionsPtr apache_database_functions) :
 general_database_functions_(general_database_functions),
-apache_database_functions_(apache_database_functions) {
+apache_database_functions_(apache_database_functions),
+is_anomaly_detected_(false) {
 }
 
 }

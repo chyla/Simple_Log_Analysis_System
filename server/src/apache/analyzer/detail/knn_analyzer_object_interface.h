@@ -10,6 +10,8 @@
 
 #include <patlms/type/timestamp.h>
 
+#include "src/apache/analyzer/type/knn_analyzer_summary.h"
+
 namespace apache
 {
 
@@ -27,6 +29,10 @@ class KnnAnalyzerObjectInterface {
   virtual ~KnnAnalyzerObjectInterface() = default;
 
   virtual void Analyze(const ::type::Timestamp &now) = 0;
+
+  virtual bool IsAnomalyDetected() const = 0;
+  
+  virtual ::apache::analyzer::type::KnnAnalyzerSummary GetAnalyzeSummary() const = 0;
 };
 
 }

@@ -11,6 +11,7 @@
 #include "detail/session_length.h"
 #include "detail/prepare_statistics_analyzer_object.h"
 #include "detail/knn_analyzer_object.h"
+#include "src/apache/notifier/type/apache_notifier_message.h"
 
 namespace apache
 {
@@ -19,19 +20,21 @@ namespace analyzer
 {
 
 ApacheAnalyzerObjectPtr ApacheAnalyzerObject::Create(::database::detail::GeneralDatabaseFunctionsInterfacePtr general_database_functions,
-                                                     ::apache::database::DatabaseFunctionsPtr database_functions) {
+                                                     ::apache::database::DatabaseFunctionsPtr database_functions,
+                                                     ::notifier::detail::NotifierInterfacePtr notifier) {
   BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::ApacheAnalyzerObject::Create: Function call";
   auto system_interface = detail::System::Create();
 
-  return Create(general_database_functions, database_functions, system_interface);
+  return Create(general_database_functions, database_functions, notifier, system_interface);
 }
 
 ApacheAnalyzerObjectPtr ApacheAnalyzerObject::Create(::database::detail::GeneralDatabaseFunctionsInterfacePtr general_database_functions,
                                                      ::apache::database::DatabaseFunctionsPtr database_functions,
+                                                     ::notifier::detail::NotifierInterfacePtr notifier,
                                                      detail::SystemInterfacePtr system_interface) {
   BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::ApacheAnalyzerObject::Create: Function call";
 
-  return ApacheAnalyzerObjectPtr(new ApacheAnalyzerObject(general_database_functions, database_functions, system_interface));
+  return ApacheAnalyzerObjectPtr(new ApacheAnalyzerObject(general_database_functions, database_functions, notifier, system_interface));
 }
 
 void ApacheAnalyzerObject::Analyze() {
@@ -48,6 +51,14 @@ void ApacheAnalyzerObject::Analyze() {
     statistics->Prepare(now);
     knn_analyzer->Analyze(now);
 
+    if (knn_analyzer->IsAnomalyDetected()) {
+      auto summary = knn_analyzer->GetAnalyzeSummary();
+      auto message = ::apache::notifier::type::ApacheNotifierMessage::Create(summary,
+                                                                             general_database_functions_,
+                                                                             database_functions_);
+      notifier_->AddMessages({message});
+    }
+
     database_functions_->SetLastRun(now);
   }
   else {
@@ -58,9 +69,11 @@ void ApacheAnalyzerObject::Analyze() {
 
 ApacheAnalyzerObject::ApacheAnalyzerObject(::database::detail::GeneralDatabaseFunctionsInterfacePtr general_database_functions,
                                            ::apache::database::DatabaseFunctionsPtr database_functions,
+                                           ::notifier::detail::NotifierInterfacePtr notifier,
                                            detail::SystemInterfacePtr system_interface) :
 general_database_functions_(general_database_functions),
 database_functions_(database_functions),
+notifier_(notifier),
 system_interface_(system_interface) {
 }
 

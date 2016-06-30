@@ -14,6 +14,7 @@
 #include "src/database/detail/general_database_functions_interface.h"
 #include "src/apache/database/database_functions.h"
 #include "detail/system.h"
+#include "src/notifier/detail/notifier_interface.h"
 
 namespace apache
 {
@@ -29,10 +30,12 @@ class ApacheAnalyzerObject : public ::analyzer::AnalyzerObjectInterface {
   virtual ~ApacheAnalyzerObject() = default;
 
   static ApacheAnalyzerObjectPtr Create(::database::detail::GeneralDatabaseFunctionsInterfacePtr general_database_functions,
-                                        ::apache::database::DatabaseFunctionsPtr database_functions);
+                                        ::apache::database::DatabaseFunctionsPtr database_functions,
+                                        ::notifier::detail::NotifierInterfacePtr notifier);
 
   static ApacheAnalyzerObjectPtr Create(::database::detail::GeneralDatabaseFunctionsInterfacePtr general_database_functions,
                                         ::apache::database::DatabaseFunctionsPtr database_functions,
+                                        ::notifier::detail::NotifierInterfacePtr notifier,
                                         detail::SystemInterfacePtr system_interface);
 
   void Analyze() override;
@@ -40,10 +43,12 @@ class ApacheAnalyzerObject : public ::analyzer::AnalyzerObjectInterface {
  private:
   ApacheAnalyzerObject(::database::detail::GeneralDatabaseFunctionsInterfacePtr general_database_functions,
                        ::apache::database::DatabaseFunctionsPtr database_functions,
+                       ::notifier::detail::NotifierInterfacePtr notifier,
                        detail::SystemInterfacePtr system_interface);
 
   ::database::detail::GeneralDatabaseFunctionsInterfacePtr general_database_functions_;
   ::apache::database::DatabaseFunctionsPtr database_functions_;
+  ::notifier::detail::NotifierInterfacePtr notifier_;
   detail::SystemInterfacePtr system_interface_;
 
   bool ShouldRun(const ::type::Timestamp &now);

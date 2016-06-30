@@ -170,7 +170,8 @@ main(int argc, char *argv[]) {
 
     analyzer_worker = analyzer::Analyzer::Create();
     analyzer_worker->AddObject(apache::analyzer::ApacheAnalyzerObject::Create(general_database_functions,
-                                                                              apache_database_functions));
+                                                                              apache_database_functions,
+                                                                              notifier_worker));
 
     analyzer_thread = std::thread([]() {
       analyzer_worker->StartLoop();

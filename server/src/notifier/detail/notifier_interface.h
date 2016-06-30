@@ -27,6 +27,8 @@ class NotifierInterface {
   virtual void AddMessages(::notifier::type::NotifierMessages messages) = 0;
 };
 
+typedef std::shared_ptr<NotifierInterface> NotifierInterfacePtr;
+
 }
 
 }

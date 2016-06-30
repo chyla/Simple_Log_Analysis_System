@@ -41,6 +41,10 @@ class KnnAnalyzerObject : public KnnAnalyzerObjectInterface {
 
   void Analyze(const ::type::Timestamp &now);
 
+  bool IsAnomalyDetected() const override;
+
+  ::apache::analyzer::type::KnnAnalyzerSummary GetAnalyzeSummary() const override;
+
  private:
   KnnAnalyzerObject(::database::detail::GeneralDatabaseFunctionsInterfacePtr general_database_functions,
                     ::apache::database::DatabaseFunctionsPtr apache_database_functions);
@@ -73,6 +77,9 @@ class KnnAnalyzerObject : public KnnAnalyzerObjectInterface {
   ::apache::database::DatabaseFunctionsPtr apache_database_functions_;
 
   prepare_statistics::NearestNeighboursTable neighbours_table_;
+
+  bool is_anomaly_detected_;
+  ::apache::analyzer::type::KnnAnalyzerSummary analyze_summary_;
 };
 
 }

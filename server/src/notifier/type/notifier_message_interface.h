@@ -19,8 +19,8 @@ class NotifierMessageInterface {
  public:
   virtual ~NotifierMessageInterface() = default;
 
-  virtual std::string GetModuleName() const = 0;
-  virtual std::string GetDetectionResults() const = 0;
+  virtual std::string GetModuleName() = 0;
+  virtual std::string GetDetectionResults() = 0;
 };
 
 typedef std::shared_ptr<NotifierMessageInterface> NotifierMessageInterfacePtr;
