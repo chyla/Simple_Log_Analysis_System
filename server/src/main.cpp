@@ -27,6 +27,8 @@
 #include "analyzer/analyzer.h"
 #include "apache/analyzer/apache_analyzer_object.h"
 
+#include "notifier/notifier.h"
+
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
@@ -37,8 +39,10 @@ namespace keywords = boost::log::keywords;
 dbus::BusPtr bus;
 web::CommandReceiverPtr command_receiver;
 analyzer::AnalyzerPtr analyzer_worker;
+notifier::NotifierPtr notifier_worker;
 std::thread command_receiver_thread;
 std::thread analyzer_thread;
+std::thread notifier_thread;
 
 struct sigaction act, act_usr;
 
@@ -46,6 +50,7 @@ void exit_signal_handler(int sig, siginfo_t *siginfo, void *context) {
   bus->StopLoop();
   command_receiver->StopListen();
   analyzer_worker->StopLoop();
+  notifier_worker->StopLoop();
 }
 
 void analyze_signal_handler(int sig, siginfo_t *siginfo, void *context) {
@@ -158,6 +163,11 @@ main(int argc, char *argv[]) {
     act_usr.sa_flags = SA_SIGINFO;
     sigaction(SIGUSR1, &act_usr, nullptr);
 
+    notifier_worker = notifier::Notifier::Create(options);
+    notifier_thread = std::thread([]() {
+      notifier_worker->Loop();
+    });
+
     analyzer_worker = analyzer::Analyzer::Create();
     analyzer_worker->AddObject(apache::analyzer::ApacheAnalyzerObject::Create(general_database_functions,
                                                                               apache_database_functions));
@@ -181,6 +191,9 @@ main(int argc, char *argv[]) {
     if (analyzer_worker)
       analyzer_worker->StopLoop();
 
+    if (notifier_worker)
+      notifier_worker->StopLoop();
+
     if (command_receiver)
       command_receiver->StopListen();
 
@@ -192,6 +205,9 @@ main(int argc, char *argv[]) {
 
     if (analyzer_thread.joinable())
       analyzer_thread.join();
+
+    if (notifier_thread.joinable())
+      notifier_thread.join();
 
     if (command_receiver_thread.joinable())
       command_receiver_thread.join();
