@@ -105,7 +105,9 @@ void Notifier::SendMailNotification() {
   while (IsMessageAvailable()) {
     auto message = GetMessage();
 
-    mail_body += "\r\n\r\nModule: " + message->GetModuleName() + "\r\nResults:\r\n";
+    mail_body += "\r\n\r\n"
+        "Module: " + message->GetModuleName() + "\r\n"
+        "================================================================================\r\n";
     mail_body += message->GetDetectionResults();
   }
 

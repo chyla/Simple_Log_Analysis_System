@@ -41,11 +41,13 @@ std::string ApacheNotifierMessage::GetDetectionResults() {
   for (auto stats : summary_) {
     results = "Results for agent " + general_database_functions_->GetAgentNameById(stats.agent_id) +
         " and virtualhost " + apache_database_functions_->GetVirtualhostNameById(stats.virtualhost_id) +
-        "\r\n    Found " + to_string(stats.anomaly_sessions_ids.size()) + " anomalies. " +
-        "\r\n    Anomalies sessions IDs: \r\n        ";
+        "\r\n  Found " + to_string(stats.anomaly_sessions_ids.size()) + " anomalies. " +
+        "\r\n  Sessions (IDs) marked as anomalies: \r\n    ";
 
     for (auto i : stats.anomaly_sessions_ids)
       results += to_string(i) + "; ";
+    
+    results += "\r\n--------------------------------------------------------------------------------\r\n";
   }
 
   return results;
