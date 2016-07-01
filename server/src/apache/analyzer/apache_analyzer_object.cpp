@@ -49,7 +49,7 @@ void ApacheAnalyzerObject::Analyze() {
   if (ShouldRun(now)) {
     BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::ApacheAnalyzerObject::Analyze: ShouldRun: true";
     statistics->Prepare(now);
-    knn_analyzer->Analyze(now);
+    knn_analyzer->Analyze();
 
     if (knn_analyzer->IsAnomalyDetected()) {
       auto summary = knn_analyzer->GetAnalyzeSummary();

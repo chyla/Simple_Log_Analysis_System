@@ -10,6 +10,7 @@
 #include <string>
 #include <utility>
 #include <boost/log/trivial.hpp>
+#include <patlms/type/timestamp.h>
 
 #include "src/database/exception/detail/item_not_found_exception.h"
 #include "src/database/exception/detail/cant_execute_sql_statement_exception.h"
@@ -292,6 +293,107 @@ bool DatabaseFunctions::AddSessionStatistics(const ::apache::type::ApacheSession
                                                                        const ::type::Timestamp &from, const ::type::Timestamp &to,
                                                                        unsigned limit, ::database::type::RowsCount offset) {
   return db_->GetApacheSessionStatistics(agent_name, virtualhost_name, from, to, limit, offset);
+}
+
+::database::type::RowsCount DatabaseFunctions::GetNotClassifiedSessionsStatisticsCount(const ::database::type::RowId &agent_name_id,
+                                                                                       const ::database::type::RowId &virtualhost_name_id) {
+  BOOST_LOG_TRIVIAL(debug) << "apache::database::DatabaseFunctions::GetNotClassifiedSessionsStatisticsCount: Function call";
+
+  auto agent_name = general_database_functions_->GetAgentNameById(agent_name_id);
+  auto virtualhost_name = GetVirtualhostNameById(virtualhost_name_id);
+
+  string sql =
+      "select count(*) from APACHE_SESSION_TABLE "
+      "  where "
+      "    ( "
+      "      AGENT_NAME=? "
+      "      and "
+      "      VIRTUALHOST=? "
+      "    )"
+      "  and "
+      "  CLASSIFICATION=" + std::to_string(static_cast<int> (::database::type::Classification::UNKNOWN)) +
+      ";";
+
+  sqlite3_stmt *statement;
+  sqlite_wrapper_->Prepare(sql, &statement);
+
+  sqlite_wrapper_->BindText(statement, 1, agent_name);
+
+  sqlite_wrapper_->BindText(statement, 2, virtualhost_name);
+
+  sqlite_wrapper_->Step(statement);
+
+  auto count = sqlite_wrapper_->ColumnInt64(statement, 0);
+
+  sqlite_wrapper_->Finalize(statement);
+
+  return count;
+}
+
+::apache::type::ApacheSessions DatabaseFunctions::GetNotClassifiedSessionStatistics(const ::database::type::RowId &agent_name_id,
+                                                                                    const ::database::type::RowId &virtualhost_name_id,
+                                                                                    unsigned limit, ::database::type::RowsCount offset) {
+  BOOST_LOG_TRIVIAL(debug) << "apache::database::DatabaseFunctions::GetNotClassifiedSessionStatistics: Function call";
+  ::apache::type::ApacheSessions sessions;
+  int ret;
+
+  auto agent_name = general_database_functions_->GetAgentNameById(agent_name_id);
+  auto virtualhost_name = GetVirtualhostNameById(virtualhost_name_id);
+
+  string sql =
+      "select ID, AGENT_NAME, VIRTUALHOST, CLIENT_IP, UTC_HOUR, UTC_MINUTE, UTC_SECOND, UTC_DAY, UTC_MONTH, UTC_YEAR, SESSION_LENGTH, BANDWIDTH_USAGE, REQUESTS_COUNT, ERRORS_COUNT, ERROR_PERCENTAGE, USER_AGENT, CLASSIFICATION "
+      " from APACHE_SESSION_TABLE "
+      "  where"
+      "    ("
+      "      AGENT_NAME=?"
+      "      and"
+      "      VIRTUALHOST=?"
+      "    )"
+      "  and "
+      "    CLASSIFICATION=" + std::to_string(static_cast<int> (::database::type::Classification::UNKNOWN)) +
+      "   limit " + to_string(limit) + " offset " + to_string(offset) +
+      ";";
+
+  sqlite3_stmt *statement;
+  sqlite_wrapper_->Prepare(sql, &statement);
+
+  sqlite_wrapper_->BindText(statement, 1, agent_name);
+
+  sqlite_wrapper_->BindText(statement, 2, virtualhost_name);
+
+  do {
+    ret = sqlite_wrapper_->Step(statement);
+
+    if (ret == SQLITE_ROW) {
+      BOOST_LOG_TRIVIAL(debug) << "database::Database::GetApacheLogs: Found new log entry in database";
+      ::apache::type::ApacheSessionEntry entry;
+
+      entry.id = sqlite_wrapper_->ColumnInt64(statement, 0);
+      entry.agent_name = sqlite_wrapper_->ColumnText(statement, 1);
+      entry.virtualhost = sqlite_wrapper_->ColumnText(statement, 2);
+      entry.client_ip = sqlite_wrapper_->ColumnText(statement, 3);
+      entry.session_start = ::type::Timestamp::Create(sqlite_wrapper_->ColumnInt(statement, 4),
+                                                      sqlite_wrapper_->ColumnInt(statement, 5),
+                                                      sqlite_wrapper_->ColumnInt(statement, 6),
+                                                      sqlite_wrapper_->ColumnInt(statement, 7),
+                                                      sqlite_wrapper_->ColumnInt(statement, 8),
+                                                      sqlite_wrapper_->ColumnInt(statement, 9));
+      entry.session_length = sqlite_wrapper_->ColumnInt64(statement, 10);
+      entry.bandwidth_usage = sqlite_wrapper_->ColumnInt64(statement, 11);
+      entry.requests_count = sqlite_wrapper_->ColumnInt64(statement, 12);
+      entry.errors_count = sqlite_wrapper_->ColumnInt64(statement, 13);
+      entry.error_percentage = sqlite_wrapper_->ColumnDouble(statement, 14);
+      entry.useragent = sqlite_wrapper_->ColumnText(statement, 15);
+      entry.classification = static_cast< ::database::type::Classification> (sqlite_wrapper_->ColumnInt(statement, 16));
+
+      sessions.push_back(entry);
+    }
+  }
+  while (ret != SQLITE_DONE);
+
+  sqlite_wrapper_->Finalize(statement);
+
+  return sessions;
 }
 
 bool DatabaseFunctions::IsSessionStatisticsWithoutLearningSetExists(const std::string &agent_name, const std::string &virtualhost_name) {

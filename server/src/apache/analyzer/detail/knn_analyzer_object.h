@@ -39,7 +39,7 @@ class KnnAnalyzerObject : public KnnAnalyzerObjectInterface {
   static KnnAnalyzerObjectPtr Create(::database::detail::GeneralDatabaseFunctionsInterfacePtr general_database_functions,
                                      ::apache::database::DatabaseFunctionsPtr apache_database_functions);
 
-  void Analyze(const ::type::Timestamp &now);
+  void Analyze();
 
   bool IsAnomalyDetected() const override;
 
@@ -49,15 +49,11 @@ class KnnAnalyzerObject : public KnnAnalyzerObjectInterface {
   KnnAnalyzerObject(::database::detail::GeneralDatabaseFunctionsInterfacePtr general_database_functions,
                     ::apache::database::DatabaseFunctionsPtr apache_database_functions);
 
-  void AnalyzeVirtualhost(const ::database::type::AgentName &agent_name,
-                          const ::database::type::VirtualhostName &virtualhost_name,
-                          const ::type::Timestamp &last_analyze_timestamp,
-                          const ::type::Timestamp &now);
+  void AnalyzeVirtualhost(const ::database::type::RowId &agent_name_id,
+                          const ::database::type::RowId &virtualhost_name_id);
 
-  void AnalyzeSessions(const ::database::type::AgentName &agent_name,
-                       const ::database::type::VirtualhostName &virtualhost_name,
-                       const ::type::Timestamp &from,
-                       const ::type::Timestamp &to,
+  void AnalyzeSessions(const ::database::type::RowId &agent_name_id,
+                       const ::database::type::RowId &virtualhost_name_id,
                        unsigned limit,
                        ::database::type::RowsCount offset);
 

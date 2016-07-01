@@ -31,22 +31,19 @@ KnnAnalyzerObjectPtr KnnAnalyzerObject::Create(::database::detail::GeneralDataba
   return KnnAnalyzerObjectPtr(new KnnAnalyzerObject(general_database_functions, apache_database_functions));
 }
 
-void KnnAnalyzerObject::Analyze(const ::type::Timestamp &now) {
-  auto is_stats = apache_database_functions_->IsLastRunSet();
+void KnnAnalyzerObject::Analyze() {
+  for (auto agent_name : general_database_functions_->GetAgentNames()) {
+    BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::KnnAnalyzerObject::Analyze: Preparing agent: " << agent_name;
 
-  if (is_stats) {
-    auto last_analyze = apache_database_functions_->GetLastRun();
-    BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::KnnAnalyzerObject::Analyze: Found last run time " << last_analyze;
+    for (auto virtualhost_name : apache_database_functions_->GetVirtualhostNames(agent_name)) {
+      BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::KnnAnalyzerObject::Analyze: Preparing virtualhost: " << virtualhost_name;
 
-    for (auto agent_name : general_database_functions_->GetAgentNames()) {
-      BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::KnnAnalyzerObject::Analyze: Preparing agent: " << agent_name;
+      auto agent_id = general_database_functions_->GetAgentNameId(agent_name);
+      auto virtualhost_id = apache_database_functions_->GetVirtualhostNameId(virtualhost_name);
+      BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::KnnAnalyzerObject::Analyze: Agent ID: " << agent_id;
+      BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::KnnAnalyzerObject::Analyze: Virtualhost ID " << virtualhost_id;
 
-      for (auto virtualhost_name : apache_database_functions_->GetVirtualhostNames(agent_name)) {
-        BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::KnnAnalyzerObject::Analyze: Preparing virtualhost: " << virtualhost_name;
-
-        // sprawdzic istnienie konfiguracji
-        AnalyzeVirtualhost(agent_name, virtualhost_name, last_analyze, now);
-      }
+      AnalyzeVirtualhost(agent_id, virtualhost_id);
     }
   }
 }
@@ -59,61 +56,45 @@ bool KnnAnalyzerObject::IsAnomalyDetected() const {
   return analyze_summary_;
 }
 
-void KnnAnalyzerObject::AnalyzeVirtualhost(const ::database::type::AgentName &agent_name,
-                                           const ::database::type::VirtualhostName &virtualhost_name,
-                                           const ::type::Timestamp &last_analyze_timestamp,
-                                           const ::type::Timestamp &now) {
+void KnnAnalyzerObject::AnalyzeVirtualhost(const ::database::type::RowId &agent_name_id,
+                                           const ::database::type::RowId &virtualhost_name_id) {
   BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::KnnAnalyzerObject::AnalyzeVirtualhost: Function call";
   constexpr RowsCount MAX_ROWS_IN_MEMORY = 100;
   BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::KnnAnalyzerObject::AnalyzeSessions: Max rows in memory: " << MAX_ROWS_IN_MEMORY;
-  BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::KnnAnalyzerObject::AnalyzeSessions: Last analyze timestamp: " << last_analyze_timestamp;
-  BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::KnnAnalyzerObject::AnalyzeSessions: Current timestamp: " << now;
 
-  auto from = last_analyze_timestamp;
-  auto to = now;
-
-  auto sessions_count = apache_database_functions_->GetSessionStatisticsCount(agent_name, virtualhost_name, from, to);
+  auto sessions_count = apache_database_functions_->GetNotClassifiedSessionsStatisticsCount(agent_name_id, virtualhost_name_id);
   BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::KnnAnalyzerObject::AnalyzeVirtualhost: Found " << sessions_count << " sessions to analyze";
 
   analyze_summary_.push_back(type::KnnVirtualhostAnalyzeStatistics());
 
   util::RunPartially(MAX_ROWS_IN_MEMORY, sessions_count, [&](long long part_count, long long offset) {
-    AnalyzeSessions(agent_name, virtualhost_name, from, to, part_count, offset);
+    AnalyzeSessions(agent_name_id, virtualhost_name_id, part_count, offset);
   });
 }
 
-void KnnAnalyzerObject::AnalyzeSessions(const ::database::type::AgentName &agent_name,
-                                        const ::database::type::VirtualhostName &virtualhost_name,
-                                        const ::type::Timestamp &from,
-                                        const ::type::Timestamp &to,
+void KnnAnalyzerObject::AnalyzeSessions(const ::database::type::RowId &agent_name_id,
+                                        const ::database::type::RowId &virtualhost_name_id,
                                         unsigned limit,
                                         ::database::type::RowsCount offset) {
   BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::KnnAnalyzerObject::AnalyzeSessions: Function call";
-  BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::KnnAnalyzerObject::AnalyzeSessions: Analyzing sessions: " << agent_name << "/" << virtualhost_name << " from " << from << " to " << to << " (limit=" << limit << "; offset=" << offset << ")";
+  BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::KnnAnalyzerObject::AnalyzeSessions: Analyzing sessions: agent_name_id=" << agent_name_id << "; virtualhost_name_id=" << virtualhost_name_id << " (limit=" << limit << "; offset=" << offset << ")";
   constexpr RowsCount MAX_ROWS_IN_MEMORY = 100;
 
-  auto sessions_part = apache_database_functions_->GetSessionStatistics(agent_name, virtualhost_name,
-                                                                        from, to,
-                                                                        limit, offset);
+  auto sessions_part = apache_database_functions_->GetNotClassifiedSessionStatistics(agent_name_id, virtualhost_name_id, limit, offset);
   BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::KnnAnalyzerObject::AnalyzeSessions: Received " << sessions_part.size() << " sessions statictics";
 
-  auto agent_id = general_database_functions_->GetAgentNameId(agent_name);
-  auto virtualhost_id = apache_database_functions_->GetVirtualhostNameId(virtualhost_name);
-  BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::KnnAnalyzerObject::AnalyzeSessions: Agent ID: " << agent_id;
-  BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::KnnAnalyzerObject::AnalyzeSessions: Virtualhost ID " << virtualhost_id;
-
   type::KnnVirtualhostAnalyzeStatistics &stats = analyze_summary_.at(analyze_summary_.size() - 1);
-  stats.agent_id = agent_id;
-  stats.virtualhost_id = virtualhost_id;
+  stats.agent_id = agent_name_id;
+  stats.virtualhost_id = virtualhost_name_id;
 
-  auto learning_set_count = apache_database_functions_->GetLearningSessionsCount(agent_id, virtualhost_id);
+  auto learning_set_count = apache_database_functions_->GetLearningSessionsCount(agent_name_id, virtualhost_name_id);
   BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::KnnAnalyzerObject::AnalyzeSessions: Found " << learning_set_count << " sessions in learning set";
 
   for (auto session : sessions_part) {
     neighbours_table_.SetSession(session);
 
     util::RunPartially(MAX_ROWS_IN_MEMORY, learning_set_count, [&](long long part_count, long long offset) {
-      AnalyzeSessionsWithLearningSet(agent_id, virtualhost_id, part_count, offset, session);
+      AnalyzeSessionsWithLearningSet(agent_name_id, virtualhost_name_id, part_count, offset, session);
     });
 
     if (IsSessionAnomaly()) {

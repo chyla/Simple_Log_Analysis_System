@@ -28,7 +28,7 @@ class KnnAnalyzerObjectInterface {
  public:
   virtual ~KnnAnalyzerObjectInterface() = default;
 
-  virtual void Analyze(const ::type::Timestamp &now) = 0;
+  virtual void Analyze() = 0;
 
   virtual bool IsAnomalyDetected() const = 0;
   
