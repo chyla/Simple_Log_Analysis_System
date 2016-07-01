@@ -564,7 +564,7 @@ void DatabaseFunctions::ClearAnomalyMarksInLearningSet(const ::database::type::R
   BOOST_LOG_TRIVIAL(debug) << "apache::database::DatabaseFunctions::ClearAnomalyMarksInLearningSet: Function call";
 
   auto sql =
-      "update APACHE_SESSION_TABLE set CLASSIFICATION=" + std::to_string(static_cast<int> (::database::type::Classification::ANOMALY)) +
+      "update APACHE_SESSION_TABLE set CLASSIFICATION=" + std::to_string(static_cast<int> (::database::type::Classification::NORMAL)) +
       " where "
       "  ID in ( "
       "         select SESSION_ID from APACHE_LEARNING_SESSIONS where "
