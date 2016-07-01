@@ -35,19 +35,33 @@ std::string ApacheNotifierMessage::GetModuleName() {
 
 std::string ApacheNotifierMessage::GetDetectionResults() {
   BOOST_LOG_TRIVIAL(debug) << "apache::notifier::ApacheNotifierMessage::GetDetectionResults: Function call";
-  
+
   std::string results;
 
   for (auto stats : summary_) {
     results = "Results for agent " + general_database_functions_->GetAgentNameById(stats.agent_id) +
         " and virtualhost " + apache_database_functions_->GetVirtualhostNameById(stats.virtualhost_id) +
         "\r\n  Found " + to_string(stats.anomaly_sessions_ids.size()) + " anomalies. " +
-        "\r\n  Sessions (IDs) marked as anomalies: \r\n    ";
+        "\r\n  Sessions marked as anomalies: \r\n\r\n";
 
-    for (auto i : stats.anomaly_sessions_ids)
-      results += to_string(i) + "; ";
-    
-    results += "\r\n--------------------------------------------------------------------------------\r\n";
+    for (auto i : stats.anomaly_sessions_ids) {
+      const auto s = apache_database_functions_->GetOneSessionStatistic(i);
+
+      results += "    ...........................................................................\r\n";
+      results += "    ID:                      " + to_string(i) + "\r\n";
+      results += "    IP:                      " + s.client_ip + "\r\n";
+      results += "    Session start:           " + s.session_start.ToString() + "\r\n";
+      results += "    Session length (s):      " + to_string(s.session_length) + "\r\n";
+      results += "    Bandwidth usage (bytes): " + to_string(s.bandwidth_usage) + "\r\n";
+      results += "    Requests count:          " + to_string(s.requests_count) + "\r\n";
+      results += "    Error requests (%):      " + to_string(s.error_percentage) + "\r\n";
+      results += "    User-Agent:              " + s.useragent + "\r\n";
+      results += "    ...........................................................................\r\n";
+
+      results += "\r\n";
+    }
+
+    results += "--------------------------------------------------------------------------------\r\n\r\n";
   }
 
   return results;
