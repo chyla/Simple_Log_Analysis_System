@@ -64,7 +64,7 @@ class DatabaseFunctions : public detail::DatabaseFunctionsInterface {
                                                                         const ::type::Timestamp &from, const ::type::Timestamp &to,
                                                                         unsigned limit, long long offset) override;
   ::apache::type::ApacheSessionEntry GetOneSessionStatistic(::database::type::RowId id) override;
-  void MarkSessionStatisticAsAnomaly(const ::database::type::RowId &id) override;
+  void UpdateSessionStatisticClassification(const ::database::type::RowId &id, const ::database::type::Classification &classification) override;
   void ClearAnomalyMarksInLearningSet(const ::database::type::RowId &agent_name_id,
                                       const ::database::type::RowId &virtualhost_name_id) override;
   void MarkLearningSetWithIqrMethod(const ::database::type::RowId &agent_name_id,

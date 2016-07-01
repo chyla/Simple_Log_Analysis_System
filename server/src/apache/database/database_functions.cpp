@@ -549,11 +549,11 @@ bool DatabaseFunctions::IsSessionStatisticsWithoutLearningSetExists(const std::s
   return db_->GetApacheOneSessionStatistic(id);
 }
 
-void DatabaseFunctions::MarkSessionStatisticAsAnomaly(const ::database::type::RowId &id) {
-  BOOST_LOG_TRIVIAL(debug) << "apache::database::DatabaseFunctions::MarkSessionStatisticAsAnomaly: Function call";
+void DatabaseFunctions::UpdateSessionStatisticClassification(const ::database::type::RowId &id, const ::database::type::Classification &classification) {
+  BOOST_LOG_TRIVIAL(debug) << "apache::database::DatabaseFunctions::UpdateSessionStatisticClassification: Function call";
 
   auto sql = "update APACHE_SESSION_TABLE "
-      "set CLASSIFICATION=" + std::to_string(static_cast<int> (::database::type::Classification::ANOMALY)) +
+      "set CLASSIFICATION=" + std::to_string(static_cast<int> (classification)) +
       " where ID=" + to_string(id) + ";";
 
   sqlite_wrapper_->Exec(sql);
@@ -608,7 +608,7 @@ void DatabaseFunctions::MarkLearningSetWithIqrMethod(const ::database::type::Row
     BOOST_LOG_TRIVIAL(debug) << "apache::database::DatabaseFunctions::MarkLearningSetWithIqrMethod: Loop: Comparing m to element.second=" << element.second;
 
     if (element.second > m)
-      MarkSessionStatisticAsAnomaly(element.first);
+      UpdateSessionStatisticClassification(element.first, ::database::type::Classification::ANOMALY);
   }
 }
 

@@ -59,7 +59,7 @@ class DatabaseFunctionsInterface {
                                                                                 const ::type::Timestamp &from, const ::type::Timestamp &to,
                                                                                 unsigned limit, long long offset) = 0;
   virtual ::apache::type::ApacheSessionEntry GetOneSessionStatistic(::database::type::RowId id) = 0;
-  virtual void MarkSessionStatisticAsAnomaly(const ::database::type::RowId &id) = 0;
+  virtual void UpdateSessionStatisticClassification(const ::database::type::RowId &id, const ::database::type::Classification &classification) = 0;
   virtual void ClearAnomalyMarksInLearningSet(const ::database::type::RowId &agent_name_id,
                                               const ::database::type::RowId &virtualhost_name_id) = 0;
   virtual void MarkLearningSetWithIqrMethod(const ::database::type::RowId &agent_name_id,

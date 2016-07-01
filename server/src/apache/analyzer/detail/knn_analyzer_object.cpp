@@ -97,13 +97,15 @@ void KnnAnalyzerObject::AnalyzeSessions(const ::database::type::RowId &agent_nam
       AnalyzeSessionsWithLearningSet(agent_name_id, virtualhost_name_id, part_count, offset, session);
     });
 
-    if (IsSessionAnomaly()) {
+    auto classification = GetSessionClassification();
+
+    if (classification == ::database::type::Classification::ANOMALY) {
       is_anomaly_detected_ = true;
       stats.anomaly_sessions_ids.push_back(session.id);
-
-      session.classification = ::database::type::Classification::ANOMALY;
-      apache_database_functions_->MarkSessionStatisticAsAnomaly(session.id);
     }
+
+    session.classification = classification;
+    apache_database_functions_->UpdateSessionStatisticClassification(session.id, session.classification);
 
     BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::KnnAnalyzerObject::AnalyzeSessions: Is session with id " << session.id << " anomaly? - " << (session.classification == ::database::type::Classification::ANOMALY);
   }
@@ -129,7 +131,7 @@ void KnnAnalyzerObject::AnalyzeSessionsWithLearningSet(const ::database::type::R
   }
 }
 
-bool KnnAnalyzerObject::IsSessionAnomaly() {
+::database::type::Classification KnnAnalyzerObject::GetSessionClassification() {
   long long i = 0;
   const auto &neighbours = neighbours_table_.Get();
 
@@ -139,11 +141,17 @@ bool KnnAnalyzerObject::IsSessionAnomaly() {
   for (const auto &n : neighbours)
     i = i - 1 + 2 * static_cast<int> (n.classification == ::database::type::Classification::ANOMALY);
 
-  bool anomaly = i > 0;
+  ::database::type::Classification c = ::database::type::Classification::UNKNOWN;
+  if (neighbours.size() > 0) {
+    if (i > 0)
+      c = ::database::type::Classification::ANOMALY;
+    else
+      c = ::database::type::Classification::NORMAL;
+  }
 
-  BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::KnnAnalyzerObject::IsSessionAnomaly: Anomaly: " << anomaly;
+  BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::KnnAnalyzerObject::IsSessionAnomaly: Classification: " << static_cast<int> (c);
 
-  return anomaly;
+  return c;
 }
 
 KnnAnalyzerObject::KnnAnalyzerObject(::database::detail::GeneralDatabaseFunctionsInterfacePtr general_database_functions,
