@@ -122,7 +122,10 @@ void KnnAnalyzerObject::AnalyzeSessionsWithLearningSet(const ::database::type::R
 
     const auto &learning_set_session = apache_database_functions_->GetOneSessionStatistic(session_id);
 
-    neighbours_table_.Add(learning_set_session);
+    if (learning_set_session.classification != ::database::type::Classification::UNKNOWN)
+      neighbours_table_.Add(learning_set_session);
+    else
+      BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::KnnAnalyzerObject::AnalyzeSessionsWithLearningSet: Unknown session classification (id=" << learning_set_session.id << "(";
   }
 }
 
@@ -134,7 +137,7 @@ bool KnnAnalyzerObject::IsSessionAnomaly() {
     BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::KnnAnalyzerObject::IsSessionAnomaly: Final nearest neighbour id=" << n.session_id;
 
   for (const auto &n : neighbours)
-    i = i - 1 + 2 * static_cast<int> (n.is_session_anomaly);
+    i = i - 1 + 2 * static_cast<int> (n.classification == ::database::type::Classification::ANOMALY);
 
   bool anomaly = i > 0;
 

@@ -44,10 +44,10 @@ void NearestNeighboursTable::Add(const ::apache::type::ApacheSessionEntry &sessi
 
   Neighbour n;
   n.distance = Distance(session, original_session_);
-  n.is_session_anomaly = (session.classification == ::database::type::Classification::ANOMALY);
+  n.classification = session.classification;
   n.session_id = session.id;
 
-  BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::prepare_statistics::NearestNeighboursTable::Add: Adding neighbour where distance=" << n.distance << "; is_session_anomaly=" << n.is_session_anomaly << "; session_id=" << n.session_id;
+  BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::prepare_statistics::NearestNeighboursTable::Add: Adding neighbour where distance=" << n.distance << "; classification=" << static_cast<int> (n.classification) << "; session_id=" << n.session_id;
 
   nearest_neighbours_.push_back(n);
 

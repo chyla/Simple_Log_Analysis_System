@@ -11,6 +11,7 @@
 #include <limits>
 
 #include "src/database/type/row_id.h"
+#include "src/database/type/classification.h"
 
 namespace apache
 {
@@ -26,7 +27,7 @@ namespace prepare_statistics
 
 struct Neighbour {
   double distance;
-  bool is_session_anomaly;
+  ::database::type::Classification classification;
   ::database::type::RowId session_id;
 
   inline bool operator==(const Neighbour& oth) const;
@@ -36,7 +37,7 @@ typedef std::vector<Neighbour> Neighbours;
 
 bool Neighbour::operator==(const Neighbour& oth) const {
   return (abs(distance - oth.distance) < std::numeric_limits<double>::epsilon()) &&
-    is_session_anomaly == oth.is_session_anomaly &&
+    classification == oth.classification &&
     session_id == session_id;
 }
 
