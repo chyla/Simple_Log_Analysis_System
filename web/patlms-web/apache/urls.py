@@ -6,7 +6,6 @@ from . import views
 
 urlpatterns = [
     url(r'^$', views.status, name='status'),
-    url(r'^configure_actions', views.configure_actions, name='configure_actions'),
 
     url(r'^configure_anomaly_detection$', RedirectView.as_view(url='configure_anomaly_detection_select_agent_and_virtualhost', permanent=True), name='configure_anomaly_detection'),
     url(r'^configure_anomaly_detection_select_agent_and_virtualhost$', views.configure_anomaly_detection_select_agent_and_virtualhost, name='configure_anomaly_detection_select_agent_and_virtualhost'),

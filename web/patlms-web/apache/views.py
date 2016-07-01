@@ -6,10 +6,6 @@ from django.core.urlresolvers import reverse
 from util.type import Classification
 import util
 
-
-def configure_actions(request):
-    return render_to_response('apache/configure_actions.html')
-
 def status(request):
     exception = None
     configuration = None
