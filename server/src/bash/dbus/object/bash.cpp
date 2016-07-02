@@ -1,4 +1,5 @@
 #include "bash.h"
+#include "src/bash/domain/scripts.h"
 
 #include <boost/log/trivial.hpp>
 
@@ -11,8 +12,8 @@ namespace dbus
 namespace object
 {
 
-Bash::Bash(database::DatabasePtr database)
-: database_(database) {
+Bash::Bash(::bash::domain::detail::ScriptsInterfacePtr scripts) :
+scripts_(scripts) {
 }
 
 Bash::~Bash() {
@@ -90,7 +91,7 @@ DBusHandlerResult Bash::OwnMessageHandler(DBusConnection *connection, DBusMessag
     log_entry.user_id = user_id;
     log_entry.command = command;
 
-    database_->AddBashLogs({log_entry});
+    scripts_->AddLog(log_entry);
 
     DBusMessage *reply_msg = dbus_message_new_method_return(message);
     BOOST_LOG_TRIVIAL(debug) << "objects::Bash::OwnMessageHandler: Sending reply";

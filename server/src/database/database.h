@@ -33,11 +33,7 @@ class Database {
 
   bool IsOpen() const;
 
-  void CreateBashLogsTable();
-
   ::type::Date GetDateById(type::RowId id) __attribute__((deprecated));
-
-  bool AddBashLogs(const ::type::BashLogs &log_entries);
 
   bool AddApacheSessionStatistics(const ::apache::type::ApacheSessions &sessions);
 

@@ -14,6 +14,10 @@ patlms_server_SOURCES	= main.cpp \
 				apache/analyzer/detail/system.cpp \
 				apache/analyzer/detail/prepare_statistics/nearest_neighbours_table.cpp \
 				apache/notifier/type/apache_notifier_message.cpp \
+				bash/database/detail/raw_database_functions.cpp \
+				bash/database/database_functions.cpp \
+				bash/dbus/object/bash.cpp \
+				bash/domain/scripts.cpp \
 				database/database.cpp \
 				database/sqlite_wrapper.cpp \
 				database/general_database_functions.cpp \
@@ -27,7 +31,6 @@ patlms_server_SOURCES	= main.cpp \
 				program_options/parser.cpp \
 				program_options/type/options.cpp \
 				program_options/web/command_executor_object.cpp \
-				bash/dbus/object/bash.cpp \
 				apache/dbus/object/apache.cpp \
 				web/command_receiver.cpp \
 				web/command_executor.cpp \

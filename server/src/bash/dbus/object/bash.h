@@ -7,7 +7,7 @@
 #include <patlms/dbus/object.h>
 #include <patlms/type/bash_log_entry.h>
 
-#include "src/database/database.h"
+#include "src/bash/domain/detail/scripts_interface.h"
 
 namespace bash
 {
@@ -20,7 +20,7 @@ namespace object
 
 class Bash : public ::dbus::Object {
  public:
-  Bash(::database::DatabasePtr database);
+  Bash(::bash::domain::detail::ScriptsInterfacePtr scripts);
   virtual ~Bash();
 
   const char* GetPath();
@@ -30,7 +30,7 @@ class Bash : public ::dbus::Object {
 
   DBusHandlerResult OwnMessageHandler(DBusConnection *connection, DBusMessage *message);
 
-  ::database::DatabasePtr database_;
+  ::bash::domain::detail::ScriptsInterfacePtr scripts_;
 };
 
 typedef std::shared_ptr<Bash> BashPtr;

@@ -27,6 +27,9 @@
 #include "analyzer/analyzer.h"
 #include "apache/analyzer/apache_analyzer_object.h"
 
+#include "src/bash/database/database_functions.h"
+#include "src/bash/domain/scripts.h"
+
 #include "notifier/notifier.h"
 
 #ifdef HAVE_CONFIG_H
@@ -60,7 +63,6 @@ void analyze_signal_handler(int sig, siginfo_t *siginfo, void *context) {
 database::DatabasePtr CreateDatabase(database::SQLiteWrapperPtr sqlite_wrapper) {
   database::DatabasePtr database = database::Database::Create();
   database->Open(sqlite_wrapper->GetSQLiteHandle());
-  database->CreateBashLogsTable();
 
   return database;
 }
@@ -142,7 +144,14 @@ main(int argc, char *argv[]) {
     bus->Connect();
     bus->RequestConnectionName("org.chyla.patlms.server");
 
-    bash_object = std::make_shared<bash::dbus::object::Bash>(database);
+    auto bash_database_functions = ::bash::database::DatabaseFunctions::Create(sqlite_wrapper,
+                                                                               general_database_functions);
+    bash_database_functions->CreateTables();
+
+    auto bash_scripts = ::bash::domain::Scripts::Create(bash_database_functions,
+                                                        general_database_functions);
+
+    bash_object = std::make_shared<bash::dbus::object::Bash>(bash_scripts);
     bus->RegisterObject(bash_object);
 
     apache_object = std::make_shared<apache::dbus::object::Apache>(database, general_database_functions, apache_database_functions);
