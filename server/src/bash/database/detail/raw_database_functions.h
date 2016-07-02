@@ -33,6 +33,9 @@ class RawDatabaseFunctions : public RawDatabaseFunctionsInterface {
   void AddSystemUser(const entity::SystemUser &system_user) override;
   ::database::type::RowId GetSystemUserId(const entity::SystemUser &system_user) override;
 
+  void AddCommand(const ::bash::database::type::CommandName &command) override;
+  ::database::type::RowId GetCommandId(const ::bash::database::type::CommandName &command) override;
+
   void AddLog(const entity::Log &log) override;
 
  private:

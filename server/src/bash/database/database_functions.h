@@ -36,6 +36,9 @@ class DatabaseFunctions : public detail::DatabaseFunctionsInterface {
   void AddSystemUser(type::UID uid) override;
   ::database::type::RowId GetSystemUserId(type::UID uid) override;
 
+  void AddCommand(const ::bash::database::type::CommandName &command) override;
+  ::database::type::RowId GetCommandId(const ::bash::database::type::CommandName &command) override;
+
   void AddLog(const ::type::BashLogEntry &log_entry) override;
 
  private:

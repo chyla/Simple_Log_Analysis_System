@@ -53,6 +53,18 @@ void DatabaseFunctions::AddSystemUser(type::UID uid) {
   return raw_database_functions_->GetSystemUserId({uid});
 }
 
+void DatabaseFunctions::AddCommand(const ::bash::database::type::CommandName &command) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::DatabaseFunctions::AddCommand: Function call";
+
+  return raw_database_functions_->AddCommand(command);
+}
+
+::database::type::RowId DatabaseFunctions::GetCommandId(const ::bash::database::type::CommandName &command) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::DatabaseFunctions::GetCommandId: Function call";
+
+  return raw_database_functions_->GetCommandId(command);
+}
+
 void DatabaseFunctions::AddLog(const ::type::BashLogEntry &log_entry) {
   BOOST_LOG_TRIVIAL(debug) << "database::DatabaseFunctions::AddLog: Function call";
 
@@ -61,7 +73,7 @@ void DatabaseFunctions::AddLog(const ::type::BashLogEntry &log_entry) {
   raw_log.date_id = general_database_functions_->GetDateId(log_entry.utc_time.GetDate());
   raw_log.time_id = general_database_functions_->GetTimeId(log_entry.utc_time.GetTime());
   raw_log.user_id = GetSystemUserId(log_entry.user_id);
-  raw_log.command = log_entry.command;
+  raw_log.command_id = raw_database_functions_->GetCommandId(log_entry.command);
 
   raw_database_functions_->AddLog(raw_log);
 }

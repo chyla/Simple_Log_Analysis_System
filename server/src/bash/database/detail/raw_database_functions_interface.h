@@ -8,6 +8,7 @@
 
 #include "entity/log.h"
 #include "entity/system_user.h"
+#include "src/bash/database/type/command_name.h"
 
 #include <memory>
 
@@ -28,6 +29,9 @@ class RawDatabaseFunctionsInterface {
 
   virtual void AddSystemUser(const entity::SystemUser &system_user) = 0;
   virtual ::database::type::RowId GetSystemUserId(const entity::SystemUser &system_user) = 0;
+
+  virtual void AddCommand(const ::bash::database::type::CommandName &command) = 0;
+  virtual ::database::type::RowId GetCommandId(const ::bash::database::type::CommandName &command) = 0;
 
   virtual void AddLog(const entity::Log &log) = 0;
 };

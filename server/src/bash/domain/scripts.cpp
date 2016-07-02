@@ -25,6 +25,7 @@ void Scripts::AddLog(const ::type::BashLogEntry &log_entry) {
   general_database_functions_->AddTime(log_entry.utc_time.GetTime());
   general_database_functions_->AddAgentName(log_entry.agent_name);
   database_functions_->AddSystemUser(log_entry.user_id);
+  database_functions_->AddCommand(log_entry.command);
 
   database_functions_->AddLog(log_entry);
 }

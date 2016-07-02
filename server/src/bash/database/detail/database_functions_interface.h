@@ -10,6 +10,7 @@
 
 #include "src/database/type/row_id.h"
 #include "src/bash/database/type/uid.h"
+#include "src/bash/database/type/command_name.h"
 
 #include <memory>
 
@@ -30,6 +31,9 @@ class DatabaseFunctionsInterface {
 
   virtual void AddSystemUser(type::UID uid) = 0;
   virtual ::database::type::RowId GetSystemUserId(type::UID uid) = 0;
+
+  virtual void AddCommand(const ::bash::database::type::CommandName &command) = 0;
+  virtual ::database::type::RowId GetCommandId(const ::bash::database::type::CommandName &command) = 0;
 
   virtual void AddLog(const ::type::BashLogEntry &log_entry) = 0;
 };

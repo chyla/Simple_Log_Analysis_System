@@ -26,7 +26,7 @@ struct Log {
   ::database::type::RowId time_id;
   ::database::type::RowId date_id;
   ::database::type::RowId user_id;
-  ::bash::database::type::CommandName command;
+  ::database::type::RowId command_id;
 };
 
 }
