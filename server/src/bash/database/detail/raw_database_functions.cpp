@@ -62,7 +62,7 @@ void RawDatabaseFunctions::AddSystemUser(const entity::SystemUser &system_user) 
 }
 
 ::database::type::RowId RawDatabaseFunctions::GetSystemUserId(const entity::SystemUser &system_user) {
-  BOOST_LOG_TRIVIAL(debug) << "database::Database::GetDateId: Function call";
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::detail::RawDatabaseFunctions::GetSystemUserId: Function call";
 
   const string sql =
       "select ID from BASH_SYSTEM_USER_TABLE "

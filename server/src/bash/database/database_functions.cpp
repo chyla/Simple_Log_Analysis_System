@@ -36,13 +36,13 @@ DatabaseFunctionsPtr DatabaseFunctions::Create(::bash::database::detail::RawData
 }
 
 void DatabaseFunctions::CreateTables() {
-  BOOST_LOG_TRIVIAL(debug) << "bash::database::DatabaseFunctions::Create: Function call";
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::DatabaseFunctions::CreateTables: Function call";
 
   raw_database_functions_->CreateTables();
 }
 
 void DatabaseFunctions::AddSystemUser(type::UID uid) {
-  BOOST_LOG_TRIVIAL(debug) << "database::DatabaseFunctions::AddVirtualhostName: Function call";
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::DatabaseFunctions::AddSystemUser: Function call";
 
   raw_database_functions_->AddSystemUser({uid});
 }
@@ -66,7 +66,7 @@ void DatabaseFunctions::AddCommand(const ::bash::database::type::CommandName &co
 }
 
 void DatabaseFunctions::AddLog(const ::type::BashLogEntry &log_entry) {
-  BOOST_LOG_TRIVIAL(debug) << "database::DatabaseFunctions::AddLog: Function call";
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::DatabaseFunctions::AddLog: Function call";
 
   detail::entity::Log raw_log;
   raw_log.agent_name_id = general_database_functions_->GetAgentNameId(log_entry.agent_name);
