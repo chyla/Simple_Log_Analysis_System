@@ -36,12 +36,12 @@ void Scripts::CreateDailySystemStatistics() {
   ::bash::database::detail::entity::DailySystemStatistic stat;
 
   auto agents_names_ids = general_database_functions_->GetAgentsIds();
+  auto commands_ids = database_functions_->GetAllCommandsIds();
+
   for (auto agent_name_id : agents_names_ids) {
     auto dates_ids = database_functions_->GetDateIdsWithoutCreatedDailySystemStatistic(agent_name_id);
 
     for (auto date_id : dates_ids) {
-      auto commands_ids = database_functions_->GetAllCommandsIds();
-
       for (auto command_id : commands_ids) {
         auto count = database_functions_->CountCommandsForDailySystemStatistic(agent_name_id, date_id, command_id);
 
