@@ -45,7 +45,7 @@ void RawDatabaseFunctions::CreateTables() {
                         "  TIME_ID integer, "
                         "  DATE_ID integer, "
                         "  USER_ID integer, "
-                        "  COMMAND_ID text, "
+                        "  COMMAND_ID integer, "
                         "  foreign key(AGENT_NAME_ID) references AGENT_NAMES(ID), "
                         "  foreign key(TIME_ID) references TIME_TABLE(ID), "
                         "  foreign key(DATE_ID) references DATE_TABLE(ID), "
