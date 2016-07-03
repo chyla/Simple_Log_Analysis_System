@@ -42,6 +42,7 @@ class GeneralDatabaseFunctions : public ::database::detail::GeneralDatabaseFunct
 
   MOCK_METHOD1(AddAgentName, void (const std::string &name));
   MOCK_METHOD0(GetAgentNames, ::database::type::AgentNames());
+  MOCK_METHOD0(GetAgentsIds, ::database::type::RowIds());
   MOCK_METHOD1(AddAndGetAgentNameId, ::database::type::RowId(const std::string &name));
   MOCK_METHOD1(GetAgentNameId, ::database::type::RowId(const std::string &name));
   MOCK_METHOD1(GetAgentNameById, std::string(const ::database::type::RowId &id));

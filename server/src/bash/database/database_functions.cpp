@@ -65,6 +65,12 @@ void DatabaseFunctions::AddCommand(const ::bash::database::type::CommandName &co
   return raw_database_functions_->GetCommandId(command);
 }
 
+::database::type::RowIds DatabaseFunctions::GetAllCommandsIds() {
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::DatabaseFunctions::GetAllCommandsIds: Function call";
+
+  return raw_database_functions_->GetAllCommandsIds();
+}
+
 void DatabaseFunctions::AddLog(const ::type::BashLogEntry &log_entry) {
   BOOST_LOG_TRIVIAL(debug) << "bash::database::DatabaseFunctions::AddLog: Function call";
 
@@ -76,6 +82,26 @@ void DatabaseFunctions::AddLog(const ::type::BashLogEntry &log_entry) {
   raw_log.command_id = raw_database_functions_->GetCommandId(log_entry.command);
 
   raw_database_functions_->AddLog(raw_log);
+}
+
+::database::type::RowsCount DatabaseFunctions::CountCommandsForDailySystemStatistic(::database::type::RowId agent_name_id,
+                                                                                    ::database::type::RowId date_id,
+                                                                                    ::database::type::RowId command_id) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::DatabaseFunctions::CountCommandsForDailySystemStatistic: Function call";
+
+  return raw_database_functions_->CountCommandsForDailySystemStatistic(agent_name_id, date_id, command_id);
+}
+
+void DatabaseFunctions::AddDailySystemStatistic(const detail::entity::DailySystemStatistic &statistics) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::DatabaseFunctions::AddDailySystemStatistic: Function call";
+
+  raw_database_functions_->AddDailySystemStatistic(statistics);
+}
+
+::database::type::RowIds DatabaseFunctions::GetDateIdsWithoutCreatedDailySystemStatistic(::database::type::RowId agent_name_id) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::DatabaseFunctions::GetDateIdsWithoutCreatedDailySystemStatistic: Function call";
+
+  return raw_database_functions_->GetDateIdsWithoutCreatedDailySystemStatistic(agent_name_id);
 }
 
 DatabaseFunctions::DatabaseFunctions(::bash::database::detail::RawDatabaseFunctionsInterfacePtr raw_database_functions,

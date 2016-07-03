@@ -210,6 +210,41 @@ type::AgentNames GeneralDatabaseFunctions::GetAgentNames() {
   return database_->GetApacheAgentNames();
 }
 
+::database::type::RowIds GeneralDatabaseFunctions::GetAgentsIds() {
+  BOOST_LOG_TRIVIAL(debug) << "database::GeneralDatabaseFunctions::GetAgentsIds: Function call";
+
+  ::database::type::RowIds ids;
+  ::database::type::RowId id;
+
+  const char *sql = "select ID from AGENT_NAMES;";
+
+  sqlite3_stmt *statement = nullptr;
+  sqlite_wrapper_->Prepare(sql, &statement);
+
+  try {
+    do {
+      auto ret = sqlite_wrapper_->Step(statement);
+
+      if (ret == SQLITE_ROW) {
+        id = sqlite_wrapper_->ColumnInt64(statement, 0);
+        ids.push_back(id);
+      }
+      else
+        break;
+    }
+    while (true);
+  }
+  catch (::database::exception::DatabaseException &ex) {
+    BOOST_LOG_TRIVIAL(debug) << "database::GeneralDatabaseFunctions::GetAgentsIds: Exception catched: " << ex.what();
+    sqlite_wrapper_->Finalize(statement);
+    throw;
+  }
+
+  sqlite_wrapper_->Finalize(statement);
+
+  return ids;
+}
+
 ::database::type::RowId GeneralDatabaseFunctions::AddAndGetAgentNameId(const std::string &name) {
   BOOST_LOG_TRIVIAL(debug) << "database::GeneralDatabaseFunctions::AddAndGetAgentNameId: Function call";
 

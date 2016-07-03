@@ -28,6 +28,8 @@ class Scripts : public detail::ScriptsInterface {
 
   void AddLog(const ::type::BashLogEntry &log_entry) override;
 
+  void CreateDailySystemStatistics() override;
+
  private:
   ::bash::database::detail::DatabaseFunctionsInterfacePtr database_functions_;
   ::database::detail::GeneralDatabaseFunctionsInterfacePtr general_database_functions_;

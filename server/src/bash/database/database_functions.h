@@ -38,8 +38,15 @@ class DatabaseFunctions : public detail::DatabaseFunctionsInterface {
 
   void AddCommand(const ::bash::database::type::CommandName &command) override;
   ::database::type::RowId GetCommandId(const ::bash::database::type::CommandName &command) override;
+  ::database::type::RowIds GetAllCommandsIds() override;
 
   void AddLog(const ::type::BashLogEntry &log_entry) override;
+  ::database::type::RowsCount CountCommandsForDailySystemStatistic(::database::type::RowId agent_name_id,
+                                                                   ::database::type::RowId date_id,
+                                                                   ::database::type::RowId command_id) override;
+
+  void AddDailySystemStatistic(const detail::entity::DailySystemStatistic &statistics) override;
+  ::database::type::RowIds GetDateIdsWithoutCreatedDailySystemStatistic(::database::type::RowId agent_name_id) override;
 
  private:
   ::bash::database::detail::RawDatabaseFunctionsInterfacePtr raw_database_functions_;

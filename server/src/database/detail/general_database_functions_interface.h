@@ -38,6 +38,7 @@ class GeneralDatabaseFunctionsInterface {
 
   virtual void AddAgentName(const std::string &name) = 0;
   virtual ::database::type::AgentNames GetAgentNames() = 0;
+  virtual ::database::type::RowIds GetAgentsIds() = 0;
   virtual ::database::type::RowId AddAndGetAgentNameId(const std::string &name) = 0;
   virtual ::database::type::RowId GetAgentNameId(const std::string &name) = 0;
   virtual std::string GetAgentNameById(const ::database::type::RowId &id) = 0;

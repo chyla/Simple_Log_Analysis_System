@@ -40,6 +40,7 @@ class GeneralDatabaseFunctions : public detail::GeneralDatabaseFunctionsInterfac
 
   void AddAgentName(const std::string &name) override;
   type::AgentNames GetAgentNames() override;
+  ::database::type::RowIds GetAgentsIds() override;
   ::database::type::RowId AddAndGetAgentNameId(const std::string &name) override;
   ::database::type::RowId GetAgentNameId(const std::string &name) override;
   std::string GetAgentNameById(const ::database::type::RowId &id) override;

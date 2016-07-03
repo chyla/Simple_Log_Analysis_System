@@ -24,6 +24,8 @@ class ScriptsInterface {
   virtual ~ScriptsInterface() = default;
 
   virtual void AddLog(const ::type::BashLogEntry &log_entry) = 0;
+  
+  virtual void CreateDailySystemStatistics() = 0;
 };
 
 typedef std::shared_ptr<ScriptsInterface> ScriptsInterfacePtr;

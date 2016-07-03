@@ -30,6 +30,32 @@ void Scripts::AddLog(const ::type::BashLogEntry &log_entry) {
   database_functions_->AddLog(log_entry);
 }
 
+void Scripts::CreateDailySystemStatistics() {
+  BOOST_LOG_TRIVIAL(debug) << "bash::domain::Scripts::CreateDailySystemStatistics: Function call";
+
+  ::bash::database::detail::entity::DailySystemStatistic stat;
+
+  auto agents_names_ids = general_database_functions_->GetAgentsIds();
+  for (auto agent_name_id : agents_names_ids) {
+    auto dates_ids = database_functions_->GetDateIdsWithoutCreatedDailySystemStatistic(agent_name_id);
+
+    for (auto date_id : dates_ids) {
+      auto commands_ids = database_functions_->GetAllCommandsIds();
+
+      for (auto command_id : commands_ids) {
+        auto count = database_functions_->CountCommandsForDailySystemStatistic(agent_name_id, date_id, command_id);
+
+        stat.agent_name_id = agent_name_id;
+        stat.date_id = date_id;
+        stat.command_id = command_id;
+        stat.summary = count;
+
+        database_functions_->AddDailySystemStatistic(stat);
+      }
+    }
+  }
+}
+
 Scripts::Scripts(::bash::database::detail::DatabaseFunctionsInterfacePtr database_functions,
                  ::database::detail::GeneralDatabaseFunctionsInterfacePtr general_database_functions) :
 database_functions_(database_functions),
