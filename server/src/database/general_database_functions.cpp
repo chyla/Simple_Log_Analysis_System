@@ -155,6 +155,64 @@ void GeneralDatabaseFunctions::AddDate(const ::type::Date &date) {
   return sqlite_wrapper_->GetFirstInt64Column(sql, -1);
 }
 
+::database::type::RowIds GeneralDatabaseFunctions::GetDateRangeIds(const ::type::Date &from, const ::type::Date &to) {
+  BOOST_LOG_TRIVIAL(debug) << "database::GeneralDatabaseFunctions::GetDateRangeIds: Function call";
+
+  string from_day = to_string(from.GetDay()),
+      from_month = to_string(from.GetMonth()),
+      from_year = to_string(from.GetYear()),
+      to_day = to_string(to.GetDay()),
+      to_month = to_string(to.GetMonth()),
+      to_year = to_string(to.GetYear());
+
+  string sql =
+      "select ID from DATE_TABLE where "
+      "  ("
+      "    ("
+      "      (YEAR > " + from_year + ")"
+      "      or (YEAR = " + from_year + " and MONTH > " + from_month + ")"
+      "      or (YEAR = " + from_year + " and MONTH = " + from_month + " and DAY >= " + from_day + ")"
+      "    )"
+      "  and"
+      "    ("
+      "      (YEAR < " + to_year + ")"
+      "      or (YEAR = " + to_year + " and MONTH < " + to_month + ")"
+      "      or (YEAR = " + to_year + " and MONTH = " + to_month + " and DAY <= " + to_day + ")"
+      "    )"
+      "  )"
+      ";"
+      ;
+
+  ::database::type::RowIds ids;
+  ::database::type::RowId id;
+
+  sqlite3_stmt *statement = nullptr;
+  sqlite_wrapper_->Prepare(sql, &statement);
+
+  try {
+    do {
+      auto ret = sqlite_wrapper_->Step(statement);
+
+      if (ret == SQLITE_ROW) {
+        id = sqlite_wrapper_->ColumnInt64(statement, 0);
+        ids.push_back(id);
+      }
+      else
+        break;
+    }
+    while (true);
+  }
+  catch (::database::exception::DatabaseException &ex) {
+    BOOST_LOG_TRIVIAL(debug) << "database::GeneralDatabaseFunctions::GetDateRangeIds: Exception catched: " << ex.what();
+    sqlite_wrapper_->Finalize(statement);
+    throw;
+  }
+
+  sqlite_wrapper_->Finalize(statement);
+
+  return ids;
+}
+
 ::type::Date GeneralDatabaseFunctions::GetDateById(const ::database::type::RowId &id) {
   BOOST_LOG_TRIVIAL(debug) << "database::GeneralDatabaseFunctions::GetDateById: Function call";
   ::type::Date date;

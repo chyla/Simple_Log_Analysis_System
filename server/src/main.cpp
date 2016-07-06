@@ -29,6 +29,8 @@
 
 #include "src/bash/database/database_functions.h"
 #include "src/bash/domain/scripts.h"
+#include "src/bash/domain/web_scripts.h"
+#include "src/bash/web/command_executor_object.h"
 
 #include "notifier/notifier.h"
 #include "bash/analyzer/bash_analyzer_object.h"
@@ -152,6 +154,11 @@ main(int argc, char *argv[]) {
     auto bash_scripts = ::bash::domain::Scripts::Create(bash_database_functions,
                                                         general_database_functions);
 
+    auto bash_web_scripts = ::bash::domain::WebScripts::Create(bash_scripts);
+
+    auto bash_web_command_executor = bash::web::CommandExecutorObject::Create(bash_web_scripts);
+    command_executor->RegisterCommandObject(bash_web_command_executor);
+
     bash_object = std::make_shared<bash::dbus::object::Bash>(bash_scripts);
     bus->RegisterObject(bash_object);
 
@@ -184,7 +191,7 @@ main(int argc, char *argv[]) {
                                                                               notifier_worker));
 
     analyzer_worker->AddObject(bash::analyzer::BashAnalyzerObject::Create(bash_scripts));
-    
+
     analyzer_thread = std::thread([]() {
       analyzer_worker->StartLoop();
     });

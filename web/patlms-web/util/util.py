@@ -76,3 +76,18 @@ def get_learning_set_sessions(agent_name, virtualhost_name):
 
 def remove_configuration(configuration_id):
     return connect_and_get_result_from_command('remove_configuration', [configuration_id])
+
+def bash_get_unconfigured_agents():
+    return connect_and_get_result_from_command('bash.get_unconfigured_agents')
+
+def bash_get_anomaly_detection_configurations():
+    return connect_and_get_result_from_command('bash.get_anomaly_detection_configurations')
+
+def bash_remove_anomaly_detection_configurations(configuration_id):
+    return connect_and_get_result_from_command('bash.remove_anomaly_detection_configurations', [int(configuration_id)])
+
+def bash_get_commands_statistics(agent_name_id, begin_date, end_date):
+    return connect_and_get_result_from_command('bash.get_commands_statistics', [int(agent_name_id), begin_date, end_date])
+
+def bash_save_anomaly_detection_configuration(agent_name_id, begin_date, end_date):
+    return connect_and_get_result_from_command('bash.save_anomaly_detection_configuration', [int(agent_name_id), begin_date, end_date])

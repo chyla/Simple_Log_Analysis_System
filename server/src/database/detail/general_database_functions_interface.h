@@ -34,6 +34,7 @@ class GeneralDatabaseFunctionsInterface {
   virtual void AddDate(const ::type::Date &date) = 0;
   virtual ::database::type::RowId AddAndGetDateId(const ::type::Date &date) = 0;
   virtual ::database::type::RowId GetDateId(const ::type::Date &date) = 0;
+  virtual ::database::type::RowIds GetDateRangeIds(const ::type::Date &from, const ::type::Date &to) = 0;
   virtual ::type::Date GetDateById(const ::database::type::RowId &id) = 0;
 
   virtual void AddAgentName(const std::string &name) = 0;

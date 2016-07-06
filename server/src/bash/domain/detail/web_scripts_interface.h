@@ -3,12 +3,11 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef SCRIPTS_INTERFACE_H
-#define SCRIPTS_INTERFACE_H
+#ifndef WEB_SCRIPTS_INTERFACE_H
+#define WEB_SCRIPTS_INTERFACE_H
 
-#include <patlms/type/bash_log_entry.h>
-#include <patlms/type/date.h>
-
+#include "src/database/type/row_id.h"
+#include "src/database/type/rows_count.h"
 #include "src/bash/domain/type/command_statistic.h"
 #include "src/bash/domain/type/unconfigured_agent.h"
 #include "src/bash/domain/type/anomaly_detection_configuration.h"
@@ -24,13 +23,9 @@ namespace domain
 namespace detail
 {
 
-class ScriptsInterface {
+class WebScriptsInterface {
  public:
-  virtual ~ScriptsInterface() = default;
-
-  virtual void AddLog(const ::type::BashLogEntry &log_entry) = 0;
-
-  virtual void CreateDailySystemStatistics() = 0;
+  virtual ~WebScriptsInterface() = default;
 
   virtual ::bash::domain::type::UnconfiguredAgents GetUnconfigurentAgents() = 0;
 
@@ -40,16 +35,12 @@ class ScriptsInterface {
                                  const ::type::Date &begin_date,
                                  const ::type::Date &end_date) = 0;
 
-  virtual void CalculateCommandStatistics(::database::type::RowId agent_name_id,
-                                          const ::type::Date &begin_date,
-                                          const ::type::Date &end_date) = 0;
-
   virtual ::bash::domain::type::CommandsStatistics GetCommandsStatistics(::database::type::RowId agent_name_id,
                                                                          const ::type::Date &begin_date,
                                                                          const ::type::Date &end_date) = 0;
 };
 
-typedef std::shared_ptr<ScriptsInterface> ScriptsInterfacePtr;
+typedef std::shared_ptr<WebScriptsInterface> WebScriptsInterfacePtr;
 
 }
 
@@ -57,4 +48,4 @@ typedef std::shared_ptr<ScriptsInterface> ScriptsInterfacePtr;
 
 }
 
-#endif /* SCRIPTS_H */
+#endif /* WEB_SCRIPTS_INTERFACE_H */

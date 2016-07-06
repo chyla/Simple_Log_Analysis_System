@@ -36,6 +36,7 @@ class GeneralDatabaseFunctions : public detail::GeneralDatabaseFunctionsInterfac
   void AddDate(const ::type::Date &date) override;
   ::database::type::RowId AddAndGetDateId(const ::type::Date &date) override;
   ::database::type::RowId GetDateId(const ::type::Date &date) override;
+  ::database::type::RowIds GetDateRangeIds(const ::type::Date &from, const ::type::Date &to);
   ::type::Date GetDateById(const ::database::type::RowId &id) override;
 
   void AddAgentName(const std::string &name) override;

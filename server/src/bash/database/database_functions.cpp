@@ -71,6 +71,12 @@ void DatabaseFunctions::AddCommand(const ::bash::database::type::CommandName &co
   return raw_database_functions_->GetAllCommandsIds();
 }
 
+::bash::database::type::CommandName DatabaseFunctions::GetCommandNameById(::database::type::RowId id) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::DatabaseFunctions::GetCommandNameById: Function call";
+
+  return raw_database_functions_->GetCommandNameById(id);
+}
+
 void DatabaseFunctions::AddLog(const ::type::BashLogEntry &log_entry) {
   BOOST_LOG_TRIVIAL(debug) << "bash::database::DatabaseFunctions::AddLog: Function call";
 
@@ -102,6 +108,79 @@ void DatabaseFunctions::AddDailySystemStatistic(const detail::entity::DailySyste
   BOOST_LOG_TRIVIAL(debug) << "bash::database::DatabaseFunctions::GetDateIdsWithoutCreatedDailySystemStatistic: Function call";
 
   return raw_database_functions_->GetDateIdsWithoutCreatedDailySystemStatistic(agent_name_id);
+}
+
+::database::type::RowIds DatabaseFunctions::GetAgentIdsWithoutConfiguration() {
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::DatabaseFunctions::GetAgentIdsWithoutConfiguration: Function call";
+
+  return raw_database_functions_->GetAgentIdsWithoutConfiguration();
+}
+
+type::AnomalyDetectionConfigurations DatabaseFunctions::GetAnomalyDetectionConfigurations() {
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::DatabaseFunctions::GetAnomalyDetectionConfigurations: Function call";
+
+  auto raw_configs = raw_database_functions_->GetAnomalyDetectionConfigurations();
+
+  type::AnomalyDetectionConfigurations configs;
+  type::AnomalyDetectionConfiguration c;
+
+  for (const auto &config : raw_configs) {
+    c.id = config.id;
+    c.agent_name_id = config.agent_name_id;
+    c.begin_date = general_database_functions_->GetDateById(config.begin_date_id);
+    c.end_date = general_database_functions_->GetDateById(config.end_date_id);
+
+    configs.push_back(c);
+  }
+
+  return configs;
+}
+
+void DatabaseFunctions::RemoveAnomalyDetectionConfiguration(::database::type::RowId id) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::DatabaseFunctions::RemoveAnomalyDetectionConfiguration: Function call";
+
+  raw_database_functions_->RemoveAnomalyDetectionConfiguration(id);
+}
+
+void DatabaseFunctions::AddAnomalyDetectionConfiguration(const type::AnomalyDetectionConfiguration &configuration) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::DatabaseFunctions::AddAnomalyDetectionConfiguration: Function call";
+
+  detail::entity::AnomalyDetectionConfiguration c;
+  c.agent_name_id = configuration.agent_name_id;
+  c.begin_date_id = general_database_functions_->GetDateId(configuration.begin_date);
+  c.end_date_id = general_database_functions_->GetDateId(configuration.end_date);
+
+  raw_database_functions_->AddAnomalyDetectionConfiguration(c);
+}
+
+void DatabaseFunctions::AddCommandStatistic(const detail::entity::CommandStatistic &statistic) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::DatabaseFunctions::AddCommandStatistic: Function call";
+
+  raw_database_functions_->AddCommandStatistic(statistic);
+}
+
+bool DatabaseFunctions::IsCommandStatisticExist(::database::type::RowId agent_name_id,
+                                                ::database::type::RowId command_id,
+                                                ::database::type::RowId begin_date_id,
+                                                ::database::type::RowId end_date_id) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::DatabaseFunctions::IsCommandStatisticExist: Function call";
+
+  return raw_database_functions_->IsCommandStatisticExist(agent_name_id, command_id, begin_date_id, end_date_id);
+}
+
+detail::entity::CommandsStatistics DatabaseFunctions::GetCommandsStatistics(::database::type::RowId agent_name_id,
+                                                                            ::database::type::RowId begin_date_id,
+                                                                            ::database::type::RowId end_date_id) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::DatabaseFunctions::GetCommandStatistic: Function call";
+
+  return raw_database_functions_->GetCommandsStatistics(agent_name_id, begin_date_id, end_date_id);
+}
+
+::database::type::RowsCount DatabaseFunctions::CommandSummary(::database::type::RowId command_id,
+                                                              ::database::type::RowIds date_range_ids) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::DatabaseFunctions::CommandSummary: Function call";
+
+  return raw_database_functions_->CommandSummary(command_id, date_range_ids);
 }
 
 DatabaseFunctions::DatabaseFunctions(::bash::database::detail::RawDatabaseFunctionsInterfacePtr raw_database_functions,

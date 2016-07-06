@@ -30,6 +30,22 @@ class Scripts : public detail::ScriptsInterface {
 
   void CreateDailySystemStatistics() override;
 
+  ::bash::domain::type::UnconfiguredAgents GetUnconfigurentAgents() override;
+
+  ::bash::domain::type::AnomalyDetectionConfigurations GetAnomalyDetectionConfigurations() override;
+  void RemoveAnomalyDetectionConfiguration(::database::type::RowId id) override;
+  void SaveConfiguration(::database::type::RowId agent_name_id,
+                         const ::type::Date &begin_date,
+                         const ::type::Date &end_date) override;
+
+  void CalculateCommandStatistics(::database::type::RowId agent_name_id,
+                                  const ::type::Date &begin_date,
+                                  const ::type::Date &end_date) override;
+
+  ::bash::domain::type::CommandsStatistics GetCommandsStatistics(::database::type::RowId agent_name_id,
+                                                                 const ::type::Date &begin_date,
+                                                                 const ::type::Date &end_date) override;
+
  private:
   ::bash::database::detail::DatabaseFunctionsInterfacePtr database_functions_;
   ::database::detail::GeneralDatabaseFunctionsInterfacePtr general_database_functions_;

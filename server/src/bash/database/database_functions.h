@@ -39,6 +39,7 @@ class DatabaseFunctions : public detail::DatabaseFunctionsInterface {
   void AddCommand(const ::bash::database::type::CommandName &command) override;
   ::database::type::RowId GetCommandId(const ::bash::database::type::CommandName &command) override;
   ::database::type::RowIds GetAllCommandsIds() override;
+  ::bash::database::type::CommandName GetCommandNameById(::database::type::RowId id) override;
 
   void AddLog(const ::type::BashLogEntry &log_entry) override;
   ::database::type::RowsCount CountCommandsForDailySystemStatistic(::database::type::RowId agent_name_id,
@@ -48,6 +49,22 @@ class DatabaseFunctions : public detail::DatabaseFunctionsInterface {
   void AddDailySystemStatistic(const detail::entity::DailySystemStatistic &statistics) override;
   ::database::type::RowIds GetDateIdsWithoutCreatedDailySystemStatistic(::database::type::RowId agent_name_id) override;
 
+  ::database::type::RowIds GetAgentIdsWithoutConfiguration() override;
+
+  type::AnomalyDetectionConfigurations GetAnomalyDetectionConfigurations() override;
+  void RemoveAnomalyDetectionConfiguration(::database::type::RowId id) override;
+  void AddAnomalyDetectionConfiguration(const type::AnomalyDetectionConfiguration &configuration) override;
+
+  void AddCommandStatistic(const detail::entity::CommandStatistic &statistic) override;
+  bool IsCommandStatisticExist(::database::type::RowId agent_name_id,
+                               ::database::type::RowId command_id,
+                               ::database::type::RowId begin_date_id,
+                               ::database::type::RowId end_date_id) override;
+  detail::entity::CommandsStatistics GetCommandsStatistics(::database::type::RowId agent_name_id,
+                                                           ::database::type::RowId begin_date_id,
+                                                           ::database::type::RowId end_date_id) override;
+  ::database::type::RowsCount CommandSummary(::database::type::RowId command_id,
+                                             ::database::type::RowIds date_range_ids) override;
  private:
   ::bash::database::detail::RawDatabaseFunctionsInterfacePtr raw_database_functions_;
   ::database::detail::GeneralDatabaseFunctionsInterfacePtr general_database_functions_;

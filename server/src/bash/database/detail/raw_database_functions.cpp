@@ -8,6 +8,7 @@
 #include <boost/log/trivial.hpp>
 
 #include "src/database/exception/database_exception.h"
+#include "src/database/exception/detail/item_not_found_exception.h"
 
 using namespace std;
 
@@ -61,6 +62,31 @@ void RawDatabaseFunctions::CreateTables() {
                         "  foreign key(AGENT_NAME_ID) references AGENT_NAMES(ID), "
                         "  foreign key(DATE_ID) references DATE_TABLE(ID), "
                         "  foreign key(COMMAND_ID) references BASH_COMMAND_TABLE(ID) "
+                        ");");
+
+  sqlite_wrapper_->Exec("create table if not exists BASH_ANOMALY_DETECTION_CONFIGURATION_TABLE ("
+                        "  ID integer primary key, "
+                        "  AGENT_NAME_ID integer, "
+                        "  BEGIN_DATE_ID integer, "
+                        "  END_DATE_ID integer, "
+                        "  foreign key(AGENT_NAME_ID) references AGENT_NAMES(ID), "
+                        "  foreign key(BEGIN_DATE_ID) references DATE_TABLE(ID), "
+                        "  foreign key(END_DATE_ID) references DATE_TABLE(ID), "
+                        "  unique (AGENT_NAME_ID) "
+                        ");");
+
+  sqlite_wrapper_->Exec("create table if not exists BASH_DATE_RANGE_COMMANDS_STATISTICS_TABLE ("
+                        "  ID integer primary key, "
+                        "  AGENT_NAME_ID integer, "
+                        "  COMMAND_ID integer, "
+                        "  BEGIN_DATE_ID integer, "
+                        "  END_DATE_ID integer, "
+                        "  SUMMARY integer, "
+                        "  foreign key(AGENT_NAME_ID) references AGENT_NAMES(ID), "
+                        "  foreign key(COMMAND_ID) references BASH_COMMAND_TABLE(ID), "
+                        "  foreign key(BEGIN_DATE_ID) references DATE_TABLE(ID), "
+                        "  foreign key(END_DATE_ID) references DATE_TABLE(ID), "
+                        "  unique (AGENT_NAME_ID, COMMAND_ID, BEGIN_DATE_ID, END_DATE_ID) "
                         ");");
 }
 
@@ -177,6 +203,37 @@ void RawDatabaseFunctions::AddCommand(const ::bash::database::type::CommandName 
   return commands_ids;
 }
 
+::bash::database::type::CommandName RawDatabaseFunctions::GetCommandNameById(::database::type::RowId id) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::detail::RawDatabaseFunctions::GetCommandNameById: Function call";
+
+  string sql = "select COMMAND from BASH_COMMAND_TABLE where ID=" + to_string(id) + ";";
+  ::bash::database::type::CommandName name;
+
+  sqlite3_stmt *statement = nullptr;
+  sqlite_wrapper_->Prepare(sql, &statement);
+
+  try {
+    auto ret = sqlite_wrapper_->Step(statement);
+
+    if (ret == SQLITE_ROW) {
+      name = sqlite_wrapper_->ColumnText(statement, 0);
+    }
+    else {
+      BOOST_LOG_TRIVIAL(debug) << "bash::database::detail::RawDatabaseFunctions::GetCommandNameById: Command name with id=" << id << " not found";
+      throw ::database::exception::detail::ItemNotFoundException();
+    }
+  }
+  catch (::database::exception::DatabaseException &ex) {
+    BOOST_LOG_TRIVIAL(debug) << "bash::database::detail::RawDatabaseFunctions::GetCommandId: Exception catched: " << ex.what();
+    sqlite_wrapper_->Finalize(statement);
+    throw;
+  }
+
+  sqlite_wrapper_->Finalize(statement);
+
+  return name;
+}
+
 void RawDatabaseFunctions::AddLog(const entity::Log & log) {
   BOOST_LOG_TRIVIAL(debug) << "bash::database::detail::RawDatabaseFunctions::AddLog: Function call";
 
@@ -274,6 +331,216 @@ void RawDatabaseFunctions::AddDailySystemStatistic(const entity::DailySystemStat
   sqlite_wrapper_->Finalize(statement);
 
   return date_ids;
+}
+
+::database::type::RowIds RawDatabaseFunctions::GetAgentIdsWithoutConfiguration() {
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::detail::RawDatabaseFunctions::GetAgentIdsWithoutConfiguration: Function call";
+
+  ::database::type::RowIds ids;
+  ::database::type::RowId id;
+
+  string sql =
+      "select AN.ID from AGENT_NAMES as AN "
+      " left join BASH_ANOMALY_DETECTION_CONFIGURATION_TABLE as BADCT "
+      " on AN.ID=BADCT.AGENT_NAME_ID where BADCT.ID is null;";
+
+  sqlite3_stmt *statement = nullptr;
+  sqlite_wrapper_->Prepare(sql, &statement);
+
+  try {
+    do {
+      auto ret = sqlite_wrapper_->Step(statement);
+
+      if (ret == SQLITE_ROW) {
+        id = sqlite_wrapper_->ColumnInt64(statement, 0);
+        ids.push_back(id);
+      }
+      else
+        break;
+    }
+    while (true);
+  }
+  catch (::database::exception::DatabaseException &ex) {
+    BOOST_LOG_TRIVIAL(debug) << "bash::database::detail::RawDatabaseFunctions::GetAgentIdsWithoutConfiguration: Exception catched: " << ex.what();
+    sqlite_wrapper_->Finalize(statement);
+    throw;
+  }
+
+  sqlite_wrapper_->Finalize(statement);
+
+  return ids;
+}
+
+entity::AnomalyDetectionConfigurations RawDatabaseFunctions::GetAnomalyDetectionConfigurations() {
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::detail::RawDatabaseFunctions::GetAnomalyDetectionConfiguration: Function call";
+
+  entity::AnomalyDetectionConfigurations configurations;
+  entity::AnomalyDetectionConfiguration config;
+
+  const char *sql = "select ID, AGENT_NAME_ID, BEGIN_DATE_ID, END_DATE_ID from BASH_ANOMALY_DETECTION_CONFIGURATION_TABLE;";
+
+  sqlite3_stmt *statement = nullptr;
+  sqlite_wrapper_->Prepare(sql, &statement);
+
+  try {
+    do {
+      auto ret = sqlite_wrapper_->Step(statement);
+
+      if (ret == SQLITE_ROW) {
+        config.id = sqlite_wrapper_->ColumnInt64(statement, 0);
+        config.agent_name_id = sqlite_wrapper_->ColumnInt64(statement, 1);
+        config.begin_date_id = sqlite_wrapper_->ColumnInt64(statement, 2);
+        config.end_date_id = sqlite_wrapper_->ColumnInt64(statement, 3);
+
+        configurations.push_back(config);
+      }
+      else
+        break;
+    }
+    while (true);
+  }
+  catch (::database::exception::DatabaseException &ex) {
+    BOOST_LOG_TRIVIAL(debug) << "bash::database::detail::RawDatabaseFunctions::GetAgentIdsWithoutConfiguration: Exception catched: " << ex.what();
+    sqlite_wrapper_->Finalize(statement);
+    throw;
+  }
+
+  sqlite_wrapper_->Finalize(statement);
+
+  return configurations;
+}
+
+void RawDatabaseFunctions::RemoveAnomalyDetectionConfiguration(::database::type::RowId id) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::detail::RawDatabaseFunctions::RemoveAnomalyDetectionConfiguration: Function call";
+
+  string sql = "delete from BASH_ANOMALY_DETECTION_CONFIGURATION_TABLE where ID=" + to_string(id);
+
+  sqlite_wrapper_->Exec(sql);
+}
+
+void RawDatabaseFunctions::AddAnomalyDetectionConfiguration(const entity::AnomalyDetectionConfiguration &configuration) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::detail::RawDatabaseFunctions::AddAnomalyDetectionConfiguration: Function call";
+
+  string sql = "insert or replace into BASH_ANOMALY_DETECTION_CONFIGURATION_TABLE (ID, AGENT_NAME_ID, BEGIN_DATE_ID, END_DATE_ID) values ("
+      "(select ID from BASH_ANOMALY_DETECTION_CONFIGURATION_TABLE where AGENT_NAME_ID=" + to_string(configuration.agent_name_id) + "), " +
+      to_string(configuration.agent_name_id) + ", " +
+      to_string(configuration.begin_date_id) + ", " +
+      to_string(configuration.end_date_id) +
+      ");";
+
+  sqlite_wrapper_->Exec(sql);
+}
+
+void RawDatabaseFunctions::AddCommandStatistic(const entity::CommandStatistic &statistic) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::detail::RawDatabaseFunctions::AddCommandStatistic: Function call";
+
+  string sql = "insert or ignore into BASH_DATE_RANGE_COMMANDS_STATISTICS_TABLE ( "
+      " AGENT_NAME_ID, "
+      " COMMAND_ID, "
+      " BEGIN_DATE_ID, "
+      " END_DATE_ID, "
+      " SUMMARY "
+      ") "
+      "values ( " +
+      to_string(statistic.agent_name_id) + ", " +
+      to_string(statistic.command_id) + ", " +
+      to_string(statistic.begin_date_id) + ", " +
+      to_string(statistic.end_date_id) + ", " +
+      to_string(statistic.summary) +
+      ");";
+
+  sqlite_wrapper_->Exec(sql);
+}
+
+bool RawDatabaseFunctions::IsCommandStatisticExist(::database::type::RowId agent_name_id,
+                                                   ::database::type::RowId command_id,
+                                                   ::database::type::RowId begin_date_id,
+                                                   ::database::type::RowId end_date_id) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::detail::RawDatabaseFunctions::IsCommandStatisticExist: Function call";
+
+  string sql = "select count(*) from BASH_DATE_RANGE_COMMANDS_STATISTICS_TABLE "
+      " where "
+      "  AGENT_NAME_ID=" + to_string(agent_name_id) +
+      " and "
+      "  COMMAND_ID=" + to_string(command_id) +
+      " and "
+      "  BEGIN_DATE_ID=" + to_string(begin_date_id) +
+      " and "
+      "  END_DATE_ID=" + to_string(end_date_id) +
+      ";";
+
+  return static_cast<bool> (sqlite_wrapper_->GetFirstInt64Column(sql));
+}
+
+entity::CommandsStatistics RawDatabaseFunctions::GetCommandsStatistics(::database::type::RowId agent_name_id,
+                                                                       ::database::type::RowId begin_date_id,
+                                                                       ::database::type::RowId end_date_id) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::detail::RawDatabaseFunctions::GetCommandStatistic: Function call";
+
+  entity::CommandsStatistics statistics;
+
+  entity::CommandStatistic stat;
+  stat.agent_name_id = agent_name_id;
+  stat.begin_date_id = begin_date_id;
+  stat.end_date_id = end_date_id;
+
+  string sql = "select ID, SUMMARY, COMMAND_ID from BASH_DATE_RANGE_COMMANDS_STATISTICS_TABLE "
+      " where "
+      "  AGENT_NAME_ID=" + to_string(agent_name_id) +
+      " and "
+      "  BEGIN_DATE_ID=" + to_string(begin_date_id) +
+      " and "
+      "  END_DATE_ID=" + to_string(end_date_id) +
+      ";";
+
+  sqlite3_stmt *statement = nullptr;
+  sqlite_wrapper_->Prepare(sql, &statement);
+
+  try {
+    do {
+      auto ret = sqlite_wrapper_->Step(statement);
+
+      if (ret == SQLITE_ROW) {
+        stat.id = sqlite_wrapper_->ColumnInt64(statement, 0);
+        stat.summary = sqlite_wrapper_->ColumnInt64(statement, 1);
+        stat.command_id = sqlite_wrapper_->ColumnInt64(statement, 2);
+
+        statistics.push_back(stat);
+      }
+      else
+        break;
+    }
+    while (true);
+  }
+  catch (::database::exception::DatabaseException &ex) {
+    BOOST_LOG_TRIVIAL(error) << "bash::database::detail::RawDatabaseFunctions::GetCommandStatistic: Exception catched: " << ex.what();
+    sqlite_wrapper_->Finalize(statement);
+    throw;
+  }
+
+  sqlite_wrapper_->Finalize(statement);
+
+  return statistics;
+}
+
+::database::type::RowsCount RawDatabaseFunctions::CommandSummary(::database::type::RowId command_id, ::database::type::RowIds date_range_ids) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::detail::RawDatabaseFunctions::CommandSummary: Function call";
+
+  string sql = "select sum(SUMMARY) from BASH_DAILY_STATISTICS_TABLE "
+      " where "
+      "  DATE_ID in (";
+
+  auto end = date_range_ids.end();
+  for (auto it = date_range_ids.begin(); it != end; ++it) {
+    sql += to_string(*it);
+
+    if (it != end - 1)
+      sql += ", ";
+  }
+
+  sql += ") and COMMAND_ID=" + to_string(command_id) + ";";
+
+  return sqlite_wrapper_->GetFirstInt64Column(sql, 0);
 }
 
 RawDatabaseFunctions::RawDatabaseFunctions(::database::detail::SQLiteWrapperInterfacePtr sqlite_wrapper) :

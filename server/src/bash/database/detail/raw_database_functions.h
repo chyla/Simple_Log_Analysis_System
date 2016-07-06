@@ -36,6 +36,7 @@ class RawDatabaseFunctions : public RawDatabaseFunctionsInterface {
   void AddCommand(const ::bash::database::type::CommandName &command) override;
   ::database::type::RowId GetCommandId(const ::bash::database::type::CommandName &command) override;
   ::database::type::RowIds GetAllCommandsIds() override;
+  ::bash::database::type::CommandName GetCommandNameById(::database::type::RowId id) override;
 
   void AddLog(const entity::Log &log) override;
   ::database::type::RowsCount CountCommandsForDailySystemStatistic(::database::type::RowId agent_name_id,
@@ -45,6 +46,23 @@ class RawDatabaseFunctions : public RawDatabaseFunctionsInterface {
   void AddDailySystemStatistic(const entity::DailySystemStatistic &statistics) override;
   ::database::type::RowIds GetDateIdsWithoutCreatedDailySystemStatistic(::database::type::RowId agent_name_id) override;
 
+  ::database::type::RowIds GetAgentIdsWithoutConfiguration() override;
+
+  entity::AnomalyDetectionConfigurations GetAnomalyDetectionConfigurations() override;
+  void RemoveAnomalyDetectionConfiguration(::database::type::RowId id) override;
+  void AddAnomalyDetectionConfiguration(const entity::AnomalyDetectionConfiguration &configuration) override;
+
+  void AddCommandStatistic(const entity::CommandStatistic &statistic) override;
+
+  bool IsCommandStatisticExist(::database::type::RowId agent_name_id,
+                               ::database::type::RowId command_id,
+                               ::database::type::RowId begin_date_id,
+                               ::database::type::RowId end_date_id) override;
+  entity::CommandsStatistics GetCommandsStatistics(::database::type::RowId agent_name_id,
+                                                   ::database::type::RowId begin_date_id,
+                                                   ::database::type::RowId end_date_id) override;
+  ::database::type::RowsCount CommandSummary(::database::type::RowId command_id,
+                                             ::database::type::RowIds date_range_ids) override;
  private:
   ::database::detail::SQLiteWrapperInterfacePtr sqlite_wrapper_;
 

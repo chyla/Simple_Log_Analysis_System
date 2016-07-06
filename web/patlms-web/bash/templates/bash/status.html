@@ -5,29 +5,174 @@
 
 <h1>Bash Logs</h1>
 
-<p>
+<div class="help-button">
+    <button class="js-fr-offcanvas-open" aria-controls="help_box">
+        <i class="fa fa-question-circle" aria-hidden="true"></i>
+        Help
+    </button>
+</div>
 
-<table class="pure-table pure-table-bordered">
-    <thead>
-        <tr>
-            <th>Configured</th>
-            <th>Data range</th>
-        </tr>
-    </thead>
+<div class="clear-float"></div>
+<h2>Configuration</h2>
 
-    <tbody>
-        <tr>
-            <td> no </td>
-            <td> - </td>
-        </tr>
-    </tbody>
-</table>
+<div class="col-sm-12">
+    {% if configurations %}
+        <table class="table table custab sortable">
+            <thead>
+                <tr>
+                    <th><button class="custab-head-button">Agent</button></th>
+                    <th><button class="custab-head-button">Date range</button></th>
+                    <th class="sorttable_nosort"><button class="custab-head-button">Options</button></th>
+                </tr>
+            </thead>
 
-</p>
+            <tbody>
+                {% for c in configurations %}
+                <tr {% cycle '' 'class="custab-odd"' %}>
+                    <td> {{ c.agent_name }} </td>
+                    <td> {{ c.begin_date }} - {{ c.end_date }} </td>
+                    <td>
+                        <a href="" class="btn btn-info btn-xs">
+                            <i class="fa fa-university" aria-hidden="true"></i>
+                            Select commands
+                        </a>
+                        <a aria-controls="modal-reconfigure-id-{{ c.id }}" class="btn btn-warning btn-xs js-fr-dialogmodal-open">
+                            <i class="fa fa-repeat" aria-hidden="true"></i>
+                            Reconfigure
+                        </a>
+                        <button aria-controls="modal-remove-configuration-id-{{ c.id }}" class="btn btn-danger btn-xs js-fr-dialogmodal-open">
+                            <i class="fa fa-trash" aria-hidden="true"></i>
+                            Remove
+                        </button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <i class="fa fa-exclamation" aria-hidden="true"></i>
+        No configuration found.
+    {% endif %}
 
-<p class="action-buttons">
-    <a class="pure-button pure-button-primary" href="#">Configure anomaly detection</a>
-    <a class="pure-button pure-button-primary" href="#">Configure actions</a>
-</p>
+    </p>
+
+    <div class="action-buttons">
+        <a class="pure-button pure-button-primary" href="{% url 'bash:configure_anomaly_detection' %}">
+            <i class="fa fa-plus" aria-hidden="true"></i>
+            Create anomaly detection configuration
+        </a>
+    </div>
+</div>
+
+<div class="clear-float"></div>
+<h2>Sessions classification</h2>
+
+<div class="col-sm-12">
+    {% if available_classification_for_agent_host_names|length > 0 %}
+            <table class="table table custab sortable">
+            <thead>
+                <tr>
+                    <th><button class="custab-head-button">Agent</button></th>
+                    <th><button class="custab-head-button">Virtualhost</button></th>
+                    <th class="sorttable_nosort"><button class="custab-head-button">Options</button></th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for d in available_classification_for_agent_host_names %}
+                    {% for virtualhost_name in d.virtualhosts_names %}
+                        <tr {% cycle '' 'class="custab-odd"' %}>
+                            <td> {{ d.agent_name }} </td>
+                            <td>
+                                <a class="btn btn-success btn-xs" href="">
+                                    <i class="fa fa-desktop" aria-hidden="true"></i>
+                                    View
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+    <p>
+        <i class="fa fa-exclamation" aria-hidden="true"></i>
+        Results not found.
+    </p>
+    {% endif %}
+</div>
+
+<section class="fr-offcanvas fr-offcanvas--right js-fr-offcanvas slas-offcanvas" id="help_box">
+    <p>
+        Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim <a href="#">ipsam voluptatem</a> quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor.
+    </p>
+    <p>
+        Sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem <a href="#">ullam corporis suscipit</a> laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?
+    </p>
+    <p>
+        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ipsa, sunt modi! Nobis ab quia soluta, perspiciatis <a href="#">laudantium eveniet</a> quaerat sed, quod hic debitis earum repellendus optio, inventore ex facere possimus.
+    </p>
+    <button class="fr-offcanvas-close js-fr-offcanvas-close">
+        <i class="fa fa-times" aria-hidden="true"></i>
+        Close
+    </button>
+</section>
+
+{% for c in configurations %}
+    <section class="fr-dialogmodal js-fr-dialogmodal" id="modal-remove-configuration-id-{{ c.id }}">
+        <div class="fr-dialogmodal-modal js-fr-dialogmodal-modal" aria-labelledby="Remove configuration">
+            <div role="document">
+                <h2>Remove configuration</h2>
+
+                <p>
+                    Do you really want to remove configuration for&nbsp;<b>{{ c.agent_name }}</b>?
+                </p>
+
+
+                <form class="pure-form" method="post" action="{% url 'bash:configure_anomaly_detection_remove_configuration' %}">
+                    {% csrf_token %}                        
+                    <div class="action-buttons">
+                        <button class="pure-button button-no js-fr-dialogmodal-close" aria-label="No" type="button">
+                            <i class="fa fa-times" aria-hidden="true"></i>
+                            No
+                        </button>
+
+                        <input type="hidden" name="configuration_id" value="{{ c.id }}">
+
+                        <button type="submit" class="pure-button button-yes" href="#">
+                            <i class="fa fa-check" aria-hidden="true"></i>
+                            Yes
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+{% endfor %}
+
+{% for c in configurations %}
+    <section class="fr-dialogmodal js-fr-dialogmodal" id="modal-reconfigure-id-{{ c.id }}">
+        <div class="fr-dialogmodal-modal js-fr-dialogmodal-modal" aria-labelledby="Reconfigure">
+            <div role="document">
+                <h2>Reconfigure</h2>
+
+                <p>
+                    Do you really want to remove current configuration and create new&nbsp;for&nbsp;<b>{{ c.agent_name }}</b>?
+                </p>
+
+                <div class="action-buttons">
+                    <button class="pure-button button-no js-fr-dialogmodal-close" aria-label="No" type="button">
+                        <i class="fa fa-times" aria-hidden="true"></i>
+                        No
+                    </button>
+                    <a class="pure-button button-yes" href="{% url 'bash:configure_anomaly_detection_select_date_range' %}?agent_name_id={{ c.agent_name_id }}&begin_date={{ c.begin_date }}&end_date={{ c.end_date }}" >
+                        <i class="fa fa-check" aria-hidden="true"></i>
+                        Yes
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endfor %}
 
 {% endblock %}

@@ -37,6 +37,7 @@ class GeneralDatabaseFunctions : public ::database::detail::GeneralDatabaseFunct
 
   MOCK_METHOD1(AddDate, void(const ::type::Date &date));
   MOCK_METHOD1(AddAndGetDateId, ::database::type::RowId(const ::type::Date &date));
+  MOCK_METHOD2(GetDateRangeIds, ::database::type::RowIds(const ::type::Date &from, const ::type::Date &to));
   MOCK_METHOD1(GetDateId, ::database::type::RowId(const ::type::Date &date));
   MOCK_METHOD1(GetDateById, ::type::Date(const ::database::type::RowId &id));
 
