@@ -41,6 +41,10 @@ void WebScripts::SaveConfiguration(::database::type::RowId agent_name_id,
   BOOST_LOG_TRIVIAL(debug) << "bash::domain::WebScripts::SaveConfiguration: Function call";
 
   scripts_->SaveConfiguration(agent_name_id, begin_date, end_date);
+  
+  scripts_->RemoveAllCommandsFromAgentConfiguration(agent_name_id);
+  
+  scripts_->AddDefaultCommandsToAgentConfiguration(agent_name_id);
 }
 
 ::bash::domain::type::CommandsStatistics WebScripts::GetCommandsStatistics(::database::type::RowId agent_name_id,

@@ -53,6 +53,9 @@ class DatabaseFunctionsInterface {
   virtual type::AnomalyDetectionConfigurations GetAnomalyDetectionConfigurations() = 0;
   virtual void RemoveAnomalyDetectionConfiguration(::database::type::RowId id) = 0;
   virtual void AddAnomalyDetectionConfiguration(const type::AnomalyDetectionConfiguration &configuration) = 0;
+  virtual ::database::type::RowId GetConfigurationIdForAgent(::database::type::RowId agent_id) = 0;
+  virtual void RemoveAllCommandsFromConfiguration(::database::type::RowId configuration_id) = 0;
+  virtual void AddDefaultCommandsToConfiguration(::database::type::RowId configuration_id) = 0;
 
   virtual void AddCommandStatistic(const entity::CommandStatistic &statistic) = 0;
   virtual bool IsCommandStatisticExist(::database::type::RowId agent_name_id,
@@ -64,6 +67,7 @@ class DatabaseFunctionsInterface {
                                                            ::database::type::RowId end_date_id) = 0;
   virtual ::database::type::RowsCount CommandSummary(::database::type::RowId command_id,
                                                      ::database::type::RowIds date_range_ids) = 0;
+
 };
 
 typedef std::shared_ptr<DatabaseFunctionsInterface> DatabaseFunctionsInterfacePtr;

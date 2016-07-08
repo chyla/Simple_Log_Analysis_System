@@ -88,6 +88,15 @@ void RawDatabaseFunctions::CreateTables() {
                         "  foreign key(END_DATE_ID) references DATE_TABLE(ID), "
                         "  unique (AGENT_NAME_ID, COMMAND_ID, BEGIN_DATE_ID, END_DATE_ID) "
                         ");");
+
+  sqlite_wrapper_->Exec("create table if not exists BASH_SELECTED_COMMANDS_TABLE ( "
+                        "  ID integer primary key, "
+                        "  CONFIGURATION_ID integer, "
+                        "  COMMAND_ID integer, "
+                        "  foreign key(CONFIGURATION_ID) references BASH_ANOMALY_DETECTION_CONFIGURATION_TABLE(ID), "
+                        "  foreign key(COMMAND_ID) references BASH_COMMAND_TABLE(ID), "
+                        "  unique (CONFIGURATION_ID, COMMAND_ID) "
+                        ");");
 }
 
 void RawDatabaseFunctions::AddSystemUser(const entity::SystemUser &system_user) {
@@ -431,6 +440,27 @@ void RawDatabaseFunctions::AddAnomalyDetectionConfiguration(const entity::Anomal
   sqlite_wrapper_->Exec(sql);
 }
 
+::database::type::RowId RawDatabaseFunctions::GetConfigurationIdForAgent(::database::type::RowId agent_id) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::detail::RawDatabaseFunctions::GetConfigurationIdForAgent: Function call";
+
+  string sql = "select ID from BASH_ANOMALY_DETECTION_CONFIGURATION_TABLE where AGENT_NAME_ID=" + to_string(agent_id) + ";";
+
+  return sqlite_wrapper_->GetFirstInt64Column(sql);
+}
+
+void RawDatabaseFunctions::AddDefaultCommandsToConfiguration(::database::type::RowId configuration_id) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::detail::RawDatabaseFunctions::GetConfigurationIdForAgent: Function call";
+
+  string sql = 
+      "insert into BASH_SELECTED_COMMANDS_TABLE (CONFIGURATION_ID, COMMAND_ID) "
+      "  select BADCT.ID, COMMAND_ID "
+      "  from BASH_DATE_RANGE_COMMANDS_STATISTICS_TABLE as BDRCST join BASH_ANOMALY_DETECTION_CONFIGURATION_TABLE as BADCT " 
+      "  on BDRCST.AGENT_NAME_ID=BADCT.AGENT_NAME_ID and BDRCST.BEGIN_DATE_ID=BADCT.BEGIN_DATE_ID and BDRCST.END_DATE_ID=BADCT.END_DATE_ID "
+      "  where BADCT.ID=" + to_string(configuration_id) + " order by SUMMARY desc limit 100;";
+
+  sqlite_wrapper_->Exec(sql);
+}
+
 void RawDatabaseFunctions::AddCommandStatistic(const entity::CommandStatistic &statistic) {
   BOOST_LOG_TRIVIAL(debug) << "bash::database::detail::RawDatabaseFunctions::AddCommandStatistic: Function call";
 
@@ -541,6 +571,14 @@ entity::CommandsStatistics RawDatabaseFunctions::GetCommandsStatistics(::databas
   sql += ") and COMMAND_ID=" + to_string(command_id) + ";";
 
   return sqlite_wrapper_->GetFirstInt64Column(sql, 0);
+}
+
+void RawDatabaseFunctions::RemoveAllCommandsFromConfiguration(::database::type::RowId configuration_id) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::detail::RawDatabaseFunctions::RemoveAllCommandsFromConfiguration: Function call";
+
+  string sql = "delete from BASH_SELECTED_COMMANDS_TABLE where CONFIGURATION_ID=" + to_string(configuration_id) + ";";
+
+  sqlite_wrapper_->Exec(sql);
 }
 
 RawDatabaseFunctions::RawDatabaseFunctions(::database::detail::SQLiteWrapperInterfacePtr sqlite_wrapper) :

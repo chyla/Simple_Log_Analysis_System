@@ -153,6 +153,24 @@ void DatabaseFunctions::AddAnomalyDetectionConfiguration(const type::AnomalyDete
   raw_database_functions_->AddAnomalyDetectionConfiguration(c);
 }
 
+::database::type::RowId DatabaseFunctions::GetConfigurationIdForAgent(::database::type::RowId agent_id) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::DatabaseFunctions::GetConfigurationIdForAgent: Function call";
+
+  return raw_database_functions_->GetConfigurationIdForAgent(agent_id);
+}
+
+void DatabaseFunctions::RemoveAllCommandsFromConfiguration(::database::type::RowId configuration_id) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::DatabaseFunctions::RemoveAllCommandsFromConfiguration: Function call";
+
+  raw_database_functions_->RemoveAllCommandsFromConfiguration(configuration_id);
+}
+
+void DatabaseFunctions::AddDefaultCommandsToConfiguration(::database::type::RowId configuration_id) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::DatabaseFunctions::AddDefaultCommandsToConfiguration: Function call";
+
+  raw_database_functions_->AddDefaultCommandsToConfiguration(configuration_id);
+}
+
 void DatabaseFunctions::AddCommandStatistic(const detail::entity::CommandStatistic &statistic) {
   BOOST_LOG_TRIVIAL(debug) << "bash::database::DatabaseFunctions::AddCommandStatistic: Function call";
 

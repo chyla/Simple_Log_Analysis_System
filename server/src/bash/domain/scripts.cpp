@@ -115,6 +115,22 @@ void Scripts::SaveConfiguration(::database::type::RowId agent_name_id,
   database_functions_->AddAnomalyDetectionConfiguration(c);
 }
 
+void Scripts::AddDefaultCommandsToAgentConfiguration(::database::type::RowId agent_name_id) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::domain::Scripts::AddDefaultCommandsToAgentConfiguration: Function call";
+
+  auto configuration_id = database_functions_->GetConfigurationIdForAgent(agent_name_id);
+  
+  database_functions_->AddDefaultCommandsToConfiguration(configuration_id);
+}
+
+void Scripts::RemoveAllCommandsFromAgentConfiguration(::database::type::RowId agent_name_id) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::domain::Scripts::RemoveAllCommandsFromAgentConfiguration: Function call";
+
+  auto configuration_id = database_functions_->GetConfigurationIdForAgent(agent_name_id);
+
+  database_functions_->RemoveAllCommandsFromConfiguration(configuration_id);
+}
+
 void Scripts::CalculateCommandStatistics(::database::type::RowId agent_name_id,
                                          const ::type::Date &begin_date,
                                          const ::type::Date &end_date) {

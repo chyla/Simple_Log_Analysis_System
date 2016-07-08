@@ -54,6 +54,9 @@ class DatabaseFunctions : public detail::DatabaseFunctionsInterface {
   type::AnomalyDetectionConfigurations GetAnomalyDetectionConfigurations() override;
   void RemoveAnomalyDetectionConfiguration(::database::type::RowId id) override;
   void AddAnomalyDetectionConfiguration(const type::AnomalyDetectionConfiguration &configuration) override;
+  ::database::type::RowId GetConfigurationIdForAgent(::database::type::RowId agent_id) override;
+  void RemoveAllCommandsFromConfiguration(::database::type::RowId configuration_id) override;
+  void AddDefaultCommandsToConfiguration(::database::type::RowId configuration_id) override;
 
   void AddCommandStatistic(const detail::entity::CommandStatistic &statistic) override;
   bool IsCommandStatisticExist(::database::type::RowId agent_name_id,
@@ -65,6 +68,8 @@ class DatabaseFunctions : public detail::DatabaseFunctionsInterface {
                                                            ::database::type::RowId end_date_id) override;
   ::database::type::RowsCount CommandSummary(::database::type::RowId command_id,
                                              ::database::type::RowIds date_range_ids) override;
+
+
  private:
   ::bash::database::detail::RawDatabaseFunctionsInterfacePtr raw_database_functions_;
   ::database::detail::GeneralDatabaseFunctionsInterfacePtr general_database_functions_;

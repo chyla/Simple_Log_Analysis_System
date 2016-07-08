@@ -39,6 +39,8 @@ class ScriptsInterface {
   virtual void SaveConfiguration(::database::type::RowId agent_name_id,
                                  const ::type::Date &begin_date,
                                  const ::type::Date &end_date) = 0;
+  virtual void AddDefaultCommandsToAgentConfiguration(::database::type::RowId agent_name_id) = 0;
+  virtual void RemoveAllCommandsFromAgentConfiguration(::database::type::RowId agent_name_id) = 0;
 
   virtual void CalculateCommandStatistics(::database::type::RowId agent_name_id,
                                           const ::type::Date &begin_date,

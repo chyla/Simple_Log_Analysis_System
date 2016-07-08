@@ -51,6 +51,9 @@ class RawDatabaseFunctions : public RawDatabaseFunctionsInterface {
   entity::AnomalyDetectionConfigurations GetAnomalyDetectionConfigurations() override;
   void RemoveAnomalyDetectionConfiguration(::database::type::RowId id) override;
   void AddAnomalyDetectionConfiguration(const entity::AnomalyDetectionConfiguration &configuration) override;
+  ::database::type::RowId GetConfigurationIdForAgent(::database::type::RowId agent_id) override;
+  void RemoveAllCommandsFromConfiguration(::database::type::RowId configuration_id) override;
+  void AddDefaultCommandsToConfiguration(::database::type::RowId configuration_id) override;
 
   void AddCommandStatistic(const entity::CommandStatistic &statistic) override;
 

@@ -35,7 +35,6 @@ class WebScripts : public detail::WebScriptsInterface {
   ::bash::domain::type::CommandsStatistics GetCommandsStatistics(::database::type::RowId agent_name_id,
                                                                  const ::type::Date &begin_date,
                                                                  const ::type::Date &end_date) override;
-
  private:
   ::bash::domain::detail::ScriptsInterfacePtr scripts_;
 
