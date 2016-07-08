@@ -119,7 +119,7 @@ void Scripts::AddDefaultCommandsToAgentConfiguration(::database::type::RowId age
   BOOST_LOG_TRIVIAL(debug) << "bash::domain::Scripts::AddDefaultCommandsToAgentConfiguration: Function call";
 
   auto configuration_id = database_functions_->GetConfigurationIdForAgent(agent_name_id);
-  
+
   database_functions_->AddDefaultCommandsToConfiguration(configuration_id);
 }
 
@@ -127,6 +127,12 @@ void Scripts::RemoveAllCommandsFromAgentConfiguration(::database::type::RowId ag
   BOOST_LOG_TRIVIAL(debug) << "bash::domain::Scripts::RemoveAllCommandsFromAgentConfiguration: Function call";
 
   auto configuration_id = database_functions_->GetConfigurationIdForAgent(agent_name_id);
+
+  database_functions_->RemoveAllCommandsFromConfiguration(configuration_id);
+}
+
+void Scripts::RemoveAllCommandsFromConfiguration(::database::type::RowId configuration_id) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::domain::Scripts::RemoveAllCommandsFromConfiguration: Function call";
 
   database_functions_->RemoveAllCommandsFromConfiguration(configuration_id);
 }

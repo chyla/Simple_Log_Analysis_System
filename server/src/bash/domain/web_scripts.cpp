@@ -32,6 +32,8 @@ WebScriptsPtr WebScripts::Create(::bash::domain::detail::ScriptsInterfacePtr scr
 void WebScripts::RemoveAnomalyDetectionConfiguration(::database::type::RowId id) {
   BOOST_LOG_TRIVIAL(debug) << "bash::domain::WebScripts::RemoveAnomalyDetectionConfiguration: Function call";
 
+  scripts_->RemoveAllCommandsFromConfiguration(id);
+
   scripts_->RemoveAnomalyDetectionConfiguration(id);
 }
 
@@ -41,9 +43,9 @@ void WebScripts::SaveConfiguration(::database::type::RowId agent_name_id,
   BOOST_LOG_TRIVIAL(debug) << "bash::domain::WebScripts::SaveConfiguration: Function call";
 
   scripts_->SaveConfiguration(agent_name_id, begin_date, end_date);
-  
+
   scripts_->RemoveAllCommandsFromAgentConfiguration(agent_name_id);
-  
+
   scripts_->AddDefaultCommandsToAgentConfiguration(agent_name_id);
 }
 
