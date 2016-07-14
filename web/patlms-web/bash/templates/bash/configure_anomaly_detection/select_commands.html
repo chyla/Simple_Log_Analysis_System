@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+<h1>Bash Logs</h1>
+
+<div class="col-sm-12">
+    <div class="help-button">
+        <button class="js-fr-offcanvas-open" aria-controls="help_box">
+            <i class="fa fa-question-circle" aria-hidden="true"></i>
+            Help
+        </button>
+    </div>
+</div>
+
+<div class="clear-float"></div>
+<h2>Anomaly Detection Configuration</h2>
+
+<div class="clear-float"></div>
+<h3>Select commands</h3>
+    
+
+<form class="pure-form" method="post" action="{% url 'bash:configure_anomaly_detection_select_commands_save_selected' %}">
+    {% csrf_token %}
+
+    <input type="hidden" name="configuration_id" value="{{ configuration_id }}"/>
+
+    <div class="col-sm-12">
+        {% if all_commands_statistics %}
+            <table class="table table custab sortable">
+                <thead>
+                    <tr>
+                        <th><button type="button" class="custab-head-button">Command</button></th>
+                        <th><button type="button" class="custab-head-button">Summary count</button></th>
+                        <th></th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for c in all_commands_statistics %}
+                    <tr {% cycle '' 'class="custab-odd"' %}>
+                        <td> {{ c.command_name }} </td>
+                        <td> {{ c.summary_count }} </td>
+                        <td>
+                            <input id="table_check_button_{{ c.command_name_id }}" type="checkbox" name="checks" value="{{ c.command_name_id }}"
+                             {% if c.command_name_id in selected_commands %}
+                                checked="checked" 
+                             {% endif %}
+                             />
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div>
+                <i class="fa fa-exclamation" aria-hidden="true"></i>
+                Empty commands set.
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="col-sm-1">
+        <div class="action-buttons-left">
+            <button type="submit" class="pure-button button-success">
+                <i class="fa fa-check" aria-hidden="true"></i>
+                Select
+            </button>
+        </div>
+    </div>
+</form>
+
+<div class="col-sm-11">
+    <div class="action-buttons-right">
+        <form class="pure-form" method="post" action="{% url 'bash:configure_anomaly_detection_select_commands_save_selected' %}">
+            {% csrf_token %}
+
+            <input type="hidden" name="configuration_id" value="{{ configuration_id }}"/>
+            <input type="hidden" name="select_default_commands" value="true"/>
+    
+            <button type="submit" class="pure-button pure-button-primary">
+                <i class="fa fa-magic" aria-hidden="true"></i>
+                Select the most frequent commands (max 100)
+            </button>
+        </form>
+    </div>
+</div>
+
+<section class="fr-offcanvas fr-offcanvas--right js-fr-offcanvas slas-offcanvas" id="help_box">
+    <p>
+        Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim <a href="#">ipsam voluptatem</a> quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor.
+    </p>
+    <p>
+        Sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem <a href="#">ullam corporis suscipit</a> laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?
+    </p>
+    <p>
+        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ipsa, sunt modi! Nobis ab quia soluta, perspiciatis <a href="#">laudantium eveniet</a> quaerat sed, quod hic debitis earum repellendus optio, inventore ex facere possimus.
+    </p>
+    <button class="fr-offcanvas-close js-fr-offcanvas-close">
+        <i class="fa fa-times" aria-hidden="true"></i>
+        Close
+    </button>
+</section>
+
+{% endblock %}

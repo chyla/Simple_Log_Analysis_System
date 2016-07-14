@@ -10,6 +10,11 @@
 #include "detail/remove_anomaly_detection_configuration.h"
 #include "detail/get_commands_statistics.h"
 #include "detail/save_anomaly_detection_configuration.h"
+#include "detail/get_configuration_id_for_agent.h"
+#include "detail/get_commands_statistics_by_configuration_id.h"
+#include "detail/get_selected_commands_ids.h"
+#include "detail/save_selected_commands.h"
+#include "detail/select_default_commands.h"
 
 #include <boost/log/trivial.hpp>
 #include <json/json.hpp>
@@ -57,7 +62,12 @@ scripts_(scripts) {
     detail::GetUnconfiguredAgents::Create(scripts),
     detail::RemoveAnomalyDetectionConfiguration::Create(scripts),
     detail::GetCommandsStatistics::Create(scripts),
-    detail::SaveAnomalyDetectionConfiguration::Create(scripts)
+    detail::SaveAnomalyDetectionConfiguration::Create(scripts),
+    detail::GetConfigurationIdForAgent::Create(scripts),
+    detail::GetCommandsStatisticsByConfigurationId::Create(scripts),
+    detail::GetSelectedCommandsIds::Create(scripts),
+    detail::SaveSelectedCommands::Create(scripts),
+    detail::SelectDefaultCommands::Create(scripts)
   };
 
   for (auto &c : web_commands)

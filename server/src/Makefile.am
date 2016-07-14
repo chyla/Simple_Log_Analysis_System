@@ -23,9 +23,14 @@ patlms_server_SOURCES	= main.cpp \
 				bash/web/command_executor_object.cpp \
 				bash/web/detail/get_anomaly_detection_configuration.cpp \
 				bash/web/detail/get_commands_statistics.cpp \
+				bash/web/detail/get_commands_statistics_by_configuration_id.cpp \
+				bash/web/detail/get_selected_commands_ids.cpp \
 				bash/web/detail/get_unconfigured_agents.cpp \
+				bash/web/detail/get_configuration_id_for_agent.cpp \
 				bash/web/detail/remove_anomaly_detection_configuration.cpp \
 				bash/web/detail/save_anomaly_detection_configuration.cpp \
+				bash/web/detail/save_selected_commands.cpp \
+				bash/web/detail/select_default_commands.cpp \
 				database/database.cpp \
 				database/sqlite_wrapper.cpp \
 				database/general_database_functions.cpp \

@@ -4,6 +4,7 @@
  */
 
 #include "web_scripts.h"
+#include "scripts.h"
 
 #include <boost/log/trivial.hpp>
 
@@ -49,6 +50,12 @@ void WebScripts::SaveConfiguration(::database::type::RowId agent_name_id,
   scripts_->AddDefaultCommandsToAgentConfiguration(agent_name_id);
 }
 
+::database::type::RowId WebScripts::GetConfigurationIdForAgent(::database::type::RowId agent_id) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::domain::WebScripts::GetConfigurationIdForAgent: Function call";
+
+  return scripts_->GetConfigurationIdForAgent(agent_id);
+}
+
 ::bash::domain::type::CommandsStatistics WebScripts::GetCommandsStatistics(::database::type::RowId agent_name_id,
                                                                            const ::type::Date &begin_date,
                                                                            const ::type::Date &end_date) {
@@ -61,6 +68,33 @@ void WebScripts::SaveConfiguration(::database::type::RowId agent_name_id,
   auto statistics = scripts_->GetCommandsStatistics(agent_name_id, begin_date, end_date);
 
   return statistics;
+}
+
+::bash::domain::type::CommandsStatistics WebScripts::GetCommandsStatistics(::database::type::RowId configuration_id) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::domain::WebScripts::GetCommandsStatistics: Function call";
+
+  BOOST_LOG_TRIVIAL(debug) << "bash::domain::WebScripts::GetCommandsStatistics: Returning statistics";
+  auto statistics = scripts_->GetCommandsStatistics(configuration_id);
+
+  return statistics;
+}
+
+::database::type::RowIds WebScripts::GetMarkedCommandsIds(::database::type::RowId configuration_id) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::domain::WebScripts::GetMarkedCommandsIds: Function call";
+
+  return scripts_->GetMarkedCommandsIds(configuration_id);
+}
+
+void WebScripts::SaveSelectedCommands(::database::type::RowId configuration_id, ::database::type::RowIds command_names_ids) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::domain::WebScripts::SaveSelectedCommands: Function call";
+
+  scripts_->SaveSelectedCommands(configuration_id, command_names_ids);
+}
+
+void WebScripts::SelectDefaultCommands(::database::type::RowId configuration_id) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::domain::WebScripts::SelectDefaultCommands: Function call";
+
+  scripts_->SelectDefaultCommands(configuration_id);
 }
 
 WebScripts::WebScripts(::bash::domain::detail::ScriptsInterfacePtr scripts) :

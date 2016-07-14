@@ -194,11 +194,30 @@ detail::entity::CommandsStatistics DatabaseFunctions::GetCommandsStatistics(::da
   return raw_database_functions_->GetCommandsStatistics(agent_name_id, begin_date_id, end_date_id);
 }
 
+detail::entity::CommandsStatistics DatabaseFunctions::GetCommandsStatistics(::database::type::RowId configuration_id) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::DatabaseFunctions::GetCommandStatistic: Function call";
+
+  return raw_database_functions_->GetCommandsStatistics(configuration_id);
+}
+
+::database::type::RowIds DatabaseFunctions::GetMarkedCommandsIds(::database::type::RowId configuration_id) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::DatabaseFunctions::GetMarkedCommandsIds: Function call";
+
+  return raw_database_functions_->GetMarkedCommandsIds(configuration_id);
+}
+
 ::database::type::RowsCount DatabaseFunctions::CommandSummary(::database::type::RowId command_id,
                                                               ::database::type::RowIds date_range_ids) {
   BOOST_LOG_TRIVIAL(debug) << "bash::database::DatabaseFunctions::CommandSummary: Function call";
 
   return raw_database_functions_->CommandSummary(command_id, date_range_ids);
+}
+
+void DatabaseFunctions::AddSelectedCommandsIds(::database::type::RowId configuration_id,
+                                               ::database::type::RowIds command_names_ids) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::DatabaseFunctions::AddSelectedCommandsIds: Function call";
+
+  raw_database_functions_->AddSelectedCommandsIds(configuration_id, command_names_ids);
 }
 
 DatabaseFunctions::DatabaseFunctions(::bash::database::detail::RawDatabaseFunctionsInterfacePtr raw_database_functions,

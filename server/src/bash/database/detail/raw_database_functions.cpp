@@ -449,12 +449,12 @@ void RawDatabaseFunctions::AddAnomalyDetectionConfiguration(const entity::Anomal
 }
 
 void RawDatabaseFunctions::AddDefaultCommandsToConfiguration(::database::type::RowId configuration_id) {
-  BOOST_LOG_TRIVIAL(debug) << "bash::database::detail::RawDatabaseFunctions::GetConfigurationIdForAgent: Function call";
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::detail::RawDatabaseFunctions::AddDefaultCommandsToConfiguration: Function call";
 
-  string sql = 
+  string sql =
       "insert into BASH_SELECTED_COMMANDS_TABLE (CONFIGURATION_ID, COMMAND_ID) "
       "  select BADCT.ID, COMMAND_ID "
-      "  from BASH_DATE_RANGE_COMMANDS_STATISTICS_TABLE as BDRCST join BASH_ANOMALY_DETECTION_CONFIGURATION_TABLE as BADCT " 
+      "  from BASH_DATE_RANGE_COMMANDS_STATISTICS_TABLE as BDRCST join BASH_ANOMALY_DETECTION_CONFIGURATION_TABLE as BADCT "
       "  on BDRCST.AGENT_NAME_ID=BADCT.AGENT_NAME_ID and BDRCST.BEGIN_DATE_ID=BADCT.BEGIN_DATE_ID and BDRCST.END_DATE_ID=BADCT.END_DATE_ID "
       "  where BADCT.ID=" + to_string(configuration_id) + " order by SUMMARY desc limit 100;";
 
@@ -551,6 +551,107 @@ entity::CommandsStatistics RawDatabaseFunctions::GetCommandsStatistics(::databas
   sqlite_wrapper_->Finalize(statement);
 
   return statistics;
+}
+
+entity::CommandsStatistics RawDatabaseFunctions::GetCommandsStatistics(::database::type::RowId configuration_id) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::detail::RawDatabaseFunctions::GetCommandStatistic: Function call";
+
+  entity::CommandsStatistics statistics;
+  entity::CommandStatistic stat;
+
+  string sql =
+      "select BDRCST.ID, BDRCST.SUMMARY, BDRCST.COMMAND_ID, "
+      "       BDRCST.AGENT_NAME_ID , BDRCST.BEGIN_DATE_ID , BDRCST.END_DATE_ID"
+      " from BASH_DATE_RANGE_COMMANDS_STATISTICS_TABLE as BDRCST "
+      " join BASH_ANOMALY_DETECTION_CONFIGURATION_TABLE as BADCT "
+      " on BDRCST.AGENT_NAME_ID=BADCT.AGENT_NAME_ID "
+      "   and BDRCST.BEGIN_DATE_ID=BADCT.BEGIN_DATE_ID "
+      "   and BDRCST.END_DATE_ID=BADCT.END_DATE_ID "
+      " where BADCT.ID=" + to_string(configuration_id) + ";";
+
+  sqlite3_stmt *statement = nullptr;
+  sqlite_wrapper_->Prepare(sql, &statement);
+
+  try {
+    do {
+      auto ret = sqlite_wrapper_->Step(statement);
+
+      if (ret == SQLITE_ROW) {
+        stat.id = sqlite_wrapper_->ColumnInt64(statement, 0);
+        stat.summary = sqlite_wrapper_->ColumnInt64(statement, 1);
+        stat.command_id = sqlite_wrapper_->ColumnInt64(statement, 2);
+        stat.agent_name_id = sqlite_wrapper_->ColumnInt64(statement, 3);
+        stat.begin_date_id = sqlite_wrapper_->ColumnInt64(statement, 4);
+        stat.end_date_id = sqlite_wrapper_->ColumnInt64(statement, 5);
+
+        statistics.push_back(stat);
+      }
+      else
+        break;
+    }
+    while (true);
+  }
+  catch (::database::exception::DatabaseException &ex) {
+    BOOST_LOG_TRIVIAL(error) << "bash::database::detail::RawDatabaseFunctions::GetCommandStatistic: Exception catched: " << ex.what();
+    sqlite_wrapper_->Finalize(statement);
+    throw;
+  }
+
+  sqlite_wrapper_->Finalize(statement);
+
+  return statistics;
+}
+
+::database::type::RowIds RawDatabaseFunctions::GetMarkedCommandsIds(::database::type::RowId configuration_id) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::detail::RawDatabaseFunctions::GetMarkedCommandsIds: Function call";
+
+  ::database::type::RowIds ids;
+
+  string sql = "select COMMAND_ID from BASH_SELECTED_COMMANDS_TABLE "
+      " where CONFIGURATION_ID=" + to_string(configuration_id) + ";";
+
+  sqlite3_stmt *statement = nullptr;
+  sqlite_wrapper_->Prepare(sql, &statement);
+
+  try {
+    do {
+      auto ret = sqlite_wrapper_->Step(statement);
+
+      if (ret == SQLITE_ROW) {
+        auto id = sqlite_wrapper_->ColumnInt64(statement, 0);
+
+        ids.push_back(id);
+      }
+      else
+        break;
+    }
+    while (true);
+  }
+  catch (::database::exception::DatabaseException &ex) {
+    BOOST_LOG_TRIVIAL(debug) << "bash::database::detail::RawDatabaseFunctions::GetMarkedCommandsIds: Exception catched: " << ex.what();
+    sqlite_wrapper_->Finalize(statement);
+    throw;
+  }
+
+  sqlite_wrapper_->Finalize(statement);
+
+  return ids;
+}
+
+void RawDatabaseFunctions::AddSelectedCommandsIds(::database::type::RowId configuration_id,
+                                                  ::database::type::RowIds command_names_ids) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::detail::RawDatabaseFunctions::AddSelectedCommandsIds: Function call";
+
+  string sql = "begin transaction; ";
+
+  for (const auto &id : command_names_ids)
+    sql +=
+      "insert into BASH_SELECTED_COMMANDS_TABLE ( CONFIGURATION_ID, COMMAND_ID ) "
+      "  values ( " + to_string(configuration_id) + ", " + to_string(id) + " ); ";
+
+  sql += " end transaction; ";
+
+  sqlite_wrapper_->Exec(sql);
 }
 
 ::database::type::RowsCount RawDatabaseFunctions::CommandSummary(::database::type::RowId command_id, ::database::type::RowIds date_range_ids) {

@@ -115,6 +115,12 @@ void Scripts::SaveConfiguration(::database::type::RowId agent_name_id,
   database_functions_->AddAnomalyDetectionConfiguration(c);
 }
 
+::database::type::RowId Scripts::GetConfigurationIdForAgent(::database::type::RowId agent_id) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::domain::Scripts::GetConfigurationIdForAgent: Function call";
+
+  return database_functions_->GetConfigurationIdForAgent(agent_id);
+}
+
 void Scripts::AddDefaultCommandsToAgentConfiguration(::database::type::RowId agent_name_id) {
   BOOST_LOG_TRIVIAL(debug) << "bash::domain::Scripts::AddDefaultCommandsToAgentConfiguration: Function call";
 
@@ -197,6 +203,48 @@ void Scripts::CalculateCommandStatistics(::database::type::RowId agent_name_id,
   }
 
   return statistics;
+}
+
+::bash::domain::type::CommandsStatistics Scripts::GetCommandsStatistics(::database::type::RowId configuration_id) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::domain::Scripts::GetCommandsStatistics: Function call";
+
+  auto raw_statistics = database_functions_->GetCommandsStatistics(configuration_id);
+
+  ::bash::domain::type::CommandsStatistics statistics;
+  statistics.reserve(raw_statistics.size());
+
+  ::bash::domain::type::CommandStatistic s;
+  for (const auto &st : raw_statistics) {
+    s.command_name_id = st.command_id;
+    s.summary_count = st.summary;
+    s.command_name = database_functions_->GetCommandNameById(st.command_id);
+
+    statistics.push_back(s);
+  }
+
+  return statistics;
+}
+
+::database::type::RowIds Scripts::GetMarkedCommandsIds(::database::type::RowId configuration_id) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::domain::Scripts::GetMarkedCommandsIds: Function call";
+
+  return database_functions_->GetMarkedCommandsIds(configuration_id);
+}
+
+void Scripts::SaveSelectedCommands(::database::type::RowId configuration_id, ::database::type::RowIds command_names_ids) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::domain::Scripts::SaveSelectedCommands: Function call";
+
+  database_functions_->RemoveAllCommandsFromConfiguration(configuration_id);
+
+  database_functions_->AddSelectedCommandsIds(configuration_id, command_names_ids);
+}
+
+void Scripts::SelectDefaultCommands(::database::type::RowId configuration_id) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::domain::Scripts::SelectDefaultCommands: Function call";
+
+  database_functions_->RemoveAllCommandsFromConfiguration(configuration_id);
+
+  database_functions_->AddDefaultCommandsToConfiguration(configuration_id);
 }
 
 Scripts::Scripts(::bash::database::detail::DatabaseFunctionsInterfacePtr database_functions,

@@ -63,6 +63,10 @@ class RawDatabaseFunctionsInterface {
   virtual entity::CommandsStatistics GetCommandsStatistics(::database::type::RowId agent_name_id,
                                                            ::database::type::RowId begin_date_id,
                                                            ::database::type::RowId end_date_id) = 0;
+  virtual entity::CommandsStatistics GetCommandsStatistics(::database::type::RowId configuration_id) = 0;
+  virtual ::database::type::RowIds GetMarkedCommandsIds(::database::type::RowId configuration_id) = 0;
+  virtual void AddSelectedCommandsIds(::database::type::RowId configuration_id,
+                                      ::database::type::RowIds command_names_ids) = 0;
   virtual ::database::type::RowsCount CommandSummary(::database::type::RowId command_id,
                                                      ::database::type::RowIds date_range_ids) = 0;
 };

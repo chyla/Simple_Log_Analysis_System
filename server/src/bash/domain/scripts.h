@@ -37,6 +37,7 @@ class Scripts : public detail::ScriptsInterface {
   void SaveConfiguration(::database::type::RowId agent_name_id,
                          const ::type::Date &begin_date,
                          const ::type::Date &end_date) override;
+  ::database::type::RowId GetConfigurationIdForAgent(::database::type::RowId agent_id) override;
   void AddDefaultCommandsToAgentConfiguration(::database::type::RowId agent_name_id) override;
   void RemoveAllCommandsFromAgentConfiguration(::database::type::RowId agent_name_id) override;
   void RemoveAllCommandsFromConfiguration(::database::type::RowId configuration_id) override;
@@ -48,6 +49,10 @@ class Scripts : public detail::ScriptsInterface {
   ::bash::domain::type::CommandsStatistics GetCommandsStatistics(::database::type::RowId agent_name_id,
                                                                  const ::type::Date &begin_date,
                                                                  const ::type::Date &end_date) override;
+  ::bash::domain::type::CommandsStatistics GetCommandsStatistics(::database::type::RowId configuration_id) override;
+  ::database::type::RowIds GetMarkedCommandsIds(::database::type::RowId configuration_id) override;
+  void SaveSelectedCommands(::database::type::RowId configuration_id, ::database::type::RowIds command_names_ids) override;
+  void SelectDefaultCommands(::database::type::RowId configuration_id) override;
 
  private:
   ::bash::database::detail::DatabaseFunctionsInterfacePtr database_functions_;

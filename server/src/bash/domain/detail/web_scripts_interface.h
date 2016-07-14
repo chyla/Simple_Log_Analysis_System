@@ -34,10 +34,15 @@ class WebScriptsInterface {
   virtual void SaveConfiguration(::database::type::RowId agent_name_id,
                                  const ::type::Date &begin_date,
                                  const ::type::Date &end_date) = 0;
+  virtual ::database::type::RowId GetConfigurationIdForAgent(::database::type::RowId agent_id) = 0;
 
   virtual ::bash::domain::type::CommandsStatistics GetCommandsStatistics(::database::type::RowId agent_name_id,
                                                                          const ::type::Date &begin_date,
                                                                          const ::type::Date &end_date) = 0;
+  virtual ::bash::domain::type::CommandsStatistics GetCommandsStatistics(::database::type::RowId configuration_id) = 0;
+  virtual ::database::type::RowIds GetMarkedCommandsIds(::database::type::RowId configuration_id) = 0;
+  virtual void SaveSelectedCommands(::database::type::RowId configuration_id, ::database::type::RowIds command_names_ids) = 0;
+  virtual void SelectDefaultCommands(::database::type::RowId configuration_id) = 0;
 };
 
 typedef std::shared_ptr<WebScriptsInterface> WebScriptsInterfacePtr;

@@ -89,5 +89,20 @@ def bash_remove_anomaly_detection_configurations(configuration_id):
 def bash_get_commands_statistics(agent_name_id, begin_date, end_date):
     return connect_and_get_result_from_command('bash.get_commands_statistics', [int(agent_name_id), begin_date, end_date])
 
+def bash_get_commands_statistics_by_configuration_id(configuration_id):
+    return connect_and_get_result_from_command('bash.get_commands_statistics_by_configuration_id', [int(configuration_id)])
+
 def bash_save_anomaly_detection_configuration(agent_name_id, begin_date, end_date):
     return connect_and_get_result_from_command('bash.save_anomaly_detection_configuration', [int(agent_name_id), begin_date, end_date])
+
+def bash_get_configuration_id_for_agent(agent_name_id):
+    return connect_and_get_result_from_command('bash.get_configuration_id_for_agent', [int(agent_name_id)])
+
+def bash_get_selected_commands_ids(configuration_id):
+    return connect_and_get_result_from_command('bash.get_selected_commands_ids', [int(configuration_id)])
+
+def bash_save_selected_commands(configuration_id, selected_commands_ids):
+    return connect_and_get_result_from_command('bash.save_selected_commands', [int(configuration_id), selected_commands_ids])
+
+def bash_select_default_commands(configuration_id):
+    return connect_and_get_result_from_command('bash.select_default_commands', [int(configuration_id)])

@@ -12,5 +12,7 @@ urlpatterns = [
     url(r'^configure_anomaly_detection/remove_configuration', views.configure_anomaly_detection_remove_configuration, name='configure_anomaly_detection_remove_configuration'),
     url(r'^configure_anomaly_detection/save_configuration', views.configure_anomaly_detection_save_configuration, name='configure_anomaly_detection_save_configuration'),
     url(r'^configure_anomaly_detection/select_date_range', views.configure_anomaly_detection_select_date_range, name='configure_anomaly_detection_select_date_range'),
+    url(r'^configure_anomaly_detection/select_commands$', views.configure_anomaly_detection_select_commands, name='configure_anomaly_detection_select_commands'),
+    url(r'^configure_anomaly_detection/select_commands_save_selected', views.configure_anomaly_detection_select_commands_save_selected, name='configure_anomaly_detection_select_commands_save_selected'),
 
 ]
