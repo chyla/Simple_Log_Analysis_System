@@ -53,6 +53,12 @@ void DatabaseFunctions::AddSystemUser(type::UID uid) {
   return raw_database_functions_->GetSystemUserId({uid});
 }
 
+::database::type::RowIds DatabaseFunctions::GetSystemUsersIdsFromLogs(::database::type::RowId agent_name_id) {
+  BOOST_LOG_TRIVIAL(debug) << "database::DatabaseFunctions::GetSystemUsersIdsFromLogs: Function call";
+
+  return raw_database_functions_->GetSystemUsersIdsFromLogs(agent_name_id);
+}
+
 void DatabaseFunctions::AddCommand(const ::bash::database::type::CommandName &command) {
   BOOST_LOG_TRIVIAL(debug) << "bash::database::DatabaseFunctions::AddCommand: Function call";
 
@@ -98,6 +104,15 @@ void DatabaseFunctions::AddLog(const ::type::BashLogEntry &log_entry) {
   return raw_database_functions_->CountCommandsForDailySystemStatistic(agent_name_id, date_id, command_id);
 }
 
+::database::type::RowsCount DatabaseFunctions::CountCommandsForUserDailyStatisticFromLogs(::database::type::RowId agent_name_id,
+                                                                                          ::database::type::RowId date_id,
+                                                                                          ::database::type::RowId user_id,
+                                                                                          ::database::type::RowId command_id) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::DatabaseFunctions::CountCommandsForUserDailyStatisticFromLogs: Function call";
+
+  return raw_database_functions_->CountCommandsForUserDailyStatisticFromLogs(agent_name_id, date_id, user_id, command_id);
+}
+
 void DatabaseFunctions::AddDailySystemStatistic(const detail::entity::DailySystemStatistic &statistics) {
   BOOST_LOG_TRIVIAL(debug) << "bash::database::DatabaseFunctions::AddDailySystemStatistic: Function call";
 
@@ -114,6 +129,18 @@ void DatabaseFunctions::AddDailySystemStatistic(const detail::entity::DailySyste
   BOOST_LOG_TRIVIAL(debug) << "bash::database::DatabaseFunctions::GetAgentIdsWithoutConfiguration: Function call";
 
   return raw_database_functions_->GetAgentIdsWithoutConfiguration();
+}
+
+::database::type::RowIds DatabaseFunctions::GetAgentsIdsWithConfiguration() {
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::DatabaseFunctions::GetAgentsIdsWithConfigurations: Function call";
+
+  return raw_database_functions_->GetAgentsIdsWithConfiguration();
+}
+
+void DatabaseFunctions::AddDailyUserStatistic(const ::bash::database::detail::entity::DailyUserStatistic &us) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::DatabaseFunctions::AddDailyUserStatistic: Function call";
+
+  raw_database_functions_->AddDailyUserStatistic(us);
 }
 
 type::AnomalyDetectionConfigurations DatabaseFunctions::GetAnomalyDetectionConfigurations() {
@@ -218,6 +245,21 @@ void DatabaseFunctions::AddSelectedCommandsIds(::database::type::RowId configura
   BOOST_LOG_TRIVIAL(debug) << "bash::database::DatabaseFunctions::AddSelectedCommandsIds: Function call";
 
   raw_database_functions_->AddSelectedCommandsIds(configuration_id, command_names_ids);
+}
+
+::database::type::RowIds DatabaseFunctions::GetNotCalculatedDatesIdsFromLogs(::database::type::RowId agent_name_id,
+                                                                             ::database::type::RowId user_id) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::DatabaseFunctions::GetNotCalculatedDatesIdsFromLogs: Function call";
+
+  return raw_database_functions_->GetNotCalculatedDatesIdsFromLogs(agent_name_id, user_id);
+}
+
+::database::type::RowIds DatabaseFunctions::GetCommandsIdsFromLogs(::database::type::RowId agent_name_id,
+                                                                   ::database::type::RowId user_id,
+                                                                   ::database::type::RowId date_id) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::DatabaseFunctions::GetCommandsIdsFromLogs: Function call";
+
+  return raw_database_functions_->GetCommandsIdsFromLogs(agent_name_id, user_id, date_id);
 }
 
 DatabaseFunctions::DatabaseFunctions(::bash::database::detail::RawDatabaseFunctionsInterfacePtr raw_database_functions,

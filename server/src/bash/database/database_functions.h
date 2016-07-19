@@ -35,6 +35,7 @@ class DatabaseFunctions : public detail::DatabaseFunctionsInterface {
 
   void AddSystemUser(type::UID uid) override;
   ::database::type::RowId GetSystemUserId(type::UID uid) override;
+  ::database::type::RowIds GetSystemUsersIdsFromLogs(::database::type::RowId agent_name_id) override;
 
   void AddCommand(const ::bash::database::type::CommandName &command) override;
   ::database::type::RowId GetCommandId(const ::bash::database::type::CommandName &command) override;
@@ -45,11 +46,17 @@ class DatabaseFunctions : public detail::DatabaseFunctionsInterface {
   ::database::type::RowsCount CountCommandsForDailySystemStatistic(::database::type::RowId agent_name_id,
                                                                    ::database::type::RowId date_id,
                                                                    ::database::type::RowId command_id) override;
+  ::database::type::RowsCount CountCommandsForUserDailyStatisticFromLogs(::database::type::RowId agent_name_id,
+                                                                         ::database::type::RowId date_id,
+                                                                         ::database::type::RowId user_id,
+                                                                         ::database::type::RowId command_id) override;
 
   void AddDailySystemStatistic(const detail::entity::DailySystemStatistic &statistics) override;
   ::database::type::RowIds GetDateIdsWithoutCreatedDailySystemStatistic(::database::type::RowId agent_name_id) override;
 
   ::database::type::RowIds GetAgentIdsWithoutConfiguration() override;
+  ::database::type::RowIds GetAgentsIdsWithConfiguration() override;
+  void AddDailyUserStatistic(const ::bash::database::detail::entity::DailyUserStatistic &us) override;
 
   type::AnomalyDetectionConfigurations GetAnomalyDetectionConfigurations() override;
   void RemoveAnomalyDetectionConfiguration(::database::type::RowId id) override;
@@ -73,6 +80,11 @@ class DatabaseFunctions : public detail::DatabaseFunctionsInterface {
   void AddSelectedCommandsIds(::database::type::RowId configuration_id,
                               ::database::type::RowIds command_names_ids) override;
 
+  ::database::type::RowIds GetNotCalculatedDatesIdsFromLogs(::database::type::RowId agent_name_id,
+                                                            ::database::type::RowId user_id) override;
+  ::database::type::RowIds GetCommandsIdsFromLogs(::database::type::RowId agent_name_id,
+                                                  ::database::type::RowId user_id,
+                                                  ::database::type::RowId date_id) override;
  private:
   ::bash::database::detail::RawDatabaseFunctionsInterfacePtr raw_database_functions_;
   ::database::detail::GeneralDatabaseFunctionsInterfacePtr general_database_functions_;

@@ -14,6 +14,8 @@ patlms_server_SOURCES	= main.cpp \
 				apache/analyzer/detail/system.cpp \
 				apache/analyzer/detail/prepare_statistics/nearest_neighbours_table.cpp \
 				apache/notifier/type/apache_notifier_message.cpp \
+				bash/analyzer/detail/daily_user_statistics_creator.cpp \
+				bash/analyzer/detail/system.cpp \
 				bash/analyzer/bash_analyzer_object.cpp \
 				bash/database/detail/raw_database_functions.cpp \
 				bash/database/database_functions.cpp \

@@ -8,6 +8,12 @@
 
 #include "src/analyzer/analyzer_object_interface.h"
 #include "src/bash/domain/detail/scripts_interface.h"
+#include "src/bash/analyzer/detail/daily_user_statistics_creator_interface.h"
+#include "src/bash/database/detail/database_functions_interface.h"
+#include "src/database/detail/general_database_functions_interface.h"
+#include "detail/system_interface.h"
+
+#include <patlms/type/date.h>
 
 #include <memory>
 
@@ -24,14 +30,27 @@ class BashAnalyzerObject : public ::analyzer::AnalyzerObjectInterface {
  public:
   virtual ~BashAnalyzerObject() = default;
 
-  static BashAnalyzerObjectPtr Create(::bash::domain::detail::ScriptsInterfacePtr scripts_interface);
+  static BashAnalyzerObjectPtr Create(::bash::database::detail::DatabaseFunctionsInterfacePtr database_functions,
+                                      ::database::detail::GeneralDatabaseFunctionsInterfacePtr general_database_functions,
+                                      ::bash::domain::detail::ScriptsInterfacePtr scripts_interface);
+
+  static BashAnalyzerObjectPtr Create(::bash::database::detail::DatabaseFunctionsInterfacePtr database_functions,
+                                      ::database::detail::GeneralDatabaseFunctionsInterfacePtr general_database_functions,
+                                      ::bash::domain::detail::ScriptsInterfacePtr scripts_interface,
+                                      detail::SystemInterfacePtr system_interface);
 
   void Analyze() override;
 
  private:
-  BashAnalyzerObject(::bash::domain::detail::ScriptsInterfacePtr scripts_interface);
+  BashAnalyzerObject(detail::DailyUserStatisticsCreatorInterfacePtr daily_user_statistics_creator,
+                     ::bash::domain::detail::ScriptsInterfacePtr scripts_interface,
+                     detail::SystemInterfacePtr system_interface);
 
+  ::type::Date GetCurrentDate() const;
+
+  detail::DailyUserStatisticsCreatorInterfacePtr daily_user_statistics_creator_;
   ::bash::domain::detail::ScriptsInterfacePtr scripts_interface_;
+  detail::SystemInterfacePtr system_interface_;
 };
 
 }

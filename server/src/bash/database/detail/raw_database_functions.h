@@ -32,6 +32,7 @@ class RawDatabaseFunctions : public RawDatabaseFunctionsInterface {
 
   void AddSystemUser(const entity::SystemUser &system_user) override;
   ::database::type::RowId GetSystemUserId(const entity::SystemUser &system_user) override;
+  ::database::type::RowIds GetSystemUsersIdsFromLogs(::database::type::RowId agent_name_id) override;
 
   void AddCommand(const ::bash::database::type::CommandName &command) override;
   ::database::type::RowId GetCommandId(const ::bash::database::type::CommandName &command) override;
@@ -42,11 +43,17 @@ class RawDatabaseFunctions : public RawDatabaseFunctionsInterface {
   ::database::type::RowsCount CountCommandsForDailySystemStatistic(::database::type::RowId agent_name_id,
                                                                    ::database::type::RowId date_id,
                                                                    ::database::type::RowId command_id) override;
+  ::database::type::RowsCount CountCommandsForUserDailyStatisticFromLogs(::database::type::RowId agent_name_id,
+                                                                         ::database::type::RowId date_id,
+                                                                         ::database::type::RowId user_id,
+                                                                         ::database::type::RowId command_id) override;
 
   void AddDailySystemStatistic(const entity::DailySystemStatistic &statistics) override;
   ::database::type::RowIds GetDateIdsWithoutCreatedDailySystemStatistic(::database::type::RowId agent_name_id) override;
 
   ::database::type::RowIds GetAgentIdsWithoutConfiguration() override;
+  ::database::type::RowIds GetAgentsIdsWithConfiguration() override;
+  void AddDailyUserStatistic(const ::bash::database::detail::entity::DailyUserStatistic &us) override;
 
   entity::AnomalyDetectionConfigurations GetAnomalyDetectionConfigurations() override;
   void RemoveAnomalyDetectionConfiguration(::database::type::RowId id) override;
@@ -70,6 +77,12 @@ class RawDatabaseFunctions : public RawDatabaseFunctionsInterface {
                               ::database::type::RowIds command_names_ids) override;
   ::database::type::RowsCount CommandSummary(::database::type::RowId command_id,
                                              ::database::type::RowIds date_range_ids) override;
+
+  ::database::type::RowIds GetNotCalculatedDatesIdsFromLogs(::database::type::RowId agent_name_id,
+                                                            ::database::type::RowId user_id) override;
+  ::database::type::RowIds GetCommandsIdsFromLogs(::database::type::RowId agent_name_id,
+                                                  ::database::type::RowId user_id,
+                                                  ::database::type::RowId date_id) override;
  private:
   ::database::detail::SQLiteWrapperInterfacePtr sqlite_wrapper_;
 

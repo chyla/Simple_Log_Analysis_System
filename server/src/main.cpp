@@ -190,7 +190,9 @@ main(int argc, char *argv[]) {
                                                                               apache_database_functions,
                                                                               notifier_worker));
 
-    analyzer_worker->AddObject(bash::analyzer::BashAnalyzerObject::Create(bash_scripts));
+    analyzer_worker->AddObject(bash::analyzer::BashAnalyzerObject::Create(bash_database_functions,
+                                                                          general_database_functions,
+                                                                          bash_scripts));
 
     analyzer_thread = std::thread([]() {
       analyzer_worker->StartLoop();
