@@ -27,7 +27,7 @@ void DailyUserStatisticsCreator::CreateStatistics(const ::type::Date &today) {
 
   ::bash::database::detail::entity::DailyUserStatistic us;
 
-  auto agents = database_functions_->GetAgentsIdsWithConfiguration();
+  auto agents = general_database_functions_->GetAgentsIds();
   for (const auto &agent : agents) {
     us.agent_name_id = agent;
 
