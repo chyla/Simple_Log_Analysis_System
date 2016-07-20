@@ -143,6 +143,20 @@ void DatabaseFunctions::AddDailyUserStatistic(const ::bash::database::detail::en
   raw_database_functions_->AddDailyUserStatistic(us);
 }
 
+::database::type::RowId DatabaseFunctions::GetDailyUserStatisticId(::database::type::RowId agent_name_id,
+                                                                   ::database::type::RowId user_id,
+                                                                   ::database::type::RowId date_id) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::DatabaseFunctions::GetDailyUserStatisticId: Function call";
+
+  return raw_database_functions_->GetDailyUserStatisticId(agent_name_id, user_id, date_id);
+}
+
+void DatabaseFunctions::AddDailyUserCommandStatistic(const ::bash::database::detail::entity::DailyUserCommandStatistic &ucs) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::DatabaseFunctions::GetDailyUserStatisticId: Function call";
+
+  return raw_database_functions_->AddDailyUserCommandStatistic(ucs);
+}
+
 type::AnomalyDetectionConfigurations DatabaseFunctions::GetAnomalyDetectionConfigurations() {
   BOOST_LOG_TRIVIAL(debug) << "bash::database::DatabaseFunctions::GetAnomalyDetectionConfigurations: Function call";
 

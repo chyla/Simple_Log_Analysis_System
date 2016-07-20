@@ -4,7 +4,9 @@
  */
 
 #include "daily_user_statistics_creator.h"
+
 #include "src/bash/database/detail/entity/daily_user_statistic.h"
+#include "src/bash/database/detail/entity/daily_user_command_statistic.h"
 
 #include <boost/log/trivial.hpp>
 
@@ -26,6 +28,7 @@ void DailyUserStatisticsCreator::CreateStatistics(const ::type::Date &today) {
   BOOST_LOG_TRIVIAL(debug) << "bash::analyzer::detail::DailyUserStatisticsCreator::CreateStatistics: Function call";
 
   ::bash::database::detail::entity::DailyUserStatistic us;
+  ::bash::database::detail::entity::DailyUserCommandStatistic ucs;
 
   auto agents = general_database_functions_->GetAgentsIds();
   for (const auto &agent : agents) {
@@ -39,13 +42,17 @@ void DailyUserStatisticsCreator::CreateStatistics(const ::type::Date &today) {
       for (const auto &date : dates) {
         us.date_id = date;
 
+        database_functions_->AddDailyUserStatistic(us);
+        us.id = database_functions_->GetDailyUserStatisticId(agent, user, date);
+
         auto commands = database_functions_->GetCommandsIdsFromLogs(agent, user, date);
         for (const auto &command : commands) {
-          us.command_id = command;
-          us.classification = ::database::type::Classification::UNKNOWN;
-          us.summary = database_functions_->CountCommandsForUserDailyStatisticFromLogs(agent, user, date, command);
+          ucs.daily_user_statistic_id = us.id;
+          ucs.command_id = command;
+          ucs.classification = ::database::type::Classification::UNKNOWN;
+          ucs.summary = database_functions_->CountCommandsForUserDailyStatisticFromLogs(agent, user, date, command);
 
-          database_functions_->AddDailyUserStatistic(us);
+          database_functions_->AddDailyUserCommandStatistic(ucs);
         }
       }
     }

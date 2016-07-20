@@ -53,6 +53,10 @@ class DatabaseFunctions : public detail::DatabaseFunctionsInterface {
 
   void AddDailySystemStatistic(const detail::entity::DailySystemStatistic &statistics) override;
   ::database::type::RowIds GetDateIdsWithoutCreatedDailySystemStatistic(::database::type::RowId agent_name_id) override;
+  ::database::type::RowId GetDailyUserStatisticId(::database::type::RowId agent_name_id,
+                                                  ::database::type::RowId user_id,
+                                                  ::database::type::RowId date_id) override;
+  void AddDailyUserCommandStatistic(const ::bash::database::detail::entity::DailyUserCommandStatistic &ucs) override;
 
   ::database::type::RowIds GetAgentIdsWithoutConfiguration() override;
   ::database::type::RowIds GetAgentsIdsWithConfiguration() override;

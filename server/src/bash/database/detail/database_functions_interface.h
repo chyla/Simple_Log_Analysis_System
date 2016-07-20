@@ -14,6 +14,7 @@
 #include "src/bash/database/type/anomaly_detection_configuration.h"
 #include "src/bash/database/detail/entity/daily_system_statistic.h"
 #include "src/bash/database/detail/entity/daily_user_statistic.h"
+#include "src/bash/database/detail/entity/daily_user_command_statistic.h"
 #include "src/bash/database/detail/entity/command_statistic.h"
 
 #include <memory>
@@ -57,6 +58,10 @@ class DatabaseFunctionsInterface {
   virtual ::database::type::RowIds GetAgentIdsWithoutConfiguration() = 0;
   virtual ::database::type::RowIds GetAgentsIdsWithConfiguration() = 0;
   virtual void AddDailyUserStatistic(const ::bash::database::detail::entity::DailyUserStatistic &us) = 0;
+  virtual ::database::type::RowId GetDailyUserStatisticId(::database::type::RowId agent_name_id,
+                                                          ::database::type::RowId user_id,
+                                                          ::database::type::RowId date_id) = 0;
+  virtual void AddDailyUserCommandStatistic(const ::bash::database::detail::entity::DailyUserCommandStatistic &ucs) = 0;
 
   virtual type::AnomalyDetectionConfigurations GetAnomalyDetectionConfigurations() = 0;
   virtual void RemoveAnomalyDetectionConfiguration(::database::type::RowId id) = 0;

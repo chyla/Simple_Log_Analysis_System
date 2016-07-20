@@ -54,6 +54,10 @@ class RawDatabaseFunctions : public RawDatabaseFunctionsInterface {
   ::database::type::RowIds GetAgentIdsWithoutConfiguration() override;
   ::database::type::RowIds GetAgentsIdsWithConfiguration() override;
   void AddDailyUserStatistic(const ::bash::database::detail::entity::DailyUserStatistic &us) override;
+  ::database::type::RowId GetDailyUserStatisticId(::database::type::RowId agent_name_id,
+                                                  ::database::type::RowId user_id,
+                                                  ::database::type::RowId date_id) override;
+  void AddDailyUserCommandStatistic(const ::bash::database::detail::entity::DailyUserCommandStatistic &ucs) override;
 
   entity::AnomalyDetectionConfigurations GetAnomalyDetectionConfigurations() override;
   void RemoveAnomalyDetectionConfiguration(::database::type::RowId id) override;
