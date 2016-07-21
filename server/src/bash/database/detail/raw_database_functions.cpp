@@ -117,6 +117,15 @@ void RawDatabaseFunctions::CreateTables() {
                         "  foreign key(STATISTIC_ID) references BASH_DAILY_USER_STATISTICS_TABLE(ID), "
                         "  foreign key(COMMAND_ID) references BASH_COMMAND_TABLE(ID) "
                         ");");
+
+  sqlite_wrapper_->Exec("create table if not exists BASH_ANOMALY_DETECTION_CONFIGURATION_SELECTED_STATISTICS_TABLE ("
+                        "  ID integer primary key, "
+                        "  CONFIGURATION_ID integer, "
+                        "  STATISTIC_ID integer, "
+                        "  foreign key(CONFIGURATION_ID) references BASH_ANOMALY_DETECTION_CONFIGURATION_TABLE(ID), "
+                        "  foreign key(STATISTIC_ID) references BASH_DAILY_USER_STATISTICS_TABLE(ID), "
+                        "  unique (CONFIGURATION_ID, STATISTIC_ID) "
+                        ");");
 }
 
 void RawDatabaseFunctions::AddSystemUser(const entity::SystemUser &system_user) {
@@ -917,6 +926,38 @@ void RawDatabaseFunctions::RemoveAllCommandsFromConfiguration(::database::type::
   sqlite_wrapper_->Finalize(statement);
 
   return ids;
+}
+
+void RawDatabaseFunctions::AddDailyUserStatisticsToConfiguration(::database::type::RowId configuration_id,
+                                                                 const ::database::type::RowIds &date_range_ids) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::detail::RawDatabaseFunctions::AddDailyUserStatisticsToConfiguration: Function call";
+
+  string sql =
+      "insert or ignore into BASH_ANOMALY_DETECTION_CONFIGURATION_SELECTED_STATISTICS_TABLE (CONFIGURATION_ID, STATISTIC_ID)"
+      " select " + to_string(configuration_id) +
+      ", ID from BASH_DAILY_USER_STATISTICS_TABLE "
+      "  where DATE_ID in (";
+
+  auto end = date_range_ids.end();
+  for (auto it = date_range_ids.begin(); it != end; ++it) {
+    sql += to_string(*it);
+
+    if (it != end - 1)
+      sql += ", ";
+  }
+
+  sql += ");";
+
+  sqlite_wrapper_->Exec(sql);
+}
+
+void RawDatabaseFunctions::RemoveDailyStatisticsFromConfiguration(::database::type::RowId configuration_id) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::detail::RawDatabaseFunctions::RemoveDailyStatisticsFromConfiguration: Function call";
+
+  string sql = "delete from BASH_ANOMALY_DETECTION_CONFIGURATION_SELECTED_STATISTICS_TABLE "
+      " where CONFIGURATION_ID=" + to_string(configuration_id) + ";";
+
+  sqlite_wrapper_->Exec(sql);
 }
 
 RawDatabaseFunctions::RawDatabaseFunctions(::database::detail::SQLiteWrapperInterfacePtr sqlite_wrapper) :

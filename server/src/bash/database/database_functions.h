@@ -89,6 +89,10 @@ class DatabaseFunctions : public detail::DatabaseFunctionsInterface {
   ::database::type::RowIds GetCommandsIdsFromLogs(::database::type::RowId agent_name_id,
                                                   ::database::type::RowId user_id,
                                                   ::database::type::RowId date_id) override;
+
+  void AddDailyUserStatisticsToConfiguration(::database::type::RowId configuration_id,
+                                             const ::database::type::RowIds &date_range_ids) override;
+  void RemoveDailyStatisticsFromConfiguration(::database::type::RowId configuration_id) override;
  private:
   ::bash::database::detail::RawDatabaseFunctionsInterfacePtr raw_database_functions_;
   ::database::detail::GeneralDatabaseFunctionsInterfacePtr general_database_functions_;

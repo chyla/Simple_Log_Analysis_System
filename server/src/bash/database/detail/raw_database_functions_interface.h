@@ -88,6 +88,10 @@ class RawDatabaseFunctionsInterface {
   virtual ::database::type::RowIds GetCommandsIdsFromLogs(::database::type::RowId agent_name_id,
                                                           ::database::type::RowId user_id,
                                                           ::database::type::RowId date_id) = 0;
+
+  virtual void AddDailyUserStatisticsToConfiguration(::database::type::RowId configuration_id,
+                                                     const ::database::type::RowIds &date_range_ids) = 0;
+  virtual void RemoveDailyStatisticsFromConfiguration(::database::type::RowId configuration_id) = 0;
 };
 
 typedef std::shared_ptr<RawDatabaseFunctionsInterface> RawDatabaseFunctionsInterfacePtr;

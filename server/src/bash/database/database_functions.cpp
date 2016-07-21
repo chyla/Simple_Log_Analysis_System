@@ -276,6 +276,19 @@ void DatabaseFunctions::AddSelectedCommandsIds(::database::type::RowId configura
   return raw_database_functions_->GetCommandsIdsFromLogs(agent_name_id, user_id, date_id);
 }
 
+void DatabaseFunctions::AddDailyUserStatisticsToConfiguration(::database::type::RowId configuration_id,
+                                                              const ::database::type::RowIds &date_range_ids) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::DatabaseFunctions::AddDailyUserStatisticsToConfiguration: Function call";
+
+  raw_database_functions_->AddDailyUserStatisticsToConfiguration(configuration_id, date_range_ids);
+}
+
+void DatabaseFunctions::RemoveDailyStatisticsFromConfiguration(::database::type::RowId configuration_id) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::DatabaseFunctions::RemoveDailyStatisticsFromConfiguration: Function call";
+
+  raw_database_functions_->RemoveDailyStatisticsFromConfiguration(configuration_id);
+}
+
 DatabaseFunctions::DatabaseFunctions(::bash::database::detail::RawDatabaseFunctionsInterfacePtr raw_database_functions,
                                      ::database::detail::GeneralDatabaseFunctionsInterfacePtr general_database_functions) :
 raw_database_functions_(raw_database_functions),

@@ -41,6 +41,10 @@ class Scripts : public detail::ScriptsInterface {
   void AddDefaultCommandsToAgentConfiguration(::database::type::RowId agent_name_id) override;
   void RemoveAllCommandsFromAgentConfiguration(::database::type::RowId agent_name_id) override;
   void RemoveAllCommandsFromConfiguration(::database::type::RowId configuration_id) override;
+  void AddDailyUserStatisticsToConfiguration(::database::type::RowId agent_name_id,
+                                             const ::type::Date &begin_date,
+                                             const ::type::Date &end_date) override;
+  void RemoveDailyStatisticsFromConfiguration(::database::type::RowId configuration_id) override;
 
   void CalculateCommandStatistics(::database::type::RowId agent_name_id,
                                   const ::type::Date &begin_date,

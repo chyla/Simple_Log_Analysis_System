@@ -143,6 +143,23 @@ void Scripts::RemoveAllCommandsFromConfiguration(::database::type::RowId configu
   database_functions_->RemoveAllCommandsFromConfiguration(configuration_id);
 }
 
+void Scripts::AddDailyUserStatisticsToConfiguration(::database::type::RowId agent_name_id,
+                                                    const ::type::Date &begin_date,
+                                                    const ::type::Date &end_date) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::domain::Scripts::AddDailyUserStatisticsToConfiguration: Function call";
+
+  auto id = database_functions_->GetConfigurationIdForAgent(agent_name_id);
+  auto date_range_ids = general_database_functions_->GetDateRangeIds(begin_date, end_date);
+
+  database_functions_->AddDailyUserStatisticsToConfiguration(id, date_range_ids);
+}
+
+void Scripts::RemoveDailyStatisticsFromConfiguration(::database::type::RowId configuration_id) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::domain::Scripts::RemoveDailyStatisticsFromConfiguration: Function call";
+
+  database_functions_->RemoveDailyStatisticsFromConfiguration(configuration_id);
+}
+
 void Scripts::CalculateCommandStatistics(::database::type::RowId agent_name_id,
                                          const ::type::Date &begin_date,
                                          const ::type::Date &end_date) {
