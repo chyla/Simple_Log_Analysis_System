@@ -145,3 +145,33 @@ def configure_anomaly_detection_select_commands_save_selected(request):
         exception = str(e)
 
     return redirect('bash:status', permanent=False)
+
+def configure_anomaly_detection_correct_sessions_marks(request):
+    exception = None
+    configuration_id = request.POST.get('configuration_id', None)
+
+    try:
+        pass
+    except Exception as e:
+        exception = str(e)
+
+    return render(request,
+                  'bash/configure_anomaly_detection/correct_sessions_marks.html',
+                  {'exception' : exception,
+                   })
+
+def configure_anomaly_detection_correct_sessions_marks_save(request):
+    exception = None
+
+    try:
+        pass
+    except Exception as e:
+        exception = str(e)
+
+    if exception:
+        return render(request,
+                      'bash/status.html',
+                      {'exception' : exception,
+                       });
+
+    return redirect('bash:status', permanent=False)

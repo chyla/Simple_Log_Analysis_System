@@ -32,8 +32,12 @@
                     <td> {{ c.agent_name }} </td>
                     <td> {{ c.begin_date }} - {{ c.end_date }} </td>
                     <td>
-                        <a href="{% url 'bash:configure_anomaly_detection_select_commands' %}?configuration_id={{ c.id }}" class="btn btn-info btn-xs">
+                        <a href="{% url 'bash:configure_anomaly_detection_correct_sessions_marks' %}?configuration_id={{ c.id }}" class="btn btn-info btn-xs">
                             <i class="fa fa-university" aria-hidden="true"></i>
+                            Categorize data
+                        </a>
+                        <a href="{% url 'bash:configure_anomaly_detection_select_commands' %}?configuration_id={{ c.id }}" class="btn btn-info btn-xs">
+                            <i class="fa fa-bars" aria-hidden="true"></i>
                             Select commands
                         </a>
                         <a aria-controls="modal-reconfigure-id-{{ c.id }}" class="btn btn-warning btn-xs js-fr-dialogmodal-open">
