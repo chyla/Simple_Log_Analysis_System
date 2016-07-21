@@ -7,6 +7,7 @@
 #define DAILY_USER_STATISTIC_H
 
 #include "src/database/type/row_id.h"
+#include "src/database/type/classification.h"
 
 namespace bash
 {
@@ -25,6 +26,7 @@ struct DailyUserStatistic {
   ::database::type::RowId agent_name_id;
   ::database::type::RowId user_id;
   ::database::type::RowId date_id;
+  ::database::type::Classification classification;
 };
 
 }

@@ -30,6 +30,8 @@ void DailyUserStatisticsCreator::CreateStatistics(const ::type::Date &today) {
   ::bash::database::detail::entity::DailyUserStatistic us;
   ::bash::database::detail::entity::DailyUserCommandStatistic ucs;
 
+  us.classification = ::database::type::Classification::UNKNOWN;
+
   auto agents = general_database_functions_->GetAgentsIds();
   for (const auto &agent : agents) {
     us.agent_name_id = agent;
@@ -49,7 +51,6 @@ void DailyUserStatisticsCreator::CreateStatistics(const ::type::Date &today) {
         for (const auto &command : commands) {
           ucs.daily_user_statistic_id = us.id;
           ucs.command_id = command;
-          ucs.classification = ::database::type::Classification::UNKNOWN;
           ucs.summary = database_functions_->CountCommandsForUserDailyStatisticFromLogs(agent, user, date, command);
 
           database_functions_->AddDailyUserCommandStatistic(ucs);

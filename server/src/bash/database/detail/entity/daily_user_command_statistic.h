@@ -8,7 +8,6 @@
 
 #include "src/database/type/row_id.h"
 #include "src/database/type/rows_count.h"
-#include "src/database/type/classification.h"
 
 namespace bash
 {
@@ -27,7 +26,6 @@ struct DailyUserCommandStatistic {
   ::database::type::RowId daily_user_statistic_id;
   ::database::type::RowId command_id;
   ::database::type::RowsCount summary;
-  ::database::type::Classification classification;
 };
 
 }

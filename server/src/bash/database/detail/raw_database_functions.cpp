@@ -103,6 +103,7 @@ void RawDatabaseFunctions::CreateTables() {
                         "  AGENT_NAME_ID integer, "
                         "  USER_ID integer, "
                         "  DATE_ID integer, "
+                        "  CLASSIFICATION integer default 0, "
                         "  foreign key(AGENT_NAME_ID) references AGENT_NAMES(ID), "
                         "  foreign key(USER_ID) references BASH_SYSTEM_USER_TABLE(ID), "
                         "  foreign key(DATE_ID) references DATE_TABLE(ID) "
@@ -113,7 +114,6 @@ void RawDatabaseFunctions::CreateTables() {
                         "  STATISTIC_ID integer, "
                         "  COMMAND_ID integer, "
                         "  SUMMARY integer, "
-                        "  CLASSIFICATION integer default 0, "
                         "  foreign key(STATISTIC_ID) references BASH_DAILY_USER_STATISTICS_TABLE(ID), "
                         "  foreign key(COMMAND_ID) references BASH_COMMAND_TABLE(ID) "
                         ");");
@@ -496,11 +496,12 @@ void RawDatabaseFunctions::AddDailySystemStatistic(const entity::DailySystemStat
 void RawDatabaseFunctions::AddDailyUserStatistic(const ::bash::database::detail::entity::DailyUserStatistic &us) {
   BOOST_LOG_TRIVIAL(debug) << "bash::database::detail::RawDatabaseFunctions::AddDailyUserStatistic: Function call";
 
-  string sql = "insert into BASH_DAILY_USER_STATISTICS_TABLE (AGENT_NAME_ID, USER_ID, DATE_ID) "
+  string sql = "insert into BASH_DAILY_USER_STATISTICS_TABLE (AGENT_NAME_ID, USER_ID, DATE_ID, CLASSIFICATION) "
       " values ("
       + to_string(us.agent_name_id) + ","
       + to_string(us.user_id) + ","
-      + to_string(us.date_id) +
+      + to_string(us.date_id) + ","
+      + to_string(static_cast<int> (us.classification)) +
       " );";
 
   sqlite_wrapper_->Exec(sql);
@@ -523,12 +524,11 @@ void RawDatabaseFunctions::AddDailyUserStatistic(const ::bash::database::detail:
 void RawDatabaseFunctions::AddDailyUserCommandStatistic(const ::bash::database::detail::entity::DailyUserCommandStatistic &ucs) {
   BOOST_LOG_TRIVIAL(debug) << "bash::database::detail::RawDatabaseFunctions::GetDailyUserStatisticId: Function call";
 
-  string sql = "insert into BASH_DAILY_USER_COMMAND_STATISTICS_TABLE (STATISTIC_ID, COMMAND_ID, SUMMARY, CLASSIFICATION) "
+  string sql = "insert into BASH_DAILY_USER_COMMAND_STATISTICS_TABLE (STATISTIC_ID, COMMAND_ID, SUMMARY) "
       " values ("
       + to_string(ucs.daily_user_statistic_id) + ","
       + to_string(ucs.command_id) + ","
-      + to_string(ucs.summary) + ","
-      + to_string(static_cast<int> (ucs.classification)) +
+      + to_string(ucs.summary) +
       " );";
 
   sqlite_wrapper_->Exec(sql);
