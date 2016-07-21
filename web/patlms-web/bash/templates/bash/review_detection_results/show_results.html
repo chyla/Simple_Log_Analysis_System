@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+<h1>Apache Logs</h1>
+
+<div class="col-sm-12">
+    <div class="help-button">
+        <button class="js-fr-offcanvas-open" aria-controls="help_box">
+            <i class="fa fa-question-circle" aria-hidden="true"></i>
+            Help
+        </button>
+    </div>
+</div>
+
+<div class="clear-float"></div>
+<h2>Sessions classification</h2>
+
+<div class="clear-float"></div>
+<h3>Select date range</h3>
+
+<div class="col-sm-12">
+    <form class="pure-form ws-validate"  method="get" action="#">
+        <div class="col-sm-6 ws-success">
+            <label for="begin-date" class="control-label">Begin date:</label>
+            <input type="date" name="begin_date" id='begin_date' class='input-max-width' value="{{ begin_date }}" onchange="this.form.submit()">
+        </div>
+    
+        <div class="col-sm-6 ws-success">
+            <label for="end-date" class="control-label">End date:</label>
+            <input type="date" name="end_date" id='end_date' class='input-max-width' value="{{ end_date }}" onchange="this.form.submit()">
+        </div>
+    </form>
+</div>
+
+<div class="clear-float"></div>
+<h3>Results</h3>
+
+<div class="col-sm-12">
+    {% if agent_name == '' or virtualhost_name == '' or begin_date == '' or end_date == '' or sessions|length == 0 %}
+        There is no data to display.
+    {% else %}
+        <table class="table custab">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Date</th>
+                    <th>User</th>
+                    <th>Classification</th>
+                </tr>
+            </thead>
+
+            <tbody>
+            {% for s in sessions %}
+                <tr id="table_row_{{ s.id }}"
+                    {% if s.classification == CLASSIFICATION_ANOMALY %}
+                        class="analysis_results_row_anomaly"
+                    {% elif s.classification == CLASSIFICATION_NORMAL %}
+                        class="analysis_results_row_normal"
+                    {% elif s.classification == CLASSIFICATION_UNKNOWN %}
+                        class="analysis_results_row_unknown"
+                    {% endif %}
+                >
+                    <td>{{ s.id }}</td>
+                    <td>{{ s.date }}</td>
+                    <td>{{ s.user }}</td>
+                    <td>
+                        {% if s.classification == CLASSIFICATION_ANOMALY %}
+                            <a href="#" class="btn btn-classification-anomaly btn-xs"> ANOMALY </a>
+                        {% elif s.classification == CLASSIFICATION_NORMAL %}
+                            <a href="#" class="btn btn-classification-normal btn-xs"> NORMAL </a>
+                        {% elif s.classification == CLASSIFICATION_UNKNOWN %}
+                            <a href="#" class="btn btn-classification-unknown btn-xs"> UNKNOWN </a>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+</div>
+
+<section class="fr-offcanvas fr-offcanvas--right js-fr-offcanvas slas-offcanvas" id="help_box">
+    <p>
+        Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim <a href="#">ipsam voluptatem</a> quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor.
+    </p>
+    <p>
+        Sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem <a href="#">ullam corporis suscipit</a> laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?
+    </p>
+    <p>
+        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ipsa, sunt modi! Nobis ab quia soluta, perspiciatis <a href="#">laudantium eveniet</a> quaerat sed, quod hic debitis earum repellendus optio, inventore ex facere possimus.
+    </p>
+    <button class="fr-offcanvas-close js-fr-offcanvas-close">
+        <i class="fa fa-times" aria-hidden="true"></i>
+        Close
+    </button>
+</section>
+
+{% endblock %}

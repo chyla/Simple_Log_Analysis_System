@@ -175,3 +175,17 @@ def configure_anomaly_detection_correct_sessions_marks_save(request):
                        });
 
     return redirect('bash:status', permanent=False)
+
+def review_detection_results_show_results(request):
+    exception = None
+    configuration_id = request.POST.get('configuration_id', None)
+
+    try:
+        pass
+    except Exception as e:
+        exception = str(e)
+
+    return render(request,
+                  'bash/review_detection_results/show_results.html',
+                  {'exception' : exception,
+                   })
