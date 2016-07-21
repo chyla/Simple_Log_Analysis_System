@@ -9,6 +9,7 @@
 
 #include "src/database/exception/database_exception.h"
 #include "src/database/exception/detail/item_not_found_exception.h"
+#include "src/database/type/classification.h"
 
 using namespace std;
 
@@ -146,6 +147,19 @@ void RawDatabaseFunctions::AddSystemUser(const entity::SystemUser &system_user) 
       ";";
 
   return sqlite_wrapper_->GetFirstInt64Column(sql, -1);
+}
+
+::bash::database::detail::entity::SystemUser RawDatabaseFunctions::GetSystemUserById(::database::type::RowId id) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::detail::RawDatabaseFunctions::GetSystemUserById: Function call";
+
+  string sql = "select SYSTEM_UID from BASH_SYSTEM_USER_TABLE where ID=" + to_string(id) + ";";
+
+
+  entity::SystemUser su{
+    sqlite_wrapper_->GetFirstInt64Column(sql)
+  };
+
+  return su;
 }
 
 ::database::type::RowIds RawDatabaseFunctions::GetSystemUsersIdsFromLogs(::database::type::RowId agent_name_id) {
@@ -958,6 +972,51 @@ void RawDatabaseFunctions::RemoveDailyStatisticsFromConfiguration(::database::ty
       " where CONFIGURATION_ID=" + to_string(configuration_id) + ";";
 
   sqlite_wrapper_->Exec(sql);
+}
+
+::bash::database::detail::entity::DailyUserStatistics RawDatabaseFunctions::GetDailyUserStatisticsFromConfiguration(::database::type::RowId configuration_id) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::detail::RawDatabaseFunctions::AddDailyUserStatisticsToConfiguration: Function call";
+
+  string sql =
+      "select BDUST.ID, BDUST.AGENT_NAME_ID, BDUST.USER_ID, BDUST.DATE_ID, BDUST.CLASSIFICATION "
+      " from BASH_DAILY_USER_STATISTICS_TABLE as BDUST "
+      " join BASH_ANOMALY_DETECTION_CONFIGURATION_SELECTED_STATISTICS_TABLE as BADCSST "
+      " on BDUST.ID=BADCSST.STATISTIC_ID "
+      " where BADCSST.CONFIGURATION_ID=" + to_string(configuration_id) + ";";
+
+  ::bash::database::detail::entity::DailyUserStatistics statistics;
+  ::bash::database::detail::entity::DailyUserStatistic stat;
+
+  sqlite3_stmt *statement = nullptr;
+  sqlite_wrapper_->Prepare(sql, &statement);
+
+  try {
+    do {
+      auto ret = sqlite_wrapper_->Step(statement);
+
+      if (ret == SQLITE_ROW) {
+        stat.id = sqlite_wrapper_->ColumnInt64(statement, 0);
+        stat.agent_name_id = sqlite_wrapper_->ColumnInt64(statement, 1);
+        stat.user_id = sqlite_wrapper_->ColumnInt64(statement, 2);
+        stat.date_id = sqlite_wrapper_->ColumnInt64(statement, 3);
+        stat.classification = static_cast< ::database::type::Classification> (sqlite_wrapper_->ColumnInt(statement, 4));
+
+        statistics.push_back(stat);
+      }
+      else
+        break;
+    }
+    while (true);
+  }
+  catch (::database::exception::DatabaseException &ex) {
+    BOOST_LOG_TRIVIAL(debug) << "bash::database::detail::RawDatabaseFunctions::GetCommandsIdsFromLogs: Exception catched: " << ex.what();
+    sqlite_wrapper_->Finalize(statement);
+    throw;
+  }
+
+  sqlite_wrapper_->Finalize(statement);
+
+  return statistics;
 }
 
 RawDatabaseFunctions::RawDatabaseFunctions(::database::detail::SQLiteWrapperInterfacePtr sqlite_wrapper) :

@@ -3,31 +3,32 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef DAILY_USER_STATISTIC_H
-#define DAILY_USER_STATISTIC_H
+#ifndef BASH_DOMAIN_TYPE_DAILY_USER_STATISTIC_H
+#define BASH_DOMAIN_TYPE_DAILY_USER_STATISTIC_H
+
+#include <patlms/type/date.h>
 
 #include "src/database/type/row_id.h"
+#include "src/database/type/agent_name.h"
 #include "src/database/type/classification.h"
+#include "src/bash/database/detail/entity/system_user.h"
 
 #include <vector>
 
 namespace bash
 {
 
-namespace database
+namespace domain
 {
 
-namespace detail
-{
-
-namespace entity
+namespace type
 {
 
 struct DailyUserStatistic {
   ::database::type::RowId id;
-  ::database::type::RowId agent_name_id;
-  ::database::type::RowId user_id;
-  ::database::type::RowId date_id;
+  ::database::type::AgentName agent_name;
+  ::bash::database::type::UID uid;
+  ::type::Date date;
   ::database::type::Classification classification;
 };
 
@@ -39,6 +40,4 @@ typedef std::vector<DailyUserStatistic> DailyUserStatistics;
 
 }
 
-}
-
-#endif /* DAILY_USER_STATISTIC_H */
+#endif /* BASH_DOMAIN_TYPE_DAILY_USER_STATISTIC_H */

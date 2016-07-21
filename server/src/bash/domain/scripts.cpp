@@ -5,6 +5,7 @@
 
 #include "scripts.h"
 #include "src/bash/database/detail/entity/anomaly_detection_configuration.h"
+#include "src/bash/database/detail/entity/system_user.h"
 
 #include <boost/log/trivial.hpp>
 
@@ -158,6 +159,30 @@ void Scripts::RemoveDailyStatisticsFromConfiguration(::database::type::RowId con
   BOOST_LOG_TRIVIAL(debug) << "bash::domain::Scripts::RemoveDailyStatisticsFromConfiguration: Function call";
 
   database_functions_->RemoveDailyStatisticsFromConfiguration(configuration_id);
+}
+
+::bash::domain::type::DailyUserStatistics Scripts::GetDailyUserStatisticsFromConfiguration(::database::type::RowId configuration_id) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::domain::Scripts::GetDailyUserStatisticsFromConfiguration: Function call";
+
+  auto raw_statistics = database_functions_->GetDailyUserStatisticsFromConfiguration(configuration_id);
+
+  ::bash::domain::type::DailyUserStatistics statistics;
+  statistics.reserve(raw_statistics.size());
+
+  ::bash::domain::type::DailyUserStatistic s;
+  for (const auto &r : raw_statistics) {
+    auto system_user = database_functions_->GetSystemUserById(r.user_id);
+    
+    s.agent_name = general_database_functions_->GetAgentNameById(r.agent_name_id);
+    s.classification = r.classification;
+    s.date = general_database_functions_->GetDateById(r.date_id);
+    s.uid = system_user.uid;
+    s.id = r.id;
+    
+    statistics.push_back(s);
+  }
+  
+  return statistics;
 }
 
 void Scripts::CalculateCommandStatistics(::database::type::RowId agent_name_id,

@@ -32,6 +32,7 @@ class RawDatabaseFunctions : public RawDatabaseFunctionsInterface {
 
   void AddSystemUser(const entity::SystemUser &system_user) override;
   ::database::type::RowId GetSystemUserId(const entity::SystemUser &system_user) override;
+  ::bash::database::detail::entity::SystemUser GetSystemUserById(::database::type::RowId id) override;
   ::database::type::RowIds GetSystemUsersIdsFromLogs(::database::type::RowId agent_name_id) override;
 
   void AddCommand(const ::bash::database::type::CommandName &command) override;
@@ -91,6 +92,7 @@ class RawDatabaseFunctions : public RawDatabaseFunctionsInterface {
   void AddDailyUserStatisticsToConfiguration(::database::type::RowId configuration_id,
                                              const ::database::type::RowIds &date_range_ids) override;
   void RemoveDailyStatisticsFromConfiguration(::database::type::RowId configuration_id) override;
+  ::bash::database::detail::entity::DailyUserStatistics GetDailyUserStatisticsFromConfiguration(::database::type::RowId configuration_id) override;
 
  private:
   ::database::detail::SQLiteWrapperInterfacePtr sqlite_wrapper_;

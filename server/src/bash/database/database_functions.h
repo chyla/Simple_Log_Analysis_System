@@ -35,6 +35,7 @@ class DatabaseFunctions : public detail::DatabaseFunctionsInterface {
 
   void AddSystemUser(type::UID uid) override;
   ::database::type::RowId GetSystemUserId(type::UID uid) override;
+  ::bash::database::detail::entity::SystemUser GetSystemUserById(::database::type::RowId id) override;
   ::database::type::RowIds GetSystemUsersIdsFromLogs(::database::type::RowId agent_name_id) override;
 
   void AddCommand(const ::bash::database::type::CommandName &command) override;
@@ -93,6 +94,8 @@ class DatabaseFunctions : public detail::DatabaseFunctionsInterface {
   void AddDailyUserStatisticsToConfiguration(::database::type::RowId configuration_id,
                                              const ::database::type::RowIds &date_range_ids) override;
   void RemoveDailyStatisticsFromConfiguration(::database::type::RowId configuration_id) override;
+  ::bash::database::detail::entity::DailyUserStatistics GetDailyUserStatisticsFromConfiguration(::database::type::RowId configuration_id) override;
+
  private:
   ::bash::database::detail::RawDatabaseFunctionsInterfacePtr raw_database_functions_;
   ::database::detail::GeneralDatabaseFunctionsInterfacePtr general_database_functions_;

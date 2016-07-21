@@ -19,7 +19,7 @@
 <h2>Anomaly Detection Configuration</h2>
 
 <div class="clear-float"></div>
-<h3>Categorize data</h3>
+<h3>Categorize sessions</h3>
 
 <div class="col-sm-12">
     <form class="pure-form" method="post" action="{% url 'bash:configure_anomaly_detection_correct_sessions_marks_save' %}">
@@ -30,7 +30,7 @@
                 <tr>
                     <th>ID</th>
                     <th>Date</th>
-                    <th>User</th>
+                    <th>System User ID</th>
                     <th>Is anomally</th>
                 </tr>
             </thead>
@@ -48,7 +48,7 @@
                 >
                     <td>{{ s.id }}</td>
                     <td>{{ s.date }}</td>
-                    <td>{{ s.user }}</td>
+                    <td>{{ s.uid }}</td>
                     <td>
                         <input type="hidden" name="rows_ids" value="{{ s.id }}">
                         <input id="table_check_button_{{ s.id }}" type="checkbox" name="checks" value="{{ s.id }}"

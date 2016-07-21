@@ -148,16 +148,18 @@ def configure_anomaly_detection_select_commands_save_selected(request):
 
 def configure_anomaly_detection_correct_sessions_marks(request):
     exception = None
-    configuration_id = request.POST.get('configuration_id', None)
+    configuration_id = request.GET.get('configuration_id', None)
+    sessions = None
 
     try:
-        pass
+        sessions = util.bash_get_daily_user_statistics_from_configuration(configuration_id)
     except Exception as e:
         exception = str(e)
 
     return render(request,
                   'bash/configure_anomaly_detection/correct_sessions_marks.html',
                   {'exception' : exception,
+                   'sessions' : sessions,
                    })
 
 def configure_anomaly_detection_correct_sessions_marks_save(request):

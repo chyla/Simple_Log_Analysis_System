@@ -33,6 +33,8 @@ class WebScripts : public detail::WebScriptsInterface {
                          const ::type::Date &end_date) override;
   ::database::type::RowId GetConfigurationIdForAgent(::database::type::RowId agent_id) override;
 
+  ::bash::domain::type::DailyUserStatistics GetDailyUserStatisticsFromConfiguration(::database::type::RowId configuration_id) override;
+
   ::bash::domain::type::CommandsStatistics GetCommandsStatistics(::database::type::RowId agent_name_id,
                                                                  const ::type::Date &begin_date,
                                                                  const ::type::Date &end_date) override;

@@ -45,6 +45,7 @@ class Scripts : public detail::ScriptsInterface {
                                              const ::type::Date &begin_date,
                                              const ::type::Date &end_date) override;
   void RemoveDailyStatisticsFromConfiguration(::database::type::RowId configuration_id) override;
+  ::bash::domain::type::DailyUserStatistics GetDailyUserStatisticsFromConfiguration(::database::type::RowId configuration_id) override;
 
   void CalculateCommandStatistics(::database::type::RowId agent_name_id,
                                   const ::type::Date &begin_date,

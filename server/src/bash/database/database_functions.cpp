@@ -53,6 +53,12 @@ void DatabaseFunctions::AddSystemUser(type::UID uid) {
   return raw_database_functions_->GetSystemUserId({uid});
 }
 
+::bash::database::detail::entity::SystemUser DatabaseFunctions::GetSystemUserById(::database::type::RowId id) {
+  BOOST_LOG_TRIVIAL(debug) << "database::DatabaseFunctions::GetSystemUserById: Function call";
+
+  return raw_database_functions_->GetSystemUserById(id);
+}
+
 ::database::type::RowIds DatabaseFunctions::GetSystemUsersIdsFromLogs(::database::type::RowId agent_name_id) {
   BOOST_LOG_TRIVIAL(debug) << "database::DatabaseFunctions::GetSystemUsersIdsFromLogs: Function call";
 
@@ -287,6 +293,12 @@ void DatabaseFunctions::RemoveDailyStatisticsFromConfiguration(::database::type:
   BOOST_LOG_TRIVIAL(debug) << "bash::database::DatabaseFunctions::RemoveDailyStatisticsFromConfiguration: Function call";
 
   raw_database_functions_->RemoveDailyStatisticsFromConfiguration(configuration_id);
+}
+
+::bash::database::detail::entity::DailyUserStatistics DatabaseFunctions::GetDailyUserStatisticsFromConfiguration(::database::type::RowId configuration_id) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::DatabaseFunctions::GetDailyUserStatisticsFromConfiguration: Function call";
+
+  return raw_database_functions_->GetDailyUserStatisticsFromConfiguration(configuration_id);
 }
 
 DatabaseFunctions::DatabaseFunctions(::bash::database::detail::RawDatabaseFunctionsInterfacePtr raw_database_functions,

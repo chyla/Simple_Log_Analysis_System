@@ -60,6 +60,12 @@ void WebScripts::SaveConfiguration(::database::type::RowId agent_name_id,
   return scripts_->GetConfigurationIdForAgent(agent_id);
 }
 
+::bash::domain::type::DailyUserStatistics WebScripts::GetDailyUserStatisticsFromConfiguration(::database::type::RowId configuration_id) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::domain::WebScripts::GetDailyUserStatisticsFromConfiguration: Function call";
+
+  return scripts_->GetDailyUserStatisticsFromConfiguration(configuration_id);
+}
+
 ::bash::domain::type::CommandsStatistics WebScripts::GetCommandsStatistics(::database::type::RowId agent_name_id,
                                                                            const ::type::Date &begin_date,
                                                                            const ::type::Date &end_date) {

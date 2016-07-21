@@ -14,6 +14,7 @@
 #include "entity/command_statistic.h"
 #include "src/bash/database/detail/entity/daily_user_statistic.h"
 #include "src/bash/database/detail/entity/daily_user_command_statistic.h"
+#include "src/bash/database/detail/entity/system_user.h"
 
 #include <memory>
 
@@ -34,6 +35,7 @@ class RawDatabaseFunctionsInterface {
 
   virtual void AddSystemUser(const entity::SystemUser &system_user) = 0;
   virtual ::database::type::RowId GetSystemUserId(const entity::SystemUser &system_user) = 0;
+  virtual ::bash::database::detail::entity::SystemUser GetSystemUserById(::database::type::RowId id) = 0;
   virtual ::database::type::RowIds GetSystemUsersIdsFromLogs(::database::type::RowId agent_name_id) = 0;
 
   virtual void AddCommand(const ::bash::database::type::CommandName &command) = 0;
@@ -92,6 +94,7 @@ class RawDatabaseFunctionsInterface {
   virtual void AddDailyUserStatisticsToConfiguration(::database::type::RowId configuration_id,
                                                      const ::database::type::RowIds &date_range_ids) = 0;
   virtual void RemoveDailyStatisticsFromConfiguration(::database::type::RowId configuration_id) = 0;
+  virtual ::bash::database::detail::entity::DailyUserStatistics GetDailyUserStatisticsFromConfiguration(::database::type::RowId configuration_id) = 0;
 };
 
 typedef std::shared_ptr<RawDatabaseFunctionsInterface> RawDatabaseFunctionsInterfacePtr;

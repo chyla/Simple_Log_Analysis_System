@@ -11,6 +11,7 @@
 #include "src/bash/domain/type/command_statistic.h"
 #include "src/bash/domain/type/unconfigured_agent.h"
 #include "src/bash/domain/type/anomaly_detection_configuration.h"
+#include "src/bash/domain/type/daily_user_statistic.h"
 
 #include <memory>
 
@@ -35,6 +36,8 @@ class WebScriptsInterface {
                                  const ::type::Date &begin_date,
                                  const ::type::Date &end_date) = 0;
   virtual ::database::type::RowId GetConfigurationIdForAgent(::database::type::RowId agent_id) = 0;
+
+  virtual ::bash::domain::type::DailyUserStatistics GetDailyUserStatisticsFromConfiguration(::database::type::RowId configuration_id) = 0;
 
   virtual ::bash::domain::type::CommandsStatistics GetCommandsStatistics(::database::type::RowId agent_name_id,
                                                                          const ::type::Date &begin_date,

@@ -15,6 +15,7 @@
 #include "detail/get_selected_commands_ids.h"
 #include "detail/save_selected_commands.h"
 #include "detail/select_default_commands.h"
+#include "detail/get_daily_user_statistics_from_configuration.h"
 
 #include <boost/log/trivial.hpp>
 #include <json/json.hpp>
@@ -67,7 +68,8 @@ scripts_(scripts) {
     detail::GetCommandsStatisticsByConfigurationId::Create(scripts),
     detail::GetSelectedCommandsIds::Create(scripts),
     detail::SaveSelectedCommands::Create(scripts),
-    detail::SelectDefaultCommands::Create(scripts)
+    detail::SelectDefaultCommands::Create(scripts),
+    detail::GetDailyUserStatisticsFromConfiguration::Create(scripts)
   };
 
   for (auto &c : web_commands)

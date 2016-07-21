@@ -29,6 +29,7 @@ patlms_server_SOURCES	= main.cpp \
 				bash/web/detail/get_selected_commands_ids.cpp \
 				bash/web/detail/get_unconfigured_agents.cpp \
 				bash/web/detail/get_configuration_id_for_agent.cpp \
+				bash/web/detail/get_daily_user_statistics_from_configuration.cpp \
 				bash/web/detail/remove_anomaly_detection_configuration.cpp \
 				bash/web/detail/save_anomaly_detection_configuration.cpp \
 				bash/web/detail/save_selected_commands.cpp \

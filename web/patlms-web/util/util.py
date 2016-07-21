@@ -106,3 +106,6 @@ def bash_save_selected_commands(configuration_id, selected_commands_ids):
 
 def bash_select_default_commands(configuration_id):
     return connect_and_get_result_from_command('bash.select_default_commands', [int(configuration_id)])
+
+def bash_get_daily_user_statistics_from_configuration(configuration_id):
+    return connect_and_get_result_from_command('bash.get_daily_user_statistics_from_configuration', [int(configuration_id)])
