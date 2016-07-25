@@ -1019,6 +1019,61 @@ void RawDatabaseFunctions::RemoveDailyStatisticsFromConfiguration(::database::ty
   return statistics;
 }
 
+::bash::database::detail::entity::DailyUserStatistics RawDatabaseFunctions::GetDailyUserStatisticsForAgent(::database::type::RowId agent_name_id,
+                                                                                                           const ::database::type::RowIds &date_range_ids) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::detail::RawDatabaseFunctions::GetDailyUserStatisticsForAgent: Function call";
+
+  string sql =
+      "select BDUST.ID, BDUST.USER_ID, BDUST.DATE_ID, BDUST.CLASSIFICATION "
+      " from BASH_DAILY_USER_STATISTICS_TABLE as BDUST "
+      " where BDUST.AGENT_NAME_ID=" + to_string(agent_name_id) +
+      " and BDUST.DATE_ID in (";
+
+  auto end = date_range_ids.end();
+  for (auto it = date_range_ids.begin(); it != end; ++it) {
+    sql += to_string(*it);
+
+    if (it != end - 1)
+      sql += ", ";
+  }
+
+  sql += ");";
+
+  ::bash::database::detail::entity::DailyUserStatistics statistics;
+  ::bash::database::detail::entity::DailyUserStatistic stat;
+  stat.agent_name_id = agent_name_id;
+
+  sqlite3_stmt *statement = nullptr;
+  sqlite_wrapper_->Prepare(sql, &statement);
+
+  try {
+    do {
+      auto ret = sqlite_wrapper_->Step(statement);
+
+      if (ret == SQLITE_ROW) {
+        stat.id = sqlite_wrapper_->ColumnInt64(statement, 0);
+        stat.user_id = sqlite_wrapper_->ColumnInt64(statement, 1);
+        stat.date_id = sqlite_wrapper_->ColumnInt64(statement, 2);
+        stat.classification = static_cast< ::database::type::Classification> (sqlite_wrapper_->ColumnInt(statement, 3));
+
+        statistics.push_back(stat);
+      }
+      else
+        break;
+    }
+    while (true);
+  }
+  catch (::database::exception::DatabaseException &ex) {
+    BOOST_LOG_TRIVIAL(debug) << "bash::database::detail::RawDatabaseFunctions::GetCommandsIdsFromLogs: Exception catched: " << ex.what();
+    sqlite_wrapper_->Finalize(statement);
+    throw;
+  }
+
+  sqlite_wrapper_->Finalize(statement);
+
+  return statistics;
+}
+
 RawDatabaseFunctions::RawDatabaseFunctions(::database::detail::SQLiteWrapperInterfacePtr sqlite_wrapper) :
 sqlite_wrapper_(sqlite_wrapper) {
 }

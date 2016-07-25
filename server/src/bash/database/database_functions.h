@@ -96,6 +96,9 @@ class DatabaseFunctions : public detail::DatabaseFunctionsInterface {
   void RemoveDailyStatisticsFromConfiguration(::database::type::RowId configuration_id) override;
   ::bash::database::detail::entity::DailyUserStatistics GetDailyUserStatisticsFromConfiguration(::database::type::RowId configuration_id) override;
 
+  ::bash::database::detail::entity::DailyUserStatistics GetDailyUserStatisticsForAgent(::database::type::RowId agent_name_id,
+                                                                                       const ::database::type::RowIds &date_range_ids) override;
+
  private:
   ::bash::database::detail::RawDatabaseFunctionsInterfacePtr raw_database_functions_;
   ::database::detail::GeneralDatabaseFunctionsInterfacePtr general_database_functions_;

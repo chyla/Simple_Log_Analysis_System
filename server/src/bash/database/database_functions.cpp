@@ -301,6 +301,13 @@ void DatabaseFunctions::RemoveDailyStatisticsFromConfiguration(::database::type:
   return raw_database_functions_->GetDailyUserStatisticsFromConfiguration(configuration_id);
 }
 
+::bash::database::detail::entity::DailyUserStatistics DatabaseFunctions::GetDailyUserStatisticsForAgent(::database::type::RowId agent_name_id,
+                                                                                                        const ::database::type::RowIds &date_range_ids) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::DatabaseFunctions::GetDailyUserStatisticsForAgent: Function call";
+
+  return raw_database_functions_->GetDailyUserStatisticsForAgent(agent_name_id, date_range_ids);
+}
+
 DatabaseFunctions::DatabaseFunctions(::bash::database::detail::RawDatabaseFunctionsInterfacePtr raw_database_functions,
                                      ::database::detail::GeneralDatabaseFunctionsInterfacePtr general_database_functions) :
 raw_database_functions_(raw_database_functions),

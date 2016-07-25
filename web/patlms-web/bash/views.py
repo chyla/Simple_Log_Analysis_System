@@ -3,6 +3,7 @@
 from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response, render, redirect
 from django.core.urlresolvers import reverse
+from util.type import Classification
 import util
 
 
@@ -180,14 +181,25 @@ def configure_anomaly_detection_correct_sessions_marks_save(request):
 
 def review_detection_results_show_results(request):
     exception = None
-    configuration_id = request.POST.get('configuration_id', None)
+    sessions = None
+    agent_name_id = request.GET.get('agent_name_id', None)
+    begin_date = request.GET.get('begin_date', util.get_default_begin_date())
+    end_date = request.GET.get('end_date', util.get_default_end_date())
 
     try:
-        pass
+        sessions = util.bash_get_daily_user_statistics_for_agent(agent_name_id, begin_date, end_date)
+        print sessions
     except Exception as e:
         exception = str(e)
 
     return render(request,
                   'bash/review_detection_results/show_results.html',
                   {'exception' : exception,
+                   'sessions' : sessions,
+                   'agent_name_id' : agent_name_id,
+                   'begin_date' : begin_date,
+                   'end_date' : end_date,
+                   'CLASSIFICATION_ANOMALY' : Classification.ANOMALY,
+                   'CLASSIFICATION_NORMAL' : Classification.NORMAL,
+                   'CLASSIFICATION_UNKNOWN' : Classification.UNKNOWN,
                    })

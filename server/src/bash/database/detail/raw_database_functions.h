@@ -94,6 +94,8 @@ class RawDatabaseFunctions : public RawDatabaseFunctionsInterface {
   void RemoveDailyStatisticsFromConfiguration(::database::type::RowId configuration_id) override;
   ::bash::database::detail::entity::DailyUserStatistics GetDailyUserStatisticsFromConfiguration(::database::type::RowId configuration_id) override;
 
+  ::bash::database::detail::entity::DailyUserStatistics GetDailyUserStatisticsForAgent(::database::type::RowId agent_name_id,
+                                                                                       const ::database::type::RowIds &date_range_ids) override;
  private:
   ::database::detail::SQLiteWrapperInterfacePtr sqlite_wrapper_;
 

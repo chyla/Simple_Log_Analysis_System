@@ -49,6 +49,9 @@ class ScriptsInterface {
                                                      const ::type::Date &end_date) = 0;
   virtual void RemoveDailyStatisticsFromConfiguration(::database::type::RowId configuration_id) = 0;
   virtual ::bash::domain::type::DailyUserStatistics GetDailyUserStatisticsFromConfiguration(::database::type::RowId configuration_id) = 0;
+  virtual ::bash::domain::type::DailyUserStatistics GetDailyUserStatisticsForAgent(::database::type::RowId agent_name_id,
+                                                                                   const ::type::Date &begin_date,
+                                                                                   const ::type::Date &end_date) = 0;
 
   virtual void CalculateCommandStatistics(::database::type::RowId agent_name_id,
                                           const ::type::Date &begin_date,

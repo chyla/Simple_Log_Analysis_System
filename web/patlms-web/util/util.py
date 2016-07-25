@@ -109,3 +109,6 @@ def bash_select_default_commands(configuration_id):
 
 def bash_get_daily_user_statistics_from_configuration(configuration_id):
     return connect_and_get_result_from_command('bash.get_daily_user_statistics_from_configuration', [int(configuration_id)])
+
+def bash_get_daily_user_statistics_for_agent(agent_name_id, begin_date, end_date):
+    return connect_and_get_result_from_command('bash.get_daily_user_statistics_for_agent', [int(agent_name_id), begin_date, end_date])

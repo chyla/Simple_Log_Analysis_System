@@ -3,7 +3,7 @@
 
 {% block content %}
 
-<h1>Apache Logs</h1>
+<h1>Bash Logs</h1>
 
 <div class="col-sm-12">
     <div class="help-button">
@@ -31,6 +31,8 @@
             <label for="end-date" class="control-label">End date:</label>
             <input type="date" name="end_date" id='end_date' class='input-max-width' value="{{ end_date }}" onchange="this.form.submit()">
         </div>
+
+        <input type="hidden" name="agent_name_id" value="{{ agent_name_id }}">
     </form>
 </div>
 
@@ -38,7 +40,7 @@
 <h3>Results</h3>
 
 <div class="col-sm-12">
-    {% if agent_name == '' or virtualhost_name == '' or begin_date == '' or end_date == '' or sessions|length == 0 %}
+    {% if begin_date == '' or end_date == '' or sessions|length == 0 or sessions == None %}
         There is no data to display.
     {% else %}
         <table class="table custab">
@@ -64,7 +66,7 @@
                 >
                     <td>{{ s.id }}</td>
                     <td>{{ s.date }}</td>
-                    <td>{{ s.user }}</td>
+                    <td>{{ s.uid }}</td>
                     <td>
                         {% if s.classification == CLASSIFICATION_ANOMALY %}
                             <a href="#" class="btn btn-classification-anomaly btn-xs"> ANOMALY </a>

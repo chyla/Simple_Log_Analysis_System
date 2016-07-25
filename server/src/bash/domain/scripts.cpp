@@ -172,16 +172,44 @@ void Scripts::RemoveDailyStatisticsFromConfiguration(::database::type::RowId con
   ::bash::domain::type::DailyUserStatistic s;
   for (const auto &r : raw_statistics) {
     auto system_user = database_functions_->GetSystemUserById(r.user_id);
-    
+
     s.agent_name = general_database_functions_->GetAgentNameById(r.agent_name_id);
     s.classification = r.classification;
     s.date = general_database_functions_->GetDateById(r.date_id);
     s.uid = system_user.uid;
     s.id = r.id;
-    
+
     statistics.push_back(s);
   }
-  
+
+  return statistics;
+}
+
+::bash::domain::type::DailyUserStatistics Scripts::GetDailyUserStatisticsForAgent(::database::type::RowId agent_name_id,
+                                                                                  const ::type::Date &begin_date,
+                                                                                  const ::type::Date &end_date) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::domain::Scripts::GetDailyUserStatisticsForAgent: Function call";
+
+  auto date_range_ids = general_database_functions_->GetDateRangeIds(begin_date, end_date);
+
+  auto raw_statistics = database_functions_->GetDailyUserStatisticsForAgent(agent_name_id, date_range_ids);
+
+  ::bash::domain::type::DailyUserStatistics statistics;
+  statistics.reserve(raw_statistics.size());
+
+  ::bash::domain::type::DailyUserStatistic s;
+  for (const auto &r : raw_statistics) {
+    auto system_user = database_functions_->GetSystemUserById(r.user_id);
+
+    s.agent_name = general_database_functions_->GetAgentNameById(r.agent_name_id);
+    s.classification = r.classification;
+    s.date = general_database_functions_->GetDateById(r.date_id);
+    s.uid = system_user.uid;
+    s.id = r.id;
+
+    statistics.push_back(s);
+  }
+
   return statistics;
 }
 

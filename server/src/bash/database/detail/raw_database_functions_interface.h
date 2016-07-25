@@ -95,6 +95,9 @@ class RawDatabaseFunctionsInterface {
                                                      const ::database::type::RowIds &date_range_ids) = 0;
   virtual void RemoveDailyStatisticsFromConfiguration(::database::type::RowId configuration_id) = 0;
   virtual ::bash::database::detail::entity::DailyUserStatistics GetDailyUserStatisticsFromConfiguration(::database::type::RowId configuration_id) = 0;
+
+  virtual ::bash::database::detail::entity::DailyUserStatistics GetDailyUserStatisticsForAgent(::database::type::RowId agent_name_id,
+                                                                                               const ::database::type::RowIds &date_range_ids) = 0;
 };
 
 typedef std::shared_ptr<RawDatabaseFunctionsInterface> RawDatabaseFunctionsInterfacePtr;
