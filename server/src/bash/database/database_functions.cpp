@@ -202,6 +202,7 @@ void DatabaseFunctions::AddAnomalyDetectionConfiguration(const type::AnomalyDete
   c.agent_name_id = configuration.agent_name_id;
   c.begin_date_id = general_database_functions_->GetDateId(configuration.begin_date);
   c.end_date_id = general_database_functions_->GetDateId(configuration.end_date);
+  c.changed = configuration.changed;
 
   raw_database_functions_->AddAnomalyDetectionConfiguration(c);
 }
@@ -222,6 +223,12 @@ void DatabaseFunctions::AddDefaultCommandsToConfiguration(::database::type::RowI
   BOOST_LOG_TRIVIAL(debug) << "bash::database::DatabaseFunctions::AddDefaultCommandsToConfiguration: Function call";
 
   raw_database_functions_->AddDefaultCommandsToConfiguration(configuration_id);
+}
+
+void DatabaseFunctions::MarkConfigurationAsUnchanged(::database::type::RowId configuration_id) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::DatabaseFunctions::MarkConfigurationAsUnchanged: Function call";
+
+  raw_database_functions_->MarkConfigurationAsUnchanged(configuration_id);
 }
 
 void DatabaseFunctions::AddCommandStatistic(const detail::entity::CommandStatistic &statistic) {

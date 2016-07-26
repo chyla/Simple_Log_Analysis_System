@@ -112,6 +112,7 @@ void Scripts::SaveConfiguration(::database::type::RowId agent_name_id,
   c.agent_name_id = agent_name_id;
   c.begin_date = begin_date;
   c.end_date = end_date;
+  c.changed = true;
 
   database_functions_->AddAnomalyDetectionConfiguration(c);
 }

@@ -71,6 +71,7 @@ class RawDatabaseFunctionsInterface {
   virtual ::database::type::RowId GetConfigurationIdForAgent(::database::type::RowId agent_id) = 0;
   virtual void RemoveAllCommandsFromConfiguration(::database::type::RowId configuration_id) = 0;
   virtual void AddDefaultCommandsToConfiguration(::database::type::RowId configuration_id) = 0;
+  virtual void MarkConfigurationAsUnchanged(::database::type::RowId configuration_id) = 0;
 
   virtual void AddCommandStatistic(const entity::CommandStatistic &statistic) = 0;
   virtual bool IsCommandStatisticExist(::database::type::RowId agent_name_id,

@@ -70,6 +70,7 @@ class DatabaseFunctions : public detail::DatabaseFunctionsInterface {
   ::database::type::RowId GetConfigurationIdForAgent(::database::type::RowId agent_id) override;
   void RemoveAllCommandsFromConfiguration(::database::type::RowId configuration_id) override;
   void AddDefaultCommandsToConfiguration(::database::type::RowId configuration_id) override;
+  void MarkConfigurationAsUnchanged(::database::type::RowId configuration_id) override;
 
   void AddCommandStatistic(const detail::entity::CommandStatistic &statistic) override;
   bool IsCommandStatisticExist(::database::type::RowId agent_name_id,

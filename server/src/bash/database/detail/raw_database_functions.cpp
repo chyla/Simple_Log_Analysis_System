@@ -70,6 +70,7 @@ void RawDatabaseFunctions::CreateTables() {
                         "  AGENT_NAME_ID integer, "
                         "  BEGIN_DATE_ID integer, "
                         "  END_DATE_ID integer, "
+                        "  CHANGED integer, "
                         "  foreign key(AGENT_NAME_ID) references AGENT_NAMES(ID), "
                         "  foreign key(BEGIN_DATE_ID) references DATE_TABLE(ID), "
                         "  foreign key(END_DATE_ID) references DATE_TABLE(ID), "
@@ -603,7 +604,7 @@ entity::AnomalyDetectionConfigurations RawDatabaseFunctions::GetAnomalyDetection
   entity::AnomalyDetectionConfigurations configurations;
   entity::AnomalyDetectionConfiguration config;
 
-  const char *sql = "select ID, AGENT_NAME_ID, BEGIN_DATE_ID, END_DATE_ID from BASH_ANOMALY_DETECTION_CONFIGURATION_TABLE;";
+  const char *sql = "select ID, AGENT_NAME_ID, BEGIN_DATE_ID, END_DATE_ID, CHANGED from BASH_ANOMALY_DETECTION_CONFIGURATION_TABLE;";
 
   sqlite3_stmt *statement = nullptr;
   sqlite_wrapper_->Prepare(sql, &statement);
@@ -617,6 +618,7 @@ entity::AnomalyDetectionConfigurations RawDatabaseFunctions::GetAnomalyDetection
         config.agent_name_id = sqlite_wrapper_->ColumnInt64(statement, 1);
         config.begin_date_id = sqlite_wrapper_->ColumnInt64(statement, 2);
         config.end_date_id = sqlite_wrapper_->ColumnInt64(statement, 3);
+        config.changed = static_cast<bool> (sqlite_wrapper_->ColumnInt(statement, 4));
 
         configurations.push_back(config);
       }
@@ -647,11 +649,12 @@ void RawDatabaseFunctions::RemoveAnomalyDetectionConfiguration(::database::type:
 void RawDatabaseFunctions::AddAnomalyDetectionConfiguration(const entity::AnomalyDetectionConfiguration &configuration) {
   BOOST_LOG_TRIVIAL(debug) << "bash::database::detail::RawDatabaseFunctions::AddAnomalyDetectionConfiguration: Function call";
 
-  string sql = "insert or replace into BASH_ANOMALY_DETECTION_CONFIGURATION_TABLE (ID, AGENT_NAME_ID, BEGIN_DATE_ID, END_DATE_ID) values ("
+  string sql = "insert or replace into BASH_ANOMALY_DETECTION_CONFIGURATION_TABLE (ID, AGENT_NAME_ID, BEGIN_DATE_ID, END_DATE_ID, CHANGED) values ("
       "(select ID from BASH_ANOMALY_DETECTION_CONFIGURATION_TABLE where AGENT_NAME_ID=" + to_string(configuration.agent_name_id) + "), " +
       to_string(configuration.agent_name_id) + ", " +
       to_string(configuration.begin_date_id) + ", " +
-      to_string(configuration.end_date_id) +
+      to_string(configuration.end_date_id) + ", " +
+      to_string(configuration.changed) +
       ");";
 
   sqlite_wrapper_->Exec(sql);
@@ -674,6 +677,18 @@ void RawDatabaseFunctions::AddDefaultCommandsToConfiguration(::database::type::R
       "  from BASH_DATE_RANGE_COMMANDS_STATISTICS_TABLE as BDRCST join BASH_ANOMALY_DETECTION_CONFIGURATION_TABLE as BADCT "
       "  on BDRCST.AGENT_NAME_ID=BADCT.AGENT_NAME_ID and BDRCST.BEGIN_DATE_ID=BADCT.BEGIN_DATE_ID and BDRCST.END_DATE_ID=BADCT.END_DATE_ID "
       "  where BADCT.ID=" + to_string(configuration_id) + " order by SUMMARY desc limit 100;";
+
+  sqlite_wrapper_->Exec(sql);
+}
+
+void RawDatabaseFunctions::MarkConfigurationAsUnchanged(::database::type::RowId configuration_id) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::detail::RawDatabaseFunctions::MarkConfigurationAsUnchanged: Function call";
+
+  string sql =
+      "update BASH_ANOMALY_DETECTION_CONFIGURATION_TABLE "
+      " set CHANGED=0 "
+      " where ID=" + to_string(configuration_id) +
+      ";";
 
   sqlite_wrapper_->Exec(sql);
 }

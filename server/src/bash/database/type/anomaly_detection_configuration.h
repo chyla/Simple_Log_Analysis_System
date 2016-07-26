@@ -26,6 +26,7 @@ struct AnomalyDetectionConfiguration {
   ::database::type::RowId agent_name_id;
   ::type::Date begin_date;
   ::type::Date end_date;
+  bool changed;
 };
 
 typedef std::vector<AnomalyDetectionConfiguration> AnomalyDetectionConfigurations;
