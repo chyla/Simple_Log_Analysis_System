@@ -191,7 +191,6 @@ def review_detection_results_show_results(request):
 
     try:
         sessions = util.bash_get_daily_user_statistics_for_agent(agent_name_id, begin_date, end_date)
-        print sessions
     except Exception as e:
         exception = str(e)
 
