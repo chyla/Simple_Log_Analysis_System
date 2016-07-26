@@ -149,6 +149,12 @@ void DatabaseFunctions::AddDailyUserStatistic(const ::bash::database::detail::en
   raw_database_functions_->AddDailyUserStatistic(us);
 }
 
+::database::entity::AgentNames DatabaseFunctions::GetAgentsWithExistingDailyUserStatistics() {
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::DatabaseFunctions::GetAgentsWithExistingDailyUserStatistics: Function call";
+
+  return raw_database_functions_->GetAgentsWithExistingDailyUserStatistics();
+}
+
 ::database::type::RowId DatabaseFunctions::GetDailyUserStatisticId(::database::type::RowId agent_name_id,
                                                                    ::database::type::RowId user_id,
                                                                    ::database::type::RowId date_id) {

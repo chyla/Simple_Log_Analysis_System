@@ -62,6 +62,7 @@ class DatabaseFunctions : public detail::DatabaseFunctionsInterface {
   ::database::type::RowIds GetAgentIdsWithoutConfiguration() override;
   ::database::type::RowIds GetAgentsIdsWithConfiguration() override;
   void AddDailyUserStatistic(const ::bash::database::detail::entity::DailyUserStatistic &us) override;
+  ::database::entity::AgentNames GetAgentsWithExistingDailyUserStatistics() override;
 
   type::AnomalyDetectionConfigurations GetAnomalyDetectionConfigurations() override;
   void RemoveAnomalyDetectionConfiguration(::database::type::RowId id) override;

@@ -68,6 +68,12 @@ void WebScripts::SaveConfiguration(::database::type::RowId agent_name_id,
   return scripts_->GetDailyUserStatisticsForAgent(agent_name_id, begin_date, end_date);
 }
 
+::database::entity::AgentNames WebScripts::GetAgentsWithExistingDailyUserStatistics() {
+  BOOST_LOG_TRIVIAL(debug) << "bash::domain::WebScripts::GetAgentsWithExistingDailyUserStatistics: Function call";
+
+  return scripts_->GetAgentsWithExistingDailyUserStatistics();
+}
+
 ::bash::domain::type::DailyUserStatistics WebScripts::GetDailyUserStatisticsFromConfiguration(::database::type::RowId configuration_id) {
   BOOST_LOG_TRIVIAL(debug) << "bash::domain::WebScripts::GetDailyUserStatisticsFromConfiguration: Function call";
 

@@ -49,6 +49,7 @@ class Scripts : public detail::ScriptsInterface {
   ::bash::domain::type::DailyUserStatistics GetDailyUserStatisticsForAgent(::database::type::RowId agent_name_id,
                                                                            const ::type::Date &begin_date,
                                                                            const ::type::Date &end_date) override;
+  ::database::entity::AgentNames GetAgentsWithExistingDailyUserStatistics() override;
 
   void CalculateCommandStatistics(::database::type::RowId agent_name_id,
                                   const ::type::Date &begin_date,

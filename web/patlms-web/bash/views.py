@@ -10,9 +10,11 @@ import util
 def status(request):
     exception = None
     configurations = None
+    agents_with_existing_sessions = None
 
     try:
         configurations = util.bash_get_anomaly_detection_configurations()
+        agents_with_existing_sessions = util.bash_get_agents_with_existing_sessions()
     except Exception as e:
         exception = str(e)
 
@@ -20,6 +22,7 @@ def status(request):
                   'bash/status.html',
                   {'exception' : exception,
                    'configurations' : configurations,
+                   'agents_with_existing_sessions' : agents_with_existing_sessions,
                    })
 
 def configure_anomaly_detection_select_agent(request):

@@ -112,3 +112,6 @@ def bash_get_daily_user_statistics_from_configuration(configuration_id):
 
 def bash_get_daily_user_statistics_for_agent(agent_name_id, begin_date, end_date):
     return connect_and_get_result_from_command('bash.get_daily_user_statistics_for_agent', [int(agent_name_id), begin_date, end_date])
+
+def bash_get_agents_with_existing_sessions():
+    return connect_and_get_result_from_command('bash.get_agents_with_existing_sessions')

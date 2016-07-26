@@ -35,6 +35,7 @@ class WebScripts : public detail::WebScriptsInterface {
   ::bash::domain::type::DailyUserStatistics GetDailyUserStatisticsForAgent(::database::type::RowId agent_name_id,
                                                                            const ::type::Date &begin_date,
                                                                            const ::type::Date &end_date) override;
+  ::database::entity::AgentNames GetAgentsWithExistingDailyUserStatistics() override;
 
   ::bash::domain::type::DailyUserStatistics GetDailyUserStatisticsFromConfiguration(::database::type::RowId configuration_id) override;
 

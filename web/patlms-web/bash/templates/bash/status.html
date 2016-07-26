@@ -72,29 +72,26 @@
 <h2>Sessions classification</h2>
 
 <div class="col-sm-12">
-    {% if available_classification_for_agent_host_names|length > 0 %}
+    {% if agents_with_existing_sessions|length > 0 %}
             <table class="table table custab sortable">
             <thead>
                 <tr>
                     <th><button class="custab-head-button">Agent</button></th>
-                    <th><button class="custab-head-button">Virtualhost</button></th>
                     <th class="sorttable_nosort"><button class="custab-head-button">Options</button></th>
                 </tr>
             </thead>
 
             <tbody>
-                {% for d in available_classification_for_agent_host_names %}
-                    {% for virtualhost_name in d.virtualhosts_names %}
-                        <tr {% cycle '' 'class="custab-odd"' %}>
-                            <td> {{ d.agent_name }} </td>
-                            <td>
-                                <a class="btn btn-success btn-xs" href="">
-                                    <i class="fa fa-desktop" aria-hidden="true"></i>
-                                    View
-                                </a>
-                            </td>
-                        </tr>
-                    {% endfor %}
+                {% for s in agents_with_existing_sessions %}
+                    <tr {% cycle '' 'class="custab-odd"' %}>
+                        <td> {{ s.agent_name }} </td>
+                        <td>
+                            <a class="btn btn-success btn-xs" href="{% url 'bash:review_detection_results_show_results' %}?agent_name_id={{ s.id }}">
+                                <i class="fa fa-desktop" aria-hidden="true"></i>
+                                View
+                            </a>
+                        </td>
+                    </tr>
                 {% endfor %}
             </tbody>
         </table>

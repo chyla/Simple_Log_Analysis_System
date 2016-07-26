@@ -15,6 +15,7 @@
 #include "src/bash/database/detail/entity/daily_user_statistic.h"
 #include "src/bash/database/detail/entity/daily_user_command_statistic.h"
 #include "src/bash/database/detail/entity/system_user.h"
+#include "src/database/entity/agent_name.h"
 
 #include <memory>
 
@@ -62,6 +63,7 @@ class RawDatabaseFunctionsInterface {
                                                           ::database::type::RowId user_id,
                                                           ::database::type::RowId date_id) = 0;
   virtual void AddDailyUserCommandStatistic(const ::bash::database::detail::entity::DailyUserCommandStatistic &ucs) = 0;
+  virtual ::database::entity::AgentNames GetAgentsWithExistingDailyUserStatistics() = 0;
 
   virtual entity::AnomalyDetectionConfigurations GetAnomalyDetectionConfigurations() = 0;
   virtual void RemoveAnomalyDetectionConfiguration(::database::type::RowId id) = 0;

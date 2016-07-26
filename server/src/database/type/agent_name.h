@@ -3,8 +3,8 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef AGENT_NAME_H
-#define AGENT_NAME_H
+#ifndef  SRC_DATABASE_TYPE_AGENT_NAME_H
+#define  SRC_DATABASE_TYPE_AGENT_NAME_H
 
 #include <string>
 #include <vector>
@@ -23,4 +23,4 @@ typedef std::vector<AgentName> AgentNames;
 
 }
 
-#endif /* AGENT_NAME_H */
+#endif /* SRC_DATABASE_TYPE_AGENT_NAME_H */

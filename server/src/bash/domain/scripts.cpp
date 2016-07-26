@@ -213,6 +213,12 @@ void Scripts::RemoveDailyStatisticsFromConfiguration(::database::type::RowId con
   return statistics;
 }
 
+::database::entity::AgentNames Scripts::GetAgentsWithExistingDailyUserStatistics() {
+  BOOST_LOG_TRIVIAL(debug) << "bash::domain::Scripts::GetAgentsWithExistingDailyUserStatistics: Function call";
+
+  return database_functions_->GetAgentsWithExistingDailyUserStatistics();
+}
+
 void Scripts::CalculateCommandStatistics(::database::type::RowId agent_name_id,
                                          const ::type::Date &begin_date,
                                          const ::type::Date &end_date) {
