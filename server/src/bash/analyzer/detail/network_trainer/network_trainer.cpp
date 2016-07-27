@@ -104,7 +104,7 @@ void NetworkTrainer::CreateLearningSetFile(const ::bash::database::type::Anomaly
        BOOST_LOG_TRIVIAL(debug) << "bash::analyzer::detail::network_trainer::NetworkTrainer::CreateLearningSetFile: Found " << daily_user_statistics.size() << " statistics in part";
 
       for (const auto &statistic : daily_user_statistics) {
-        if (1 || statistic.classification != ::database::type::Classification::UNKNOWN) {
+        if (statistic.classification != ::database::type::Classification::UNKNOWN) {
           std::fill(input.begin(), input.end(), 0);
 
           auto commands_statistics = database_functions_->GetSelectedDailyUserCommandsStatistics(statistic.id);
