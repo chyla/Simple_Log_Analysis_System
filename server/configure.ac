@@ -222,6 +222,40 @@ if test "x$ax_patlms_library" != "xyes"; then
   AC_MSG_ERROR([cannot find the PATLMS library])
 fi
 
+AC_MSG_CHECKING([for FANN library])
+save_LIBS=$LIBS
+save_CPPFLAGS=$CPPFLAGS
+FANN_LIBS="-lm -lfann"
+FANN_CPPFLAGS=""
+LIBS="$LIBS $FANN_LIBS"
+CPPFLAGS="$CPPFLAGS $FANN_CPPFLAGS"
+AC_LINK_IFELSE([AC_LANG_SOURCE([
+                    #include <fann.h>
+                    int main(int argc, char **argv) {
+                        struct fann *ann = fann_create_standard(4, 2, 8, 9, 1);
+                        return 0;
+                    }
+                ])
+               ],
+               [AC_DEFINE([HAVE_FANN], , [define if the FANN library is available])
+                AC_SUBST(FANN_LIBS)
+                AM_CONDITIONAL([HAVE_FANN], [true])
+                ax_fann_library="yes"
+                AC_MSG_RESULT(yes)
+               ],
+               [
+                AM_CONDITIONAL([HAVE_FANN], [false])
+                ax_fann_library="no"
+                AC_MSG_RESULT(no)
+               ]
+              )
+LIBS=$save_LIBS
+CPPFLAGS=$save_CPPFLAGS
+
+if test "x$ax_fann_library" != "xyes"; then
+  AC_MSG_ERROR([cannot find the FANN library])
+fi
+
 # Checks for header files.
 
 # Checks for typedefs, structures, and compiler characteristics.
