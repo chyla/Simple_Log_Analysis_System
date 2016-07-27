@@ -1,6 +1,6 @@
 AUTOMAKE_OPTIONS	= subdir-objects
 
-AM_CPPFLAGS		= $(PTHREAD_CFLAGS) @BOOST_CPPFLAGS@ -DSYSCONFDIR="\"$(sysconfdir)\"" -DLOGDIR="\"$(localstatedir)/log/\"" $(DBUS_CFLAGS) $(SQLite3_CFLAGS) @LIBCURL_CPPFLAGS@ -I${top_srcdir}/third_party
+AM_CPPFLAGS		= $(PTHREAD_CFLAGS) @BOOST_CPPFLAGS@ -DSYSCONFDIR="\"$(sysconfdir)\"" -DLOGDIR="\"$(localstatedir)/log/\"" $(DBUS_CFLAGS) $(SQLite3_CFLAGS) @LIBCURL_CPPFLAGS@ -I${top_srcdir}/third_party $(FANN_CPPFLAGS)
 
 AM_LDFLAGS		= @BOOST_LDFLAGS@
 
@@ -49,7 +49,8 @@ tests_LDADD	= $(OBJECT_FILES) \
 			$(DBUS_LIBS) \
 			$(SQLite3_LIBS) \
 			@LIBPATLMS_LIBS@ \
-			@LIBCURL@
+			@LIBCURL@ \
+			$(FANN_LIBS)
 else
 tests_SOURCES	= main.cpp
 endif
