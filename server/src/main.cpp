@@ -192,7 +192,8 @@ main(int argc, char *argv[]) {
 
     analyzer_worker->AddObject(bash::analyzer::BashAnalyzerObject::Create(bash_database_functions,
                                                                           general_database_functions,
-                                                                          bash_scripts));
+                                                                          bash_scripts,
+                                                                          options.GetNeuralNetworkDataDirectory()));
 
     analyzer_thread = std::thread([]() {
       analyzer_worker->StartLoop();

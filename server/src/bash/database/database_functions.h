@@ -101,6 +101,16 @@ class DatabaseFunctions : public detail::DatabaseFunctionsInterface {
   ::bash::database::detail::entity::DailyUserStatistics GetDailyUserStatisticsForAgent(::database::type::RowId agent_name_id,
                                                                                        const ::database::type::RowIds &date_range_ids) override;
 
+  ::database::type::RowIds GetUsersIdsFromSelectedDailyStatisticsInConfiguration(::database::type::RowId agent_name_id) override;
+  ::database::type::RowId GetNumberOfSelectedDailyStatisticsInConfiguration(::database::type::RowId configuration_id) override;
+  ::database::type::RowsCount GetSelectedDailyUserStatisticsCountFromConfigurationByUser(::database::type::RowId configuration_id,
+                                                                                         ::database::type::RowId user_id) override;
+  ::bash::database::detail::entity::DailyUserStatistics GetSelectedDailyUserStatisticsFromConfigurationByUser(::database::type::RowId configuration_id,
+                                                                                                              ::database::type::RowId user_id,
+                                                                                                              ::database::type::RowsCount limit,
+                                                                                                              ::database::type::RowsCount offset) override;
+  ::bash::database::detail::entity::DailyUserCommandsStatistics GetSelectedDailyUserCommandsStatistics(::database::type::RowId statistic_id)  override;
+
  private:
   ::bash::database::detail::RawDatabaseFunctionsInterfacePtr raw_database_functions_;
   ::database::detail::GeneralDatabaseFunctionsInterfacePtr general_database_functions_;

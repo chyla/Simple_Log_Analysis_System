@@ -12,6 +12,7 @@
 #include "src/bash/database/detail/database_functions_interface.h"
 #include "src/database/detail/general_database_functions_interface.h"
 #include "detail/system_interface.h"
+#include "detail/network_trainer/network_trainer_interface.h"
 
 #include <patlms/type/date.h>
 
@@ -32,23 +33,27 @@ class BashAnalyzerObject : public ::analyzer::AnalyzerObjectInterface {
 
   static BashAnalyzerObjectPtr Create(::bash::database::detail::DatabaseFunctionsInterfacePtr database_functions,
                                       ::database::detail::GeneralDatabaseFunctionsInterfacePtr general_database_functions,
-                                      ::bash::domain::detail::ScriptsInterfacePtr scripts_interface);
+                                      ::bash::domain::detail::ScriptsInterfacePtr scripts_interface,
+                                      const std::string &neural_network_data_directory);
 
   static BashAnalyzerObjectPtr Create(::bash::database::detail::DatabaseFunctionsInterfacePtr database_functions,
                                       ::database::detail::GeneralDatabaseFunctionsInterfacePtr general_database_functions,
                                       ::bash::domain::detail::ScriptsInterfacePtr scripts_interface,
-                                      detail::SystemInterfacePtr system_interface);
+                                      detail::SystemInterfacePtr system_interface,
+                                      const std::string &neural_network_data_directory);
 
   void Analyze() override;
 
  private:
   BashAnalyzerObject(detail::DailyUserStatisticsCreatorInterfacePtr daily_user_statistics_creator,
+                     detail::network_trainer::NetworkTrainerInterfacePtr network_trainer,
                      ::bash::domain::detail::ScriptsInterfacePtr scripts_interface,
                      detail::SystemInterfacePtr system_interface);
 
   ::type::Date GetCurrentDate() const;
 
   detail::DailyUserStatisticsCreatorInterfacePtr daily_user_statistics_creator_;
+  detail::network_trainer::NetworkTrainerInterfacePtr network_trainer_;
   ::bash::domain::detail::ScriptsInterfacePtr scripts_interface_;
   detail::SystemInterfacePtr system_interface_;
 };

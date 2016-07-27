@@ -22,6 +22,7 @@ const Options Options::Create(const std::string &run_as_user,
                               bool help_message,
                               bool daemon,
                               const std::string &databasefile_path,
+                              const std::string &neural_network_data_directory,
                               const std::string &web_address,
                               unsigned web_port,
                               SecurityOption mail_server_secure,
@@ -42,6 +43,7 @@ const Options Options::Create(const std::string &run_as_user,
   options.show_help_message_ = help_message;
   options.daemon_ = daemon;
   options.databasefile_path_ = databasefile_path;
+  options.neural_network_data_directory_ = neural_network_data_directory;
   options.web_address_ = web_address;
   options.web_port_ = web_port;
   options.mail_server_secure_ = mail_server_secure;
@@ -94,6 +96,10 @@ bool Options::IsDebug() const {
 
 const std::string& Options::GetDatabasefilePath() const {
   return databasefile_path_;
+}
+
+const std::string& Options::GetNeuralNetworkDataDirectory() const {
+  return neural_network_data_directory_;
 }
 
 const std::string& Options::GetWebAddress() const {

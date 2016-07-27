@@ -24,6 +24,7 @@ class Options {
                               bool help_message,
                               bool daemon,
                               const std::string &databasefile_path,
+                              const std::string &neural_network_data_directory,
                               const std::string &web_address,
                               unsigned web_port,
                               SecurityOption mail_server_secure,
@@ -48,6 +49,7 @@ class Options {
   bool IsDebug() const;
 
   const std::string& GetDatabasefilePath() const;
+  const std::string& GetNeuralNetworkDataDirectory() const;
 
   const std::string& GetWebAddress() const;
   const unsigned& GetWebPort() const;
@@ -65,6 +67,7 @@ class Options {
   std::string pidfile_path_;
   std::string logfile_path_;
   std::string databasefile_path_;
+  std::string neural_network_data_directory_;
 
   std::string web_address_;
   unsigned web_port_;

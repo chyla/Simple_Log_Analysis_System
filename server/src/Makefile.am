@@ -17,6 +17,7 @@ patlms_server_SOURCES	= main.cpp \
 				bash/analyzer/detail/daily_user_statistics_creator.cpp \
 				bash/analyzer/detail/system.cpp \
 				bash/analyzer/bash_analyzer_object.cpp \
+				bash/analyzer/detail/network_trainer/network_trainer.cpp \
 				bash/database/detail/raw_database_functions.cpp \
 				bash/database/database_functions.cpp \
 				bash/dbus/object/bash.cpp \

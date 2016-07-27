@@ -101,6 +101,16 @@ class RawDatabaseFunctionsInterface {
 
   virtual ::bash::database::detail::entity::DailyUserStatistics GetDailyUserStatisticsForAgent(::database::type::RowId agent_name_id,
                                                                                                const ::database::type::RowIds &date_range_ids) = 0;
+
+  virtual ::database::type::RowIds GetUsersIdsFromSelectedDailyStatisticsInConfiguration(::database::type::RowId configuration_id) = 0;
+  virtual ::database::type::RowId GetNumberOfSelectedDailyStatisticsInConfiguration(::database::type::RowId configuration_id) = 0;
+  virtual ::database::type::RowsCount GetSelectedDailyUserStatisticsCountFromConfigurationByUser(::database::type::RowId configuration_id,
+                                                                                                 ::database::type::RowId user_id) = 0;
+  virtual ::bash::database::detail::entity::DailyUserStatistics GetSelectedDailyUserStatisticsFromConfigurationByUser(::database::type::RowId configuration_id,
+                                                                                                                      ::database::type::RowId user_id,
+                                                                                                                      ::database::type::RowsCount limit,
+                                                                                                                      ::database::type::RowsCount offset) = 0;
+  virtual ::bash::database::detail::entity::DailyUserCommandsStatistics GetSelectedDailyUserCommandsStatistics(::database::type::RowId statistic_id) = 0;
 };
 
 typedef std::shared_ptr<RawDatabaseFunctionsInterface> RawDatabaseFunctionsInterfacePtr;

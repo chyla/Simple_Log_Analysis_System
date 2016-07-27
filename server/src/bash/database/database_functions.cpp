@@ -321,6 +321,40 @@ void DatabaseFunctions::RemoveDailyStatisticsFromConfiguration(::database::type:
   return raw_database_functions_->GetDailyUserStatisticsForAgent(agent_name_id, date_range_ids);
 }
 
+::database::type::RowIds DatabaseFunctions::GetUsersIdsFromSelectedDailyStatisticsInConfiguration(::database::type::RowId configuration_id) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::DatabaseFunctions::GetUsersIdsFromDailyStatistics: Function call";
+
+  return raw_database_functions_->GetUsersIdsFromSelectedDailyStatisticsInConfiguration(configuration_id);
+}
+
+::database::type::RowId DatabaseFunctions::GetNumberOfSelectedDailyStatisticsInConfiguration(::database::type::RowId configuration_id) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::DatabaseFunctions::GetUsersIdsFromDailyStatistics: Function call";
+
+  return raw_database_functions_->GetNumberOfSelectedDailyStatisticsInConfiguration(configuration_id);
+}
+
+::database::type::RowsCount DatabaseFunctions::GetSelectedDailyUserStatisticsCountFromConfigurationByUser(::database::type::RowId configuration_id,
+                                                                                                          ::database::type::RowId user_id) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::DatabaseFunctions::GetUsersIdsFromDailyStatistics: Function call";
+
+  return raw_database_functions_->GetSelectedDailyUserStatisticsCountFromConfigurationByUser(configuration_id, user_id);
+}
+
+::bash::database::detail::entity::DailyUserStatistics DatabaseFunctions::GetSelectedDailyUserStatisticsFromConfigurationByUser(::database::type::RowId configuration_id,
+                                                                                                                               ::database::type::RowId user_id,
+                                                                                                                               ::database::type::RowsCount limit,
+                                                                                                                               ::database::type::RowsCount offset) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::DatabaseFunctions::GetSelectedDailyUserStatisticsFromConfigurationByUser: Function call";
+
+  return raw_database_functions_->GetSelectedDailyUserStatisticsFromConfigurationByUser(configuration_id, user_id, limit, offset);
+}
+
+::bash::database::detail::entity::DailyUserCommandsStatistics DatabaseFunctions::GetSelectedDailyUserCommandsStatistics(::database::type::RowId statistic_id) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::DatabaseFunctions::GetSelectedDailyUserCommandsStatistics: Function call";
+
+  return raw_database_functions_->GetSelectedDailyUserCommandsStatistics(statistic_id);
+}
+
 DatabaseFunctions::DatabaseFunctions(::bash::database::detail::RawDatabaseFunctionsInterfacePtr raw_database_functions,
                                      ::database::detail::GeneralDatabaseFunctionsInterfacePtr general_database_functions) :
 raw_database_functions_(raw_database_functions),

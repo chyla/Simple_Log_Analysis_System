@@ -41,3 +41,4 @@ mail_from=<slas@example.com>
 pidfile=%localstatedir%/run/%package%/patlms-server.pid
 logfile=%localstatedir%/log/%package%/server.log
 databasefile=%localstatedir%/lib/%package%/server.db
+neural_network_data_directory=%localstatedir%/lib/%package%/

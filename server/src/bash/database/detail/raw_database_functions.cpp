@@ -840,7 +840,7 @@ entity::CommandsStatistics RawDatabaseFunctions::GetCommandsStatistics(::databas
   ::database::type::RowIds ids;
 
   string sql = "select COMMAND_ID from BASH_SELECTED_COMMANDS_TABLE "
-      " where CONFIGURATION_ID=" + to_string(configuration_id) + ";";
+      " where CONFIGURATION_ID=" + to_string(configuration_id) + " order by COMMAND_ID;";
 
   sqlite3_stmt *statement = nullptr;
   sqlite_wrapper_->Prepare(sql, &statement);
@@ -1120,6 +1120,169 @@ void RawDatabaseFunctions::RemoveDailyStatisticsFromConfiguration(::database::ty
   }
   catch (::database::exception::DatabaseException &ex) {
     BOOST_LOG_TRIVIAL(debug) << "bash::database::detail::RawDatabaseFunctions::GetCommandsIdsFromLogs: Exception catched: " << ex.what();
+    sqlite_wrapper_->Finalize(statement);
+    throw;
+  }
+
+  sqlite_wrapper_->Finalize(statement);
+
+  return statistics;
+}
+
+::database::type::RowIds RawDatabaseFunctions::GetUsersIdsFromSelectedDailyStatisticsInConfiguration(::database::type::RowId configuration_id) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::detail::RawDatabaseFunctions::GetUsersIdsFromDailyStatistics: Function call";
+
+  string sql =
+      "select distinct BDUST.USER_ID from BASH_ANOMALY_DETECTION_CONFIGURATION_SELECTED_STATISTICS_TABLE as BADCSST "
+      " left join BASH_DAILY_USER_STATISTICS_TABLE as BDUST "
+      " on BADCSST.STATISTIC_ID=BDUST.ID "
+      " where BADCSST.CONFIGURATION_ID=" + to_string(configuration_id) +
+      ";";
+
+  ::database::type::RowIds ids;
+  ::database::type::RowId id;
+
+  sqlite3_stmt *statement = nullptr;
+  sqlite_wrapper_->Prepare(sql, &statement);
+
+  try {
+    do {
+      auto ret = sqlite_wrapper_->Step(statement);
+
+      if (ret == SQLITE_ROW) {
+        id = sqlite_wrapper_->ColumnInt64(statement, 0);
+        ids.push_back(id);
+      }
+      else
+        break;
+    }
+    while (true);
+  }
+  catch (::database::exception::DatabaseException &ex) {
+    BOOST_LOG_TRIVIAL(debug) << "bash::database::detail::RawDatabaseFunctions::GetUsersIdsFromDailyStatistics: Exception catched: " << ex.what();
+    sqlite_wrapper_->Finalize(statement);
+    throw;
+  }
+
+  sqlite_wrapper_->Finalize(statement);
+
+  return ids;
+}
+
+::database::type::RowId RawDatabaseFunctions::GetNumberOfSelectedDailyStatisticsInConfiguration(::database::type::RowId configuration_id) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::detail::RawDatabaseFunctions::GetNumberOfDailyStatisticsInConfiguration: Function call";
+
+  string sql =
+      "select count(*) from BASH_ANOMALY_DETECTION_CONFIGURATION_SELECTED_STATISTICS_TABLE "
+      " where CONFIGURATION_ID=" + to_string(configuration_id) + ";";
+
+  return sqlite_wrapper_->GetFirstInt64Column(sql);
+}
+
+::database::type::RowsCount RawDatabaseFunctions::GetSelectedDailyUserStatisticsCountFromConfigurationByUser(::database::type::RowId configuration_id,
+                                                                                                             ::database::type::RowId user_id) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::detail::RawDatabaseFunctions::GetSelectedDailyUserStatisticsCountFromConfigurationByUser: Function call";
+
+  string sql =
+      "select count(*) from BASH_ANOMALY_DETECTION_CONFIGURATION_SELECTED_STATISTICS_TABLE as BADCSST "
+      " left join BASH_DAILY_USER_STATISTICS_TABLE as BDUST on BADCSST.STATISTIC_ID=BDUST.ID "
+      " where BADCSST.CONFIGURATION_ID=" + to_string(configuration_id) +
+      "   and BDUST.USER_ID=" + to_string(user_id) + ";";
+
+  return sqlite_wrapper_->GetFirstInt64Column(sql);
+
+}
+
+::bash::database::detail::entity::DailyUserStatistics RawDatabaseFunctions::GetSelectedDailyUserStatisticsFromConfigurationByUser(::database::type::RowId configuration_id,
+                                                                                                                                  ::database::type::RowId user_id,
+                                                                                                                                  ::database::type::RowsCount limit,
+                                                                                                                                  ::database::type::RowsCount offset) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::detail::RawDatabaseFunctions::GetSelectedDailyUserStatisticsFromConfigurationByUser: Function call";
+
+  string sql =
+      "select BDUST.ID, BDUST.AGENT_NAME_ID, BDUST.DATE_ID, BDUST.CLASSIFICATION from BASH_DAILY_USER_STATISTICS_TABLE as BDUST "
+      " where BDUST.ID in ("
+      "   select BADCSST.STATISTIC_ID from BASH_ANOMALY_DETECTION_CONFIGURATION_SELECTED_STATISTICS_TABLE as BADCSST "
+      "    left join BASH_ANOMALY_DETECTION_CONFIGURATION_TABLE as BADCT "
+      "    on BADCSST.CONFIGURATION_ID=BADCT.ID "
+      "    where BADCSST.CONFIGURATION_ID=" + to_string(configuration_id) +
+      " )"
+      " and BDUST.USER_ID=" + to_string(user_id) +
+      " limit " + to_string(limit) +
+      " offset " + to_string(offset) +
+      ";";
+
+  ::bash::database::detail::entity::DailyUserStatistics statistics;
+  ::bash::database::detail::entity::DailyUserStatistic stat;
+  stat.user_id = user_id;
+
+  sqlite3_stmt *statement = nullptr;
+  sqlite_wrapper_->Prepare(sql, &statement);
+
+  try {
+    do {
+      auto ret = sqlite_wrapper_->Step(statement);
+
+      if (ret == SQLITE_ROW) {
+        stat.id = sqlite_wrapper_->ColumnInt64(statement, 0);
+        stat.agent_name_id = sqlite_wrapper_->ColumnInt64(statement, 1);
+        stat.date_id = sqlite_wrapper_->ColumnInt64(statement, 2);
+        stat.classification = static_cast< ::database::type::Classification> (sqlite_wrapper_->ColumnInt(statement, 3));
+
+        statistics.push_back(stat);
+      }
+      else
+        break;
+    }
+    while (true);
+  }
+  catch (::database::exception::DatabaseException &ex) {
+    BOOST_LOG_TRIVIAL(debug) << "bash::database::detail::RawDatabaseFunctions::GetCommandsIdsFromLogs: Exception catched: " << ex.what();
+    sqlite_wrapper_->Finalize(statement);
+    throw;
+  }
+
+  sqlite_wrapper_->Finalize(statement);
+
+  return statistics;
+}
+
+::bash::database::detail::entity::DailyUserCommandsStatistics RawDatabaseFunctions::GetSelectedDailyUserCommandsStatistics(::database::type::RowId statistic_id) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::detail::RawDatabaseFunctions::GetSelectedDailyUserCommandsStatistics: Function call";
+
+  string sql =
+      "select BDUCST.ID, BDUCST.STATISTIC_ID, BDUCST.COMMAND_ID, BDUCST.SUMMARY from BASH_SELECTED_COMMANDS_TABLE as BSCT "
+      " left join BASH_DAILY_USER_COMMAND_STATISTICS_TABLE as BDUCST "
+      " on BSCT.COMMAND_ID=BDUCST.COMMAND_ID "
+      " where BDUCST.STATISTIC_ID=" + to_string(statistic_id) +
+      " order by BDUCST.COMMAND_ID"
+      ";";
+
+  ::bash::database::detail::entity::DailyUserCommandsStatistics statistics;
+  ::bash::database::detail::entity::DailyUserCommandStatistic stat;
+
+  sqlite3_stmt *statement = nullptr;
+  sqlite_wrapper_->Prepare(sql, &statement);
+
+  try {
+    do {
+      auto ret = sqlite_wrapper_->Step(statement);
+
+      if (ret == SQLITE_ROW) {
+        stat.id = sqlite_wrapper_->ColumnInt64(statement, 0);
+        stat.daily_user_statistic_id = sqlite_wrapper_->ColumnInt64(statement, 1);
+        stat.command_id = sqlite_wrapper_->ColumnInt64(statement, 2);
+        stat.summary = sqlite_wrapper_->ColumnInt64(statement, 3);
+
+        statistics.push_back(stat);
+      }
+      else
+        break;
+    }
+    while (true);
+  }
+  catch (::database::exception::DatabaseException &ex) {
+    BOOST_LOG_TRIVIAL(debug) << "bash::database::detail::RawDatabaseFunctions::GetSelectedDailyUserCommandsStatistics: Exception catched: " << ex.what();
     sqlite_wrapper_->Finalize(statement);
     throw;
   }

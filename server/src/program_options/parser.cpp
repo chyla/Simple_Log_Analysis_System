@@ -22,6 +22,7 @@ help_options_("Help options") {
       ("pidfile", value<string>(), "pidfile path")
       ("logfile", value<string>(), "logfile path")
       ("databasefile", value<string>(), "database file path")
+      ("neural_network_data_directory", value<string>(), "neural network data directory")
       ("web_address", value<string>(), "web listen address")
       ("web_port", value<unsigned>(), "web listen port")
       ("mail_server_secure", value<string>(), "connection type NONE, SSL, STARTTLS")
@@ -85,6 +86,7 @@ Options Parser::Parse() {
                                     variables.count("help"),
                                     !static_cast<bool> (variables.count("nodaemon")),
                                     variables["databasefile"].as<string>(),
+                                    variables["neural_network_data_directory"].as<string>(),
                                     variables["web_address"].as<string>(),
                                     variables["web_port"].as<unsigned>(),
                                     ToSecurityOption(variables["mail_server_secure"].as<string>()),
