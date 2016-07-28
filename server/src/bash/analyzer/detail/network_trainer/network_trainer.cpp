@@ -12,6 +12,8 @@
 #include <fstream>
 #include <boost/log/trivial.hpp>
 
+#include "src/bash/analyzer/detail/command_summary_divider/command_summary_divider.h"
+
 namespace bash
 {
 
@@ -90,6 +92,7 @@ void NetworkTrainer::CreateLearningSetFile(const ::bash::database::type::Anomaly
   for (const auto &id : selected_commands_ids)
     BOOST_LOG_TRIVIAL(debug) << "bash::analyzer::detail::network_trainer::NetworkTrainer::CreateLearningSetFile: id: " << id;
 
+  command_summary_divider::CommandSummaryDivider divider;
   unsigned selected_commands_position = 0;
   unsigned commands_statistics_position = 0;
   int user_output_position = 0;
@@ -126,6 +129,8 @@ void NetworkTrainer::CreateLearningSetFile(const ::bash::database::type::Anomaly
 
             selected_commands_position++;
           }
+          
+          std::transform(input.begin(), input.end(), input.begin(), divider);
 
           if (statistic.classification == ::database::type::Classification::ANOMALY)
             output.at(user_output_position) = -1;
