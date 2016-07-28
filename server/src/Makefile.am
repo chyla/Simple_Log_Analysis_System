@@ -43,6 +43,9 @@ patlms_server_SOURCES	= main.cpp \
 				database/detail/sqlite.cpp \
 				library/curl/curl.cpp \
 				library/curl/curl_wrapper.cpp \
+				library/fann/fann.cpp \
+				library/fann/fann_guard.cpp \
+				library/fann/fann_wrapper.cpp \
 				mailer/mail.cpp \
 				mailer/mailer.cpp \
 				notifier/notifier.cpp \
