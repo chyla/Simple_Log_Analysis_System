@@ -220,6 +220,14 @@ void Scripts::RemoveDailyStatisticsFromConfiguration(::database::type::RowId con
   return database_functions_->GetAgentsWithExistingDailyUserStatistics();
 }
 
+void Scripts::UpdateDailyUserStatisticsClassification(::database::type::RowIds normal_ids,
+                                                      ::database::type::RowIds anomaly_ids) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::domain::Scripts::UpdateDailyUserStatisticsClassification: Function call";
+
+  database_functions_->SetDailyUserStatisticsClassification(normal_ids, ::database::type::Classification::NORMAL);
+  database_functions_->SetDailyUserStatisticsClassification(anomaly_ids, ::database::type::Classification::ANOMALY);
+}
+
 void Scripts::CalculateCommandStatistics(::database::type::RowId agent_name_id,
                                          const ::type::Date &begin_date,
                                          const ::type::Date &end_date) {

@@ -37,6 +37,7 @@ patlms_server_SOURCES	= main.cpp \
 				bash/web/detail/save_anomaly_detection_configuration.cpp \
 				bash/web/detail/save_selected_commands.cpp \
 				bash/web/detail/select_default_commands.cpp \
+				bash/web/detail/set_sessions_as_anomalies.cpp \
 				database/database.cpp \
 				database/sqlite_wrapper.cpp \
 				database/general_database_functions.cpp \

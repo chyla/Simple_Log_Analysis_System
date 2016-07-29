@@ -545,6 +545,27 @@ void RawDatabaseFunctions::AddDailyUserStatistic(const ::bash::database::detail:
   return sqlite_wrapper_->GetFirstInt64Column(sql);
 }
 
+void RawDatabaseFunctions::SetDailyUserStatisticsClassification(const ::database::type::RowIds &ids, ::database::type::Classification classification) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::detail::RawDatabaseFunctions::GetDailyUserStatisticId: Function call";
+
+  string sql =
+      "update BASH_DAILY_USER_STATISTICS_TABLE "
+      " set CLASSIFICATION= " + to_string(static_cast<int> (classification)) +
+      " where ID in (";
+
+  auto end = ids.end();
+  for (auto it = ids.begin(); it != end; ++it) {
+    sql += to_string(*it);
+
+    if (it != end - 1)
+      sql += ", ";
+  }
+
+  sql += ");";
+
+  sqlite_wrapper_->Exec(sql);
+}
+
 void RawDatabaseFunctions::AddDailyUserCommandStatistic(const ::bash::database::detail::entity::DailyUserCommandStatistic &ucs) {
   BOOST_LOG_TRIVIAL(debug) << "bash::database::detail::RawDatabaseFunctions::GetDailyUserStatisticId: Function call";
 

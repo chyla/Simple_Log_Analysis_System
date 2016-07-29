@@ -62,6 +62,7 @@ class RawDatabaseFunctionsInterface {
   virtual ::database::type::RowId GetDailyUserStatisticId(::database::type::RowId agent_name_id,
                                                           ::database::type::RowId user_id,
                                                           ::database::type::RowId date_id) = 0;
+  virtual void SetDailyUserStatisticsClassification(const ::database::type::RowIds &ids, ::database::type::Classification classification) = 0;
   virtual void AddDailyUserCommandStatistic(const ::bash::database::detail::entity::DailyUserCommandStatistic &ucs) = 0;
   virtual ::database::entity::AgentNames GetAgentsWithExistingDailyUserStatistics() = 0;
 

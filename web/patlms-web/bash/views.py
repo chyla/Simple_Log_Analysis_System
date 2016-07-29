@@ -164,13 +164,19 @@ def configure_anomaly_detection_correct_sessions_marks(request):
                   'bash/configure_anomaly_detection/correct_sessions_marks.html',
                   {'exception' : exception,
                    'sessions' : sessions,
+                   'CLASSIFICATION_ANOMALY' : Classification.ANOMALY,
+                   'CLASSIFICATION_NORMAL' : Classification.NORMAL,
+                   'CLASSIFICATION_UNKNOWN' : Classification.UNKNOWN,
                    })
 
 def configure_anomaly_detection_correct_sessions_marks_save(request):
     exception = None
+    all_rows_ids = request.POST.getlist('rows_ids')
+    anomalies_ids = request.POST.getlist('checks')
 
     try:
-        pass
+        util.bash_set_sessions_as_anomalies([int(i) for i in all_rows_ids],
+                                            [int(i) for i in anomalies_ids])
     except Exception as e:
         exception = str(e)
 

@@ -163,6 +163,12 @@ void DatabaseFunctions::AddDailyUserStatistic(const ::bash::database::detail::en
   return raw_database_functions_->GetDailyUserStatisticId(agent_name_id, user_id, date_id);
 }
 
+void DatabaseFunctions::SetDailyUserStatisticsClassification(const ::database::type::RowIds &ids, ::database::type::Classification classification) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::DatabaseFunctions::SetDailyUserStatisticsClassification: Function call";
+
+  return raw_database_functions_->SetDailyUserStatisticsClassification(ids, classification);
+}
+
 void DatabaseFunctions::AddDailyUserCommandStatistic(const ::bash::database::detail::entity::DailyUserCommandStatistic &ucs) {
   BOOST_LOG_TRIVIAL(debug) << "bash::database::DatabaseFunctions::GetDailyUserStatisticId: Function call";
 
