@@ -58,6 +58,7 @@ void NetworkTrainer::Train() {
     if (c.changed) {
       CreateLearningSetFile(c);
       CreateNetworkConfiguration(c);
+      database_functions_->MarkConfigurationAsUnchanged(c.id);
     }
   }
 }
