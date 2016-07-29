@@ -1169,35 +1169,40 @@ void RawDatabaseFunctions::RemoveDailyStatisticsFromConfiguration(::database::ty
   return ids;
 }
 
-::database::type::RowId RawDatabaseFunctions::GetNumberOfSelectedDailyStatisticsInConfiguration(::database::type::RowId configuration_id) {
-  BOOST_LOG_TRIVIAL(debug) << "bash::database::detail::RawDatabaseFunctions::GetNumberOfDailyStatisticsInConfiguration: Function call";
-
-  string sql =
-      "select count(*) from BASH_ANOMALY_DETECTION_CONFIGURATION_SELECTED_STATISTICS_TABLE "
-      " where CONFIGURATION_ID=" + to_string(configuration_id) + ";";
-
-  return sqlite_wrapper_->GetFirstInt64Column(sql);
-}
-
-::database::type::RowsCount RawDatabaseFunctions::GetSelectedDailyUserStatisticsCountFromConfigurationByUser(::database::type::RowId configuration_id,
-                                                                                                             ::database::type::RowId user_id) {
-  BOOST_LOG_TRIVIAL(debug) << "bash::database::detail::RawDatabaseFunctions::GetSelectedDailyUserStatisticsCountFromConfigurationByUser: Function call";
+::database::type::RowId RawDatabaseFunctions::CountSelectedDailyStatisticsWithoutUnknownClassificationInConfiguration(::database::type::RowId configuration_id) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::detail::RawDatabaseFunctions::CountSelectedDailyStatisticsWithoutUnknownClassificationInConfiguration: Function call";
 
   string sql =
       "select count(*) from BASH_ANOMALY_DETECTION_CONFIGURATION_SELECTED_STATISTICS_TABLE as BADCSST "
       " left join BASH_DAILY_USER_STATISTICS_TABLE as BDUST on BADCSST.STATISTIC_ID=BDUST.ID "
       " where BADCSST.CONFIGURATION_ID=" + to_string(configuration_id) +
-      "   and BDUST.USER_ID=" + to_string(user_id) + ";";
+      "   and BDUST.CLASSIFICATION != " + to_string(static_cast<int> (::database::type::Classification::UNKNOWN)) +
+      ";";
+
+  return sqlite_wrapper_->GetFirstInt64Column(sql);
+}
+
+::database::type::RowsCount RawDatabaseFunctions::CountSelectedDailyUserStatisticsWithoutUnknownClassificationFromConfigurationByUser(::database::type::RowId configuration_id,
+                                                                                                                                      ::database::type::RowId user_id) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::detail::RawDatabaseFunctions::CountSelectedDailyUserStatisticsWithoutUnknownClassificationFromConfigurationByUser: Function call";
+
+  string sql =
+      "select count(*) from BASH_ANOMALY_DETECTION_CONFIGURATION_SELECTED_STATISTICS_TABLE as BADCSST "
+      " left join BASH_DAILY_USER_STATISTICS_TABLE as BDUST on BADCSST.STATISTIC_ID=BDUST.ID "
+      " where BADCSST.CONFIGURATION_ID=" + to_string(configuration_id) +
+      "   and BDUST.USER_ID=" + to_string(user_id) +
+      "   and BDUST.CLASSIFICATION != " + to_string(static_cast<int> (::database::type::Classification::UNKNOWN)) +
+      ";";
 
   return sqlite_wrapper_->GetFirstInt64Column(sql);
 
 }
 
-::bash::database::detail::entity::DailyUserStatistics RawDatabaseFunctions::GetSelectedDailyUserStatisticsFromConfigurationByUser(::database::type::RowId configuration_id,
-                                                                                                                                  ::database::type::RowId user_id,
-                                                                                                                                  ::database::type::RowsCount limit,
-                                                                                                                                  ::database::type::RowsCount offset) {
-  BOOST_LOG_TRIVIAL(debug) << "bash::database::detail::RawDatabaseFunctions::GetSelectedDailyUserStatisticsFromConfigurationByUser: Function call";
+::bash::database::detail::entity::DailyUserStatistics RawDatabaseFunctions::GetSelectedDailyUserStatisticsWithoutUnknownClassificationFromConfigurationByUser(::database::type::RowId configuration_id,
+                                                                                                                                                              ::database::type::RowId user_id,
+                                                                                                                                                              ::database::type::RowsCount limit,
+                                                                                                                                                              ::database::type::RowsCount offset) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::detail::RawDatabaseFunctions::GetSelectedDailyUserStatisticsWithoutUnknownClassificationFromConfigurationByUser: Function call";
 
   string sql =
       "select BDUST.ID, BDUST.AGENT_NAME_ID, BDUST.DATE_ID, BDUST.CLASSIFICATION from BASH_DAILY_USER_STATISTICS_TABLE as BDUST "
@@ -1208,6 +1213,7 @@ void RawDatabaseFunctions::RemoveDailyStatisticsFromConfiguration(::database::ty
       "    where BADCSST.CONFIGURATION_ID=" + to_string(configuration_id) +
       " )"
       " and BDUST.USER_ID=" + to_string(user_id) +
+      " and BDUST.CLASSIFICATION != " + to_string(static_cast<int> (::database::type::Classification::UNKNOWN)) +
       " limit " + to_string(limit) +
       " offset " + to_string(offset) +
       ";";

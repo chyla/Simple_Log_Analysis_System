@@ -327,26 +327,26 @@ void DatabaseFunctions::RemoveDailyStatisticsFromConfiguration(::database::type:
   return raw_database_functions_->GetUsersIdsFromSelectedDailyStatisticsInConfiguration(configuration_id);
 }
 
-::database::type::RowId DatabaseFunctions::GetNumberOfSelectedDailyStatisticsInConfiguration(::database::type::RowId configuration_id) {
-  BOOST_LOG_TRIVIAL(debug) << "bash::database::DatabaseFunctions::GetUsersIdsFromDailyStatistics: Function call";
+::database::type::RowId DatabaseFunctions::CountSelectedDailyStatisticsWithoutUnknownClassificationInConfiguration(::database::type::RowId configuration_id) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::DatabaseFunctions::CountSelectedDailyStatisticsWithoutUnknownClassificationInConfiguration: Function call";
 
-  return raw_database_functions_->GetNumberOfSelectedDailyStatisticsInConfiguration(configuration_id);
+  return raw_database_functions_->CountSelectedDailyStatisticsWithoutUnknownClassificationInConfiguration(configuration_id);
 }
 
-::database::type::RowsCount DatabaseFunctions::GetSelectedDailyUserStatisticsCountFromConfigurationByUser(::database::type::RowId configuration_id,
-                                                                                                          ::database::type::RowId user_id) {
-  BOOST_LOG_TRIVIAL(debug) << "bash::database::DatabaseFunctions::GetUsersIdsFromDailyStatistics: Function call";
+::database::type::RowsCount DatabaseFunctions::CountSelectedDailyUserStatisticsWithoutUnknownClassificationFromConfigurationByUser(::database::type::RowId configuration_id,
+                                                                                                                                   ::database::type::RowId user_id) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::DatabaseFunctions::CountSelectedDailyUserStatisticsWithoutUnknownClassificationFromConfigurationByUser: Function call";
 
-  return raw_database_functions_->GetSelectedDailyUserStatisticsCountFromConfigurationByUser(configuration_id, user_id);
+  return raw_database_functions_->CountSelectedDailyUserStatisticsWithoutUnknownClassificationFromConfigurationByUser(configuration_id, user_id);
 }
 
-::bash::database::detail::entity::DailyUserStatistics DatabaseFunctions::GetSelectedDailyUserStatisticsFromConfigurationByUser(::database::type::RowId configuration_id,
-                                                                                                                               ::database::type::RowId user_id,
-                                                                                                                               ::database::type::RowsCount limit,
-                                                                                                                               ::database::type::RowsCount offset) {
-  BOOST_LOG_TRIVIAL(debug) << "bash::database::DatabaseFunctions::GetSelectedDailyUserStatisticsFromConfigurationByUser: Function call";
+::bash::database::detail::entity::DailyUserStatistics DatabaseFunctions::GetSelectedDailyUserStatisticsWithoutUnknownClassificationFromConfigurationByUser(::database::type::RowId configuration_id,
+                                                                                                                                                           ::database::type::RowId user_id,
+                                                                                                                                                           ::database::type::RowsCount limit,
+                                                                                                                                                           ::database::type::RowsCount offset) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::DatabaseFunctions::GetSelectedDailyUserStatisticsWithoutUnknownClassificationFromConfigurationByUser: Function call";
 
-  return raw_database_functions_->GetSelectedDailyUserStatisticsFromConfigurationByUser(configuration_id, user_id, limit, offset);
+  return raw_database_functions_->GetSelectedDailyUserStatisticsWithoutUnknownClassificationFromConfigurationByUser(configuration_id, user_id, limit, offset);
 }
 
 ::bash::database::detail::entity::DailyUserCommandsStatistics DatabaseFunctions::GetSelectedDailyUserCommandsStatistics(::database::type::RowId statistic_id) {
