@@ -182,6 +182,7 @@ type::AnomalyDetectionConfigurations DatabaseFunctions::GetAnomalyDetectionConfi
     c.agent_name_id = config.agent_name_id;
     c.begin_date = general_database_functions_->GetDateById(config.begin_date_id);
     c.end_date = general_database_functions_->GetDateById(config.end_date_id);
+    c.changed = config.changed;
 
     configs.push_back(c);
   }
