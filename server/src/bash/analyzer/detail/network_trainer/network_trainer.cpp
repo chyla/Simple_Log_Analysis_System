@@ -13,6 +13,8 @@
 #include <boost/log/trivial.hpp>
 
 #include "src/bash/analyzer/detail/command_summary_divider/command_summary_divider.h"
+#include "src/library/fann/fann_wrapper.h"
+#include "src/library/fann/fann_guard.h"
 
 namespace bash
 {
@@ -31,7 +33,18 @@ NetworkTrainerPtr NetworkTrainer::Create(::bash::database::detail::DatabaseFunct
                                          const std::string &neural_network_data_directory) {
   BOOST_LOG_TRIVIAL(debug) << "bash::analyzer::detail::network_trainer::NetworkTrainer::Create: Function call";
 
-  return NetworkTrainerPtr(new NetworkTrainer(database_functions, general_database_functions, neural_network_data_directory));
+  auto fann_wrapper = ::library::fann::FannWrapper::Create();
+
+  return Create(database_functions, general_database_functions, neural_network_data_directory, fann_wrapper);
+}
+
+NetworkTrainerPtr NetworkTrainer::Create(::bash::database::detail::DatabaseFunctionsInterfacePtr database_functions,
+                                         ::database::detail::GeneralDatabaseFunctionsInterfacePtr general_database_functions,
+                                         const std::string &neural_network_data_directory,
+                                         ::library::fann::detail::FannWrapperInterfacePtr fann_wrapper) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::analyzer::detail::network_trainer::NetworkTrainer::Create: Function call";
+
+  return NetworkTrainerPtr(new NetworkTrainer(database_functions, general_database_functions, neural_network_data_directory, fann_wrapper));
 }
 
 void NetworkTrainer::Train() {
@@ -44,16 +57,19 @@ void NetworkTrainer::Train() {
 
     if (c.changed) {
       CreateLearningSetFile(c);
+      CreateNetworkConfiguration(c);
     }
   }
 }
 
 NetworkTrainer::NetworkTrainer(::bash::database::detail::DatabaseFunctionsInterfacePtr database_functions,
                                ::database::detail::GeneralDatabaseFunctionsInterfacePtr general_database_functions,
-                               const std::string &neural_network_data_directory) :
+                               const std::string &neural_network_data_directory,
+                               ::library::fann::detail::FannWrapperInterfacePtr fann_wrapper) :
 database_functions_(database_functions),
 general_database_functions_(general_database_functions),
-neural_network_data_directory_(neural_network_data_directory) {
+neural_network_data_directory_(neural_network_data_directory),
+fann_wrapper_(fann_wrapper) {
 }
 
 void NetworkTrainer::CreateLearningSetFile(const ::bash::database::type::AnomalyDetectionConfiguration &configuration) {
@@ -64,8 +80,8 @@ void NetworkTrainer::CreateLearningSetFile(const ::bash::database::type::Anomaly
   BOOST_LOG_TRIVIAL(debug) << "bash::analyzer::detail::network_trainer::NetworkTrainer::CreateLearningSetFile: Found " << users.size() << " users";
 
   constexpr::database::type::RowsCount MAX_ROWS_IN_MEMORY = 100;
-  int number_of_inputs = 100;
-  int number_of_outputs = users.size();
+  constexpr unsigned int number_of_inputs = 100;
+  unsigned int number_of_outputs = users.size();
   long long learning_set_size = database_functions_->GetNumberOfSelectedDailyStatisticsInConfiguration(configuration.id);
   std::string file_path = neural_network_data_directory_ + "/training-" + std::to_string(configuration.id) + ".data";
 
@@ -104,53 +120,53 @@ void NetworkTrainer::CreateLearningSetFile(const ::bash::database::type::Anomaly
 
     util::RunPartially(MAX_ROWS_IN_MEMORY, daily_user_statistics_count, [&](long long part_count, long long offset) {
       auto daily_user_statistics = database_functions_->GetSelectedDailyUserStatisticsFromConfigurationByUser(configuration.id, user_id, part_count, offset);
-       BOOST_LOG_TRIVIAL(debug) << "bash::analyzer::detail::network_trainer::NetworkTrainer::CreateLearningSetFile: Found " << daily_user_statistics.size() << " statistics in part";
+      BOOST_LOG_TRIVIAL(debug) << "bash::analyzer::detail::network_trainer::NetworkTrainer::CreateLearningSetFile: Found " << daily_user_statistics.size() << " statistics in part";
 
       for (const auto &statistic : daily_user_statistics) {
-        if (statistic.classification != ::database::type::Classification::UNKNOWN) {
-          std::fill(input.begin(), input.end(), 0);
+                       if (statistic.classification != ::database::type::Classification::UNKNOWN) {
+                       std::fill(input.begin(), input.end(), 0);
 
-          auto commands_statistics = database_functions_->GetSelectedDailyUserCommandsStatistics(statistic.id);
-          BOOST_LOG_TRIVIAL(debug) << "bash::analyzer::detail::network_trainer::NetworkTrainer::CreateLearningSetFile: Found " << commands_statistics.size() << " selected daily user commands statistics with statistic id " << statistic.id;
+                       auto commands_statistics = database_functions_->GetSelectedDailyUserCommandsStatistics(statistic.id);
+                       BOOST_LOG_TRIVIAL(debug) << "bash::analyzer::detail::network_trainer::NetworkTrainer::CreateLearningSetFile: Found " << commands_statistics.size() << " selected daily user commands statistics with statistic id " << statistic.id;
 
-          selected_commands_position = 0;
-          commands_statistics_position = 0;
-          while (selected_commands_position < selected_commands_ids.size()
-              && commands_statistics_position < commands_statistics.size()) {
-            const auto &command_statistic = commands_statistics.at(commands_statistics_position);
-            BOOST_LOG_TRIVIAL(debug) << "bash::analyzer::detail::network_trainer::NetworkTrainer::CreateLearningSetFile: Position " << selected_commands_position;
+                       selected_commands_position = 0;
+                       commands_statistics_position = 0;
+                       while (selected_commands_position < selected_commands_ids.size()
+                       && commands_statistics_position < commands_statistics.size()) {
+                       const auto &command_statistic = commands_statistics.at(commands_statistics_position);
+                       BOOST_LOG_TRIVIAL(debug) << "bash::analyzer::detail::network_trainer::NetworkTrainer::CreateLearningSetFile: Position " << selected_commands_position;
 
-            if (command_statistic.command_id == selected_commands_ids.at(selected_commands_position)) {
-              BOOST_LOG_TRIVIAL(debug) << "bash::analyzer::detail::network_trainer::NetworkTrainer::CreateLearningSetFile: Found command with id " << command_statistic.command_id;
+                       if (command_statistic.command_id == selected_commands_ids.at(selected_commands_position)) {
+                       BOOST_LOG_TRIVIAL(debug) << "bash::analyzer::detail::network_trainer::NetworkTrainer::CreateLearningSetFile: Found command with id " << command_statistic.command_id;
 
-              input.at(selected_commands_position) = command_statistic.summary;
-              commands_statistics_position++;
+                       input.at(selected_commands_position) = command_statistic.summary;
+                       commands_statistics_position++;
             }
 
-            selected_commands_position++;
+                       selected_commands_position++;
           }
-          
-          std::transform(input.begin(), input.end(), input.begin(), divider);
 
-          if (statistic.classification == ::database::type::Classification::ANOMALY)
-            output.at(user_output_position) = -1;
+                       std::transform(input.begin(), input.end(), input.begin(), divider);
+
+                       if (statistic.classification == ::database::type::Classification::ANOMALY)
+                       output.at(user_output_position) = -1;
           else if (statistic.classification == ::database::type::Classification::NORMAL)
-            output.at(user_output_position) = 1;
+                       output.at(user_output_position) = 1;
 
-          BOOST_LOG_TRIVIAL(debug) << "bash::analyzer::detail::network_trainer::NetworkTrainer::CreateLearningSetFile: Classification set: " << output.at(user_output_position);
+                       BOOST_LOG_TRIVIAL(debug) << "bash::analyzer::detail::network_trainer::NetworkTrainer::CreateLearningSetFile: Classification set: " << output.at(user_output_position);
 
-          BOOST_LOG_TRIVIAL(debug) << "bash::analyzer::detail::network_trainer::NetworkTrainer::CreateLearningSetFile: Saving to file";
+                       BOOST_LOG_TRIVIAL(debug) << "bash::analyzer::detail::network_trainer::NetworkTrainer::CreateLearningSetFile: Saving to file";
 
-          for (const auto &v : input)
-            file << v << " ";
-          file << '\n';
+                       for (const auto &v : input)
+                       file << v << " ";
+                       file << '\n';
 
-          for (const auto &v : output)
-            file << v << " ";
-          file << '\n';
-        }
+                       for (const auto &v : output)
+                       file << v << " ";
+                       file << '\n';
+              }
         else {
-          BOOST_LOG_TRIVIAL(debug) << "bash::analyzer::detail::network_trainer::NetworkTrainer::CreateLearningSetFile: Classification of session statistics is UNKNOWN (statistic id = " << statistic.id << ")";
+                       BOOST_LOG_TRIVIAL(debug) << "bash::analyzer::detail::network_trainer::NetworkTrainer::CreateLearningSetFile: Classification of session statistics is UNKNOWN (statistic id = " << statistic.id << ")";
         }
       }
     });
@@ -163,6 +179,38 @@ void NetworkTrainer::CreateLearningSetFile(const ::bash::database::type::Anomaly
   file.close();
 
   BOOST_LOG_TRIVIAL(debug) << "bash::analyzer::detail::network_trainer::NetworkTrainer::CreateLearningSetFile: Done";
+}
+
+void NetworkTrainer::CreateNetworkConfiguration(const ::bash::database::type::AnomalyDetectionConfiguration &configuration) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::analyzer::detail::network_trainer::NetworkTrainer::CreateNetworkConfiguration: Done";
+
+  auto users = database_functions_->GetUsersIdsFromSelectedDailyStatisticsInConfiguration(configuration.id);
+
+  constexpr::database::type::RowsCount MAX_ROWS_IN_MEMORY = 100;
+  constexpr unsigned int number_of_inputs = 100;
+  constexpr unsigned int number_of_layers = 3;
+  constexpr unsigned int number_of_hidden_neurons = 3;
+  const unsigned int number_of_outputs = users.size();
+  constexpr float desired_error = 0.001f;
+  constexpr unsigned int max_epochs = 100;
+  constexpr unsigned int epochs_between_reports = max_epochs;
+
+  const std::string file_path = neural_network_data_directory_ + "/training-" + std::to_string(configuration.id) + ".data";
+  const std::string network_configuration_file_path = neural_network_data_directory_ + "/network-" + std::to_string(configuration.id) + ".data";
+
+  BOOST_LOG_TRIVIAL(debug) << "bash::analyzer::detail::network_trainer::NetworkTrainer::CreateNetworkConfiguration: Creating network";
+
+  struct fann *ann = fann_wrapper_->CreateStandard(number_of_layers, number_of_inputs, number_of_hidden_neurons, number_of_outputs);
+  ::library::fann::FannGuard fann_guard(ann);
+
+  fann_wrapper_->SetActivationFunctionHidden(ann, FANN_SIGMOID);
+  fann_wrapper_->SetActivationFunctionOutput(ann, FANN_SIGMOID);
+
+  BOOST_LOG_TRIVIAL(debug) << "bash::analyzer::detail::network_trainer::NetworkTrainer::CreateNetworkConfiguration: Training network";
+  fann_wrapper_->TrainOnFile(ann, file_path, max_epochs, epochs_between_reports, desired_error);
+  
+  BOOST_LOG_TRIVIAL(debug) << "bash::analyzer::detail::network_trainer::NetworkTrainer::CreateNetworkConfiguration: Saving network to file: " << network_configuration_file_path;
+  fann_wrapper_->Save(ann, network_configuration_file_path);
 }
 
 }
