@@ -238,6 +238,12 @@ void DatabaseFunctions::MarkConfigurationAsUnchanged(::database::type::RowId con
   raw_database_functions_->MarkConfigurationAsUnchanged(configuration_id);
 }
 
+void DatabaseFunctions::MarkConfigurationAsChanged(::database::type::RowId configuration_id) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::DatabaseFunctions::MarkConfigurationAsChanged: Function call";
+
+  raw_database_functions_->MarkConfigurationAsChanged(configuration_id);
+}
+
 void DatabaseFunctions::AddCommandStatistic(const detail::entity::CommandStatistic &statistic) {
   BOOST_LOG_TRIVIAL(debug) << "bash::database::DatabaseFunctions::AddCommandStatistic: Function call";
 

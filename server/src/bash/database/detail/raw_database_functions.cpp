@@ -714,6 +714,18 @@ void RawDatabaseFunctions::MarkConfigurationAsUnchanged(::database::type::RowId 
   sqlite_wrapper_->Exec(sql);
 }
 
+void RawDatabaseFunctions::MarkConfigurationAsChanged(::database::type::RowId configuration_id) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::detail::RawDatabaseFunctions::MarkConfigurationAsUnchanged: Function call";
+
+  string sql =
+      "update BASH_ANOMALY_DETECTION_CONFIGURATION_TABLE "
+      " set CHANGED=1 "
+      " where ID=" + to_string(configuration_id) +
+      ";";
+
+  sqlite_wrapper_->Exec(sql);
+}
+
 void RawDatabaseFunctions::AddCommandStatistic(const entity::CommandStatistic &statistic) {
   BOOST_LOG_TRIVIAL(debug) << "bash::database::detail::RawDatabaseFunctions::AddCommandStatistic: Function call";
 

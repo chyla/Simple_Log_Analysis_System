@@ -36,7 +36,7 @@ SetSessionsAsAnomaliesPtr SetSessionsAsAnomalies::Create(::bash::domain::detail:
   auto json_object = json::parse(message);
   auto args = json_object["args"];
 
-  scripts_->UpdateDailyUserStatisticsClassification(args.at(0), args.at(1));
+  scripts_->UpdateDailyUserStatisticsClassification(args.at(0), args.at(1), args.at(2));
 
   json j;
   j["status"] = "ok";

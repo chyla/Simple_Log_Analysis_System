@@ -54,7 +54,8 @@ class ScriptsInterface {
                                                                                    const ::type::Date &begin_date,
                                                                                    const ::type::Date &end_date) = 0;
   virtual ::database::entity::AgentNames GetAgentsWithExistingDailyUserStatistics() = 0;
-  virtual void UpdateDailyUserStatisticsClassification(::database::type::RowIds normal_ids,
+  virtual void UpdateDailyUserStatisticsClassification(::database::type::RowId configuration_id,
+                                                       ::database::type::RowIds normal_ids,
                                                        ::database::type::RowIds anomaly_ids) = 0;
 
   virtual void CalculateCommandStatistics(::database::type::RowId agent_name_id,

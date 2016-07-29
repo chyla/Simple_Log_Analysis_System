@@ -25,6 +25,8 @@
     <form class="pure-form" method="post" action="{% url 'bash:configure_anomaly_detection_correct_sessions_marks_save' %}">
         {% csrf_token %}
 
+        <input type="hidden" name="configuration_id" value="{{ configuration_id }}"/>
+    
         <table class="table custab">
             <thead>
                 <tr>

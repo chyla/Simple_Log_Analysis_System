@@ -69,6 +69,7 @@ class RawDatabaseFunctions : public RawDatabaseFunctionsInterface {
   void RemoveAllCommandsFromConfiguration(::database::type::RowId configuration_id) override;
   void AddDefaultCommandsToConfiguration(::database::type::RowId configuration_id) override;
   void MarkConfigurationAsUnchanged(::database::type::RowId configuration_id) override;
+  void MarkConfigurationAsChanged(::database::type::RowId configuration_id) override;
 
   void AddCommandStatistic(const entity::CommandStatistic &statistic) override;
 

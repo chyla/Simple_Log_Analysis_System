@@ -220,12 +220,15 @@ void Scripts::RemoveDailyStatisticsFromConfiguration(::database::type::RowId con
   return database_functions_->GetAgentsWithExistingDailyUserStatistics();
 }
 
-void Scripts::UpdateDailyUserStatisticsClassification(::database::type::RowIds normal_ids,
+void Scripts::UpdateDailyUserStatisticsClassification(::database::type::RowId configuration_id,
+                                                      ::database::type::RowIds normal_ids,
                                                       ::database::type::RowIds anomaly_ids) {
   BOOST_LOG_TRIVIAL(debug) << "bash::domain::Scripts::UpdateDailyUserStatisticsClassification: Function call";
 
   database_functions_->SetDailyUserStatisticsClassification(normal_ids, ::database::type::Classification::NORMAL);
   database_functions_->SetDailyUserStatisticsClassification(anomaly_ids, ::database::type::Classification::ANOMALY);
+
+  database_functions_->MarkConfigurationAsChanged(configuration_id);
 }
 
 void Scripts::CalculateCommandStatistics(::database::type::RowId agent_name_id,
@@ -322,6 +325,8 @@ void Scripts::SaveSelectedCommands(::database::type::RowId configuration_id, ::d
   database_functions_->RemoveAllCommandsFromConfiguration(configuration_id);
 
   database_functions_->AddSelectedCommandsIds(configuration_id, command_names_ids);
+
+  database_functions_->MarkConfigurationAsChanged(configuration_id);
 }
 
 void Scripts::SelectDefaultCommands(::database::type::RowId configuration_id) {
@@ -330,6 +335,8 @@ void Scripts::SelectDefaultCommands(::database::type::RowId configuration_id) {
   database_functions_->RemoveAllCommandsFromConfiguration(configuration_id);
 
   database_functions_->AddDefaultCommandsToConfiguration(configuration_id);
+
+  database_functions_->MarkConfigurationAsChanged(configuration_id);
 }
 
 Scripts::Scripts(::bash::database::detail::DatabaseFunctionsInterfacePtr database_functions,
