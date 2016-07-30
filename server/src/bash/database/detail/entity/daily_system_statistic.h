@@ -9,6 +9,8 @@
 #include "src/database/type/row_id.h"
 #include "src/database/type/rows_count.h"
 
+#include <vector>
+
 namespace bash
 {
 
@@ -27,6 +29,8 @@ struct DailySystemStatistic {
   ::database::type::RowId command_id;
   ::database::type::RowsCount summary;
 };
+
+typedef std::vector<DailySystemStatistic> DailySystemStatistics;
 
 }
 

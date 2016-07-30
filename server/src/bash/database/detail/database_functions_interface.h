@@ -56,6 +56,7 @@ class DatabaseFunctionsInterface {
                                                                                  ::database::type::RowId command_id) = 0;
 
   virtual void AddDailySystemStatistic(const entity::DailySystemStatistic &statistics) = 0;
+  virtual void AddDailySystemStatistics(const entity::DailySystemStatistics &statistics) = 0;
   virtual ::database::type::RowIds GetDateIdsWithoutCreatedDailySystemStatistic(::database::type::RowId agent_name_id) = 0;
 
   virtual ::database::type::RowIds GetAgentIdsWithoutConfiguration() = 0;

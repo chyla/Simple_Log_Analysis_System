@@ -35,6 +35,9 @@ void Scripts::AddLog(const ::type::BashLogEntry &log_entry) {
 void Scripts::CreateDailySystemStatistics() {
   BOOST_LOG_TRIVIAL(debug) << "bash::domain::Scripts::CreateDailySystemStatistics: Function call";
 
+  ::bash::database::detail::entity::DailySystemStatistics statistics;
+  statistics.reserve(1000);
+
   ::bash::database::detail::entity::DailySystemStatistic stat;
 
   auto agents_names_ids = general_database_functions_->GetAgentsIds();
@@ -52,10 +55,17 @@ void Scripts::CreateDailySystemStatistics() {
         stat.command_id = command_id;
         stat.summary = count;
 
-        database_functions_->AddDailySystemStatistic(stat);
+        statistics.push_back(stat);
+
+        if (statistics.size() == statistics.capacity()) {
+          database_functions_->AddDailySystemStatistics(statistics);
+          statistics.clear();
+        }
       }
     }
   }
+
+  database_functions_->AddDailySystemStatistics(statistics);
 }
 
 ::bash::domain::type::UnconfiguredAgents Scripts::GetUnconfigurentAgents() {

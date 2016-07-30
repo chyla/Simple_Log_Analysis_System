@@ -50,6 +50,7 @@ class RawDatabaseFunctions : public RawDatabaseFunctionsInterface {
                                                                          ::database::type::RowId command_id) override;
 
   void AddDailySystemStatistic(const entity::DailySystemStatistic &statistics) override;
+  void AddDailySystemStatistics(const entity::DailySystemStatistics &statistics) override;
   ::database::type::RowIds GetDateIdsWithoutCreatedDailySystemStatistic(::database::type::RowId agent_name_id) override;
 
   ::database::type::RowIds GetAgentIdsWithoutConfiguration() override;

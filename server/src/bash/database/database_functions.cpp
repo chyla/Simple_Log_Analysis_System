@@ -125,6 +125,12 @@ void DatabaseFunctions::AddDailySystemStatistic(const detail::entity::DailySyste
   raw_database_functions_->AddDailySystemStatistic(statistics);
 }
 
+void DatabaseFunctions::AddDailySystemStatistics(const detail::entity::DailySystemStatistics &statistics) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::DatabaseFunctions::AddDailySystemStatistic: Function call";
+
+  raw_database_functions_->AddDailySystemStatistics(statistics);
+}
+
 ::database::type::RowIds DatabaseFunctions::GetDateIdsWithoutCreatedDailySystemStatistic(::database::type::RowId agent_name_id) {
   BOOST_LOG_TRIVIAL(debug) << "bash::database::DatabaseFunctions::GetDateIdsWithoutCreatedDailySystemStatistic: Function call";
 

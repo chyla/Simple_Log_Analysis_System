@@ -54,6 +54,9 @@ void RawDatabaseFunctions::CreateTables() {
                         "  foreign key(USER_ID) references SYSTEM_USER_TABLE(ID) "
                         ");");
 
+  sqlite_wrapper_->Exec("create index if not exists BASH_LOGS_TABLE_AGENT_DATE_COMMAND"
+                        " on BASH_LOGS_TABLE (AGENT_NAME_ID, DATE_ID, COMMAND_ID);");
+
   sqlite_wrapper_->Exec("create table if not exists BASH_DAILY_STATISTICS_TABLE ("
                         "  ID integer primary key, "
                         "  AGENT_NAME_ID integer, "
@@ -352,7 +355,7 @@ void RawDatabaseFunctions::AddLog(const entity::Log & log) {
   BOOST_LOG_TRIVIAL(debug) << "bash::database::detail::RawDatabaseFunctions::CountCommandsForDailySystemStatistic: Function call";
 
   string sql =
-      "select count(*) from BASH_LOGS_TABLE "
+      "select count(*) from BASH_LOGS_TABLE indexed by BASH_LOGS_TABLE_AGENT_DATE_COMMAND"
       "  where "
       "    AGENT_NAME_ID=" + to_string(agent_name_id) +
       "  and "
@@ -401,6 +404,32 @@ void RawDatabaseFunctions::AddDailySystemStatistic(const entity::DailySystemStat
       to_string(statistic.command_id) + ", " +
       to_string(statistic.summary) +
       "); ";
+
+  sqlite_wrapper_->Exec(sql);
+}
+
+void RawDatabaseFunctions::AddDailySystemStatistics(const entity::DailySystemStatistics &statistics) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::detail::RawDatabaseFunctions::AddDailySystemStatistic: Function call";
+
+  string sql = "begin transaction;";
+
+  for (const auto &statistic : statistics) {
+    sql +=
+        "insert into BASH_DAILY_STATISTICS_TABLE ( "
+        "  AGENT_NAME_ID, "
+        "  DATE_ID, "
+        "  COMMAND_ID, "
+        "  SUMMARY "
+        ") "
+        "values ( " +
+        to_string(statistic.agent_name_id) + ", " +
+        to_string(statistic.date_id) + ", " +
+        to_string(statistic.command_id) + ", " +
+        to_string(statistic.summary) +
+        "); ";
+  }
+
+  sql += "end transaction;";
 
   sqlite_wrapper_->Exec(sql);
 }
@@ -632,9 +661,9 @@ void RawDatabaseFunctions::AddDailyUserCommandStatistic(const ::bash::database::
 }
 
 ::bash::database::detail::entity::DailyUserStatistics RawDatabaseFunctions::GetDailyUserStatisticsForAgentWithClassification(::database::type::RowId agent_name_id,
-                                                                                                                            ::database::type::Classification classification,
-                                                                                                                            ::database::type::RowsCount limit,
-                                                                                                                            ::database::type::RowsCount offset) {
+                                                                                                                             ::database::type::Classification classification,
+                                                                                                                             ::database::type::RowsCount limit,
+                                                                                                                             ::database::type::RowsCount offset) {
   BOOST_LOG_TRIVIAL(debug) << "bash::database::detail::RawDatabaseFunctions::GetDailyUserStatisticsForAgentWithClassification: Function call";
 
   string sql =
