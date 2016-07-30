@@ -65,6 +65,12 @@ class RawDatabaseFunctionsInterface {
   virtual void SetDailyUserStatisticsClassification(const ::database::type::RowIds &ids, ::database::type::Classification classification) = 0;
   virtual void AddDailyUserCommandStatistic(const ::bash::database::detail::entity::DailyUserCommandStatistic &ucs) = 0;
   virtual ::database::entity::AgentNames GetAgentsWithExistingDailyUserStatistics() = 0;
+  virtual ::database::type::RowsCount CountDailyUserStatisticsForAgentWithClassification(::database::type::RowId agent_name_id,
+                                                                                         ::database::type::Classification classification) = 0;
+  virtual ::bash::database::detail::entity::DailyUserStatistics GetDailyUserStatisticsForAgentWithClassification(::database::type::RowId agent_name_id,
+                                                                                                                 ::database::type::Classification classification,
+                                                                                                                 ::database::type::RowsCount limit,
+                                                                                                                 ::database::type::RowsCount offset) = 0;
 
   virtual entity::AnomalyDetectionConfigurations GetAnomalyDetectionConfigurations() = 0;
   virtual void RemoveAnomalyDetectionConfiguration(::database::type::RowId id) = 0;

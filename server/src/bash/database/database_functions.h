@@ -64,6 +64,12 @@ class DatabaseFunctions : public detail::DatabaseFunctionsInterface {
   ::database::type::RowIds GetAgentsIdsWithConfiguration() override;
   void AddDailyUserStatistic(const ::bash::database::detail::entity::DailyUserStatistic &us) override;
   ::database::entity::AgentNames GetAgentsWithExistingDailyUserStatistics() override;
+  ::database::type::RowsCount CountDailyUserStatisticsForAgentWithClassification(::database::type::RowId agent_name_id,
+                                                                                 ::database::type::Classification classification) override;
+  ::bash::database::detail::entity::DailyUserStatistics GetDailyUserStatisticsForAgentWithClassification(::database::type::RowId agent_name_id,
+                                                                                                         ::database::type::Classification classification,
+                                                                                                         ::database::type::RowsCount limit,
+                                                                                                         ::database::type::RowsCount offset) override;
 
   type::AnomalyDetectionConfigurations GetAnomalyDetectionConfigurations() override;
   void RemoveAnomalyDetectionConfiguration(::database::type::RowId id) override;

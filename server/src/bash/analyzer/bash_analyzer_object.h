@@ -13,6 +13,7 @@
 #include "src/database/detail/general_database_functions_interface.h"
 #include "detail/system_interface.h"
 #include "detail/network_trainer/network_trainer_interface.h"
+#include "detail/classificator/classificator_interface.h"
 
 #include <patlms/type/date.h>
 
@@ -47,6 +48,7 @@ class BashAnalyzerObject : public ::analyzer::AnalyzerObjectInterface {
  private:
   BashAnalyzerObject(detail::DailyUserStatisticsCreatorInterfacePtr daily_user_statistics_creator,
                      detail::network_trainer::NetworkTrainerInterfacePtr network_trainer,
+                     detail::classificator::ClassificatorInterfacePtr classificator,
                      ::bash::domain::detail::ScriptsInterfacePtr scripts_interface,
                      detail::SystemInterfacePtr system_interface);
 
@@ -54,6 +56,7 @@ class BashAnalyzerObject : public ::analyzer::AnalyzerObjectInterface {
 
   detail::DailyUserStatisticsCreatorInterfacePtr daily_user_statistics_creator_;
   detail::network_trainer::NetworkTrainerInterfacePtr network_trainer_;
+  detail::classificator::ClassificatorInterfacePtr classificator_;
   ::bash::domain::detail::ScriptsInterfacePtr scripts_interface_;
   detail::SystemInterfacePtr system_interface_;
 };

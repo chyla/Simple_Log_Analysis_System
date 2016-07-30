@@ -7,6 +7,7 @@
 
 #include "detail/daily_user_statistics_creator.h"
 #include "detail/network_trainer/network_trainer.h"
+#include "detail/classificator/classificator.h"
 #include "detail/system.h"
 
 #include <boost/log/trivial.hpp>
@@ -23,9 +24,10 @@ BashAnalyzerObjectPtr BashAnalyzerObject::Create(::bash::database::detail::Datab
                                                  const std::string &neural_network_data_directory) {
   auto dusc = detail::DailyUserStatisticsCreator::Create(database_functions, general_database_functions);
   auto nt = detail::network_trainer::NetworkTrainer::Create(database_functions, general_database_functions, neural_network_data_directory);
+  auto cr = detail::classificator::Classificator::Create(database_functions, general_database_functions, neural_network_data_directory);
   auto system = detail::System::Create();
 
-  return BashAnalyzerObjectPtr(new BashAnalyzerObject(dusc, nt, scripts_interface, system));
+  return BashAnalyzerObjectPtr(new BashAnalyzerObject(dusc, nt, cr, scripts_interface, system));
 }
 
 BashAnalyzerObjectPtr BashAnalyzerObject::Create(::bash::database::detail::DatabaseFunctionsInterfacePtr database_functions,
@@ -35,8 +37,9 @@ BashAnalyzerObjectPtr BashAnalyzerObject::Create(::bash::database::detail::Datab
                                                  const std::string &neural_network_data_directory) {
   auto dusc = detail::DailyUserStatisticsCreator::Create(database_functions, general_database_functions);
   auto nt = detail::network_trainer::NetworkTrainer::Create(database_functions, general_database_functions, neural_network_data_directory);
+  auto cr = detail::classificator::Classificator::Create(database_functions, general_database_functions, neural_network_data_directory);
 
-  return BashAnalyzerObjectPtr(new BashAnalyzerObject(dusc, nt, scripts_interface, system_interface));
+  return BashAnalyzerObjectPtr(new BashAnalyzerObject(dusc, nt, cr, scripts_interface, system_interface));
 }
 
 void BashAnalyzerObject::Analyze() {
@@ -47,14 +50,17 @@ void BashAnalyzerObject::Analyze() {
   scripts_interface_->CreateDailySystemStatistics();
   daily_user_statistics_creator_->CreateStatistics(today);
   network_trainer_->Train();
+  classificator_->Analyze();
 }
 
 BashAnalyzerObject::BashAnalyzerObject(detail::DailyUserStatisticsCreatorInterfacePtr daily_user_statistics_creator,
                                        detail::network_trainer::NetworkTrainerInterfacePtr network_trainer,
+                                       detail::classificator::ClassificatorInterfacePtr classificator,
                                        ::bash::domain::detail::ScriptsInterfacePtr scripts_interface,
                                        detail::SystemInterfacePtr system_interface) :
 daily_user_statistics_creator_(daily_user_statistics_creator),
 network_trainer_(network_trainer),
+classificator_(classificator),
 scripts_interface_(scripts_interface),
 system_interface_(system_interface) {
 }

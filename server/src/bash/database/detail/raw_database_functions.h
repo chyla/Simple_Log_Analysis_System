@@ -61,6 +61,12 @@ class RawDatabaseFunctions : public RawDatabaseFunctionsInterface {
   void SetDailyUserStatisticsClassification(const ::database::type::RowIds &ids, ::database::type::Classification classification) override;
   void AddDailyUserCommandStatistic(const ::bash::database::detail::entity::DailyUserCommandStatistic &ucs) override;
   ::database::entity::AgentNames GetAgentsWithExistingDailyUserStatistics() override;
+  ::database::type::RowsCount CountDailyUserStatisticsForAgentWithClassification(::database::type::RowId agent_name_id,
+                                                                                 ::database::type::Classification classification) override;
+  ::bash::database::detail::entity::DailyUserStatistics GetDailyUserStatisticsForAgentWithClassification(::database::type::RowId agent_name_id,
+                                                                                                         ::database::type::Classification classification,
+                                                                                                         ::database::type::RowsCount limit,
+                                                                                                         ::database::type::RowsCount offset) override;
 
   entity::AnomalyDetectionConfigurations GetAnomalyDetectionConfigurations() override;
   void RemoveAnomalyDetectionConfiguration(::database::type::RowId id) override;

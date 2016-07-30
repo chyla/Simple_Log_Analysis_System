@@ -619,6 +619,68 @@ void RawDatabaseFunctions::AddDailyUserCommandStatistic(const ::bash::database::
   return names;
 }
 
+::database::type::RowsCount RawDatabaseFunctions::CountDailyUserStatisticsForAgentWithClassification(::database::type::RowId agent_name_id,
+                                                                                                     ::database::type::Classification classification) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::detail::RawDatabaseFunctions::CountDailyUserStatisticsForAgentWithClassification: Function call";
+
+  string sql =
+      "select count(*) from BASH_DAILY_USER_STATISTICS_TABLE where AGENT_NAME_ID=" + to_string(agent_name_id) +
+      " and CLASSIFICATION=" + to_string(static_cast<int> (classification)) +
+      ";";
+
+  return sqlite_wrapper_->GetFirstInt64Column(sql);
+}
+
+::bash::database::detail::entity::DailyUserStatistics RawDatabaseFunctions::GetDailyUserStatisticsForAgentWithClassification(::database::type::RowId agent_name_id,
+                                                                                                                            ::database::type::Classification classification,
+                                                                                                                            ::database::type::RowsCount limit,
+                                                                                                                            ::database::type::RowsCount offset) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::detail::RawDatabaseFunctions::GetDailyUserStatisticsForAgentWithClassification: Function call";
+
+  string sql =
+      "select BDUST.ID, BDUST.AGENT_NAME_ID, BDUST.USER_ID, BDUST.DATE_ID, BDUST.CLASSIFICATION "
+      " from BASH_DAILY_USER_STATISTICS_TABLE as BDUST "
+      " where BDUST.AGENT_NAME_ID=" + to_string(agent_name_id) +
+      " and BDUST.CLASSIFICATION=" + to_string(static_cast<int> (classification)) +
+      " limit " + to_string(limit) +
+      " offset " + to_string(offset) +
+      ";";
+
+  ::bash::database::detail::entity::DailyUserStatistics statistics;
+  ::bash::database::detail::entity::DailyUserStatistic stat;
+
+  sqlite3_stmt *statement = nullptr;
+  sqlite_wrapper_->Prepare(sql, &statement);
+
+  try {
+    do {
+      auto ret = sqlite_wrapper_->Step(statement);
+
+      if (ret == SQLITE_ROW) {
+        stat.id = sqlite_wrapper_->ColumnInt64(statement, 0);
+        stat.agent_name_id = sqlite_wrapper_->ColumnInt64(statement, 1);
+        stat.user_id = sqlite_wrapper_->ColumnInt64(statement, 2);
+        stat.date_id = sqlite_wrapper_->ColumnInt64(statement, 3);
+        stat.classification = static_cast< ::database::type::Classification> (sqlite_wrapper_->ColumnInt(statement, 4));
+
+        statistics.push_back(stat);
+      }
+      else
+        break;
+    }
+    while (true);
+  }
+  catch (::database::exception::DatabaseException &ex) {
+    BOOST_LOG_TRIVIAL(debug) << "bash::database::detail::RawDatabaseFunctions::GetDailyUserStatisticsForAgentWithClassification: Exception catched: " << ex.what();
+    sqlite_wrapper_->Finalize(statement);
+    throw;
+  }
+
+  sqlite_wrapper_->Finalize(statement);
+
+  return statistics;
+}
+
 entity::AnomalyDetectionConfigurations RawDatabaseFunctions::GetAnomalyDetectionConfigurations() {
   BOOST_LOG_TRIVIAL(debug) << "bash::database::detail::RawDatabaseFunctions::GetAnomalyDetectionConfiguration: Function call";
 

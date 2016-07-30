@@ -155,6 +155,22 @@ void DatabaseFunctions::AddDailyUserStatistic(const ::bash::database::detail::en
   return raw_database_functions_->GetAgentsWithExistingDailyUserStatistics();
 }
 
+::database::type::RowsCount DatabaseFunctions::CountDailyUserStatisticsForAgentWithClassification(::database::type::RowId agent_name_id,
+                                                                                                  ::database::type::Classification classification) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::DatabaseFunctions::CountDailyUserStatisticsForAgentWithClassification: Function call";
+
+  return raw_database_functions_->CountDailyUserStatisticsForAgentWithClassification(agent_name_id, classification);
+}
+
+::bash::database::detail::entity::DailyUserStatistics DatabaseFunctions::GetDailyUserStatisticsForAgentWithClassification(::database::type::RowId agent_name_id,
+                                                                                                                          ::database::type::Classification classification,
+                                                                                                                          ::database::type::RowsCount limit,
+                                                                                                                          ::database::type::RowsCount offset) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::DatabaseFunctions::GetDailyUserStatisticsForAgentWithClassification: Function call";
+
+  return raw_database_functions_->GetDailyUserStatisticsForAgentWithClassification(agent_name_id, classification, limit, offset);
+}
+
 ::database::type::RowId DatabaseFunctions::GetDailyUserStatisticId(::database::type::RowId agent_name_id,
                                                                    ::database::type::RowId user_id,
                                                                    ::database::type::RowId date_id) {
