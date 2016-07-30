@@ -82,6 +82,7 @@ class DatabaseFunctions : public detail::DatabaseFunctionsInterface {
   void MarkConfigurationAsChanged(::database::type::RowId configuration_id) override;
 
   void AddCommandStatistic(const detail::entity::CommandStatistic &statistic) override;
+  void AddCommandsStatistics(const detail::entity::CommandsStatistics &statistics) override;
   bool IsCommandStatisticExist(::database::type::RowId agent_name_id,
                                ::database::type::RowId command_id,
                                ::database::type::RowId begin_date_id,

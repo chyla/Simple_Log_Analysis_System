@@ -252,6 +252,9 @@ void Scripts::CalculateCommandStatistics(::database::type::RowId agent_name_id,
 
   auto all_commands_ids = database_functions_->GetAllCommandsIds();
 
+  ::bash::database::detail::entity::CommandsStatistics statistics;
+  statistics.reserve(500);
+
   ::bash::database::detail::entity::CommandStatistic cs;
   cs.agent_name_id = agent_name_id;
   cs.begin_date_id = begin_date_id;
@@ -271,9 +274,16 @@ void Scripts::CalculateCommandStatistics(::database::type::RowId agent_name_id,
       cs.command_id = command_id;
       cs.summary = summary;
 
-      database_functions_->AddCommandStatistic(cs);
+      statistics.push_back(cs);
+
+      if (statistics.size() == statistics.capacity()) {
+        database_functions_->AddCommandsStatistics(statistics);
+        statistics.clear();
+      }
     }
   }
+
+  database_functions_->AddCommandsStatistics(statistics);
 
   BOOST_LOG_TRIVIAL(debug) << "bash::domain::Scripts::CalculateCommandStatistics: Statistics calculated";
 }

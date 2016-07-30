@@ -85,6 +85,7 @@ class DatabaseFunctionsInterface {
   virtual void MarkConfigurationAsChanged(::database::type::RowId configuration_id) = 0;
 
   virtual void AddCommandStatistic(const entity::CommandStatistic &statistic) = 0;
+  virtual void AddCommandsStatistics(const entity::CommandsStatistics &statistics) = 0;
   virtual bool IsCommandStatisticExist(::database::type::RowId agent_name_id,
                                        ::database::type::RowId command_id,
                                        ::database::type::RowId begin_date_id,

@@ -272,6 +272,12 @@ void DatabaseFunctions::AddCommandStatistic(const detail::entity::CommandStatist
   raw_database_functions_->AddCommandStatistic(statistic);
 }
 
+void DatabaseFunctions::AddCommandsStatistics(const detail::entity::CommandsStatistics &statistics) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::DatabaseFunctions::AddCommandsStatistics: Function call";
+
+  raw_database_functions_->AddCommandsStatistics(statistics);
+}
+
 bool DatabaseFunctions::IsCommandStatisticExist(::database::type::RowId agent_name_id,
                                                 ::database::type::RowId command_id,
                                                 ::database::type::RowId begin_date_id,

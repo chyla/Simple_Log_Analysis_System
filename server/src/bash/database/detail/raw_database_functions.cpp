@@ -68,6 +68,9 @@ void RawDatabaseFunctions::CreateTables() {
                         "  foreign key(COMMAND_ID) references BASH_COMMAND_TABLE(ID) "
                         ");");
 
+  sqlite_wrapper_->Exec("create index if not exists BASH_DAILY_STATISTICS_TABLE_DATE_COMMAND"
+                        " on BASH_DAILY_STATISTICS_TABLE (DATE_ID, COMMAND_ID);");
+
   sqlite_wrapper_->Exec("create table if not exists BASH_ANOMALY_DETECTION_CONFIGURATION_TABLE ("
                         "  ID integer primary key, "
                         "  AGENT_NAME_ID integer, "
@@ -93,6 +96,12 @@ void RawDatabaseFunctions::CreateTables() {
                         "  foreign key(END_DATE_ID) references DATE_TABLE(ID), "
                         "  unique (AGENT_NAME_ID, COMMAND_ID, BEGIN_DATE_ID, END_DATE_ID) "
                         ");");
+
+  sqlite_wrapper_->Exec("create index if not exists BASH_DATE_RANGE_COMMANDS_STATISTICS_TABLE_AGENT_NAME_BEGIN_DATE_END_DATE"
+                        " on BASH_DATE_RANGE_COMMANDS_STATISTICS_TABLE (AGENT_NAME_ID, BEGIN_DATE_ID, END_DATE_ID);");
+
+  sqlite_wrapper_->Exec("create index if not exists BASH_DATE_RANGE_COMMANDS_STATISTICS_TABLE_AGENT_NAME_COMMAND_BEGIN_DATE_END_DATE"
+                        " on BASH_DATE_RANGE_COMMANDS_STATISTICS_TABLE (AGENT_NAME_ID, COMMAND_ID, BEGIN_DATE_ID, END_DATE_ID);");
 
   sqlite_wrapper_->Exec("create table if not exists BASH_SELECTED_COMMANDS_TABLE ( "
                         "  ID integer primary key, "
@@ -838,13 +847,42 @@ void RawDatabaseFunctions::AddCommandStatistic(const entity::CommandStatistic &s
   sqlite_wrapper_->Exec(sql);
 }
 
+void RawDatabaseFunctions::AddCommandsStatistics(const entity::CommandsStatistics &statistics) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::detail::RawDatabaseFunctions::AddCommandsStatistics: Function call";
+
+  string sql = "begin transaction;";
+
+  for (const auto &statistic : statistics) {
+    sql += "insert or ignore into BASH_DATE_RANGE_COMMANDS_STATISTICS_TABLE ( "
+        " AGENT_NAME_ID, "
+        " COMMAND_ID, "
+        " BEGIN_DATE_ID, "
+        " END_DATE_ID, "
+        " SUMMARY "
+        ") "
+        "values ( " +
+        to_string(statistic.agent_name_id) + ", " +
+        to_string(statistic.command_id) + ", " +
+        to_string(statistic.begin_date_id) + ", " +
+        to_string(statistic.end_date_id) + ", " +
+        to_string(statistic.summary) +
+        ");";
+  }
+
+  sql += "end transaction;";
+
+  sqlite_wrapper_->Exec(sql);
+}
+
 bool RawDatabaseFunctions::IsCommandStatisticExist(::database::type::RowId agent_name_id,
                                                    ::database::type::RowId command_id,
                                                    ::database::type::RowId begin_date_id,
                                                    ::database::type::RowId end_date_id) {
   BOOST_LOG_TRIVIAL(debug) << "bash::database::detail::RawDatabaseFunctions::IsCommandStatisticExist: Function call";
 
-  string sql = "select count(*) from BASH_DATE_RANGE_COMMANDS_STATISTICS_TABLE "
+  string sql =
+      "select count(*) from BASH_DATE_RANGE_COMMANDS_STATISTICS_TABLE "
+      " indexed by BASH_DATE_RANGE_COMMANDS_STATISTICS_TABLE_AGENT_NAME_COMMAND_BEGIN_DATE_END_DATE"
       " where "
       "  AGENT_NAME_ID=" + to_string(agent_name_id) +
       " and "
@@ -871,6 +909,7 @@ entity::CommandsStatistics RawDatabaseFunctions::GetCommandsStatistics(::databas
   stat.end_date_id = end_date_id;
 
   string sql = "select ID, SUMMARY, COMMAND_ID from BASH_DATE_RANGE_COMMANDS_STATISTICS_TABLE "
+      " indexed by BASH_DATE_RANGE_COMMANDS_STATISTICS_TABLE_AGENT_NAME_BEGIN_DATE_END_DATE"
       " where "
       "  AGENT_NAME_ID=" + to_string(agent_name_id) +
       " and "
@@ -1013,7 +1052,9 @@ void RawDatabaseFunctions::AddSelectedCommandsIds(::database::type::RowId config
 ::database::type::RowsCount RawDatabaseFunctions::CommandSummary(::database::type::RowId command_id, ::database::type::RowIds date_range_ids) {
   BOOST_LOG_TRIVIAL(debug) << "bash::database::detail::RawDatabaseFunctions::CommandSummary: Function call";
 
-  string sql = "select sum(SUMMARY) from BASH_DAILY_STATISTICS_TABLE "
+  string sql =
+      "select sum(SUMMARY) from BASH_DAILY_STATISTICS_TABLE "
+      " indexed by BASH_DAILY_STATISTICS_TABLE_DATE_COMMAND "
       " where "
       "  DATE_ID in (";
 
