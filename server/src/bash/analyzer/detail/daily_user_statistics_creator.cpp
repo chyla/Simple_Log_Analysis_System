@@ -33,14 +33,17 @@ void DailyUserStatisticsCreator::CreateStatistics(const ::type::Date &today) {
   us.classification = ::database::type::Classification::UNKNOWN;
 
   auto agents = general_database_functions_->GetAgentsIds();
+  BOOST_LOG_TRIVIAL(debug) << "bash::analyzer::detail::DailyUserStatisticsCreator::CreateStatistics: Found " << agents.size() << " agents";
   for (const auto &agent : agents) {
     us.agent_name_id = agent;
 
     auto users = database_functions_->GetSystemUsersIdsFromLogs(agent);
+    BOOST_LOG_TRIVIAL(debug) << "bash::analyzer::detail::DailyUserStatisticsCreator::CreateStatistics: Found " << users.size() << " users for agent " << agent;
     for (const auto &user : users) {
       us.user_id = user;
 
       auto dates = database_functions_->GetNotCalculatedDatesIdsFromLogs(agent, user);
+      BOOST_LOG_TRIVIAL(debug) << "bash::analyzer::detail::DailyUserStatisticsCreator::CreateStatistics: Found " << dates.size() << " dates for agent " << agent << ", user " << user;
       for (const auto &date : dates) {
         us.date_id = date;
 
@@ -48,10 +51,15 @@ void DailyUserStatisticsCreator::CreateStatistics(const ::type::Date &today) {
         us.id = database_functions_->GetDailyUserStatisticId(agent, user, date);
 
         auto commands = database_functions_->GetCommandsIdsFromLogs(agent, user, date);
+        BOOST_LOG_TRIVIAL(debug) << "bash::analyzer::detail::DailyUserStatisticsCreator::CreateStatistics: Found " << commands.size() << " commands for agent " << agent << ", user " << user << ", date " << date;
         for (const auto &command : commands) {
+          BOOST_LOG_TRIVIAL(debug) << "bash::analyzer::detail::DailyUserStatisticsCreator::CreateStatistics: Analyzing command: " << command;
+
           ucs.daily_user_statistic_id = us.id;
           ucs.command_id = command;
-          ucs.summary = database_functions_->CountCommandsForUserDailyStatisticFromLogs(agent, user, date, command);
+          ucs.summary = database_functions_->CountCommandsForUserDailyStatisticFromLogs(agent, date, user, command);
+
+          BOOST_LOG_TRIVIAL(debug) << "bash::analyzer::detail::DailyUserStatisticsCreator::CreateStatistics: Summary for command " << command << ": " << ucs.summary;
 
           database_functions_->AddDailyUserCommandStatistic(ucs);
         }

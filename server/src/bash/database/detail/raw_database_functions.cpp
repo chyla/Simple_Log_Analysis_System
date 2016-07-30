@@ -368,7 +368,7 @@ void RawDatabaseFunctions::AddLog(const entity::Log & log) {
                                                                                              ::database::type::RowId date_id,
                                                                                              ::database::type::RowId user_id,
                                                                                              ::database::type::RowId command_id) {
-  BOOST_LOG_TRIVIAL(debug) << "bash::database::detail::RawDatabaseFunctions::CountCommandsForDailySystemStatistic: Function call";
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::detail::RawDatabaseFunctions::CountCommandsForUserDailyStatisticFromLogs: Function call";
 
   string sql =
       "select count(*) from BASH_LOGS_TABLE "
@@ -996,8 +996,8 @@ void RawDatabaseFunctions::RemoveAllCommandsFromConfiguration(::database::type::
 
   string sql = "select distinct COMMAND_ID from BASH_LOGS_TABLE "
       " where AGENT_NAME_ID=" + to_string(agent_name_id) +
-      " and DATE_ID=" + to_string(user_id) +
-      " and USER_ID=" + to_string(date_id) +
+      " and DATE_ID=" + to_string(date_id) +
+      " and USER_ID=" + to_string(user_id) +
       ";";
 
   ::database::type::RowIds ids;
