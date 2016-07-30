@@ -1085,7 +1085,7 @@ void RawDatabaseFunctions::RemoveAllCommandsFromConfiguration(::database::type::
 
   string sql = "select distinct BASH_LOGS_TABLE.DATE_ID from BASH_LOGS_TABLE "
       " left join BASH_DAILY_USER_STATISTICS_TABLE "
-      " on BASH_LOGS_TABLE.DATE_ID=BASH_DAILY_USER_STATISTICS_TABLE.DATE_ID and BASH_LOGS_TABLE.AGENT_NAME_ID=BASH_DAILY_USER_STATISTICS_TABLE.AGENT_NAME_ID "
+      " on BASH_LOGS_TABLE.USER_ID=BASH_DAILY_USER_STATISTICS_TABLE.USER_ID "
       " where BASH_DAILY_USER_STATISTICS_TABLE.DATE_ID is null"
       " and BASH_LOGS_TABLE.AGENT_NAME_ID=" + to_string(agent_name_id) +
       " and BASH_LOGS_TABLE.USER_ID=" + to_string(user_id) +
