@@ -124,7 +124,7 @@ void Classificator::Analyze() {
         BOOST_LOG_TRIVIAL(debug) << "bash::analyzer::detail::classificator::Classificator::Analyze: Found max output value for user_id " << users.at(user_position) << " at position " << user_position << ": " << calc_out[user_position];
 
         constexpr double anomaly_threshold = 0.5;
-        if (output_value > anomaly_threshold && users.at(user_position) == statistic.user_id) {
+        if (output_value >= anomaly_threshold && users.at(user_position) == statistic.user_id) {
           BOOST_LOG_TRIVIAL(debug) << "bash::analyzer::detail::classificator::Classificator::Analyze: Marking statistic with id " << statistic.id << " as normal";
           database_functions_->SetDailyUserStatisticsClassification({statistic.id}, ::database::type::Classification::NORMAL);
         }
