@@ -584,7 +584,7 @@ void RawDatabaseFunctions::AddDailyUserStatistic(const ::bash::database::detail:
 }
 
 void RawDatabaseFunctions::SetDailyUserStatisticsClassification(const ::database::type::RowIds &ids, ::database::type::Classification classification) {
-  BOOST_LOG_TRIVIAL(debug) << "bash::database::detail::RawDatabaseFunctions::GetDailyUserStatisticId: Function call";
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::detail::RawDatabaseFunctions::SetDailyUserStatisticsClassification: Function call";
 
   string sql =
       "update BASH_DAILY_USER_STATISTICS_TABLE "
@@ -605,7 +605,7 @@ void RawDatabaseFunctions::SetDailyUserStatisticsClassification(const ::database
 }
 
 void RawDatabaseFunctions::AddDailyUserCommandStatistic(const ::bash::database::detail::entity::DailyUserCommandStatistic &ucs) {
-  BOOST_LOG_TRIVIAL(debug) << "bash::database::detail::RawDatabaseFunctions::GetDailyUserStatisticId: Function call";
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::detail::RawDatabaseFunctions::AddDailyUserCommandStatistic: Function call";
 
   string sql = "insert into BASH_DAILY_USER_COMMAND_STATISTICS_TABLE (STATISTIC_ID, COMMAND_ID, SUMMARY) "
       " values ("
