@@ -80,6 +80,7 @@ void NetworkTrainer::CreateLearningSetFile(const ::bash::database::type::Anomaly
 
   BOOST_LOG_TRIVIAL(debug) << "bash::analyzer::detail::network_trainer::NetworkTrainer::CreateLearningSetFile: Found " << users.size() << " users";
 
+  constexpr int ANOMALY_NETWORK_VALUE = 0;
   constexpr::database::type::RowsCount MAX_ROWS_IN_MEMORY = 100;
   constexpr unsigned int number_of_inputs = 100;
   unsigned int number_of_outputs = users.size();
@@ -95,7 +96,7 @@ void NetworkTrainer::CreateLearningSetFile(const ::bash::database::type::Anomaly
   input.resize(number_of_inputs, 0);
 
   std::vector<int> output;
-  output.resize(number_of_outputs, -1);
+  output.resize(number_of_outputs, ANOMALY_NETWORK_VALUE);
 
   BOOST_LOG_TRIVIAL(debug) << "bash::analyzer::detail::network_trainer::NetworkTrainer::CreateLearningSetFile: Opening training file";
   std::fstream file(file_path.c_str(), std::ios::out | std::ios::trunc);
@@ -149,7 +150,7 @@ void NetworkTrainer::CreateLearningSetFile(const ::bash::database::type::Anomaly
         std::transform(input.begin(), input.end(), input.begin(), divider);
 
         if (statistic.classification == ::database::type::Classification::ANOMALY)
-          output.at(user_output_position) = -1;
+          output.at(user_output_position) = ANOMALY_NETWORK_VALUE;
         else if (statistic.classification == ::database::type::Classification::NORMAL)
           output.at(user_output_position) = 1;
 
@@ -167,7 +168,7 @@ void NetworkTrainer::CreateLearningSetFile(const ::bash::database::type::Anomaly
       }
     });
 
-    output.at(user_output_position) = -1;
+    output.at(user_output_position) = ANOMALY_NETWORK_VALUE;
     user_output_position++;
   }
 
@@ -189,7 +190,7 @@ void NetworkTrainer::CreateNetworkConfiguration(const ::bash::database::type::An
   const unsigned int number_of_outputs = users.size();
   constexpr float desired_error = 0.001f;
   constexpr unsigned int max_epochs = 100;
-  constexpr unsigned int epochs_between_reports = max_epochs;
+  constexpr unsigned int epochs_between_reports = 10;
 
   const std::string file_path = neural_network_data_directory_ + "/training-" + std::to_string(configuration.id) + ".data";
   const std::string network_configuration_file_path = neural_network_data_directory_ + "/network-" + std::to_string(configuration.id) + ".data";
