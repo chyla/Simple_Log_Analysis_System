@@ -77,7 +77,7 @@ void Classificator::Analyze() {
     auto daily_user_statistics_count = database_functions_->CountDailyUserStatisticsForAgentWithClassification(c.agent_name_id, ::database::type::Classification::UNKNOWN);
 
     util::RunPartially(MAX_ROWS_IN_MEMORY, daily_user_statistics_count, [&](long long part_count, long long offset) {
-      auto daily_user_statistics = database_functions_->GetDailyUserStatisticsForAgentWithClassification(c.agent_name_id, ::database::type::Classification::UNKNOWN, part_count, offset);
+      auto daily_user_statistics = database_functions_->GetDailyUserStatisticsForAgentWithClassification(c.agent_name_id, ::database::type::Classification::UNKNOWN, part_count, 0);
 
       for (const auto &statistic : daily_user_statistics) {
         std::fill(input, input + 100, 0);
