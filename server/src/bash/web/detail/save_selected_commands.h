@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef SELECT_COMMANDS_H
-#define SELECT_COMMANDS_H
+#pragma once
 
 #include "web_command.h"
 
@@ -45,5 +44,3 @@ class SaveSelectedCommands : public WebCommand {
 }
 
 }
-
-#endif /* SELECT_COMMANDS_H */

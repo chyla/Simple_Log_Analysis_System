@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef GET_MARKED_COMMANDS_IDS_H
-#define GET_MARKED_COMMANDS_IDS_H
+#pragma once
 
 #include "web_command.h"
 
@@ -45,5 +44,3 @@ class GetSelectedCommandsIds : public WebCommand {
 }
 
 }
-
-#endif /* GET_MARKED_COMMANDS_IDS_H */

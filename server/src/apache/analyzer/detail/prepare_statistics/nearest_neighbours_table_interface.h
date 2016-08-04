@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef NEAREST_NEIGHBOURS_TABLE_INTERFACE_H
-#define NEAREST_NEIGHBOURS_TABLE_INTERFACE_H
+#pragma once
 
 #include <src/apache/type/apache_session_entry.h>
 
@@ -41,5 +40,3 @@ class NearestNeighboursTableInterface {
 }
 
 }
-
-#endif /* NEAREST_NEIGHBOURS_TABLE_INTERFACE_H */

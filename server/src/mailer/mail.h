@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef MAILER_MAIL_H
-#define MAILER_MAIL_H
+#pragma once
 
 #include "detail/mail_interface.h"
 #include <vector>
@@ -53,5 +52,3 @@ class Mail : public detail::MailInterface {
 };
 
 }
-
-#endif /* MAILER_MAIL_H */

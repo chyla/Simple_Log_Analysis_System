@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef SRC_PROGRAM_OPTIONS_TYPE_SECURITY_OPTION_H
-#define SRC_PROGRAM_OPTIONS_TYPE_SECURITY_OPTION_H
+#pragma once
 
 namespace program_options
 {
@@ -21,5 +20,3 @@ enum class SecurityOption {
 }
 
 }
-
-#endif /* SECURITY_OPTION_H */

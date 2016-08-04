@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef COMMAND_SUMMARY_DIVIDER_H
-#define COMMAND_SUMMARY_DIVIDER_H
+#pragma once
 
 #include "command_summary_divider_interface.h"
 
@@ -58,5 +57,3 @@ class CommandSummaryDivider : public CommandSummaryDividerInterface {
 }
 
 }
-
-#endif /* COMMAND_SUMMARY_DIVIDER_H */

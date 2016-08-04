@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef SYSTEM_USER_H
-#define SYSTEM_USER_H
+#pragma once
 
 #include "src/bash/database/type/uid.h"
 
@@ -31,5 +30,3 @@ struct SystemUser {
 }
 
 }
-
-#endif /* SYSTEM_USER_H */

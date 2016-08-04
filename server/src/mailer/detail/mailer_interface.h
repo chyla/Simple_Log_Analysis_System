@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef MAILER_DETAIL_MAILER_INTERFACE_H
-#define MAILER_DETAIL_MAILER_INTERFACE_H
+#pragma once
 
 #include "mail_interface.h"
 
@@ -28,5 +27,3 @@ typedef std::shared_ptr<MailerInterface> MailerInterfacePtr;
 }
 
 }
-
-#endif /* MAILER_DETAIL_MAILER_INTERFACE_H */

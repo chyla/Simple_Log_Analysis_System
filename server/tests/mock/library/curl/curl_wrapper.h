@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef MOCK_LIBRARY_CURL_CURL_WRAPPER_H
-#define MOCK_LIBRARY_CURL_CURL_WRAPPER_H
+#pragma once
 
 #include "src/library/curl/detail/curl_wrapper_interface.h"
 
@@ -59,5 +58,3 @@ class CurlWrapper : public ::library::curl::detail::CurlWrapperInterface {
 }
 
 }
-
-#endif /* CURL_WRAPPER_H */

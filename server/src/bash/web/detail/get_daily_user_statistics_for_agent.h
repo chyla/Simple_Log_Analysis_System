@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef GET_DAILY_USER_STATISTICS_FOR_AGENT_H
-#define GET_DAILY_USER_STATISTICS_FOR_AGENT_H
+#pragma once
 
 #include "web_command.h"
 
@@ -45,6 +44,3 @@ class GetDailyUserStatisticsForAgent : public WebCommand {
 }
 
 }
-
-
-#endif /* GET_DAILY_USER_STATISTICS_FOR_AGENT_H */

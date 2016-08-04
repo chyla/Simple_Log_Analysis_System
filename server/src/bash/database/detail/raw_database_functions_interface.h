@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef RAW_DATABASE_FUNCTIONS_INTERFACE_H
-#define RAW_DATABASE_FUNCTIONS_INTERFACE_H
+#pragma once
 
 #include "entity/anomaly_detection_configuration.h"
 #include "entity/daily_system_statistic.h"
@@ -130,5 +129,3 @@ typedef std::shared_ptr<RawDatabaseFunctionsInterface> RawDatabaseFunctionsInter
 }
 
 }
-
-#endif /* RAW_DATABASE_FUNCTIONS_INTERFACE_H */

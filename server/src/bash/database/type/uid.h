@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef UID_H
-#define UID_H
+#pragma once
 
 namespace bash
 {
@@ -22,5 +21,3 @@ typedef int UID;
 }
 
 }
-
-#endif /* UID_H */

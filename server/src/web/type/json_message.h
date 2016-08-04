@@ -1,5 +1,4 @@
-#ifndef SRC_WEB_TYPE_JSON_MESSAGE_H
-#define SRC_WEB_TYPE_JSON_MESSAGE_H
+#pragma once
 
 #include <string>
 
@@ -14,5 +13,3 @@ typedef std::string JsonMessage;
 }
 
 }
-
-#endif /* SRC_WEB_TYPE_JSON_MESSAGE_H */

@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef ANOMALY_DETECTION_CONFIGURATION_H
-#define ANOMALY_DETECTION_CONFIGURATION_H
+#pragma once
 
 #include "src/database/type/row_id.h"
 
@@ -39,5 +38,3 @@ typedef std::vector<AnomalyDetectionConfiguration> AnomalyDetectionConfiguration
 }
 
 }
-
-#endif /* ANOMALY_DETECTION_CONFIGURATION_H */

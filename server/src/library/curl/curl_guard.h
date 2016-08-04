@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef LIBRARY_CURL_CURL_GUARD_H
-#define LIBRARY_CURL_CURL_GUARD_H
+#pragma once
 
 #include "detail/curl_wrapper_interface.h"
 #include "curl_wrapper.h"
@@ -44,5 +43,3 @@ class CurlGuard {
 }
 
 }
-
-#endif /* LIBRARY_CURL_CURL_GUARD_H */

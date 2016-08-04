@@ -1,5 +1,4 @@
-#ifndef WEB_EXCEPTION_H
-#define WEB_EXCEPTION_H
+#pragma once
 
 #include <patlms/type/exception/exception.h>
 
@@ -15,5 +14,3 @@ class WebException : public interface::Exception {
 }
 
 }
-
-#endif /* WEB_EXCEPTION_H */

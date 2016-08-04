@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef REMOVE_ANOMALY_DETECTION_CONFIGURATION_H
-#define REMOVE_ANOMALY_DETECTION_CONFIGURATION_H
+#pragma once
 
 #include "web_command.h"
 
@@ -45,6 +44,3 @@ class RemoveAnomalyDetectionConfiguration : public WebCommand {
 }
 
 }
-
-
-#endif /* REMOVE_ANOMALY_DETECTION_CONFIGURATION_H */

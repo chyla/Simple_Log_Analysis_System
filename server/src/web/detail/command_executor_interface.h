@@ -1,5 +1,4 @@
-#ifndef SRC_WEB_DETAIL_COMMAND_EXECUTOR_INTERFACE_H
-#define SRC_WEB_DETAIL_COMMAND_EXECUTOR_INTERFACE_H
+#pragma once
 
 #include <memory>
 #include <string>
@@ -26,5 +25,3 @@ typedef std::shared_ptr<CommandExecutorInterface> CommandExecutorInterfacePtr;
 }
 
 }
-
-#endif /* SRC_WEB_DETAIL_COMMAND_EXECUTOR_INTERFACE_H */

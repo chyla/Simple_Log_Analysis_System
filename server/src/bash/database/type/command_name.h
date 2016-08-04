@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef COMMAND_NAME_H
-#define COMMAND_NAME_H
+#pragma once
 
 #include <string>
 
@@ -24,6 +23,3 @@ typedef std::string CommandName;
 }
 
 }
-
-
-#endif /* COMMAND_NAME_H */

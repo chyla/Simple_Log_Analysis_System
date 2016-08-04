@@ -1,5 +1,4 @@
-#ifndef SRC_APACHE_TYPE_APACHE_SESSION_ENTRY_H
-#define SRC_APACHE_TYPE_APACHE_SESSION_ENTRY_H
+#pragma once
 
 #include <string>
 #include <vector>
@@ -38,5 +37,3 @@ typedef std::vector<ApacheSessionEntry> ApacheSessions;
 }
 
 }
-
-#endif /* SRC_APACHE_TYPE_APACHE_SESSION_ENTRY_H */

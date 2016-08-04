@@ -3,11 +3,9 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef LIBRARY_CURL_EXCEPTION_CURL_EXCEPTION_H
-#define LIBRARY_CURL_EXCEPTION_CURL_EXCEPTION_H
+#pragma once
 
 #include <patlms/type/exception/exception.h>
-
 
 namespace library
 {
@@ -26,5 +24,3 @@ class CurlException : public interface::Exception {
 }
 
 }
-
-#endif /* LIBRARY_CURL_EXCEPTION_CURL_EXCEPTION_H */

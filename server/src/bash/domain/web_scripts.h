@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef WEB_SCRIPTS_H
-#define WEB_SCRIPTS_H
+#pragma once
 
 #include "detail/scripts_interface.h"
 #include "detail/web_scripts_interface.h"
@@ -59,5 +58,3 @@ class WebScripts : public detail::WebScriptsInterface {
 }
 
 }
-
-#endif /* WEB_SCRIPTS_H */

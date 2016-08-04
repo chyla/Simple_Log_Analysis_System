@@ -1,5 +1,4 @@
-#ifndef SRC_WEB_TYPE_COMMAND_H
-#define SRC_WEB_TYPE_COMMAND_H
+#pragma once
 
 #include <string>
 
@@ -14,5 +13,3 @@ typedef std::string Command;
 }
 
 }
-
-#endif /* SRC_WEB_TYPE_COMMAND_H */

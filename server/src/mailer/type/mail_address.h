@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef MAILER_TYPE_MAIL_ADDRESS_H
-#define MAILER_TYPE_MAIL_ADDRESS_H
+#pragma once
 
 #include <string>
 
@@ -19,5 +18,3 @@ typedef std::string MailAddress;
 }
 
 }
-
-#endif /* MAILER_TYPE_MAIL_ADDRESS_H */

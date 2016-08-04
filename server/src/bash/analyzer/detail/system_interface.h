@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef BASH_ANALYZER_DETAIL_SYSTEM_INTERFACE_H
-#define BASH_ANALYZER_DETAIL_SYSTEM_INTERFACE_H
+#pragma once
 
 #include <memory>
 #include <ctime>
@@ -34,5 +33,3 @@ typedef std::shared_ptr<SystemInterface> SystemInterfacePtr;
 }
 
 }
-
-#endif /* BASH_ANALYZER_DETAIL_SYSTEM_INTERFACE_H */

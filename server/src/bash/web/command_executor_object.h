@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef COMMAND_EXECUTOR_OBJECT_H
-#define COMMAND_EXECUTOR_OBJECT_H
+#pragma once
 
 #include "src/web/type/command_executor_object_interface.h"
 
@@ -44,5 +43,3 @@ class CommandExecutorObject : public ::web::type::CommandExecutorObjectInterface
 }
 
 }
-
-#endif /* COMMAND_EXECUTOR_OBJECT_H */

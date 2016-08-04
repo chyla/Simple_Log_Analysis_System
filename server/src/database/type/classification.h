@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef CLASSIFICATION_H
-#define CLASSIFICATION_H
+#pragma once
 
 #include <string>
 #include <vector>
@@ -25,5 +24,3 @@ enum class Classification
 }
 
 }
-
-#endif /* CLASSIFICATION_H */

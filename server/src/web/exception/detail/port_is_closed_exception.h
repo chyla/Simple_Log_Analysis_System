@@ -1,5 +1,4 @@
-#ifndef PORT_IS_CLOSED_EXCEPTION_H
-#define PORT_IS_CLOSED_EXCEPTION_H
+#pragma once
 
 #include "src/web/exception/web_exception.h"
 
@@ -30,5 +29,3 @@ char const* PortIsClosedException::what() const throw ()
 }
 
 }
-
-#endif /* PORT_IS_CLOSED_EXCEPTION_H */

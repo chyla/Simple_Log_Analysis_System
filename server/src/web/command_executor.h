@@ -1,5 +1,4 @@
-#ifndef SRC_WEB_COMMAND_EXECUTOR_H
-#define SRC_WEB_COMMAND_EXECUTOR_H
+#pragma once
 
 #include "detail/command_executor_interface.h"
 
@@ -33,5 +32,3 @@ class CommandExecutor : public detail::CommandExecutorInterface {
 };
 
 }
-
-#endif /* SRC_WEB_COMMAND_EXECUTOR_H */

@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef LIBRARY_CURL_EXCEPTION_DETAIL_SLIST_APPEND_EXCEPTION_H
-#define LIBRARY_CURL_EXCEPTION_DETAIL_SLIST_APPEND_EXCEPTION_H
+#pragma once
 
 #include "src/library/curl/exception/curl_exception.h"
 
@@ -36,6 +35,3 @@ char const* SListAppendException::what() const throw () {
 }
 
 }
-
-
-#endif /* SLIST_APPEND_EXCEPTION_H */

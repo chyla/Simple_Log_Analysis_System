@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef SET_SESSIONS_AS_ANOMALIES_H
-#define SET_SESSIONS_AS_ANOMALIES_H
+#pragma once
 
 #include "web_command.h"
 
@@ -45,5 +44,3 @@ class SetSessionsAsAnomalies : public WebCommand {
 }
 
 }
-
-#endif /* SET_SESSIONS_AS_ANOMALIES_H */

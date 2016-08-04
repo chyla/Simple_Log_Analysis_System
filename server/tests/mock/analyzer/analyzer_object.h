@@ -1,5 +1,4 @@
-#ifndef TESTS_MOCK_ANALYZER_ANALYZER_OBJECT_H
-#define TESTS_MOCK_ANALYZER_ANALYZER_OBJECT_H
+#pragma once
 
 #include <memory>
 #include <gmock/gmock.h>
@@ -29,5 +28,3 @@ class AnalyzerObject : public ::analyzer::AnalyzerObjectInterface {
 }
 
 }
-
-#endif /* TESTS_MOCK_ANALYZER_ANALYZER_OBJECT_H */

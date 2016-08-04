@@ -1,5 +1,4 @@
-#ifndef SRC_APACHE_TYPE_ANOMALY_DETECTION_CONFIGURATION_ENTRY_H
-#define SRC_APACHE_TYPE_ANOMALY_DETECTION_CONFIGURATION_ENTRY_H
+#pragma once
 
 #include <vector>
 
@@ -26,5 +25,3 @@ typedef std::vector<AnomalyDetectionConfigurationEntry> AnomalyDetectionConfigur
 }
 
 }
-
-#endif /* SRC_APACHE_TYPE_ANOMALY_DETECTION_CONFIGURATION_ENTRY_H */

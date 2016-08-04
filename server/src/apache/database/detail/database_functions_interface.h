@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef SRC_APACHE_DATABASE_DETAIL_DATABASE_FUNCTIONS_INTERFACE_H
-#define SRC_APACHE_DATABASE_DETAIL_DATABASE_FUNCTIONS_INTERFACE_H
+#pragma once
 
 #include <memory>
 
@@ -99,5 +98,3 @@ typedef std::shared_ptr<DatabaseFunctionsInterface> DatabaseFunctionsInterfacePt
 }
 
 }
-
-#endif /* SRC_APACHE_DATABASE_DETAIL_DATABASE_FUNCTIONS_INTERFACE_H */

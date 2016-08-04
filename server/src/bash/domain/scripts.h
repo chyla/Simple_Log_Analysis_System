@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef SCRIPTS_H
-#define SCRIPTS_H
+#pragma once
 
 #include "detail/scripts_interface.h"
 #include "src/bash/database/detail/database_functions_interface.h"
@@ -77,5 +76,3 @@ class Scripts : public detail::ScriptsInterface {
 }
 
 }
-
-#endif /* SCRIPTS_H */

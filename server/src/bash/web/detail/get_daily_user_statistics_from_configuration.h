@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef GET_DAILY_USER_STATISTICS_FROM_CONFIGURATION_H
-#define GET_DAILY_USER_STATISTICS_FROM_CONFIGURATION_H
+#pragma once
 
 #include "web_command.h"
 
@@ -45,5 +44,3 @@ class GetDailyUserStatisticsFromConfiguration : public WebCommand {
 }
 
 }
-
-#endif /* GET_DAILY_USER_STATISTICS_FROM_CONFIGURATION_H */

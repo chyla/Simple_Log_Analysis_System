@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef NOTIFIER_DETAIL_SYSTEM_H
-#define NOTIFIER_DETAIL_SYSTEM_H
+#pragma once
 
 #include "system_interface.h"
 
@@ -31,5 +30,3 @@ class System : public SystemInterface {
 }
 
 }
-
-#endif /* NOTIFIER_DETAIL_SYSTEM_H */

@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef CLASSIFICATOR_H
-#define CLASSIFICATOR_H
+#pragma once
 
 #include "classificator_interface.h"
 
@@ -61,6 +60,3 @@ class Classificator : public ClassificatorInterface {
 }
 
 }
-
-
-#endif /* CLASSIFICATOR_H */

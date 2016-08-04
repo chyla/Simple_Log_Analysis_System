@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef WEB_SCRIPTS_INTERFACE_H
-#define WEB_SCRIPTS_INTERFACE_H
+#pragma once
 
 #include "src/database/type/row_id.h"
 #include "src/database/type/rows_count.h"
@@ -63,5 +62,3 @@ typedef std::shared_ptr<WebScriptsInterface> WebScriptsInterfacePtr;
 }
 
 }
-
-#endif /* WEB_SCRIPTS_INTERFACE_H */

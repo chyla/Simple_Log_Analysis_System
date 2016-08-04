@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef LIBRARY_FANN_FANN_WRAPPER_H
-#define LIBRARY_FANN_FANN_WRAPPER_H
+#pragma once
 
 #include "detail/fann_interface.h"
 #include "detail/fann_wrapper_interface.h"
@@ -56,5 +55,3 @@ class FannWrapper : public detail::FannWrapperInterface {
 }
 
 }
-
-#endif /* LIBRARY_FANN_FANN_WRAPPER_H */

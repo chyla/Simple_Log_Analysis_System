@@ -1,5 +1,4 @@
-#ifndef CONNECTION_IS_ALREADY_OPEN_EXCEPTION_H
-#define CONNECTION_IS_ALREADY_OPEN_EXCEPTION_H
+#pragma once
 
 #include "src/web/exception/web_exception.h"
 
@@ -30,5 +29,3 @@ char const* ConnectionIsAlreadyOpenException::what() const throw ()
 }
 
 }
-
-#endif /* CONNECTION_IS_ALREADY_OPEN_EXCEPTION_H */

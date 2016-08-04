@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef MAILER_TYPE_MAIL_RECIPIENTS_H
-#define MAILER_TYPE_MAIL_RECIPIENTS_H
+#pragma once
 
 #include "mail_address.h"
 
@@ -21,5 +20,3 @@ typedef std::vector<MailAddress> MailRecipients;
 }
 
 }
-
-#endif /* MAILER_TYPE_MAIL_RECIPIENTS_H */

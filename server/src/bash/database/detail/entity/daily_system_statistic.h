@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef DAILY_SYSTEM_STATISTICS_H
-#define DAILY_SYSTEM_STATISTICS_H
+#pragma once
 
 #include "src/database/type/row_id.h"
 #include "src/database/type/rows_count.h"
@@ -39,5 +38,3 @@ typedef std::vector<DailySystemStatistic> DailySystemStatistics;
 }
 
 }
-
-#endif /* DAILY_STATISTICS_H */

@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef SRC_DATABASE_DETAIL_SQLITE_WRAPPER_INTERFACE_H
-#define SRC_DATABASE_DETAIL_SQLITE_WRAPPER_INTERFACE_H
+#pragma once
 
 #include <memory>
 
@@ -51,5 +50,3 @@ typedef std::shared_ptr<SQLiteWrapperInterface> SQLiteWrapperInterfacePtr;
 }
 
 }
-
-#endif /* SRC_DATABASE_DETAIL_SQLITE_WRAPPER_INTERFACE_H */

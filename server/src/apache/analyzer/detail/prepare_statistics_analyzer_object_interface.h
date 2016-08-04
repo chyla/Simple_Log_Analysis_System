@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef SRC_APACHE_ANALYZER_DETAIL_PREPARE_STATISTICS_ANALYZER_OBJECT_INTERFACE_H
-#define SRC_APACHE_ANALYZER_DETAIL_PREPARE_STATISTICS_ANALYZER_OBJECT_INTERFACE_H
+#pragma once
 
 namespace apache
 {
@@ -27,5 +26,3 @@ class PrepareStatisticsAnalyzerObjectInterface {
 }
 
 }
-
-#endif /* SRC_APACHE_ANALYZER_DETAIL_PREPARE_STATISTICS_ANALYZER_OBJECT_INTERFACE_H */

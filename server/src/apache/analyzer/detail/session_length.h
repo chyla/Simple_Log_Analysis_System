@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef SRC_APACHE_ANALYZER_DETAIL_SESSION_LENGTH_H
-#define SRC_APACHE_ANALYZER_DETAIL_SESSION_LENGTH_H
+#pragma once
 
 namespace apache
 {
@@ -22,5 +21,3 @@ constexpr int SESSION_LENGTH = 60;
 }
 
 }
-
-#endif /* SRC_APACHE_ANALYZER_DETAIL_SESSION_LENGTH_H */

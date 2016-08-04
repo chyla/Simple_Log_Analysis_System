@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef SRC_APACHE_ANALYZER_APACHE_ANALYZER_OBJECT_H
-#define SRC_APACHE_ANALYZER_APACHE_ANALYZER_OBJECT_H
+#pragma once
 
 #include "src/analyzer/analyzer_object_interface.h"
 
@@ -58,5 +57,3 @@ class ApacheAnalyzerObject : public ::analyzer::AnalyzerObjectInterface {
 }
 
 }
-
-#endif /* SRC_APACHE_ANALYZER_APACHE_ANALYZER_OBJECT_H */

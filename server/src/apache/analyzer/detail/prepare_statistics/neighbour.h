@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef NEIGHBOUR_H
-#define NEIGHBOUR_H
+#pragma once
 
 #include <vector>
 #include <cmath>
@@ -48,5 +47,3 @@ bool Neighbour::operator==(const Neighbour& oth) const {
 }
 
 }
-
-#endif /* NEIGHBOUR_H */

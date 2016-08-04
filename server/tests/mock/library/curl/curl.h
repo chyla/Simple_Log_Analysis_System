@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef MOCK_LIBRARY_CURL_CURL_H
-#define MOCK_LIBRARY_CURL_CURL_H
+#pragma once
 
 #include "src/library/curl/detail/curl_interface.h"
 
@@ -61,5 +60,3 @@ class Curl : public ::library::curl::detail::CurlInterface {
 }
 
 }
-
-#endif /* MOCK_LIBRARY_CURL_CURL_H */

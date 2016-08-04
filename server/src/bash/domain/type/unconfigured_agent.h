@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef UNCONFIGURED_AGENT_H
-#define UNCONFIGURED_AGENT_H
+#pragma once
 
 #include "src/database/type/row_id.h"
 #include "src/database/type/agent_name.h"
@@ -32,5 +31,3 @@ typedef std::vector<UnconfiguredAgent> UnconfiguredAgents;
 }
 
 }
-
-#endif /* UNCONFIGURED_AGENT_H */

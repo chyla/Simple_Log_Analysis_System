@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef COMMAND_SUMMARY_DIVIDER_INTERFACE_H
-#define COMMAND_SUMMARY_DIVIDER_INTERFACE_H
+#pragma once
 
 namespace bash
 {
@@ -21,8 +20,8 @@ namespace command_summary_divider
 class CommandSummaryDividerInterface {
  public:
   virtual ~CommandSummaryDividerInterface() = default;
-  
-  virtual double operator()(long long value) = 0; 
+
+  virtual double operator()(long long value) = 0;
 };
 
 }
@@ -32,6 +31,3 @@ class CommandSummaryDividerInterface {
 }
 
 }
-
-
-#endif /* COMMAND_SUMMARY_DIVIDER_INTERFACE_H */

@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef SRC_DATABASE_TYPE_ROWS_COUNT_H
-#define SRC_DATABASE_TYPE_ROWS_COUNT_H
+#pragma once
 
 namespace database
 {
@@ -17,5 +16,3 @@ typedef long long RowsCount;
 }
 
 }
-
-#endif /* SRC_DATABASE_TYPE_ROWS_COUNT_H */

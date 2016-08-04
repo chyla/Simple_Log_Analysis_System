@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef SYSTEM_INTERFACE_H
-#define SYSTEM_INTERFACE_H
+#pragma once
 
 #include <memory>
 #include <ctime>
@@ -34,5 +33,3 @@ typedef std::shared_ptr<SystemInterface> SystemInterfacePtr;
 }
 
 }
-
-#endif /* SYSTEM_INTERFACE_H */

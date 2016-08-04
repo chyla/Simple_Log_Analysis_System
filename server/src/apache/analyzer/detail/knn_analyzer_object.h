@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef SRC_APACHE_ANALYZER_DETAIL_KNN_ANALYZER_OBJECT_H
-#define SRC_APACHE_ANALYZER_DETAIL_KNN_ANALYZER_OBJECT_H
+#pragma once
 
 #include "knn_analyzer_object_interface.h"
 
@@ -83,5 +82,3 @@ class KnnAnalyzerObject : public KnnAnalyzerObjectInterface {
 }
 
 }
-
-#endif /* SRC_APACHE_ANALYZER_DETAIL_KNN_ANALYZER_OBJECT_H */

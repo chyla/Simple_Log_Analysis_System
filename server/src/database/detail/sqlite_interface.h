@@ -1,5 +1,4 @@
-#ifndef PATLMS_DATABASE_DETAIL_SQLITE_INTERFACE_H
-#define PATLMS_DATABASE_DETAIL_SQLITE_INTERFACE_H
+#pragma once
 
 #include <memory>
 
@@ -52,5 +51,3 @@ typedef std::unique_ptr<SQLiteInterface> SQLiteInterfacePtr;
 }
 
 }
-
-#endif // PATLMS_DATABASE_DETAIL_SQLITE_INTERFACE_H

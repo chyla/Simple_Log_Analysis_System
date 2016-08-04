@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef LIBRARY_CURL_DETAIL_CURL_INTERFACE_H
-#define LIBRARY_CURL_DETAIL_CURL_INTERFACE_H
+#pragma once
 
 #include <memory>
 #include <string>
@@ -55,5 +54,3 @@ typedef std::shared_ptr<CurlInterface> CurlInterfacePtr;
 }
 
 }
-
-#endif /* LIBRARY_CURL_DETAIL_CURL_INTERFACE_H */

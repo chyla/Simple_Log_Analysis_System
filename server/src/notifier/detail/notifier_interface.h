@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef NOTIFIER_DETAIL_NOTIFIER_INTERFACE_H
-#define NOTIFIER_DETAIL_NOTIFIER_INTERFACE_H
+#pragma once
 
 #include <memory>
 
@@ -32,5 +31,3 @@ typedef std::shared_ptr<NotifierInterface> NotifierInterfacePtr;
 }
 
 }
-
-#endif /* NOTIFIER_DETAIL_NOTIFIER_INTERFACE_H */

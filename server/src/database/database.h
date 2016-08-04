@@ -1,5 +1,4 @@
-#ifndef PATLMS_DATABASE_DATABASE_H
-#define PATLMS_DATABASE_DATABASE_H
+#pragma once
 
 #include <string>
 #include <memory>
@@ -75,5 +74,3 @@ class Database {
 };
 
 }
-
-#endif /* PATLMS_DATABASE_DATABASE_H */

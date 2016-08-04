@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef RAW_DATABASE_FUNCTIONS_H
-#define RAW_DATABASE_FUNCTIONS_H
+#pragma once
 
 #include "raw_database_functions_interface.h"
 
@@ -129,5 +128,3 @@ class RawDatabaseFunctions : public RawDatabaseFunctionsInterface {
 }
 
 }
-
-#endif /* RAW_DATABASE_FUNCTIONS_H */

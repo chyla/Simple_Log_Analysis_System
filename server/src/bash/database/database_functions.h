@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef DATABASE_FUNCTIONS_H
-#define DATABASE_FUNCTIONS_H
+#pragma once
 
 #include "detail/database_functions_interface.h"
 
@@ -132,5 +131,3 @@ class DatabaseFunctions : public detail::DatabaseFunctionsInterface {
 }
 
 }
-
-#endif /* DATABASE_FUNCTIONS_H */

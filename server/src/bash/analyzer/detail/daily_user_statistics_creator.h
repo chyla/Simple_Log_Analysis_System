@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef BASH_ANALYZER_DETAIL_DAILY_USER_STATISTICS_CREATOR_H
-#define BASH_ANALYZER_DETAIL_DAILY_USER_STATISTICS_CREATOR_H
+#pragma once
 
 #include "daily_user_statistics_creator_interface.h"
 
@@ -45,6 +44,3 @@ class DailyUserStatisticsCreator : public DailyUserStatisticsCreatorInterface {
 }
 
 }
-
-
-#endif /* BASH_ANALYZER_DETAIL_DAILY_USER_STATISTICS_CREATOR_H */

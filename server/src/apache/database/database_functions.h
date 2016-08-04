@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef SRC_APACHE_DATABASE_DATABASE_FUNCTIONS_H
-#define SRC_APACHE_DATABASE_DATABASE_FUNCTIONS_H
+#pragma once
 
 #include <memory>
 
@@ -111,5 +110,3 @@ class DatabaseFunctions : public detail::DatabaseFunctionsInterface {
 }
 
 }
-
-#endif /* SRC_APACHE_DATABASE_DATABASE_FUNCTIONS_H */

@@ -1,5 +1,4 @@
-#ifndef SRC_PROGRAM_OPTIONS_TYPE_OPTIONS_H
-#define SRC_PROGRAM_OPTIONS_TYPE_OPTIONS_H
+#pragma once
 
 #include <string>
 
@@ -92,5 +91,3 @@ class Options {
 }
 
 }
-
-#endif // SRC_PROGRAM_OPTIONS_TYPE_OPTIONS_H

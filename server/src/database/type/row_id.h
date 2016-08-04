@@ -1,5 +1,4 @@
-#ifndef SRC_DATABASE_TYPE_ROW_ID_H
-#define SRC_DATABASE_TYPE_ROW_ID_H
+#pragma once
 
 #include <vector>
 
@@ -15,5 +14,3 @@ typedef std::vector<RowId> RowIds;
 }
 
 }
-
-#endif /* SRC_DATABASE_TYPE_ROW_ID_H */

@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef NOTIFIER_DETAIL_NOTIFIER_H
-#define NOTIFIER_DETAIL_NOTIFIER_H
+#pragma once
 
 #include "detail/notifier_interface.h"
 #include "detail/system_interface.h"
@@ -56,5 +55,3 @@ class Notifier : public detail::NotifierInterface {
 };
 
 }
-
-#endif /* NOTIFIER_H */

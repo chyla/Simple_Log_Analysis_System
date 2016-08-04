@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef TESTS_MOCK_DATABASE_SQLITE_WRAPPER_H
-#define TESTS_MOCK_DATABASE_SQLITE_WRAPPER_H
+#pragma once
 
 #include "src/database/detail/sqlite_wrapper_interface.h"
 
@@ -57,5 +56,3 @@ class SQLiteWrapper : public ::database::detail::SQLiteWrapperInterface {
 }
 
 }
-
-#endif /* TESTS_MOCK_DATABASE_SQLITE_WRAPPER_H */

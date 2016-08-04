@@ -1,8 +1,6 @@
-#ifndef PATLMS_DATABASE_EXCEPTION_DETAIL_ITEM_NOT_FOUND_EXCEPTION_H
-#define PATLMS_DATABASE_EXCEPTION_DETAIL_ITEM_NOT_FOUND_EXCEPTION_H
+#pragma once
 
 #include "src/database/exception/database_exception.h"
-
 
 namespace database
 {
@@ -30,5 +28,3 @@ char const* ItemNotFoundException::what() const throw ()
 }
 
 }
-
-#endif // PATLMS_DATABASE_EXCEPTION_DETAIL_ITEM_NOT_FOUND_EXCEPTION_H

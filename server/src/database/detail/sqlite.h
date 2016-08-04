@@ -1,5 +1,4 @@
-#ifndef PATLMS_DATABASE_DETAIL_SQLITE_H
-#define PATLMS_DATABASE_DETAIL_SQLITE_H
+#pragma once
 
 #include "sqlite_interface.h"
 
@@ -44,5 +43,3 @@ class SQLite : public SQLiteInterface {
 }
 
 }
-
-#endif // PATLMS_DATABASE_DETAIL_SQLITE_H

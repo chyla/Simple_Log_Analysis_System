@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef GET_CONFIGURATION_ID_FOR_AGENT_H
-#define GET_CONFIGURATION_ID_FOR_AGENT_H
+#pragma once
 
 #include "web_command.h"
 
@@ -45,5 +44,3 @@ class GetConfigurationIdForAgent : public WebCommand {
 }
 
 }
-
-#endif /* GET_CONFIGURATION_ID_FOR_AGENT_H */

@@ -1,5 +1,4 @@
-#ifndef SRC_BASH_DBUS_OBJECT_BASH_H
-#define SRC_BASH_DBUS_OBJECT_BASH_H
+#pragma once
 
 #include <vector>
 #include <memory>
@@ -40,5 +39,3 @@ typedef std::shared_ptr<Bash> BashPtr;
 }
 
 }
-
-#endif // SRC_BASH_DBUS_OBJECT_BASH_H

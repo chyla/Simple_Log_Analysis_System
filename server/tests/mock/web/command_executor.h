@@ -1,5 +1,4 @@
-#ifndef COMMAND_EXECUTOR_H
-#define COMMAND_EXECUTOR_H
+#pragma once
 
 #include <gmock/gmock.h>
 
@@ -21,5 +20,3 @@ class CommandExecutor : public ::web::detail::CommandExecutorInterface {
 }
 
 }
-
-#endif /* COMMAND_EXECUTOR_H */

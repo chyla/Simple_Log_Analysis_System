@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef LIBRARY_CURL_EXCEPTION_DETAIL_CURL_OBJECT_NOT_CREATED_EXCEPTION_H
-#define LIBRARY_CURL_EXCEPTION_DETAIL_CURL_OBJECT_NOT_CREATED_EXCEPTION_H
+#pragma once
 
 #include "src/library/curl/exception/curl_exception.h"
 
@@ -36,5 +35,3 @@ char const* CurlObjectNotCreatedException::what() const throw () {
 }
 
 }
-
-#endif /* LIBRARY_CURL_EXCEPTION_DETAIL_CURL_OBJECT_EXISTS_EXCEPTION_H */

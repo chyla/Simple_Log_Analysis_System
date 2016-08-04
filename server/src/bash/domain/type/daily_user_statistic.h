@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef BASH_DOMAIN_TYPE_DAILY_USER_STATISTIC_H
-#define BASH_DOMAIN_TYPE_DAILY_USER_STATISTIC_H
+#pragma once
 
 #include <patlms/type/date.h>
 
@@ -39,5 +38,3 @@ typedef std::vector<DailyUserStatistic> DailyUserStatistics;
 }
 
 }
-
-#endif /* BASH_DOMAIN_TYPE_DAILY_USER_STATISTIC_H */

@@ -1,5 +1,4 @@
-#ifndef PATLMS_TESTS_MOCK_DATABASE_SQLITE_H
-#define PATLMS_TESTS_MOCK_DATABASE_SQLITE_H
+#pragma once
 
 #include <memory>
 #include <gmock/gmock.h>
@@ -49,6 +48,3 @@ typedef std::unique_ptr<SQLite> SQLitePtr;
 }
 
 }
-
-#endif /* PATLMS_TESTS_MOCK_DATABASE_SQLITE_H */
-

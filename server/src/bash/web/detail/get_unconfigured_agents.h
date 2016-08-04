@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef GET_UNCONFIGURED_AGENTS_H
-#define GET_UNCONFIGURED_AGENTS_H
+#pragma once
 
 #include "web_command.h"
 
@@ -45,5 +44,3 @@ class GetUnconfiguredAgents : public WebCommand {
 }
 
 }
-
-#endif /* GET_UNCONFIGURED_AGENTS_H */

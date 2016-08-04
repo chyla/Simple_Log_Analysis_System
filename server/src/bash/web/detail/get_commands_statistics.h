@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef GET_COMMANDS_STATISTICS_H
-#define GET_COMMANDS_STATISTICS_H
+#pragma once
 
 #include "web_command.h"
 
@@ -45,6 +44,3 @@ class GetCommandsStatistics : public WebCommand {
 }
 
 }
-
-
-#endif /* GET_COMMANDS_STATISTICS_H */

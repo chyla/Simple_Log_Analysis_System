@@ -1,5 +1,4 @@
-#ifndef SRC_WEB_DETAIL_COMMAND_RECEIVER_INTERFACE_H
-#define SRC_WEB_DETAIL_COMMAND_RECEIVER_INTERFACE_H
+#pragma once
 
 #include <memory>
 
@@ -16,7 +15,7 @@ class CommandReceiverInterface {
   virtual void OpenPort(const std::string &address, const int port) = 0;
   virtual void ClosePort() = 0;
   virtual bool IsPortOpen() const = 0;
-  
+
   virtual void StartListen() = 0;
   virtual void StopListen() = 0;
   virtual bool IsListen() const = 0;
@@ -27,5 +26,3 @@ typedef std::shared_ptr<CommandReceiverInterface> CommandReceiverInterfacePtr;
 }
 
 }
-
-#endif /* SRC_WEB_DETAIL_COMMAND_RECEIVER_INTERFACE_H */

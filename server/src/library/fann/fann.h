@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef LIBRARY_FANN_FANN_H
-#define LIBRARY_FANN_FANN_H
+#pragma once
 
 #include "detail/fann_interface.h"
 
@@ -53,5 +52,3 @@ class Fann : public detail::FannInterface {
 }
 
 }
-
-#endif /* LIBRARY_FANN_FANN_H */

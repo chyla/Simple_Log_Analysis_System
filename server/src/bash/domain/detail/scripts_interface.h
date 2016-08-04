@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef SCRIPTS_INTERFACE_H
-#define SCRIPTS_INTERFACE_H
+#pragma once
 
 #include <patlms/type/bash_log_entry.h>
 #include <patlms/type/date.h>
@@ -78,5 +77,3 @@ typedef std::shared_ptr<ScriptsInterface> ScriptsInterfacePtr;
 }
 
 }
-
-#endif /* SCRIPTS_H */

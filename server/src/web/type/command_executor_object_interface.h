@@ -1,5 +1,4 @@
-#ifndef SRC_WEB_TYPE_COMMAND_EXECUTOR_OBJECT_INTERFACE_H
-#define SRC_WEB_TYPE_COMMAND_EXECUTOR_OBJECT_INTERFACE_H
+#pragma once
 
 #include <string>
 #include <memory>
@@ -38,5 +37,3 @@ typedef std::shared_ptr<CommandExecutorObjectInterface> CommandExecutorObjectInt
 }
 
 }
-
-#endif /* SRC_WEB_TYPE_COMMAND_EXECUTOR_OBJECT_INTERFACE_H */

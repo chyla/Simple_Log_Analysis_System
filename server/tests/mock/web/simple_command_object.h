@@ -1,5 +1,4 @@
-#ifndef SIMPLE_COMMAND_OBJECT_H
-#define SIMPLE_COMMAND_OBJECT_H
+#pragma once
 
 #include <gmock/gmock.h>
 
@@ -20,5 +19,3 @@ class SimpleCommandObject : public ::web::type::CommandExecutorObjectInterface {
 }
 
 }
-
-#endif /* SIMPLE_COMMAND_OBJECT_H */

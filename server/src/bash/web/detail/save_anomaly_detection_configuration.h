@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef ADD_ANOMALY_DETECTION_CONFIGURATION_H
-#define ADD_ANOMALY_DETECTION_CONFIGURATION_H
+#pragma once
 
 #include "web_command.h"
 
@@ -45,5 +44,3 @@ class SaveAnomalyDetectionConfiguration : public WebCommand {
 }
 
 }
-
-#endif /* ADD_ANOMALY_DETECTION_CONFIGURATION_H */

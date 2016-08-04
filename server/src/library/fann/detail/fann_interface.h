@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef LIBRARY_FANN_DETAIL_FANN_INTERFACE_H
-#define LIBRARY_FANN_DETAIL_FANN_INTERFACE_H
+#pragma once
 
 #include <floatfann.h>
 #include <fann.h>
@@ -55,5 +54,3 @@ typedef std::shared_ptr<FannInterface> FannInterfacePtr;
 }
 
 }
-
-#endif /* LIBRARY_FANN_DETAIL_FANN_INTERFACE_H */

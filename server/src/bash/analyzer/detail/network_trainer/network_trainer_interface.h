@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef NETWORK_TRAINER_INTERFACE_H
-#define NETWORK_TRAINER_INTERFACE_H
+#pragma once
 
 #include <memory>
 
@@ -36,5 +35,3 @@ typedef std::shared_ptr<NetworkTrainerInterface> NetworkTrainerInterfacePtr;
 }
 
 }
-
-#endif /* NETWORK_TRAINER_INTERFACE_H */

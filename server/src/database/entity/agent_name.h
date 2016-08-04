@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef DATABASE_ENTITY_AGENT_NAME_H
-#define DATABASE_ENTITY_AGENT_NAME_H
+#pragma once
 
 #include "src/database/type/row_id.h"
 #include "src/database/type/agent_name.h"
@@ -28,5 +27,3 @@ typedef std::vector<AgentName> AgentNames;
 }
 
 }
-
-#endif /* DATABASE_ENTITY_AGENT_NAME_H */

@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef SRC_DATABASE_GENERAL_DATABASE_FUNCTIONS_H
-#define SRC_DATABASE_GENERAL_DATABASE_FUNCTIONS_H
+#pragma once
 
 #include "detail/general_database_functions_interface.h"
 
@@ -55,5 +54,3 @@ class GeneralDatabaseFunctions : public detail::GeneralDatabaseFunctionsInterfac
 };
 
 }
-
-#endif /* SRC_DATABASE_GENERAL_DATABASE_FUNCTIONS_H */

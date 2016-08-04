@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef SRC_DATABASE_DETAIL_GENERAL_DATABASE_FUNCTIONS_INTERFACE_H
-#define SRC_DATABASE_DETAIL_GENERAL_DATABASE_FUNCTIONS_INTERFACE_H
+#pragma once
 
 #include <memory>
 
@@ -50,5 +49,3 @@ typedef std::shared_ptr<GeneralDatabaseFunctionsInterface> GeneralDatabaseFuncti
 }
 
 }
-
-#endif /* SRC_DATABASE_DETAIL_GENERAL_DATABASE_FUNCTIONS_INTERFACE_H */

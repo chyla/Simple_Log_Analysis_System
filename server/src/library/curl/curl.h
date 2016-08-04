@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef MAILER_DETAIL_CURL_H
-#define MAILER_DETAIL_CURL_H
+#pragma once
 
 #include "detail/curl_interface.h"
 
@@ -52,5 +51,3 @@ class Curl : public detail::CurlInterface {
 }
 
 }
-
-#endif /* MAILER_DETAIL_CURL_H */

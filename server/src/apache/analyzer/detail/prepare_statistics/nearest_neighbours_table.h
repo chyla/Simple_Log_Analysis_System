@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef NEAREST_NEIGHBOURS_TABLE_H
-#define NEAREST_NEIGHBOURS_TABLE_H
+#pragma once
 
 #include "nearest_neighbours_table_interface.h"
 
@@ -51,5 +50,3 @@ class NearestNeighboursTable : public NearestNeighboursTableInterface {
 }
 
 }
-
-#endif /* NEAREST_NEIGHBOURS_TABLE_H */

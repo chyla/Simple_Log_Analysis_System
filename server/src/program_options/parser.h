@@ -1,5 +1,4 @@
-#ifndef PATLMS_PROGRAM_OPTIONS_PARSER_H
-#define PATLMS_PROGRAM_OPTIONS_PARSER_H
+#pragma once
 
 #include <boost/program_options.hpp>
 #include <utility>
@@ -34,5 +33,3 @@ class Parser {
 };
 
 }
-
-#endif // PATLMS_PROGRAM_OPTIONS_PARSER_H

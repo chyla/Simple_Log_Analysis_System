@@ -1,5 +1,4 @@
-#ifndef SRC_APACHE_WEB_COMMAND_EXECUTOR_OBJECT_H
-#define SRC_APACHE_WEB_COMMAND_EXECUTOR_OBJECT_H
+#pragma once
 
 #include "src/web/type/command_executor_object_interface.h"
 
@@ -71,5 +70,3 @@ class CommandExecutorObject : public ::web::type::CommandExecutorObjectInterface
 }
 
 }
-
-#endif /* PROGRAM_OPTIONS_COMMAND_EXECUTOR_OBJECT_H */

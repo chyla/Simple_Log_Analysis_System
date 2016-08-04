@@ -1,5 +1,4 @@
-#ifndef SRC_PROGRAM_OPTIONS_WEB_COMMAND_EXECUTOR_OBJECT_H
-#define SRC_PROGRAM_OPTIONS_WEB_COMMAND_EXECUTOR_OBJECT_H
+#pragma once
 
 #include <memory>
 
@@ -37,5 +36,3 @@ class CommandExecutorObject : public ::web::type::CommandExecutorObjectInterface
 }
 
 }
-
-#endif /* SRC_PROGRAM_OPTIONS_WEB_COMMAND_EXECUTOR_OBJECT_H */

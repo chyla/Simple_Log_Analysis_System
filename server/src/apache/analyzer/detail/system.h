@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef SYSTEM_H
-#define SYSTEM_H
+#pragma once
 
 #include "system_interface.h"
 
@@ -23,7 +22,7 @@ typedef std::shared_ptr<System> SystemPtr;
 class System : public SystemInterface {
  public:
   virtual ~System() = default;
-  
+
   static SystemPtr Create();
 
   time_t Time(time_t *t) override;
@@ -36,5 +35,3 @@ class System : public SystemInterface {
 }
 
 }
-
-#endif /* SYSTEM_H */

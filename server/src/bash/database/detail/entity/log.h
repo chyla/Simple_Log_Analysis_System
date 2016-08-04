@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef LOG_H
-#define LOG_H
+#pragma once
 
 #include "src/database/type/row_id.h"
 #include "src/bash/database/type/command_name.h"
@@ -36,5 +35,3 @@ struct Log {
 }
 
 }
-
-#endif /* LOG_H */

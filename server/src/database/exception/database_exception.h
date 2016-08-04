@@ -1,8 +1,6 @@
-#ifndef PATLMS_DATABASE_EXCEPTION_DATABASE_EXCEPTION_H
-#define PATLMS_DATABASE_EXCEPTION_DATABASE_EXCEPTION_H
+#pragma once
 
 #include <patlms/type/exception/exception.h>
-
 
 namespace database
 {
@@ -16,5 +14,3 @@ class DatabaseException : public interface::Exception {
 }
 
 }
-
-#endif /* PATLMS_DATABASE_EXCEPTION_DATABASE_EXCEPTION_EXCEPTION_H */

@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef CLASSIFICATOR_INTERFACE_H
-#define CLASSIFICATOR_INTERFACE_H
+#pragma once
 
 #include <memory>
 
@@ -36,5 +35,3 @@ typedef std::shared_ptr<ClassificatorInterface> ClassificatorInterfacePtr;
 }
 
 }
-
-#endif /* CLASSIFICATOR_INTERFACE_H */

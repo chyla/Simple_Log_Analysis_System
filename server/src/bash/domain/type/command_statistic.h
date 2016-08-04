@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef BASH_DOMAIN_TYPE_COMMAND_STATISTIC_H
-#define BASH_DOMAIN_TYPE_COMMAND_STATISTIC_H
+#pragma once
 
 #include <patlms/type/date.h>
 
@@ -36,5 +35,3 @@ typedef std::vector<CommandStatistic> CommandsStatistics;
 }
 
 }
-
-#endif /* BASH_DOMAIN_TYPE_COMMAND_STATISTIC_H */

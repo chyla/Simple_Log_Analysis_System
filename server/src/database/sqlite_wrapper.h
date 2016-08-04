@@ -1,5 +1,4 @@
-#ifndef SQLITE_WRAPPER_H
-#define SQLITE_WRAPPER_H
+#pragma once
 
 #include <memory>
 #include <string>
@@ -55,5 +54,3 @@ class SQLiteWrapper : public detail::SQLiteWrapperInterface {
 };
 
 }
-
-#endif /* SQLITE_WRAPPER_H */

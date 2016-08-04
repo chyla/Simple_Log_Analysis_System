@@ -1,5 +1,4 @@
-#ifndef SRC_ANALYZER_DETAIL_ANALYZER_INTERFACE_H
-#define SRC_ANALYZER_DETAIL_ANALYZER_INTERFACE_H
+#pragma once
 
 #include <memory>
 
@@ -28,5 +27,3 @@ typedef std::shared_ptr<AnalyzerInterface> AnalyzerInterfacePtr;
 }
 
 }
-
-#endif /* SRC_ANALYZER_DETAIL_ANALYZER_INTERFACE_H */

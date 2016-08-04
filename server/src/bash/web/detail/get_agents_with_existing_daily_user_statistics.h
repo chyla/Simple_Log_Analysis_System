@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef GET_AGENTS_WITH_EXISTING_DAILY_USER_STATISTICS_H
-#define GET_AGENTS_WITH_EXISTING_DAILY_USER_STATISTICS_H
+#pragma once
 
 #include "web_command.h"
 
@@ -45,5 +44,3 @@ class GetAgentsWithExistingDailyUserStatistics : public WebCommand {
 }
 
 }
-
-#endif /* GET_AGENTS_WITH_EXISTING_DAILY_USER_STATISTICS_H */

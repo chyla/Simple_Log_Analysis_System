@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef MAILER_TYPE_RAW_MAIL_TEXT_H
-#define MAILER_TYPE_RAW_MAIL_TEXT_H
+#pragma once
 
 #include <string>
 
@@ -19,5 +18,3 @@ typedef std::string RawMailText;
 }
 
 }
-
-#endif /* MAILER_TYPE_RAW_MAIL_TEXT_H */

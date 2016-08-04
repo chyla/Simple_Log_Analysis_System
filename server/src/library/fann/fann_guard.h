@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef LIBRARY_FANN_FANN_GUARD_H
-#define LIBRARY_FANN_FANN_GUARD_H
+#pragma once
 
 #include "detail/fann_wrapper_interface.h"
 
@@ -28,5 +27,3 @@ class FannGuard {
 }
 
 }
-
-#endif /* LIBRARY_FANN_FANN_GUARD_H */

@@ -1,5 +1,4 @@
-#ifndef SRC_WEB_COMMAND_RECEIVER_H
-#define SRC_WEB_COMMAND_RECEIVER_H
+#pragma once
 
 #include <memory>
 
@@ -45,5 +44,3 @@ class CommandReceiver : public detail::CommandReceiverInterface {
 };
 
 }
-
-#endif /* SRC_WEB_COMMAND_RECEIVER_H */

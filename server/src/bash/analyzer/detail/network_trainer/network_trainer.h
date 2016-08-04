@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef NETWORK_TRAINER_H
-#define NETWORK_TRAINER_H
+#pragma once
 
 #include "network_trainer_interface.h"
 
@@ -64,5 +63,3 @@ class NetworkTrainer : public NetworkTrainerInterface {
 }
 
 }
-
-#endif /* NETWORK_TRAINER_H */

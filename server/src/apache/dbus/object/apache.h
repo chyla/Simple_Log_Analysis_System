@@ -1,5 +1,4 @@
-#ifndef SRC_APACHE_DBUS_OBJECT_APACHE_H
-#define SRC_APACHE_DBUS_OBJECT_APACHE_H
+#pragma once
 
 #include <vector>
 
@@ -45,5 +44,3 @@ typedef std::shared_ptr<Apache> ApachePtr;
 }
 
 }
-
-#endif /* SRC_APACHE_DBUS_OBJECT_APACHE_H */

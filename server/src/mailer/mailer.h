@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef MAILER_MAILER_H
-#define MAILER_MAILER_H
+#pragma once
 
 #include "detail/mailer_interface.h"
 #include "src/program_options/type/options.h"
@@ -55,5 +54,3 @@ class Mailer : public detail::MailerInterface {
 };
 
 }
-
-#endif /* MAILER_MAILER_H */

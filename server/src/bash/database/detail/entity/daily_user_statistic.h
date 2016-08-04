@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef DAILY_USER_STATISTIC_H
-#define DAILY_USER_STATISTIC_H
+#pragma once
 
 #include "src/database/type/row_id.h"
 #include "src/database/type/classification.h"
@@ -40,5 +39,3 @@ typedef std::vector<DailyUserStatistic> DailyUserStatistics;
 }
 
 }
-
-#endif /* DAILY_USER_STATISTIC_H */

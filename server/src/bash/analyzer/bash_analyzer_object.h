@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef BASH_ANALYZER_OBJECT_H
-#define BASH_ANALYZER_OBJECT_H
+#pragma once
 
 #include "src/analyzer/analyzer_object_interface.h"
 #include "src/bash/domain/detail/scripts_interface.h"
@@ -64,5 +63,3 @@ class BashAnalyzerObject : public ::analyzer::AnalyzerObjectInterface {
 }
 
 }
-
-#endif /* BASH_ANALYZER_OBJECT_H */

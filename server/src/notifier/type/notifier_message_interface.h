@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef NOTIFIER_TYPE_NOTIFIER_MESSAGE_INTERFACE_H
-#define NOTIFIER_TYPE_NOTIFIER_MESSAGE_INTERFACE_H
+#pragma once
 
 #include <string>
 #include <memory>
@@ -28,5 +27,3 @@ typedef std::shared_ptr<NotifierMessageInterface> NotifierMessageInterfacePtr;
 }
 
 }
-
-#endif /* NOTIFIER_TYPE_NOTIFIER_MESSAGE_INTERFACE_H */

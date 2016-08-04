@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef COMMAND_STATISTIC_H
-#define COMMAND_STATISTIC_H
+#pragma once
 
 #include "src/database/type/row_id.h"
 #include "src/database/type/rows_count.h"
@@ -41,5 +40,3 @@ typedef std::vector<CommandStatistic> CommandsStatistics;
 }
 
 }
-
-#endif /* COMMAND_STATISTIC_H */

@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef BASH_ANALYZER_DETAIL_DAILY_USER_STATISTICS_CREATOR_INTERFACE_H
-#define BASH_ANALYZER_DETAIL_DAILY_USER_STATISTICS_CREATOR_INTERFACE_H
+#pragma once
 
 #include <patlms/type/date.h>
 
@@ -33,5 +32,3 @@ typedef std::shared_ptr<DailyUserStatisticsCreatorInterface> DailyUserStatistics
 }
 
 }
-
-#endif /* BASH_ANALYZER_DETAIL_DAILY_USER_STATISTICS_CREATOR_INTERFACE_H */

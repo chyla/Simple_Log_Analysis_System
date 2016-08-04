@@ -1,5 +1,4 @@
-#ifndef SRC_ANALYZER_ANALYZER_OBJECT_INTERFACE_H
-#define SRC_ANALYZER_ANALYZER_OBJECT_INTERFACE_H
+#pragma once
 
 #include <memory>
 
@@ -16,5 +15,3 @@ class AnalyzerObjectInterface {
 typedef std::shared_ptr<AnalyzerObjectInterface> AnalyzerObjectInterfacePtr;
 
 }
-
-#endif /* SRC_ANALYZER_ANALYZER_OBJECT_INTERFACE_H */

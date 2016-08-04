@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef VIRTUALHOST_NAME_H
-#define VIRTUALHOST_NAME_H
+#pragma once
 
 #include <string>
 #include <vector>
@@ -22,6 +21,3 @@ typedef std::vector<VirtualhostName> VirtualhostNames;
 }
 
 }
-
-
-#endif /* VIRTUALHOST_NAME_H */

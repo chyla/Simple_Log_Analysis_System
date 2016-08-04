@@ -1,5 +1,4 @@
-#ifndef SRC_ANALYZER_ANALYZER_H
-#define SRC_ANALYZER_ANALYZER_H
+#pragma once
 
 #include <memory>
 #include <set>
@@ -39,5 +38,3 @@ class Analyzer : public detail::AnalyzerInterface {
 };
 
 }
-
-#endif /* SRC_ANALYZER_ANALYZER_H */

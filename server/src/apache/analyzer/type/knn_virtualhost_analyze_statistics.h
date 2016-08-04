@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef APACHE_ANALYZER_TYPE_KNN_VIRTUALHOST_ANALYZE_STATISTICS_H
-#define APACHE_ANALYZER_TYPE_KNN_VIRTUALHOST_ANALYZE_STATISTICS_H
+#pragma once
 
 #include "src/database/type/row_id.h"
 
@@ -36,5 +35,3 @@ struct KnnVirtualhostAnalyzeStatistics {
 }
 
 }
-
-#endif /* APACHE_ANALYZER_TYPE_KNN_VIRTUALHOST_ANALYZE_STATISTICS_H */

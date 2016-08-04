@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef TESTS_MOCK_APACHE_DATABASE_DATABASE_FUNCTIONS_H
-#define TESTS_MOCK_APACHE_DATABASE_DATABASE_FUNCTIONS_H
+#pragma once
 
 #include <memory>
 #include <gmock/gmock.h>
@@ -72,5 +71,3 @@ class DatabaseFunctions : public ::apache::database::detail::DatabaseFunctionsIn
 }
 
 }
-
-#endif /* TESTS_MOCK_APACHE_DATABASE_DATABASE_FUNCTIONS_H */

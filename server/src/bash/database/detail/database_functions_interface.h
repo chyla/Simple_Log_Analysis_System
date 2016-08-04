@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef DATABASE_FUNCTIONS_INTERFACE_H
-#define DATABASE_FUNCTIONS_INTERFACE_H
+#pragma once
 
 #include <patlms/type/bash_log_entry.h>
 
@@ -132,5 +131,3 @@ typedef std::shared_ptr<DatabaseFunctionsInterface> DatabaseFunctionsInterfacePt
 }
 
 }
-
-#endif /* DATABASE_FUNCTIONS_INTERFACE_H */

@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef COMMAND_H
-#define COMMAND_H
+#pragma once
 
 #include "src/web/type/command.h"
 #include "src/web/type/json_message.h"
@@ -36,5 +35,3 @@ typedef std::shared_ptr<WebCommand> WebCommandPtr;
 }
 
 }
-
-#endif /* COMMAND_H */

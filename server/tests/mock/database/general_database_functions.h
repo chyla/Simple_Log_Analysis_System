@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef TESTS_MOCK_DATABASE_GENERAL_DATABASE_FUNCTIONS_H
-#define TESTS_MOCK_DATABASE_GENERAL_DATABASE_FUNCTIONS_H
+#pragma once
 
 #include "src/database/detail/general_database_functions_interface.h"
 
@@ -52,5 +51,3 @@ class GeneralDatabaseFunctions : public ::database::detail::GeneralDatabaseFunct
 }
 
 }
-
-#endif /* TESTS_MOCK_DATABASE_GENERAL_DATABASE_FUNCTIONS_H */

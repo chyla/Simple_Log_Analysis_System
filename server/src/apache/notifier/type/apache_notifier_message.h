@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef APACHE_NOTIFIER_TYPE_APACHE_NOTIFIER_MESSAGE_H
-#define APACHE_NOTIFIER_TYPE_APACHE_NOTIFIER_MESSAGE_H
+#pragma once
 
 #include "src/notifier/type/notifier_message_interface.h"
 #include "src/apache/analyzer/type/knn_analyzer_summary.h"
@@ -49,5 +48,3 @@ class ApacheNotifierMessage : public ::notifier::type::NotifierMessageInterface 
 }
 
 }
-
-#endif /* APACHE_NOTIFIER_TYPE_APACHE_NOTIFIER_MESSAGE_H */
