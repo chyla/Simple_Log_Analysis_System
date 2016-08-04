@@ -1,5 +1,4 @@
-#ifndef BAD_ADDRESS_H
-#define BAD_ADDRESS_H
+#pragma once
 
 #include <patlms/network/exception/network_exception.h>
 
@@ -26,5 +25,3 @@ char const* BadAddressException::what() const throw() {
 }
 
 }
-
-#endif /* BAD_ADDRESS_H */

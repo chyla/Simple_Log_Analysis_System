@@ -1,5 +1,4 @@
-#ifndef MESSAGE_TOO_LONG_H
-#define MESSAGE_TOO_LONG_H
+#pragma once
 
 #include <patlms/network/exception/network_exception.h>
 
@@ -26,7 +25,3 @@ char const* MessageTooLongException::what() const throw () {
 }
 
 }
-
-
-#endif /* MESSAGE_TOO_LONG_H */
-

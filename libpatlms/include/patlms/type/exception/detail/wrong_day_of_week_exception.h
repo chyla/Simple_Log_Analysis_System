@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef INCLUDE_PATLMS_TYPE_WRONG_DAY_OF_WEEK_EXCEPTION_H
-#define INCLUDE_PATLMS_TYPE_WRONG_DAY_OF_WEEK_EXCEPTION_H
+#pragma once
 
 #include <patlms/type/exception/exception.h>
 
@@ -30,5 +29,3 @@ char const* WrongDayOfWeekException::what() const throw () {
 }
 
 }
-
-#endif /* WRONG_DAY_OF_WEEK_EXCEPTION_H */

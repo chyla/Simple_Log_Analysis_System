@@ -1,5 +1,4 @@
-#ifndef APACHE_LOG_ENTRY_H
-#define APACHE_LOG_ENTRY_H
+#pragma once
 
 #include <vector>
 
@@ -23,5 +22,3 @@ struct ApacheLogEntry {
 typedef std::vector<ApacheLogEntry> ApacheLogs;
 
 }
-
-#endif /* APACHE_LOG_ENTRY_H */

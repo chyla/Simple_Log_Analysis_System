@@ -1,5 +1,4 @@
-#ifndef POLL_EXCEPTION_H
-#define POLL_EXCEPTION_H
+#pragma once
 
 #include <patlms/network/exception/network_exception.h>
 
@@ -26,5 +25,3 @@ char const* PollException::what() const throw () {
 }
 
 }
-
-#endif /* POLL_EXCEPTION_H */

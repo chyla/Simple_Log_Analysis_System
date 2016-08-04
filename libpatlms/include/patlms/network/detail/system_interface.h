@@ -1,5 +1,4 @@
-#ifndef PATLMS_BASH_DETAIL_SYSTEM_INTERFACE_H
-#define PATLMS_BASH_DETAIL_SYSTEM_INTERFACE_H
+#pragma once
 
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -53,5 +52,3 @@ typedef std::shared_ptr<SystemInterface> SystemInterfacePtr;
 }
 
 }
-
-#endif /* PATLMS_BASH_DETAIL_SYSTEM_INTERFACE_H */

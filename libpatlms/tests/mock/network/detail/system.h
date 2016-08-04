@@ -1,5 +1,4 @@
-#ifndef SYSTEM_H
-#define SYSTEM_H
+#pragma once
 
 #include <gmock/gmock.h>
 #include <sys/socket.h>
@@ -18,7 +17,7 @@ namespace detail
 class System : public ::network::detail::SystemInterface {
  public:
   MOCK_METHOD1(Unlink, int(const char *pathname));
-  
+
   MOCK_METHOD1(Unlink, int(int domain));
 
   MOCK_METHOD3(Connect, int(int sockfd, const struct sockaddr *serv_addr, socklen_t addrlen));
@@ -53,5 +52,3 @@ class System : public ::network::detail::SystemInterface {
 }
 
 }
-
-#endif /* SYSTEM_H */

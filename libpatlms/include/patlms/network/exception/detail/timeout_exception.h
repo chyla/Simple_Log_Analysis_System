@@ -1,5 +1,4 @@
-#ifndef TIMEOUT_EXCEPTION_H
-#define TIMEOUT_EXCEPTION_H
+#pragma once
 
 #include <patlms/network/exception/network_exception.h>
 
@@ -26,7 +25,3 @@ char const* TimeoutException::what() const throw() {
 }
 
 }
-
-
-#endif /* TIMEOUT_EXCEPTION_H */
-

@@ -1,5 +1,4 @@
-#ifndef LIBPATLMS_UTIL_DETAIL_CANT_CREATE_PIDFILE_EXCEPTION_H
-#define LIBPATLMS_UTIL_DETAIL_CANT_CREATE_PIDFILE_EXCEPTION_H
+#pragma once
 
 #include <patlms/type/exception/exception.h>
 
@@ -20,5 +19,3 @@ char const* CantCreatePidfileException::what() const throw () {
 }
 
 }
-
-#endif /* LIBPATLMS_UTIL_DETAIL_CANT_CREATE_PIDFILE_EXCEPTION_H */

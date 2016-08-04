@@ -1,5 +1,4 @@
-#ifndef RECV_EXCEPTION_H
-#define RECV_EXCEPTION_H
+#pragma once
 
 #include <patlms/network/exception/network_exception.h>
 
@@ -26,5 +25,3 @@ char const* RecvException::what() const throw() {
 }
 
 }
-
-#endif /* RECV_EXCEPTION_H */

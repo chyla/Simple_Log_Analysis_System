@@ -1,5 +1,4 @@
-#ifndef LIBPATLMS_UTIL_SYSTEM_INTERFACE_H
-#define LIBPATLMS_UTIL_SYSTEM_INTERFACE_H
+#pragma once
 
 #include <memory>
 #include <cstdio>
@@ -34,5 +33,3 @@ typedef std::shared_ptr<SystemInterface> SystemInterfacePtr;
 }
 
 }
-
-#endif /* LIBPATLMS_UTIL_SYSTEM_INTERFACE_H */

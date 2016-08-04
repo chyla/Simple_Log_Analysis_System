@@ -1,5 +1,4 @@
-#ifndef CLOSE_EXCEPTION_H
-#define CLOSE_EXCEPTION_H
+#pragma once
 
 #include <patlms/network/exception/network_exception.h>
 
@@ -26,5 +25,3 @@ char const* CloseException::what() const throw() {
 }
 
 }
-
-#endif /* CLOSE_EXCEPTION_H */

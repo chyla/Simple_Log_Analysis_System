@@ -1,5 +1,4 @@
-#ifndef ACCEPT_EXCEPTION_H
-#define ACCEPT_EXCEPTION_H
+#pragma once
 
 #include <patlms/network/exception/network_exception.h>
 
@@ -26,5 +25,3 @@ char const* AcceptException::what() const throw() {
 }
 
 }
-
-#endif /* ACCEPT_EXCEPTION_H */

@@ -1,5 +1,4 @@
-#ifndef NETWORK_INTERFACE_H
-#define NETWORK_INTERFACE_H
+#pragma once
 
 #include <patlms/network/network_message.h>
 #include <patlms/network/connection_data.h>
@@ -20,7 +19,7 @@ class NetworkInterface {
   virtual ~NetworkInterface();
 
   virtual int Socket(int domain = PF_INET) = 0;
-  
+
   virtual int OpenUnixSocket(const std::string &path) = 0;
   virtual int OpenIpv4Socket(const std::string &address, int port) = 0;
   virtual void ConnectUnix(int socket, const std::string &filesystem_path) = 0;
@@ -42,5 +41,3 @@ typedef std::shared_ptr<NetworkInterface> NetworkInterfacePtr;
 }
 
 }
-
-#endif /* NETWORK_INTERFACE_H */

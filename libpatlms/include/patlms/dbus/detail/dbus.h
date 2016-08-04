@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef LIBPATLMS_DBUS_DETAIL_SQLITE_H
-#define LIBPATLMS_DBUS_DETAIL_SQLITE_H
+#pragma once
 
 #include "dbus_interface.h"
 
@@ -65,7 +64,7 @@ class DBus : public DBusInterface {
 
   dbus_bool_t connection_unregister_object_path(DBusConnection *connection,
                                                 const char *path) override;
-  
+
   void connection_unref(DBusConnection *connection) override;
 
   void error_init(DBusError *error) override;
@@ -76,5 +75,3 @@ class DBus : public DBusInterface {
 }
 
 }
-
-#endif /* SQLITE_H */

@@ -1,5 +1,4 @@
-#ifndef PATLMS_TYPE_BASH_LOG_ENTRY_H
-#define PATLMS_TYPE_BASH_LOG_ENTRY_H
+#pragma once
 
 #include <vector>
 
@@ -19,5 +18,3 @@ struct BashLogEntry {
 typedef std::vector<BashLogEntry> BashLogs;
 
 }
-
-#endif /* PATLMS_TYPE_BASH_LOG_ENTRY_H */

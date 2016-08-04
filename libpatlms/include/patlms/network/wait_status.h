@@ -1,5 +1,4 @@
-#ifndef POLL_RETURN_VALUE_H
-#define POLL_RETURN_VALUE_H
+#pragma once
 
 namespace network
 {
@@ -10,5 +9,3 @@ enum class WaitStatus {
 };
 
 }
-
-#endif /* POLL_RETURN_VALUE_H */

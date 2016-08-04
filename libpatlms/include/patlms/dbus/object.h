@@ -1,5 +1,4 @@
-#ifndef LIBPATLMS_DBUS_OBJECT_H
-#define LIBPATLMS_DBUS_OBJECT_H
+#pragma once
 
 #include <memory>
 #include <dbus/dbus.h>
@@ -25,5 +24,3 @@ class Object {
 typedef std::shared_ptr<Object> ObjectPtr;
 
 }
-
-#endif // LIBPATLMS_DBUS_OBJECT_H

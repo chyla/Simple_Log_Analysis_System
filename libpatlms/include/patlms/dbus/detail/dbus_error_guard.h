@@ -1,5 +1,4 @@
-#ifndef LIBPATLMS_DBUS_DETAIL_DBUS_ERROR_GUARD_H
-#define LIBPATLMS_DBUS_DETAIL_DBUS_ERROR_GUARD_H
+#pragma once
 
 #include "dbus_interface.h"
 
@@ -23,5 +22,3 @@ class DBusErrorGuard
 }
 
 }
-
-#endif // LIBPATLMS_DBUS_DETAIL_DBUS_ERROR_GUARD_H

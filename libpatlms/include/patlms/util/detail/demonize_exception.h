@@ -1,5 +1,4 @@
-#ifndef LIBPATLMS_UTIL_DETAIL_DEMONIZE_EXCEPTION_H
-#define LIBPATLMS_UTIL_DETAIL_DEMONIZE_EXCEPTION_H
+#pragma once
 
 #include <patlms/type/exception/exception.h>
 
@@ -20,5 +19,3 @@ char const* DemonizeException::what() const throw () {
 }
 
 }
-
-#endif /* LIBPATLMS_UTIL_DETAIL_DEMONIZE_EXCEPTION_H */

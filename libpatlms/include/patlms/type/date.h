@@ -1,5 +1,4 @@
-#ifndef INCLUDE_PATLMS_TYPE_DATE_H
-#define INCLUDE_PATLMS_TYPE_DATE_H
+#pragma once
 
 #include <ostream>
 #include <string>
@@ -59,5 +58,3 @@ int Date::GetYear() const {
 std::ostream& operator<<(std::ostream& os, const type::Date &date);
 
 }
-
-#endif /* INCLUDE_PATLMS_TYPE_DATE_H */

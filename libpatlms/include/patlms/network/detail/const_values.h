@@ -1,5 +1,4 @@
-#ifndef BUFFER_LENGTH_H
-#define BUFFER_LENGTH_H
+#pragma once
 
 namespace network
 {
@@ -16,5 +15,3 @@ constexpr int TimeoutSeconds = 15;
 }
 
 }
-
-#endif /* BUFFER_LENGTH_H */

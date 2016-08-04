@@ -1,5 +1,4 @@
-#ifndef INCLUDE_PATLMS_TYPE_EXCEPTION_DETAIL_EXCEPTION_H
-#define INCLUDE_PATLMS_TYPE_EXCEPTION_DETAIL_EXCEPTION_H
+#pragma once
 
 #include <patlms/type/exception/exception.h>
 
@@ -25,5 +24,3 @@ char const* WrongDateValueException::what() const throw () {
 }
 
 }
-
-#endif /* INCLUDE_PATLMS_TYPE_EXCEPTION_DETAIL_EXCEPTION_H */

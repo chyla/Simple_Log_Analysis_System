@@ -1,5 +1,4 @@
-#ifndef CONNECT_EXCEPTION_H
-#define CONNECT_EXCEPTION_H
+#pragma once
 
 #include <patlms/network/exception/network_exception.h>
 
@@ -26,6 +25,3 @@ char const* ConnectException::what() const throw () {
 }
 
 }
-
-
-#endif /* CONNECT_EXCEPTION_H */

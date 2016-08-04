@@ -1,5 +1,4 @@
-#ifndef SYSTEM_H
-#define SYSTEM_H
+#pragma once
 
 #include <patlms/network/detail/system_interface.h>
 
@@ -45,5 +44,3 @@ class System : public SystemInterface {
 }
 
 }
-
-#endif /* SYSTEM_H */

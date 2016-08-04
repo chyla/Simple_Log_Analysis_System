@@ -1,5 +1,4 @@
-#ifndef NETWORK_EXCEPTION_H
-#define NETWORK_EXCEPTION_H
+#pragma once
 
 #include <patlms/type/exception/exception.h>
 
@@ -15,5 +14,3 @@ class NetworkException : public ::interface::Exception {
 }
 
 }
-
-#endif /* BASH_EXCEPTION_H */

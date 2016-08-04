@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef RUN_PARTIALLY_H
-#define RUN_PARTIALLY_H
+#pragma once
 
 #include <functional>
 
@@ -15,5 +14,3 @@ void RunPartially(long long part_count, long long summary_count,
                   std::function<void(long long /* part count */, long long /* offset */)> f);
 
 }
-
-#endif /* RUN_PARTIALLY_H */

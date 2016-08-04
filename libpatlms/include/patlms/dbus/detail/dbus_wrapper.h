@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef DBUS_WRAPPER_H
-#define DBUS_WRAPPER_H
+#pragma once
 
 #include <memory>
 
@@ -75,5 +74,3 @@ class DBusWrapper : public DBusWrapperInterface {
 }
 
 }
-
-#endif /* DBUS_WRAPPER_H */

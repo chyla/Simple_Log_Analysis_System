@@ -1,5 +1,4 @@
-#ifndef TIME_EXCEPTION_H
-#define TIME_EXCEPTION_H
+#pragma once
 
 #include <patlms/type/exception/exception.h>
 
@@ -25,5 +24,3 @@ char const* WrongTimeValueException::what() const throw () {
 }
 
 }
-
-#endif /* TIME_EXCEPTION_H */

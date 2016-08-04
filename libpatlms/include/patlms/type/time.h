@@ -1,5 +1,4 @@
-#ifndef INCLUDE_PATLMS_TYPE_TIME_H
-#define INCLUDE_PATLMS_TYPE_TIME_H
+#pragma once
 
 #include <ostream>
 #include <string>
@@ -55,5 +54,3 @@ int Time::GetSecond() const {
 std::ostream& operator<<(std::ostream& os, const type::Time &time);
 
 }
-
-#endif /* INCLUDE_PATLMS_TYPE_TIME_H */

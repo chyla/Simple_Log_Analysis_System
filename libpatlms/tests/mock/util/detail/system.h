@@ -1,5 +1,4 @@
-#ifndef LIBPATLMS_TESTS_MOCK_UTIL_DETAIL_SYSTEM_H
-#define LIBPATLMS_TESTS_MOCK_UTIL_DETAIL_SYSTEM_H
+#pragma once
 
 #include <gmock/gmock.h>
 
@@ -34,5 +33,3 @@ class System : public ::util::detail::SystemInterface {
 }
 
 }
-
-#endif /* LIBPATLMS_TESTS_MOCK_UTIL_DETAIL_SYSTEM_H */

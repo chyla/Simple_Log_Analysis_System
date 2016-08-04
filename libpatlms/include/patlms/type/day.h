@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef INCLUDE_PATLMS_TYPE_DAY_H
-#define INCLUDE_PATLMS_TYPE_DAY_H
+#pragma once
 
 #include "exception/detail/wrong_day_of_week_exception.h"
 
@@ -77,5 +76,3 @@ inline const std::string ToString(const Day &day) {
 }
 
 }
-
-#endif /* DAY_H */

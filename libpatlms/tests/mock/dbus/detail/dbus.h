@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef LIBPATLMS_TESTS_MOCK_DBUS_DETAIL_DBUS_H
-#define LIBPATLMS_TESTS_MOCK_DBUS_DETAIL_DBUS_H
+#pragma once
 
 #include <dbus/dbus.h>
 #include <gmock/gmock.h>
@@ -87,5 +86,3 @@ class DBus : public ::dbus::detail::DBusInterface {
 }
 
 }
-
-#endif /* DBUS_H */

@@ -1,5 +1,4 @@
-#ifndef NETWORK_H
-#define NETWORK_H
+#pragma once
 
 #include <patlms/network/detail/network_interface.h>
 #include <patlms/network/detail/system_interface.h>
@@ -18,7 +17,7 @@ class Network : public detail::NetworkInterface {
   static NetworkPtr Create(detail::SystemInterfacePtr system);
 
   int Socket(int domain = PF_INET) override;
-  
+
   int OpenUnixSocket(const std::string &path) override;
   int OpenIpv4Socket(const std::string &address, int port) override;
   void ConnectUnix(int socket, const std::string &filesystem_path) override;
@@ -48,5 +47,3 @@ class Network : public detail::NetworkInterface {
 };
 
 }
-
-#endif /* NETWORK_H */

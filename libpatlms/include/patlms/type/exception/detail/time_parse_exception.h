@@ -1,5 +1,4 @@
-#ifndef TIME_PARSE_EXCEPTION_H
-#define TIME_PARSE_EXCEPTION_H
+#pragma once
 
 #include <patlms/type/exception/exception.h>
 
@@ -25,5 +24,3 @@ char const* TimeParseException::what() const throw () {
 }
 
 }
-
-#endif /* TIME_PARSE_EXCEPTION_H */

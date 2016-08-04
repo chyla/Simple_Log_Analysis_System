@@ -1,5 +1,4 @@
-#ifndef LIBPATLMS_SRC_DBUS_DETAIL_DBUS_LOOP_EXCEPTION_H
-#define LIBPATLMS_SRC_DBUS_DETAIL_DBUS_LOOP_EXCEPTION_H
+#pragma once
 
 #include <patlms/type/exception/exception.h>
 
@@ -20,5 +19,3 @@ char const* DBusLoopException::what() const throw () {
 }
 
 }
-
-#endif /* LIBPATLMS_SRC_DBUS_DETAIL_DBUS_LOOP_EXCEPTION_H */

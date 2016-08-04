@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef DBUS_WRAPPER_INTERFACE_H
-#define DBUS_WRAPPER_INTERFACE_H
+#pragma once
 
 #include <memory>
 #include <string>
@@ -50,7 +49,7 @@ class DBusWrapperInterface {
   virtual void ConnectionFlush() = 0;
 
   virtual void ConnectionUnregisterObjectPath(const std::string &path) = 0;
-  
+
   virtual DBusConnection* GetConnection() = 0;
 };
 
@@ -59,5 +58,3 @@ typedef std::shared_ptr<DBusWrapperInterface> DBusWrapperInterfacePtr;
 }
 
 }
-
-#endif /* DBUS_WRAPPER_INTERFACE_H */

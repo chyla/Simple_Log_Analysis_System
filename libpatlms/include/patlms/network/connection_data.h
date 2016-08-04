@@ -1,5 +1,4 @@
-#ifndef CONNECTION_DATA_H
-#define CONNECTION_DATA_H
+#pragma once
 
 #include <sys/socket.h>
 #include <cstring>
@@ -21,5 +20,3 @@ struct ConnectionData {
 };
 
 }
-
-#endif /* CONNECTION_DATA_H */

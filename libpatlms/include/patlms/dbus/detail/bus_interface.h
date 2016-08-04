@@ -1,5 +1,4 @@
-#ifndef LIBPATLMS_DBUS_BUS_INTERFACE_H
-#define LIBPATLMS_DBUS_BUS_INTERFACE_H
+#pragma once
 
 #include <dbus/dbus.h>
 #include <string>
@@ -16,7 +15,7 @@ namespace detail
 class BusInterface {
  public:
   virtual ~BusInterface();
-  
+
   virtual void Connect() = 0;
   virtual void Disconnect() = 0;
 
@@ -36,5 +35,3 @@ typedef std::shared_ptr<BusInterface> BusInterfacePtr;
 }
 
 }
-
-#endif /* LIBPATLMS_DBUS_BUS_INTERFACE_H */

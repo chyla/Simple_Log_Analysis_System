@@ -1,5 +1,4 @@
-#ifndef LIBPATLMS_UTIL_SYSTEM_H
-#define LIBPATLMS_UTIL_SYSTEM_H
+#pragma once
 
 #include <patlms/util/detail/system_interface.h>
 
@@ -29,5 +28,3 @@ class System : public SystemInterface {
 }
 
 }
-
-#endif /* LIBPATLMS_UTIL_SYSTEM_H */

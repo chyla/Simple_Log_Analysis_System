@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef LIBPATLMS_INCLUDE_DBUS_EXCEPTION_DBUS_EXCEPTION_H
-#define LIBPATLMS_INCLUDE_DBUS_EXCEPTION_DBUS_EXCEPTION_H
+#pragma once
 
 #include <patlms/type/exception/exception.h>
 
@@ -26,5 +25,3 @@ class DBusException : public ::interface::Exception {
 }
 
 }
-
-#endif /* DBUS_EXCEPTION_H */

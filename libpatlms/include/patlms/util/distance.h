@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef LIBPATLMS_UTIL_DISTANCE_H
-#define LIBPATLMS_UTIL_DISTANCE_H
+#pragma once
 
 #include <patlms/type/time.h>
 
@@ -14,5 +13,3 @@ namespace util
 long long Distance(const ::type::Time &t1, const ::type::Time &t2);
 
 }
-
-#endif /* LIBPATLMS_UTIL_DISTANCE_H */

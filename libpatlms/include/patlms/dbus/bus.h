@@ -1,5 +1,4 @@
-#ifndef LIBPATLMS_DBUS_BUS_H
-#define LIBPATLMS_DBUS_BUS_H
+#pragma once
 
 #include <string>
 #include <list>
@@ -12,7 +11,7 @@
 
 namespace dbus
 {
-  
+
 class Bus : public detail::BusInterface
 {
  public:
@@ -62,5 +61,3 @@ class Bus : public detail::BusInterface
 typedef std::shared_ptr<Bus> BusPtr;
 
 }
-
-#endif // LIBPATLMS_DBUS_BUS_H

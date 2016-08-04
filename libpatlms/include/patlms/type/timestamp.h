@@ -1,5 +1,4 @@
-#ifndef INCLUDE_PATLMS_TYPE_TIMESTAMP_H
-#define INCLUDE_PATLMS_TYPE_TIMESTAMP_H
+#pragma once
 
 #include <patlms/type/time.h>
 #include <patlms/type/date.h>
@@ -81,5 +80,3 @@ bool Timestamp::operator<(const Timestamp &t2) const {
 std::ostream& operator<<(std::ostream& os, const type::Timestamp &timestamp);
 
 }
-
-#endif /* INCLUDE_PATLMS_TYPE_TIMESTAMP_H */

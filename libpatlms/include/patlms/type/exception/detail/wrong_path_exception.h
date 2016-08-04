@@ -1,5 +1,4 @@
-#ifndef WRONG_PATH_EXCEPTION_H
-#define WRONG_PATH_EXCEPTION_H
+#pragma once
 
 #include <patlms/type/exception/exception.h>
 
@@ -25,5 +24,3 @@ char const* WrongPathException::what() const throw () {
 }
 
 }
-
-#endif /* WRONG_PATH_EXCEPTION_H */

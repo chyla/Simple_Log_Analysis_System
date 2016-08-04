@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef LIBPATLMS_DBUS_DETAIL_DBUS_INTERFACE_H
-#define LIBPATLMS_DBUS_DETAIL_DBUS_INTERFACE_H
+#pragma once
 
 #include <memory>
 #include <dbus/dbus.h>
@@ -74,5 +73,3 @@ typedef std::shared_ptr<DBusInterface> DBusInterfacePtr;
 }
 
 }
-
-#endif /* SQLITE_INTERFACE_H */
