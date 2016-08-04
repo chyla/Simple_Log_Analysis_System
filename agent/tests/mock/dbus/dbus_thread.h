@@ -1,5 +1,4 @@
-#ifndef PATLMS_MOCK_DBUS_DBUS_THREAD_H
-#define PATLMS_MOCK_DBUS_DBUS_THREAD_H
+#pragma once
 
 #include <gmock/gmock.h>
 
@@ -24,5 +23,3 @@ class DBusThread : public ::dbus::detail::DBusThreadInterface {
 }
 
 }
-
-#endif /* PATLMS_MOCK_DBUS_DBUS_THREAD_H */

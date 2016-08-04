@@ -1,5 +1,4 @@
-#ifndef BASH_EXCEPTION_H
-#define BASH_EXCEPTION_H
+#pragma once
 
 #include "src/interface/exception.h"
 
@@ -15,5 +14,3 @@ class BashException : public interface::Exception {
 }
 
 }
-
-#endif /* BASH_EXCEPTION_H */

@@ -1,5 +1,4 @@
-#ifndef PATLMS_INTERFACE_EXCEPTION_H
-#define PATLMS_INTERFACE_EXCEPTION_H
+#pragma once
 
 #include <exception>
 
@@ -17,6 +16,3 @@ Exception::~Exception() {
 }
 
 }
-
-#endif /* PATLMS_INTERFACE_EXCEPTION_H */
-

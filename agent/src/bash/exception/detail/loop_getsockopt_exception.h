@@ -1,5 +1,4 @@
-#ifndef LOOP_GETSOCKOPT_EXCEPTION_H
-#define LOOP_GETSOCKOPT_EXCEPTION_H
+#pragma once
 
 #include "src/bash/exception/bash_exception.h"
 
@@ -26,5 +25,3 @@ char const* LoopGetsockoptException::what() const throw () {
 }
 
 }
-
-#endif /* LOOP_GETSOCKOPT_EXCEPTION_H */

@@ -1,5 +1,4 @@
-#ifndef PATLMS_DBUS_DETAIL_SYSTEM_H
-#define PATLMS_DBUS_DETAIL_SYSTEM_H
+#pragma once
 
 #include "system_interface.h"
 
@@ -18,5 +17,3 @@ class System : public SystemInterface {
 }
 
 }
-
-#endif /* PATLMS_DBUS_DETAIL_SYSTEM_H */

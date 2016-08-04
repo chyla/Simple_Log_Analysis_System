@@ -1,5 +1,4 @@
-#ifndef PATLMS_MOCK_DETAIL_SYSTEM_H
-#define PATLMS_MOCK_DETAIL_SYSTEM_H
+#pragma once
 
 #include "src/dbus/detail/system_interface.h"
 
@@ -26,5 +25,3 @@ class System : public ::dbus::detail::SystemInterface
 }
 
 }
-
-#endif /* PATLMS_MOCK_DETAIL_SYSTEM_H */

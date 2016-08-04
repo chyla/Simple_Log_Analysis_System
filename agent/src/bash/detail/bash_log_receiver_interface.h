@@ -1,5 +1,4 @@
-#ifndef PATLMS_BASH_DETAIL_BASH_LOG_RECEIVER_INTERFACE_H
-#define PATLMS_BASH_DETAIL_BASH_LOG_RECEIVER_INTERFACE_H
+#pragma once
 
 #include <string>
 
@@ -17,5 +16,3 @@ class BashLogReceiverInterface {
 }
 
 }
-
-#endif /* PATLMS_BASH_DETAIL_BASH_LOG_RECEIVER_INTERFACE_H */

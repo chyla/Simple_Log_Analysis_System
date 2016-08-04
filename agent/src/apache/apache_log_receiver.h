@@ -1,5 +1,4 @@
-#ifndef APACHE_LOG_RECEIVER_H
-#define APACHE_LOG_RECEIVER_H
+#pragma once
 
 #include <patlms/dbus/detail/bus_interface.h>
 #include <patlms/network/detail/network_interface.h>
@@ -52,5 +51,3 @@ class ApacheLogReceiver {
 };
 
 }
-
-#endif /* APACHE_LOG_RECEIVER_H */

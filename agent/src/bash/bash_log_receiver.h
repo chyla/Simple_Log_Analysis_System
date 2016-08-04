@@ -1,5 +1,4 @@
-#ifndef BASH_LOG_RECEIVER_H
-#define BASH_LOG_RECEIVER_H
+#pragma once
 
 #include <patlms/network/network.h>
 #include <patlms/dbus/detail/bus_interface.h>
@@ -29,7 +28,7 @@ class BashLogReceiver : public detail::BashLogReceiverInterface {
   void StopLoop();
 
   bool IsRunning() const;
-  
+
   void SetAgentName(const std::string &agent_name);
 
  private:
@@ -49,6 +48,3 @@ class BashLogReceiver : public detail::BashLogReceiverInterface {
 };
 
 }
-
-#endif /* BASH_LOG_RECEIVER_H */
-

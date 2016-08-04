@@ -1,5 +1,4 @@
-#ifndef PATLMS_MOCK_BUS_BUS_H
-#define PATLMS_MOCK_BUS_BUS_H
+#pragma once
 
 #include <gmock/gmock.h>
 
@@ -30,5 +29,3 @@ class Bus : public ::dbus::detail::BusInterface {
 }
 
 }
-
-#endif /* PATLMS_MOCK_BUS_BUS_H */

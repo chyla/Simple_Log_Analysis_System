@@ -1,8 +1,6 @@
-#ifndef PROGRAM_OPTIONS_OPTIONS_H
-#define PROGRAM_OPTIONS_OPTIONS_H
+#pragma once
 
 #include <string>
-
 
 namespace program_options
 {
@@ -19,7 +17,7 @@ class Options {
                               unsigned dbus_port,
                               const std::string &dbus_family,
                               bool help_message,
-                              bool daemon, 
+                              bool daemon,
                               bool debug);
 
   const std::string& GetAgentName() const;
@@ -57,5 +55,3 @@ class Options {
 };
 
 }
-
-#endif // PROGRAM_OPTIONS_OPTIONS_H

@@ -1,5 +1,4 @@
-#ifndef PATLMS_BASH_DETAIL_BASH_DBUS_THREAD_COMMAND_H
-#define PATLMS_BASH_DETAIL_BASH_DBUS_THREAD_COMMAND_H
+#pragma once
 
 #include "src/dbus/dbus_thread_command.h"
 
@@ -31,5 +30,3 @@ class BashDBusThreadCommand : public ::dbus::DBusThreadCommand {
 }
 
 }
-
-#endif /* PATLMS_BASH_DETAIL_BASH_DBUS_THREAD_COMMAND_H */

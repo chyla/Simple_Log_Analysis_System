@@ -1,5 +1,4 @@
-#ifndef PATLMS_OBJECTS_BASH_PROXY_H
-#define PATLMS_OBJECTS_BASH_PROXY_H
+#pragma once
 
 #include <memory>
 #include <string>
@@ -27,5 +26,3 @@ class BashProxy : public dbus::ProxyObject {
 }
 
 }
-
-#endif // PATLMS_OBJECTS_BASH_PROXY_H

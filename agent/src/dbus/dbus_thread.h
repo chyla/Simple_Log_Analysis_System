@@ -1,5 +1,4 @@
-#ifndef PATLMS_DBUS_DBUS_THREAD_H
-#define PATLMS_DBUS_DBUS_THREAD_H
+#pragma once
 
 #include <patlms/dbus/detail/bus_interface.h>
 #include <memory>
@@ -46,5 +45,3 @@ class DBusThread : public detail::DBusThreadInterface {
 };
 
 }
-
-#endif /* PATLMS_DBUS_DBUS_THREAD_H */

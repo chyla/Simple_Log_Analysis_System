@@ -1,5 +1,4 @@
-#ifndef APACHE_DBUS_THREAD_COMMAND_H
-#define APACHE_DBUS_THREAD_COMMAND_H
+#pragma once
 
 #include "apache_proxy.h"
 
@@ -32,6 +31,3 @@ class ApacheDBusThreadCommand : public ::dbus::DBusThreadCommand {
 }
 
 }
-
-
-#endif /* APACHE_DBUS_THREAD_COMMAND_H */

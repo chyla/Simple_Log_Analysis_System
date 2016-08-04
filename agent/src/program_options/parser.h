@@ -1,5 +1,4 @@
-#ifndef PROGRAM_OPTIONS_PARSER_H
-#define PROGRAM_OPTIONS_PARSER_H
+#pragma once
 
 #include <boost/program_options.hpp>
 #include <utility>
@@ -17,7 +16,7 @@ class Parser
   Parser();
 
   std::string GetHelpMessage() const;
-    
+
   void SetCommandLineOptions(const int &argc, char **argv);
   void SetConfigFilePath(const std::string &path);
 
@@ -31,7 +30,5 @@ class Parser
 
   options_description general_options_, help_options_, all_options_;
 };
-  
-}
 
-#endif 
+}

@@ -1,5 +1,4 @@
-#ifndef APACHE_PROXY_H
-#define APACHE_PROXY_H
+#pragma once
 
 #include <patlms/type/apache_log_entry.h>
 #include <patlms/dbus/proxy_object.h>
@@ -27,5 +26,3 @@ typedef std::shared_ptr<ApacheProxy> ApacheProxyPtr;
 }
 
 }
-
-#endif /* APACHE_PROXY_H */

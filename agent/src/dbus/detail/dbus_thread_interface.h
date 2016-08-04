@@ -1,5 +1,4 @@
-#ifndef PATLMS_DBUS_DETAIL_DBUS_THREAD_INTERFACE_H
-#define PATLMS_DBUS_DETAIL_DBUS_THREAD_INTERFACE_H
+#pragma once
 
 #include <memory>
 
@@ -15,7 +14,7 @@ namespace detail
 {
 
 class DBusThreadInterface {
- public:  
+ public:
   virtual ~DBusThreadInterface();
 
   virtual void AddCommand(dbus::DBusThreadCommandPtr command) = 0;
@@ -31,7 +30,3 @@ typedef std::shared_ptr<DBusThreadInterface> DBusThreadInterfacePtr;
 }
 
 }
-
-
-#endif /* PATLMS_DBUS_DETAIL_DBUS_THREAD_INTERFACE_H */
-

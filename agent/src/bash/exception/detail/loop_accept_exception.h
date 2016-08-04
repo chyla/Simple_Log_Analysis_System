@@ -1,5 +1,4 @@
-#ifndef LOOP_ACCEPT_EXCEPTION_H
-#define LOOP_ACCEPT_EXCEPTION_H
+#pragma once
 
 #include "src/bash/exception/bash_exception.h"
 
@@ -26,5 +25,3 @@ char const* LoopAcceptException::what() const throw () {
 }
 
 }
-
-#endif /* LOOP_ACCEPT_EXCEPTION_H */

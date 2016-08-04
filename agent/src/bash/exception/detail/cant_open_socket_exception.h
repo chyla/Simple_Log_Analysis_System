@@ -1,5 +1,4 @@
-#ifndef CANT_OPEN_SOCKET_H
-#define CANT_OPEN_SOCKET_H
+#pragma once
 
 #include "src/bash/exception/bash_exception.h"
 
@@ -26,5 +25,3 @@ char const* CantOpenSocketException::what() const throw() {
 }
 
 }
-
-#endif /* CANT_OPEN_SOCKET_H */

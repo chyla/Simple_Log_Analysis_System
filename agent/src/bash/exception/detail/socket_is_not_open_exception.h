@@ -1,5 +1,4 @@
-#ifndef SOCKET_IS_NOT_OPEN_H
-#define SOCKET_IS_NOT_OPEN_H
+#pragma once
 
 #include "src/bash/exception/bash_exception.h"
 
@@ -26,5 +25,3 @@ char const* SocketIsNotOpenException::what() const throw () {
 }
 
 }
-
-#endif /* SOCKET_IS_NOT_OPEN_H */

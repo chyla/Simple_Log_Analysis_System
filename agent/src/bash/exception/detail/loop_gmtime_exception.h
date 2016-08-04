@@ -1,5 +1,4 @@
-#ifndef LOOP_GMTIME_EXCEPTION_H
-#define LOOP_GMTIME_EXCEPTION_H
+#pragma once
 
 #include "src/bash/exception/bash_exception.h"
 
@@ -26,5 +25,3 @@ char const* LoopGMTimeException::what() const throw () {
 }
 
 }
-
-#endif /* LOOP_GMTIME_EXCEPTION_H */

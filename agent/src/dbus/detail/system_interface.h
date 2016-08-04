@@ -1,5 +1,4 @@
-#ifndef PATLMS_DBUS_DETAIL_SYSTEM_INTERFACE_H
-#define PATLMS_DBUS_DETAIL_SYSTEM_INTERFACE_H
+#pragma once
 
 #include <memory>
 
@@ -20,5 +19,3 @@ typedef std::shared_ptr<SystemInterface> SystemInterfacePtr;
 }
 
 }
-
-#endif /* PATLMS_DBUS_DETAIL_SYSTEM_INTERFACE_H */
