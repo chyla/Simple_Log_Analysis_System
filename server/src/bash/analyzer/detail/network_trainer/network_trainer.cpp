@@ -185,7 +185,7 @@ void NetworkTrainer::CreateNetworkConfiguration(const ::bash::database::type::An
 
   constexpr::database::type::RowsCount MAX_ROWS_IN_MEMORY = 100;
   constexpr unsigned int number_of_inputs = 100;
-  constexpr unsigned int number_of_layers = 3;
+  constexpr unsigned int number_of_layers = 30;
   constexpr unsigned int number_of_hidden_neurons = 3;
   const unsigned int number_of_outputs = users.size();
   constexpr float desired_error = 0.001f;
