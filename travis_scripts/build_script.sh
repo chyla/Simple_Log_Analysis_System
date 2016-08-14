@@ -19,7 +19,7 @@ export CPPFLAGS="$CPPFLAGS -I${GTEST_INSTALL_DIR}/include -I${GMOCK_INSTALL_DIR}
 # build libslas
 cd libslas
 ./autogen.sh
-./configure --prefix=${PATLMS_INSTALL_DIR}
+./configure --prefix=${SLAS_INSTALL_DIR}
 make -j 3
 make install
 make -j 3 check
