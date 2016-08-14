@@ -15,7 +15,7 @@ m4_include([m4/ax_boost_log_setup.m4])
 m4_include([m4/libcurl.m4])
 
 AC_PREREQ([2.69])
-AC_INIT(slas,
+AC_INIT(slas-server,
 	m4_esyscmd_s(git describe --dirty --always --tags || ( echo "Not a git repository, can't check application version. You can ignore that error." 1>&2 && echo "unknown-version" )),
 	adam@chyla.org)
 AM_INIT_AUTOMAKE
