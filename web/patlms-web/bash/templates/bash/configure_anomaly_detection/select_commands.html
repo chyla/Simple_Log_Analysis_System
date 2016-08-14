@@ -40,7 +40,7 @@
                 <tbody>
                     {% for c in all_commands_statistics %}
                     <tr {% cycle '' 'class="custab-odd"' %}>
-                        <td> {{ c.command_name }} </td>
+                        <td> {{ c.command_name|truncatechars:55  }} </td>
                         <td> {{ c.summary_count }} </td>
                         <td>
                             <input id="table_check_button_{{ c.command_name_id }}" type="checkbox" name="checks" value="{{ c.command_name_id }}"
