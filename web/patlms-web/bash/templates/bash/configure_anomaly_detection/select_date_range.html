@@ -75,7 +75,7 @@
                 <tbody>
                     {% for c in commands_statistics %}
                     <tr {% cycle '' 'class="custab-odd"' %}>
-                        <td> {{ c.command_name }} </td>
+                        <td> {{ c.command_name|truncatechars:55 }} </td>
                         <td> {{ c.summary_count }} </td>
                     </tr>
                     {% endfor %}
