@@ -8,7 +8,7 @@ dbus_port=1032
 dbus_family=ipv4
 
 # SLAS specific options
-pidfile=%localstatedir%/run/%package%/patlms-agent.pid
+pidfile=%localstatedir%/run/%package%/agent.pid
 apache_socket_path=%localstatedir%/run/%package%/apache.socket
 bash_socket_path=%localstatedir%/run/%package%/bash.socket
 logfile=%localstatedir%/log/%package%/agent.log
