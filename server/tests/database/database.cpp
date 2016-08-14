@@ -1,9 +1,9 @@
 #include <memory>
 #include <utility>
 
-#include <patlms/type/timestamp.h>
-#include <patlms/type/bash_log_entry.h>
-#include <patlms/type/apache_log_entry.h>
+#include <slas/type/timestamp.h>
+#include <slas/type/bash_log_entry.h>
+#include <slas/type/apache_log_entry.h>
 
 #include "src/database/database.h"
 #include "src/database/exception/detail/cant_open_database_exception.h"

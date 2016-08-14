@@ -1,7 +1,7 @@
 #pragma once
 
 #include <gmock/gmock.h>
-#include <patlms/network/detail/network_interface.h>
+#include <slas/network/detail/network_interface.h>
 
 namespace mock
 {
