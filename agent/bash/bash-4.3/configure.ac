@@ -143,7 +143,7 @@ else
 	MALLOC_LIB=
 	MALLOC_LIBRARY=
 	MALLOC_LDFLAGS=
-	MALLOC_DEP=	
+	MALLOC_DEP=
 fi
 
 if test "$opt_purify" = yes; then
@@ -509,7 +509,7 @@ if test "$opt_static_link" = yes; then
 	prefer_shared=no
 	# if we're using gcc, add `-static' to LDFLAGS, except on Solaris >= 2
 	if test -n "$GCC" || test "$ac_cv_prog_gcc" = "yes"; then
-		STATIC_LD="-static" 
+		STATIC_LD="-static"
 		case "$host_os" in
 		solaris2*)	;;
 		*)		LDFLAGS="$LDFLAGS -static" ;;	# XXX experimental
@@ -562,7 +562,7 @@ then
 
 	case "$ac_cv_rl_version" in
 	5*|6*|7*|8*|9*)	;;
-	*)	opt_with_installed_readline=no 
+	*)	opt_with_installed_readline=no
 		AC_MSG_WARN([installed readline library is too old to be linked with bash])
 		AC_MSG_WARN([using private bash version])
 		;;
@@ -686,17 +686,17 @@ AX_BOOST_LOG_SETUP
 
 PKG_CHECK_MODULES([DBUS], dbus-1 >= 1.6.18)
 
-AC_MSG_CHECKING([Checking for PATLMS library])
 AC_LANG_SAVE
 AC_LANG_CPLUSPLUS
+AC_MSG_CHECKING([for libslas])
 save_LIBS=$LIBS
 save_CPPFLAGS=$CPPFLAGS
-LIBPATLMS_LIBS="-lpatlms $DBUS_LIBS $BOOST_LOG_LIB"
-LIBPATLMS_CPPFLAGS="$DBUS_CFLAGS $BOOST_CPPFLAGS"
-LIBS="$LIBS $LIBPATLMS_LIBS"
-CPPFLAGS="$CPPFLAGS $LIBPATLMS_CPPFLAGS"
+LIBSLAS_LIBS="-lslas $DBUS_LIBS $BOOST_LOG_LIB"
+LIBSLAS_CPPFLAGS="$DBUS_CFLAGS $BOOST_CPPFLAGS"
+LIBS="$LIBS $LIBSLAS_LIBS"
+CPPFLAGS="$CPPFLAGS $LIBSLAS_CPPFLAGS"
 AC_LINK_IFELSE([AC_LANG_SOURCE([
-                    #include <patlms/dbus/bus.h>
+                    #include <slas/dbus/bus.h>
                     int main(int argc, char **argv) {
                         dbus::Bus::Options opt("127.0.0.1", 1234, "ipv4");
                         dbus::Bus bus(opt);
@@ -704,15 +704,15 @@ AC_LINK_IFELSE([AC_LANG_SOURCE([
                     }
                 ])
                ],
-               [AC_DEFINE([HAVE_LIBPATLMS], , [define if the PATLMS library is available])
-                AC_SUBST(LIBPATLMS_LIBS)
-                AM_CONDITIONAL([HAVE_LIBPATLMS], [true])
-                ax_patlms_library="yes"
+               [AC_DEFINE([HAVE_LIBSLAS], , [define if the libslas is available])
+                AC_SUBST(LIBSLAS_LIBS)
+                AM_CONDITIONAL([HAVE_LIBSLAS], [true])
+                ax_slas_library="yes"
                 AC_MSG_RESULT(yes)
                ],
                [
-                AM_CONDITIONAL([HAVE_LIBPATLMS], [false])
-                ax_patlms_library="no"
+                AM_CONDITIONAL([HAVE_LIBSLAS], [false])
+                ax_slas_library="no"
                 AC_MSG_RESULT(no)
                ]
               )
@@ -720,8 +720,8 @@ LIBS=$save_LIBS
 CPPFLAGS=$save_CPPFLAGS
 AC_LANG_RESTORE
 
-if test "x$ax_patlms_library" != "xyes"; then
-  AC_MSG_ERROR([cannot find the PATLMS library])
+if test "x$ax_slas_library" != "xyes"; then
+  AC_MSG_ERROR([cannot find the SLAS library])
 fi
 
 AC_SUBST(READLINE_LIB)
