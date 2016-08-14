@@ -55,7 +55,7 @@ main(int argc, char *argv[]) {
                                                               options.GetDbusPort(),
                                                               options.GetDbusFamily()));
     bus->Connect();
-    bus->RequestConnectionName("org.chyla.patlms." + options.GetAgentName());
+    bus->RequestConnectionName("org.chyla.slas." + options.GetAgentName());
 
     dbus_thread = dbus::DBusThread::Create(bus);
 

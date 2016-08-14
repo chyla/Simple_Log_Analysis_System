@@ -20,7 +20,7 @@ Bash::~Bash() {
 }
 
 const char* Bash::GetPath() {
-  return "/org/chyla/patlms/bash";
+  return "/org/chyla/slas/bash";
 }
 
 const char* Bash::GetXmlInterface() {
@@ -33,7 +33,7 @@ const char* Bash::GetXmlInterface() {
       "      <arg name=\"data\" direction=\"out\" type=\"s\"/>\n"
       "    </method>\n"
       "  </interface>\n"
-      "  <interface name=\"org.chyla.patlms.bash\">\n"
+      "  <interface name=\"org.chyla.slas.bash\">\n"
       "    <method name=\"AddLogEntry\">\n"
       "      <arg direction=\"in\" type=\"s\"/>\n"
       "      <arg direction=\"in\" type=\"i\"/>\n"
@@ -55,8 +55,8 @@ const char* Bash::GetXmlInterface() {
 DBusHandlerResult Bash::OwnMessageHandler(DBusConnection *connection, DBusMessage *message) {
   BOOST_LOG_TRIVIAL(debug) << "objects::Bash::OwnMessageHandler: Function call";
 
-  if (dbus_message_is_method_call(message, "org.chyla.patlms.bash", "AddLogEntry")) {
-    BOOST_LOG_TRIVIAL(debug) << "objects:Bash:OwnMessageHandler: Received method call org.chyla.patlms.bash.AddLogEntry";
+  if (dbus_message_is_method_call(message, "org.chyla.slas.bash", "AddLogEntry")) {
+    BOOST_LOG_TRIVIAL(debug) << "objects:Bash:OwnMessageHandler: Received method call org.chyla.slas.bash.AddLogEntry";
 
     const char* agent_name = nullptr;
     int hour, minute, second, day, month, year;

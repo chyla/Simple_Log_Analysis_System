@@ -16,9 +16,9 @@ bool ApacheProxy::AddLogEntry(const type::ApacheLogEntry &log_entry) {
   BOOST_LOG_TRIVIAL(debug) << "apache:detail:ApacheProxy:AddLogEntry: Function call";
 
   DBusMessage *message;
-  message = CreateMethodCall("org.chyla.patlms.server",
-                             "/org/chyla/patlms/apache",
-                             "org.chyla.patlms.apache",
+  message = CreateMethodCall("org.chyla.slas.server",
+                             "/org/chyla/slas/apache",
+                             "org.chyla.slas.apache",
                              "AddLogEntry");
 
   DBusMessageIter args;
@@ -37,8 +37,8 @@ bool ApacheProxy::AddLogEntry(const type::ApacheLogEntry &log_entry) {
   AppendArgument(&args, log_entry.bytes);
   AppendArgument(&args, log_entry.user_agent.c_str());
 
-  
-  
+
+
   DBusPendingCall *reply_handle;
   bus_->SendMessage(message, &reply_handle);
 

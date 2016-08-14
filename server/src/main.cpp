@@ -113,7 +113,7 @@ main(int argc, char *argv[]) {
   }
 
   try {
-    BOOST_LOG_TRIVIAL(info) << "Server";
+    BOOST_LOG_TRIVIAL(info) << "SLAS Server";
 #ifdef HAVE_CONFIG_H
     BOOST_LOG_TRIVIAL(info) << "Version: " << VERSION;
 #endif
@@ -145,7 +145,7 @@ main(int argc, char *argv[]) {
                                                          options.GetDbusPort(),
                                                          options.GetDbusFamily()));
     bus->Connect();
-    bus->RequestConnectionName("org.chyla.patlms.server");
+    bus->RequestConnectionName("org.chyla.slas.server");
 
     auto bash_database_functions = ::bash::database::DatabaseFunctions::Create(sqlite_wrapper,
                                                                                general_database_functions);

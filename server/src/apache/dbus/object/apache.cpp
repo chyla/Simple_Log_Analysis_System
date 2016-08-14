@@ -23,7 +23,7 @@ Apache::~Apache() {
 }
 
 const char* Apache::GetPath() {
-  return "/org/chyla/patlms/apache";
+  return "/org/chyla/slas/apache";
 }
 
 const char* Apache::GetXmlInterface() {
@@ -36,7 +36,7 @@ const char* Apache::GetXmlInterface() {
       "      <arg name=\"data\" direction=\"out\" type=\"s\"/>\n"
       "    </method>\n"
       "  </interface>\n"
-      "  <interface name=\"org.chyla.patlms.apache\">\n"
+      "  <interface name=\"org.chyla.slas.apache\">\n"
       "    <method name=\"AddLogEntry\">\n"
       "      <arg direction=\"in\" type=\"s\"/>\n"
       "      <arg direction=\"in\" type=\"s\"/>\n"
@@ -62,8 +62,8 @@ const char* Apache::GetXmlInterface() {
 DBusHandlerResult Apache::OwnMessageHandler(DBusConnection *connection, DBusMessage *message) {
   BOOST_LOG_TRIVIAL(debug) << "objects::Apache::OwnMessageHandler: Function call";
 
-  if (dbus_message_is_method_call(message, "org.chyla.patlms.apache", "AddLogEntry")) {
-    BOOST_LOG_TRIVIAL(debug) << "objects:Apache:OwnMessageHandler: Received method call org.chyla.patlms.apache.AddLogEntry";
+  if (dbus_message_is_method_call(message, "org.chyla.slas.apache", "AddLogEntry")) {
+    BOOST_LOG_TRIVIAL(debug) << "objects:Apache:OwnMessageHandler: Received method call org.chyla.slas.apache.AddLogEntry";
 
     const char *agent_name = nullptr;
     const char *virtualhost = nullptr;

@@ -21,9 +21,9 @@ bool BashProxy::AddLogEntry(const type::BashLogEntry &log_entry) {
     << "command=" << log_entry.command;
 
   DBusMessage *message;
-  message = CreateMethodCall("org.chyla.patlms.server",
-                             "/org/chyla/patlms/bash",
-                             "org.chyla.patlms.bash",
+  message = CreateMethodCall("org.chyla.slas.server",
+                             "/org/chyla/slas/bash",
+                             "org.chyla.slas.bash",
                              "AddLogEntry");
 
   DBusMessageIter args;

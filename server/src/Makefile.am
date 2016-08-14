@@ -4,8 +4,8 @@ AM_CPPFLAGS		= $(PTHREAD_CFLAGS) @BOOST_CPPFLAGS@ -DSYSCONFFILE="\"$(appconffile
 
 AM_LDFLAGS		= @BOOST_LDFLAGS@ $(DBUS_LIBS)
 
-bin_PROGRAMS		= patlms-server
-patlms_server_SOURCES	= main.cpp \
+bin_PROGRAMS		= slas-server
+slas_server_SOURCES	= main.cpp \
 				analyzer/analyzer.cpp \
 				apache/database/database_functions.cpp \
 				apache/analyzer/apache_analyzer_object.cpp \
@@ -60,7 +60,7 @@ patlms_server_SOURCES	= main.cpp \
 				web/command_executor.cpp \
 				apache/web/command_executor_object.cpp
 
-patlms_server_LDADD	= \
+slas_server_LDADD	= \
 				@LIBSLAS_LIBS@ \
 				@BOOST_PROGRAM_OPTIONS_LIB@ \
 				@BOOST_LOG_LIB@ \

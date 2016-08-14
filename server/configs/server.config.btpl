@@ -38,7 +38,7 @@ mail_to=<admin@example.com>
 mail_from=<slas@example.com>
 
 # Files configuration
-pidfile=%localstatedir%/run/%package%/patlms-server.pid
+pidfile=%localstatedir%/run/%package%/server.pid
 logfile=%localstatedir%/log/%package%/server.log
 databasefile=%localstatedir%/lib/%package%/server.db
 neural_network_data_directory=%localstatedir%/lib/%package%/
