@@ -1,6 +1,6 @@
 #pragma once
 
-#include <patlms/dbus/detail/bus_interface.h>
+#include <slas/dbus/detail/bus_interface.h>
 #include <memory>
 #include <list>
 #include <mutex>

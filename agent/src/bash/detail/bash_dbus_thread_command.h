@@ -4,7 +4,7 @@
 
 #include <string>
 
-#include <patlms/type/bash_log_entry.h>
+#include <slas/type/bash_log_entry.h>
 
 #include "bash_proxy.h"
 

@@ -2,8 +2,8 @@
 
 #include <vector>
 
-#include <patlms/dbus/object.h>
-#include <patlms/type/apache_log_entry.h>
+#include <slas/dbus/object.h>
+#include <slas/type/apache_log_entry.h>
 
 #include "src/database/database.h"
 #include "src/database/detail/general_database_functions_interface.h"

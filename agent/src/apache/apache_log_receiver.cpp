@@ -7,9 +7,9 @@
 #include <string>
 #include <boost/log/trivial.hpp>
 
-#include <patlms/network/network.h>
-#include <patlms/network/exception/detail/recv_exception.h>
-#include <patlms/network/exception/detail/timeout_exception.h>
+#include <slas/network/network.h>
+#include <slas/network/exception/detail/recv_exception.h>
+#include <slas/network/exception/detail/timeout_exception.h>
 
 #include "detail/apache_dbus_thread_command.h"
 #include "detail/apache_proxy.h"

@@ -1,8 +1,8 @@
 #pragma once
 
-#include <patlms/type/apache_log_entry.h>
-#include <patlms/dbus/proxy_object.h>
-#include <patlms/dbus/detail/bus_interface.h>
+#include <slas/type/apache_log_entry.h>
+#include <slas/dbus/proxy_object.h>
+#include <slas/dbus/detail/bus_interface.h>
 #include <memory>
 
 namespace apache

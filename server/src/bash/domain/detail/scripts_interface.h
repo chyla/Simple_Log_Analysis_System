@@ -5,8 +5,8 @@
 
 #pragma once
 
-#include <patlms/type/bash_log_entry.h>
-#include <patlms/type/date.h>
+#include <slas/type/bash_log_entry.h>
+#include <slas/type/date.h>
 
 #include "src/bash/domain/type/command_statistic.h"
 #include "src/bash/domain/type/unconfigured_agent.h"

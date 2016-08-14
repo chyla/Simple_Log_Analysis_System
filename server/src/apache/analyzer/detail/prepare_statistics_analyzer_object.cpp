@@ -6,8 +6,8 @@
 #include "prepare_statistics_analyzer_object.h"
 
 #include <boost/log/trivial.hpp>
-#include <patlms/util/distance.h>
-#include <patlms/util/run_partially.h>
+#include <slas/util/distance.h>
+#include <slas/util/run_partially.h>
 
 #include "system.h"
 #include "session_length.h"

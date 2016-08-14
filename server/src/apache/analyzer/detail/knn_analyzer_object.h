@@ -11,7 +11,7 @@
 #include <memory>
 #include <utility>
 
-#include <patlms/type/timestamp.h>
+#include <slas/type/timestamp.h>
 
 #include "prepare_statistics/nearest_neighbours_table.h"
 #include "src/database/detail/general_database_functions_interface.h"

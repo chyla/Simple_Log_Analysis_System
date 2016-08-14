@@ -1,7 +1,7 @@
 #pragma once
 
-#include <patlms/network/network.h>
-#include <patlms/dbus/detail/bus_interface.h>
+#include <slas/network/network.h>
+#include <slas/dbus/detail/bus_interface.h>
 
 #include "detail/bash_log_receiver_interface.h"
 #include "src/dbus/detail/dbus_thread_interface.h"

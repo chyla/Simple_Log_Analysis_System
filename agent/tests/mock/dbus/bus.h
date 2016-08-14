@@ -2,8 +2,8 @@
 
 #include <gmock/gmock.h>
 
-#include <patlms/dbus/detail/bus_interface.h>
-#include <patlms/dbus/object.h>
+#include <slas/dbus/detail/bus_interface.h>
+#include <slas/dbus/object.h>
 
 namespace mock
 {

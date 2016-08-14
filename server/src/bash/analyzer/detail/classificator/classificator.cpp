@@ -5,7 +5,7 @@
 
 #include "classificator.h"
 
-#include <patlms/util/run_partially.h>
+#include <slas/util/run_partially.h>
 
 #include <algorithm>
 #include <vector>

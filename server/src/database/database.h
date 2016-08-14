@@ -4,11 +4,11 @@
 #include <memory>
 #include <vector>
 
-#include <patlms/type/time.h>
-#include <patlms/type/date.h>
-#include <patlms/type/timestamp.h>
-#include <patlms/type/apache_log_entry.h>
-#include <patlms/type/bash_log_entry.h>
+#include <slas/type/time.h>
+#include <slas/type/date.h>
+#include <slas/type/timestamp.h>
+#include <slas/type/apache_log_entry.h>
+#include <slas/type/bash_log_entry.h>
 
 #include "type/row_id.h"
 #include "type/agent_name.h"

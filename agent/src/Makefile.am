@@ -20,7 +20,7 @@ patlms_agent_SOURCES	= main.cpp \
 				apache/detail/apache_dbus_thread_command.cpp
 
 patlms_agent_LDADD	= \
-				@LIBPATLMS_LIBS@ \
+				@LIBSLAS_LIBS@ \
 				@BOOST_PROGRAM_OPTIONS_LIB@ \
 				@BOOST_LOG_LIB@ \
 				@BOOST_LOG_SETUP_LIB@ \

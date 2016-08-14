@@ -1,7 +1,7 @@
 #include "command_receiver.h"
 
 #include <boost/log/trivial.hpp>
-#include <patlms/network/network.h>
+#include <slas/network/network.h>
 
 #include "exception/detail/connection_is_already_open_exception.h"
 #include "exception/detail/port_is_closed_exception.h"

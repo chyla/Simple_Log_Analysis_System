@@ -3,8 +3,8 @@
 #include <vector>
 #include <memory>
 
-#include <patlms/dbus/object.h>
-#include <patlms/type/bash_log_entry.h>
+#include <slas/dbus/object.h>
+#include <slas/type/bash_log_entry.h>
 
 #include "src/bash/domain/detail/scripts_interface.h"
 

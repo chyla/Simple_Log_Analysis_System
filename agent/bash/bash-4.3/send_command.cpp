@@ -6,8 +6,8 @@
 #include "send_command.h"
 
 #include <boost/log/trivial.hpp>
-#include <patlms/util/configure_logger.h>
-#include <patlms/network/network.h>
+#include <slas/util/configure_logger.h>
+#include <slas/network/network.h>
 
 #include "slas_parser.hpp"
 

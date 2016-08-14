@@ -14,7 +14,7 @@
 #include "detail/network_trainer/network_trainer_interface.h"
 #include "detail/classificator/classificator_interface.h"
 
-#include <patlms/type/date.h>
+#include <slas/type/date.h>
 
 #include <memory>
 

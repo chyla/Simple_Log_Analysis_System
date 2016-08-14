@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include <patlms/type/bash_log_entry.h>
+#include <slas/type/bash_log_entry.h>
 
 #include "src/database/type/row_id.h"
 #include "src/bash/database/type/uid.h"

@@ -8,7 +8,7 @@
 #include <boost/log/trivial.hpp>
 #include <cmath>
 #include <limits>
-#include <patlms/util/run_partially.h>
+#include <slas/util/run_partially.h>
 
 #include "system.h"
 

@@ -3,9 +3,9 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#include <patlms/type/timestamp.h>
+#include <slas/type/timestamp.h>
 #include <boost/log/trivial.hpp>
-#include <patlms/type/exception/exception.h>
+#include <slas/type/exception/exception.h>
 
 #include "notifier.h"
 

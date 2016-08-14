@@ -5,11 +5,11 @@
 
 #include "program_options/parser.h"
 
-#include <patlms/dbus/bus.h>
-#include <patlms/util/demonize.h>
-#include <patlms/util/configure_logger.h>
-#include <patlms/util/create_pidfile.h>
-#include <patlms/util/remove_file.h>
+#include <slas/dbus/bus.h>
+#include <slas/util/demonize.h>
+#include <slas/util/configure_logger.h>
+#include <slas/util/create_pidfile.h>
+#include <slas/util/remove_file.h>
 
 #include "bash/bash_log_receiver.h"
 #include "apache/apache_log_receiver.h"

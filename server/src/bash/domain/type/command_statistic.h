@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include <patlms/type/date.h>
+#include <slas/type/date.h>
 
 #include "src/database/type/row_id.h"
 #include "src/database/type/rows_count.h"

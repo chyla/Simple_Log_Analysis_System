@@ -7,7 +7,7 @@
 
 #include <boost/log/trivial.hpp>
 
-#include <patlms/util/distance.h>
+#include <slas/util/distance.h>
 #include "detail/session_length.h"
 #include "detail/prepare_statistics_analyzer_object.h"
 #include "detail/knn_analyzer_object.h"

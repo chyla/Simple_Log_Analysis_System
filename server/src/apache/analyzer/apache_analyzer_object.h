@@ -9,7 +9,7 @@
 
 #include <memory>
 
-#include <patlms/type/timestamp.h>
+#include <slas/type/timestamp.h>
 #include "src/database/detail/general_database_functions_interface.h"
 #include "src/apache/database/database_functions.h"
 #include "detail/system.h"

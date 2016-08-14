@@ -2,7 +2,7 @@
 
 #include <memory>
 
-#include <patlms/dbus/detail/bus_interface.h>
+#include <slas/dbus/detail/bus_interface.h>
 
 #include "system_interface.h"
 #include "src/dbus/dbus_thread_command.h"

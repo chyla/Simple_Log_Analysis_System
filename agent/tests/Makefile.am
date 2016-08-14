@@ -31,7 +31,7 @@ tests_LDADD	= $(OBJECT_FILES) \
 			@PTHREAD_LIBS@ \
 			@PTHREAD_CFLAGS@ \
 			$(DBUS_LIBS) \
-			@LIBPATLMS_LIBS@
+			@LIBSLAS_LIBS@
 else
 tests_SOURCES	= main.cpp
 endif

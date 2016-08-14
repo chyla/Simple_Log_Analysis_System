@@ -61,7 +61,7 @@ patlms_server_SOURCES	= main.cpp \
 				apache/web/command_executor_object.cpp
 
 patlms_server_LDADD	= \
-				@LIBPATLMS_LIBS@ \
+				@LIBSLAS_LIBS@ \
 				@BOOST_PROGRAM_OPTIONS_LIB@ \
 				@BOOST_LOG_LIB@ \
 				@BOOST_LOG_SETUP_LIB@ \

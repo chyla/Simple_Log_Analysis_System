@@ -3,9 +3,9 @@
 #include <memory>
 #include <string>
 
-#include <patlms/dbus/proxy_object.h>
-#include <patlms/dbus/detail/bus_interface.h>
-#include <patlms/type/bash_log_entry.h>
+#include <slas/dbus/proxy_object.h>
+#include <slas/dbus/detail/bus_interface.h>
+#include <slas/type/bash_log_entry.h>
 
 namespace bash
 {

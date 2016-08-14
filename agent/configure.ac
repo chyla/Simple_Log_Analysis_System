@@ -137,15 +137,15 @@ AX_BOOST_LOG_SETUP
 
 PKG_CHECK_MODULES([DBUS], dbus-1 >= 1.6.18)
 
-AC_MSG_CHECKING([Checking for PATLMS library])
+AC_MSG_CHECKING([for libslas])
 save_LIBS=$LIBS
 save_CPPFLAGS=$CPPFLAGS
-LIBPATLMS_LIBS="-lpatlms $DBUS_LIBS $BOOST_LOG_LIB"
-LIBPATLMS_CPPFLAGS="$DBUS_CFLAGS $BOOST_CPPFLAGS"
-LIBS="$LIBS $LIBPATLMS_LIBS"
-CPPFLAGS="$CPPFLAGS $LIBPATLMS_CPPFLAGS"
+LIBSLAS_LIBS="-lslas $DBUS_LIBS $BOOST_LOG_LIB"
+LIBSLAS_CPPFLAGS="$DBUS_CFLAGS $BOOST_CPPFLAGS"
+LIBS="$LIBS $LIBSLAS_LIBS"
+CPPFLAGS="$CPPFLAGS $LIBSLAS_CPPFLAGS"
 AC_LINK_IFELSE([AC_LANG_SOURCE([
-                    #include <patlms/dbus/bus.h>
+                    #include <slas/dbus/bus.h>
                     int main(int argc, char **argv) {
                         dbus::Bus::Options opt("127.0.0.1", 1234, "ipv4");
                         dbus::Bus bus(opt);
@@ -153,23 +153,23 @@ AC_LINK_IFELSE([AC_LANG_SOURCE([
                     }
                 ])
                ],
-               [AC_DEFINE([HAVE_LIBPATLMS], , [define if the PATLMS library is available])
-                AC_SUBST(LIBPATLMS_LIBS)
-                AM_CONDITIONAL([HAVE_LIBPATLMS], [true])
-                ax_patlms_library="yes"
+               [AC_DEFINE([HAVE_LIBSLAS], , [define if the libslas is available])
+                AC_SUBST(LIBSLAS_LIBS)
+                AM_CONDITIONAL([HAVE_LIBSLAS], [true])
+                ax_slas_library="yes"
                 AC_MSG_RESULT(yes)
                ],
                [
-                AM_CONDITIONAL([HAVE_LIBPATLMS], [false])
-                ax_patlms_library="no"
+                AM_CONDITIONAL([HAVE_LIBSLAS], [false])
+                ax_slas_library="no"
                 AC_MSG_RESULT(no)
                ]
               )
 LIBS=$save_LIBS
 CPPFLAGS=$save_CPPFLAGS
 
-if test "x$ax_patlms_library" != "xyes"; then
-  AC_MSG_ERROR([cannot find the PATLMS library])
+if test "x$ax_slas_library" != "xyes"; then
+  AC_MSG_ERROR([cannot find the SLAS library])
 fi
 
 # Checks for header files.

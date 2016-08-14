@@ -2,8 +2,8 @@
 
 #include <regex>
 
-#include <patlms/util/path.h>
-#include <patlms/type/exception/detail/wrong_path_exception.h>
+#include <slas/util/path.h>
+#include <slas/type/exception/detail/wrong_path_exception.h>
 
 using type::exception::detail::WrongPathException;
 

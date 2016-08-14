@@ -3,9 +3,9 @@
 
 #include <boost/log/trivial.hpp>
 #include <boost/program_options.hpp>
-#include <patlms/network/network.h>
-#include <patlms/util/configure_logger.h>
-#include <patlms/type/exception/exception.h>
+#include <slas/network/network.h>
+#include <slas/util/configure_logger.h>
+#include <slas/type/exception/exception.h>
 
 #include "program_options/parse_options.h"
 

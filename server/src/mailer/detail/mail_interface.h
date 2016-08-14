@@ -8,8 +8,8 @@
 #include <string>
 #include <memory>
 
-#include <patlms/type/timestamp.h>
-#include <patlms/type/day.h>
+#include <slas/type/timestamp.h>
+#include <slas/type/day.h>
 
 #include "src/mailer/type/time_zone.h"
 #include "src/mailer/type/mail_address.h"

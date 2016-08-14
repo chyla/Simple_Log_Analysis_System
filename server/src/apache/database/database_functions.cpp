@@ -10,7 +10,7 @@
 #include <string>
 #include <utility>
 #include <boost/log/trivial.hpp>
-#include <patlms/type/timestamp.h>
+#include <slas/type/timestamp.h>
 
 #include "src/database/exception/detail/item_not_found_exception.h"
 #include "src/database/exception/detail/cant_execute_sql_statement_exception.h"

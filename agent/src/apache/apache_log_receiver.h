@@ -1,8 +1,8 @@
 #pragma once
 
-#include <patlms/dbus/detail/bus_interface.h>
-#include <patlms/network/detail/network_interface.h>
-#include <patlms/type/timestamp.h>
+#include <slas/dbus/detail/bus_interface.h>
+#include <slas/network/detail/network_interface.h>
+#include <slas/type/timestamp.h>
 
 #include "src/dbus/detail/dbus_thread_interface.h"
 

@@ -7,7 +7,7 @@
 
 #include <memory>
 
-#include <patlms/type/apache_log_entry.h>
+#include <slas/type/apache_log_entry.h>
 
 #include "detail/database_functions_interface.h"
 

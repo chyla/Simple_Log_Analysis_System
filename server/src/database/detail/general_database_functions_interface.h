@@ -7,8 +7,8 @@
 
 #include <memory>
 
-#include <patlms/type/time.h>
-#include <patlms/type/date.h>
+#include <slas/type/time.h>
+#include <slas/type/date.h>
 
 #include "src/database/type/agent_name.h"
 #include "src/database/type/row_id.h"

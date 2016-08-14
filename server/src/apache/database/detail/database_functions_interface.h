@@ -7,8 +7,8 @@
 
 #include <memory>
 
-#include <patlms/type/date.h>
-#include <patlms/type/apache_log_entry.h>
+#include <slas/type/date.h>
+#include <slas/type/apache_log_entry.h>
 
 #include "src/apache/type/apache_session_entry.h"
 #include "src/database/type/rows_count.h"

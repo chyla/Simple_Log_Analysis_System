@@ -10,7 +10,7 @@
 #include <utility>
 #include <map>
 
-#include <patlms/type/apache_log_entry.h>
+#include <slas/type/apache_log_entry.h>
 
 #include "prepare_statistics_analyzer_object_interface.h"
 #include "src/apache/database/detail/database_functions_interface.h"

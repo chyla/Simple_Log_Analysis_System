@@ -7,7 +7,7 @@
 
 #include <memory>
 
-#include <patlms/type/timestamp.h>
+#include <slas/type/timestamp.h>
 
 #include "src/apache/analyzer/type/knn_analyzer_summary.h"
 

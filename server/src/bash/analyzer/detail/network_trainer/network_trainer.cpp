@@ -5,7 +5,7 @@
 
 #include "network_trainer.h"
 
-#include <patlms/util/run_partially.h>
+#include <slas/util/run_partially.h>
 
 #include <algorithm>
 #include <vector>

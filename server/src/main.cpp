@@ -5,12 +5,12 @@
 #include <iostream>
 #include <thread>
 
-#include <patlms/dbus/bus.h>
-#include <patlms/type/exception/exception.h>
-#include <patlms/util/demonize.h>
-#include <patlms/util/configure_logger.h>
-#include <patlms/util/create_pidfile.h>
-#include <patlms/util/remove_file.h>
+#include <slas/dbus/bus.h>
+#include <slas/type/exception/exception.h>
+#include <slas/util/demonize.h>
+#include <slas/util/configure_logger.h>
+#include <slas/util/create_pidfile.h>
+#include <slas/util/remove_file.h>
 
 #include "program_options/parser.h"
 #include "database/database.h"

@@ -2,7 +2,7 @@
 
 #include <vector>
 
-#include <patlms/type/time.h>
+#include <slas/type/time.h>
 
 #include "src/database/type/row_id.h"
 

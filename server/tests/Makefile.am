@@ -48,7 +48,7 @@ tests_LDADD	= $(OBJECT_FILES) \
 			@PTHREAD_CFLAGS@ \
 			$(DBUS_LIBS) \
 			$(SQLite3_LIBS) \
-			@LIBPATLMS_LIBS@ \
+			@LIBSLAS_LIBS@ \
 			@LIBCURL@ \
 			$(FANN_LIBS)
 else

@@ -6,8 +6,8 @@
 
 #include <sys/un.h>
 
-#include <patlms/network/detail/system.h>
-#include <patlms/type/bash_log_entry.h>
+#include <slas/network/detail/system.h>
+#include <slas/type/bash_log_entry.h>
 
 #include "src/bash/exception/detail/cant_open_socket_exception.h"
 #include "src/bash/exception/detail/loop_poll_exception.h"

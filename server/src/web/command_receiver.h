@@ -2,7 +2,7 @@
 
 #include <memory>
 
-#include <patlms/network/detail/network_interface.h>
+#include <slas/network/detail/network_interface.h>
 
 #include "detail/command_receiver_interface.h"
 #include "detail/command_executor_interface.h"
