@@ -7,7 +7,7 @@ dbus_address=127.0.0.1
 dbus_port=1032
 dbus_family=ipv4
 
-# PAT LMS specific options
+# SLAS specific options
 pidfile=%localstatedir%/run/%package%/patlms-agent.pid
 apache_socket_path=%localstatedir%/run/%package%/apache.socket
 bash_socket_path=%localstatedir%/run/%package%/bash.socket

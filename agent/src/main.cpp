@@ -42,7 +42,7 @@ main(int argc, char *argv[]) {
 
     util::ConfigureLogger(options.GetLogfilePath(), options.IsDebug());
 
-    BOOST_LOG_TRIVIAL(info) << "Agent";
+    BOOST_LOG_TRIVIAL(info) << "SLAS Agent";
 #ifdef HAVE_CONFIG_H
     BOOST_LOG_TRIVIAL(info) << "Version: " << VERSION;
 #endif
