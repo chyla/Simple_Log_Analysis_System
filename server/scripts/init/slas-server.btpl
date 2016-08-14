@@ -15,7 +15,7 @@ PATH=/sbin:/bin:/usr/sbin:/usr/bin
 DAEMON="%bindir%/slas-server"
 NAME=slas
 SNAME=slas
-DESC="PAT LMS server service"
+DESC="SLAS server service"
 PIDFILE=`sed -n 's/pidfile=//p' %appconfdir%/server.config`
 
 . /lib/lsb/init-functions

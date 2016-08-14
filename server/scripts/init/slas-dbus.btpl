@@ -3,8 +3,8 @@
 ### BEGIN INIT INFO
 # Provides:       slas-dbus
 # Required-Start: $network $syslog
-# Required-Stop:  
-# Should-Start:   
+# Required-Stop:
+# Should-Start:
 # Default-Start:  2 3 4 5
 # Default-Stop:   0 1 6
 ### END INIT INFO
@@ -15,7 +15,7 @@ PATH=/sbin:/bin:/usr/sbin:/usr/bin
 DAEMON="%appscriptdir%/run_dbus"
 NAME=slas-dbus
 SNAME=slas-dbus
-DESC="PAT LMS D-Bus service"
+DESC="SLAS D-Bus service"
 PIDFILE="%apprundir%/dbus.pid"
 
 . /lib/lsb/init-functions
