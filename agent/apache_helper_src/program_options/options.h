@@ -1,5 +1,4 @@
-#ifndef APACHE_HELPER_PROGRAM_OPTIONS_OPTIONS_H
-#define APACHE_HELPER_PROGRAM_OPTIONS_OPTIONS_H
+#pragma once
 
 #include <string>
 
@@ -28,5 +27,3 @@ const std::string& Options::GetLogFilePath() const {
 }
 
 }
-
-#endif /* OPTIONS_H */
