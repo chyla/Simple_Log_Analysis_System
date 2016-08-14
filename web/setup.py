@@ -3,12 +3,12 @@
 
 from setuptools import setup, find_packages
 
-PACKAGE = "patlms-web"
+PACKAGE = "slas-web"
 
 setup(
     name=PACKAGE,
     version=0.1,
-    description='PAT LMS web server',
+    description='SLAS web server',
     author='Adam Chyła',
     author_email='adam@chyla.org',
     license='GPLv3',
