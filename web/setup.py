@@ -12,7 +12,7 @@ setup(
     author='Adam Chyła',
     author_email='adam@chyla.org',
     license='GPLv3',
-    url='https://github.com/chyla/pat-lms',
+    url='https://github.com/chyla/slas',
     packages=find_packages(exclude=['tests.*', 'tests', 'test.*', 'test*']),
 
     install_requires=['Django==1.8.13',
