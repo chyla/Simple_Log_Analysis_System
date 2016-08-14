@@ -16,8 +16,8 @@ export LDFLAGS="$LDFLAGS -L${GTEST_INSTALL_DIR}/lib -L${GMOCK_INSTALL_DIR}/lib"
 export CPPFLAGS="$CPPFLAGS -I${GTEST_INSTALL_DIR}/include -I${GMOCK_INSTALL_DIR}/include"
 
 
-# build libpatlms
-cd libpatlms
+# build libslas
+cd libslas
 ./autogen.sh
 ./configure --prefix=${PATLMS_INSTALL_DIR}
 make -j 3
