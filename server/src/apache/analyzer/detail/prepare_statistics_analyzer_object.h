@@ -3,8 +3,7 @@
  * All rights reserved. Distributed under the terms of the MIT License.
  */
 
-#ifndef SRC_APACHE_ANALYZER_DETAIL_PREPARE_STATISTICS_ANALYZER_OBJECT_H
-#define SRC_APACHE_ANALYZER_DETAIL_PREPARE_STATISTICS_ANALYZER_OBJECT_H
+#pragma once
 
 #include <memory>
 #include <utility>
@@ -73,5 +72,3 @@ class PrepareStatisticsAnalyzerObject : public PrepareStatisticsAnalyzerObjectIn
 }
 
 }
-
-#endif /* SRC_APACHE_ANALYZER_DETAIL_PREPARE_STATISTICS_ANALYZER_OBJECT_H */
