@@ -7,6 +7,8 @@
 #include "src/bash/database/detail/entity/anomaly_detection_configuration.h"
 #include "src/bash/database/detail/entity/system_user.h"
 
+#include "exception/detail/wrong_number_of_commands.h"
+
 #include <boost/log/trivial.hpp>
 #include <algorithm>
 #include <cctype>
@@ -356,6 +358,11 @@ void Scripts::CalculateCommandStatistics(::database::type::RowId agent_name_id,
 
 void Scripts::SaveSelectedCommands(::database::type::RowId configuration_id, ::database::type::RowIds command_names_ids) {
   BOOST_LOG_TRIVIAL(debug) << "bash::domain::Scripts::SaveSelectedCommands: Function call";
+
+  if (command_names_ids.size() > 100) {
+    BOOST_LOG_TRIVIAL(warning) << "bash::domain::Scripts::SaveSelectedCommands: Can't set more than 100 commands";
+    throw exception::detail::WrongNumberOfCommands();
+  }
 
   database_functions_->RemoveAllCommandsFromConfiguration(configuration_id);
 
