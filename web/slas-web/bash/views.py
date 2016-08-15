@@ -100,6 +100,7 @@ def configure_anomaly_detection_select_date_range(request):
     try:
         configurations = util.bash_get_anomaly_detection_configurations()
         commands_statistics = util.bash_get_commands_statistics(selected_agent_id, begin_date, end_date)
+        print "commands ", commands_statistics
     except Exception as e:
         exception = str(e)
 

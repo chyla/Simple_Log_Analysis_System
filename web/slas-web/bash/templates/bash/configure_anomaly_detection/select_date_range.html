@@ -63,7 +63,7 @@
 
 <div class="col-sm-12">
     <div class="next-page-section">
-      {% if all_commands_statistics %}
+      {% if commands_statistics %}
             <table class="table table custab sortable">
                 <thead>
                     <tr>
@@ -74,7 +74,7 @@
 
                 <tbody>
                     <!-- &#8203; is a bug workaround for rows that contains only digits in sorttable -->
-                    {% for c in all_commands_statistics %}
+                    {% for c in commands_statistics %}
                     <tr {% cycle '' 'class="custab-odd"' %}>
                         <td>&#8203;{{ c.command_name|truncatechars:55  }} </td>
                         <td> {{ c.summary_count }} </td>
