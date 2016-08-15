@@ -8,6 +8,8 @@
 #include "src/bash/database/detail/entity/system_user.h"
 
 #include <boost/log/trivial.hpp>
+#include <algorithm>
+#include <cctype>
 
 namespace bash
 {
@@ -23,13 +25,26 @@ ScriptsPtr Scripts::Create(::bash::database::detail::DatabaseFunctionsInterfaceP
 void Scripts::AddLog(const ::type::BashLogEntry &log_entry) {
   BOOST_LOG_TRIVIAL(debug) << "bash::domain::Scripts::AddLog: Function call";
 
-  general_database_functions_->AddDate(log_entry.utc_time.GetDate());
-  general_database_functions_->AddTime(log_entry.utc_time.GetTime());
-  general_database_functions_->AddAgentName(log_entry.agent_name);
-  database_functions_->AddSystemUser(log_entry.user_id);
-  database_functions_->AddCommand(log_entry.command);
+  std::string command = log_entry.command;
 
-  database_functions_->AddLog(log_entry);
+  auto is_white_char = [](const char c) {
+    return bool(isspace(c));
+  };
+  command.erase(std::remove_if(command.begin(), command.end(), is_white_char),
+                command.end());
+
+  if (command.empty()) {
+    BOOST_LOG_TRIVIAL(warning) << "bash::domain::Scripts::AddLog: Command field is empty, not added!";
+  }
+  else {
+    general_database_functions_->AddDate(log_entry.utc_time.GetDate());
+    general_database_functions_->AddTime(log_entry.utc_time.GetTime());
+    general_database_functions_->AddAgentName(log_entry.agent_name);
+    database_functions_->AddSystemUser(log_entry.user_id);
+    database_functions_->AddCommand(command);
+
+    database_functions_->AddLog(log_entry);
+  }
 }
 
 void Scripts::CreateDailySystemStatistics() {
