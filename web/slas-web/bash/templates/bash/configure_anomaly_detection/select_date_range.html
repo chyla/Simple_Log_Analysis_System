@@ -71,11 +71,12 @@
                         <th><button class="custab-head-button">Summary count</button></th>
                     </tr>
                 </thead>
-    
+
                 <tbody>
-                    {% for c in commands_statistics %}
+                    <!-- &#8203; is a bug workaround for rows that contains only digits in sorttable -->
+                    {% for c in all_commands_statistics %}
                     <tr {% cycle '' 'class="custab-odd"' %}>
-                        <td> {{ c.command_name|truncatechars:55 }} </td>
+                        <td>&#8203;{{ c.command_name|truncatechars:55  }} </td>
                         <td> {{ c.summary_count }} </td>
                     </tr>
                     {% endfor %}
