@@ -134,7 +134,6 @@ def configure_anomaly_detection_select_commands(request):
                    })
 
 def configure_anomaly_detection_select_commands_save_selected(request):
-    exception = None
     configuration_id = request.POST.get('configuration_id', None)
     select_default_commands = request.POST.get('select_default_commands', 'false')
 
@@ -147,6 +146,11 @@ def configure_anomaly_detection_select_commands_save_selected(request):
             util.bash_save_selected_commands(configuration_id, selected_commands_ids)
     except Exception as e:
         exception = str(e)
+
+        return render(request,
+                      'bash/status.html',
+                      {'exception' : exception,
+                       });
 
     return redirect('bash:status', permanent=False)
 
