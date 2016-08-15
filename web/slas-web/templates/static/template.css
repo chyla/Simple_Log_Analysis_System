@@ -286,3 +286,43 @@ input.slas-form-input {
 .help-button {
   padding: 0.3em;
 }
+
+/* scrollable */
+head tr {
+  display: block;
+}
+
+.scrollable {
+}
+
+.scrollable thead {
+  display: block;
+  width: 100%;
+}
+
+.scrollable thead tr {
+  width: 100%;
+}
+
+.scrollable thead tr th {
+  width: 100%;
+  min-width: 175px;
+  padding-right: 10pt;
+}
+
+.scrollable tbody {
+  display: block;
+  height: 45vh;
+  overflow-x: auto;
+  overflow-y: scroll;
+}
+
+.scrollable tbody tr {
+  width: 100%;
+}
+
+.scrollable tbody tr td {
+  width: 100%;
+  min-width: 175px;
+  padding-right: 10pt;
+}
