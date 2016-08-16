@@ -17,5 +17,6 @@ urlpatterns = [
     url(r'^configure_anomaly_detection/correct_sessions_marks$', views.configure_anomaly_detection_correct_sessions_marks, name='configure_anomaly_detection_correct_sessions_marks'),
     url(r'^configure_anomaly_detection/correct_sessions_marks_save', views.configure_anomaly_detection_correct_sessions_marks_save, name='configure_anomaly_detection_correct_sessions_marks_save'),
     url(r'^review_detection_results/show_results', views.review_detection_results_show_results, name='review_detection_results_show_results'),
+    url(r'^review_detection_results/show_daily_user_statistic', views.show_daily_user_statistic, name='review_detection_results_show_daily_user_statistic'),
 
 ]

@@ -41,13 +41,13 @@ void DatabaseFunctions::CreateTables() {
   raw_database_functions_->CreateTables();
 }
 
-void DatabaseFunctions::AddSystemUser(type::UID uid) {
+void DatabaseFunctions::AddSystemUser(::bash::database::type::UID uid) {
   BOOST_LOG_TRIVIAL(debug) << "bash::database::DatabaseFunctions::AddSystemUser: Function call";
 
   raw_database_functions_->AddSystemUser({uid});
 }
 
-::database::type::RowId DatabaseFunctions::GetSystemUserId(type::UID uid) {
+::database::type::RowId DatabaseFunctions::GetSystemUserId(::bash::database::type::UID uid) {
   BOOST_LOG_TRIVIAL(debug) << "database::DatabaseFunctions::GetSystemUserId: Function call";
 
   return raw_database_functions_->GetSystemUserId({uid});
@@ -185,6 +185,12 @@ void DatabaseFunctions::AddDailyUserStatistic(const ::bash::database::detail::en
   return raw_database_functions_->GetDailyUserStatisticId(agent_name_id, user_id, date_id);
 }
 
+::bash::database::detail::entity::DailyUserStatistic DatabaseFunctions::GetDailyUserStatisticById(const ::database::type::RowId &id) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::DatabaseFunctions::GetDailyUserStatisticById: Function call";
+
+  return raw_database_functions_->GetDailyUserStatisticById(id);
+}
+
 void DatabaseFunctions::SetDailyUserStatisticsClassification(const ::database::type::RowIds &ids, ::database::type::Classification classification) {
   BOOST_LOG_TRIVIAL(debug) << "bash::database::DatabaseFunctions::SetDailyUserStatisticsClassification: Function call";
 
@@ -197,13 +203,13 @@ void DatabaseFunctions::AddDailyUserCommandStatistic(const ::bash::database::det
   return raw_database_functions_->AddDailyUserCommandStatistic(ucs);
 }
 
-type::AnomalyDetectionConfigurations DatabaseFunctions::GetAnomalyDetectionConfigurations() {
+::bash::database::type::AnomalyDetectionConfigurations DatabaseFunctions::GetAnomalyDetectionConfigurations() {
   BOOST_LOG_TRIVIAL(debug) << "bash::database::DatabaseFunctions::GetAnomalyDetectionConfigurations: Function call";
 
   auto raw_configs = raw_database_functions_->GetAnomalyDetectionConfigurations();
 
-  type::AnomalyDetectionConfigurations configs;
-  type::AnomalyDetectionConfiguration c;
+  ::bash::database::type::AnomalyDetectionConfigurations configs;
+  ::bash::database::type::AnomalyDetectionConfiguration c;
 
   for (const auto &config : raw_configs) {
     c.id = config.id;
@@ -224,7 +230,7 @@ void DatabaseFunctions::RemoveAnomalyDetectionConfiguration(::database::type::Ro
   raw_database_functions_->RemoveAnomalyDetectionConfiguration(id);
 }
 
-void DatabaseFunctions::AddAnomalyDetectionConfiguration(const type::AnomalyDetectionConfiguration &configuration) {
+void DatabaseFunctions::AddAnomalyDetectionConfiguration(const ::bash::database::type::AnomalyDetectionConfiguration &configuration) {
   BOOST_LOG_TRIVIAL(debug) << "bash::database::DatabaseFunctions::AddAnomalyDetectionConfiguration: Function call";
 
   detail::entity::AnomalyDetectionConfiguration c;
@@ -394,6 +400,12 @@ void DatabaseFunctions::RemoveDailyStatisticsFromConfiguration(::database::type:
   BOOST_LOG_TRIVIAL(debug) << "bash::database::DatabaseFunctions::GetSelectedDailyUserCommandsStatistics: Function call";
 
   return raw_database_functions_->GetSelectedDailyUserCommandsStatistics(statistic_id);
+}
+
+::bash::database::detail::type::DailyUserNamedCommandsStatistics DatabaseFunctions::GetDailyUserNamedCommandsStatistics(::database::type::RowId daily_user_statistic_id) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::DatabaseFunctions::GetDailyUserNamedCommandsStatistics: Function call";
+
+  return raw_database_functions_->GetDailyUserNamedCommandsStatistics(daily_user_statistic_id);
 }
 
 DatabaseFunctions::DatabaseFunctions(::bash::database::detail::RawDatabaseFunctionsInterfacePtr raw_database_functions,

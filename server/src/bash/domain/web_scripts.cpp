@@ -68,6 +68,12 @@ void WebScripts::SaveConfiguration(::database::type::RowId agent_name_id,
   return scripts_->GetDailyUserStatisticsForAgent(agent_name_id, begin_date, end_date);
 }
 
+::bash::domain::type::DailyUserStatistic WebScripts::GetDailyUserStatisticById(::database::type::RowId id) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::domain::WebScripts::GetDailyUserStatisticById: Function call";
+
+  return scripts_->GetDailyUserStatisticById(id);
+}
+
 ::database::entity::AgentNames WebScripts::GetAgentsWithExistingDailyUserStatistics() {
   BOOST_LOG_TRIVIAL(debug) << "bash::domain::WebScripts::GetAgentsWithExistingDailyUserStatistics: Function call";
 
@@ -127,6 +133,12 @@ void WebScripts::SelectDefaultCommands(::database::type::RowId configuration_id)
   BOOST_LOG_TRIVIAL(debug) << "bash::domain::WebScripts::SelectDefaultCommands: Function call";
 
   scripts_->SelectDefaultCommands(configuration_id);
+}
+
+::bash::database::detail::type::DailyUserNamedCommandsStatistics WebScripts::GetDailyUserNamedCommandsStatistics(::database::type::RowId statistic_id) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::domain::WebScripts::GetDailyUserNamedCommandsStatistics: Function call";
+
+  return scripts_->GetDailyUserNamedCommandsStatistics(statistic_id);
 }
 
 WebScripts::WebScripts(::bash::domain::detail::ScriptsInterfacePtr scripts) :

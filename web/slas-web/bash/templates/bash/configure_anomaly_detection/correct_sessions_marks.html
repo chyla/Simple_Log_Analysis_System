@@ -34,6 +34,7 @@
                     <th>Date</th>
                     <th>System User ID</th>
                     <th>Is anomally</th>
+                    <th></th>
                 </tr>
             </thead>
 
@@ -59,6 +60,12 @@
                          {% endif %}
                             onclick="change_table_row_color({{ s.id }})"
                          >
+                    </td>
+                    <td>
+                        <a href="{% url 'bash:review_detection_results_show_daily_user_statistic' %}?statistic_id={{ s.id}}"  target="_blank" class="pure-button button-success">
+                            <i class="fa fa-info-circle" aria-hidden="true"></i>
+                            View details
+                        </a>
                     </td>
                 </tr>
             {% endfor %}

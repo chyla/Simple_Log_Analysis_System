@@ -583,6 +583,43 @@ void RawDatabaseFunctions::AddDailyUserStatistic(const ::bash::database::detail:
   return sqlite_wrapper_->GetFirstInt64Column(sql);
 }
 
+entity::DailyUserStatistic RawDatabaseFunctions::GetDailyUserStatisticById(const ::database::type::RowId &id) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::detail::RawDatabaseFunctions::GetDailyUserStatisticById: Function call";
+
+  entity::DailyUserStatistic dus;
+  dus.id = id;
+
+  string sql =
+      "select AGENT_NAME_ID, USER_ID, DATE_ID, CLASSIFICATION from BASH_DAILY_USER_STATISTICS_TABLE "
+      " where ID=" + to_string(id) +
+      ";";
+
+  sqlite3_stmt *statement = nullptr;
+  sqlite_wrapper_->Prepare(sql, &statement);
+
+  try {
+    auto ret = sqlite_wrapper_->Step(statement);
+
+    if (ret == SQLITE_ROW) {
+      dus.agent_name_id = sqlite_wrapper_->ColumnInt64(statement, 0);
+      dus.user_id = sqlite_wrapper_->ColumnInt64(statement, 1);
+      dus.date_id = sqlite_wrapper_->ColumnInt64(statement, 2);
+      dus.classification = static_cast< ::database::type::Classification> (sqlite_wrapper_->ColumnInt(statement, 3));
+    }
+    else
+      throw ::database::exception::detail::ItemNotFoundException();
+  }
+  catch (::database::exception::DatabaseException &ex) {
+    BOOST_LOG_TRIVIAL(debug) << "bash::database::detail::RawDatabaseFunctions::GetDailyUserStatisticById: Exception catched: " << ex.what();
+    sqlite_wrapper_->Finalize(statement);
+    throw;
+  }
+
+  sqlite_wrapper_->Finalize(statement);
+
+  return dus;
+}
+
 void RawDatabaseFunctions::SetDailyUserStatisticsClassification(const ::database::type::RowIds &ids, ::database::type::Classification classification) {
   BOOST_LOG_TRIVIAL(debug) << "bash::database::detail::RawDatabaseFunctions::SetDailyUserStatisticsClassification: Function call";
 
@@ -1454,6 +1491,50 @@ void RawDatabaseFunctions::RemoveDailyStatisticsFromConfiguration(::database::ty
   }
   catch (::database::exception::DatabaseException &ex) {
     BOOST_LOG_TRIVIAL(debug) << "bash::database::detail::RawDatabaseFunctions::GetSelectedDailyUserCommandsStatistics: Exception catched: " << ex.what();
+    sqlite_wrapper_->Finalize(statement);
+    throw;
+  }
+
+  sqlite_wrapper_->Finalize(statement);
+
+  return statistics;
+}
+
+::bash::database::detail::type::DailyUserNamedCommandsStatistics RawDatabaseFunctions::GetDailyUserNamedCommandsStatistics(::database::type::RowId daily_user_statistic_id) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::detail::RawDatabaseFunctions::GetDailyUserNamedCommandsStatistics: Function call";
+
+  string sql =
+      "select BASH_COMMAND_TABLE.ID, BASH_COMMAND_TABLE.COMMAND, BASH_DAILY_USER_COMMAND_STATISTICS_TABLE.SUMMARY "
+      "  from BASH_COMMAND_TABLE, BASH_DAILY_USER_COMMAND_STATISTICS_TABLE "
+      "  where "
+      "    BASH_COMMAND_TABLE.ID=BASH_DAILY_USER_COMMAND_STATISTICS_TABLE.COMMAND_ID "
+      "    and BASH_DAILY_USER_COMMAND_STATISTICS_TABLE.STATISTIC_ID=" + to_string(daily_user_statistic_id) +
+      ";";
+
+  ::bash::database::detail::type::DailyUserNamedCommandsStatistics statistics;
+  ::bash::database::detail::type::DailyUserNamedCommandStatistic stat;
+
+  sqlite3_stmt *statement = nullptr;
+  sqlite_wrapper_->Prepare(sql, &statement);
+
+  try {
+    do {
+      auto ret = sqlite_wrapper_->Step(statement);
+
+      if (ret == SQLITE_ROW) {
+        stat.command_id = sqlite_wrapper_->ColumnInt64(statement, 0);
+        stat.command_name = sqlite_wrapper_->ColumnText(statement, 1);
+        stat.summary = sqlite_wrapper_->ColumnInt64(statement, 2);
+
+        statistics.push_back(stat);
+      }
+      else
+        break;
+    }
+    while (true);
+  }
+  catch (::database::exception::DatabaseException &ex) {
+    BOOST_LOG_TRIVIAL(debug) << "bash::database::detail::RawDatabaseFunctions::GetDailyUserNamedCommandsStatistics: Exception catched: " << ex.what();
     sqlite_wrapper_->Finalize(statement);
     throw;
   }

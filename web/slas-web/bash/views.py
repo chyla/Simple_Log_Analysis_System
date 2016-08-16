@@ -227,3 +227,26 @@ def review_detection_results_show_results(request):
                    'CLASSIFICATION_NORMAL' : Classification.NORMAL,
                    'CLASSIFICATION_UNKNOWN' : Classification.UNKNOWN,
                    })
+
+@login_required
+def show_daily_user_statistic(request):
+    exception = None
+    statistic = None
+    commands_statistics = None
+    statistic_id = request.GET.get('statistic_id', None)
+
+    try:
+        statistic = util.bash_get_daily_user_statistic_by_id(statistic_id)
+        commands_statistics = util.bash_get_daily_user_named_commands_statistics(statistic_id)
+    except Exception as e:
+        exception = str(e)
+
+    return render(request,
+                  'bash/review_detection_results/show_daily_user_statistic.html',
+                  {'exception' : exception,
+                   'statistic' : statistic,
+                   'commands_statistics' : commands_statistics,
+                   'CLASSIFICATION_ANOMALY' : Classification.ANOMALY,
+                   'CLASSIFICATION_NORMAL' : Classification.NORMAL,
+                   'CLASSIFICATION_UNKNOWN' : Classification.UNKNOWN,
+                   })

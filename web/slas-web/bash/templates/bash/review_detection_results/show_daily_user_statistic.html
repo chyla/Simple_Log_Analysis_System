@@ -15,79 +15,118 @@
 </div>
 
 <div class="clear-float"></div>
-<h2>Sessions classification</h2>
+<h2>Daily user statistic</h2>
 
 <div class="clear-float"></div>
-<h3>Select date range</h3>
+<h3>Summary</h3>
 
 <div class="col-sm-12">
-    <form class="pure-form ws-validate"  method="get" action="#">
-        <div class="col-sm-6 ws-success">
-            <label for="begin-date" class="control-label">Begin date:</label>
-            <input type="date" name="begin_date" id='begin_date' class='input-max-width' value="{{ begin_date }}" onchange="this.form.submit()">
-        </div>
-    
-        <div class="col-sm-6 ws-success">
-            <label for="end-date" class="control-label">End date:</label>
-            <input type="date" name="end_date" id='end_date' class='input-max-width' value="{{ end_date }}" onchange="this.form.submit()">
-        </div>
 
-        <input type="hidden" name="agent_name_id" value="{{ agent_name_id }}">
-    </form>
-</div>
-
-<div class="clear-float"></div>
-<h3>Results</h3>
-
-<div class="col-sm-12">
-    {% if begin_date == '' or end_date == '' or sessions|length == 0 or sessions == None %}
-        There is no data to display.
-    {% else %}
-        <table class="table scrollable custab">
+        <table class="table custab">
             <thead>
                 <tr>
                     <th>ID</th>
                     <th>Date</th>
                     <th>User</th>
                     <th>Classification</th>
-                    <th></th>
                 </tr>
             </thead>
 
             <tbody>
-            {% for s in sessions %}
-                <tr id="table_row_{{ s.id }}"
-                    {% if s.classification == CLASSIFICATION_ANOMALY %}
+                <tr id="table_row_{{ statistic.id }}"
+                    {% if statistic.classification == CLASSIFICATION_ANOMALY %}
                         class="analysis_results_row_anomaly"
-                    {% elif s.classification == CLASSIFICATION_NORMAL %}
+                    {% elif statistic.classification == CLASSIFICATION_NORMAL %}
                         class="analysis_results_row_normal"
-                    {% elif s.classification == CLASSIFICATION_UNKNOWN %}
+                    {% elif statistic.classification == CLASSIFICATION_UNKNOWN %}
                         class="analysis_results_row_unknown"
                     {% endif %}
                 >
-                    <td>{{ s.id }}</td>
-                    <td>{{ s.date }}</td>
-                    <td>{{ s.uid }}</td>
+                    <td>{{ statistic.id }}</td>
+                    <td>{{ statistic.date }}</td>
+                    <td>{{ statistic.uid }}</td>
                     <td>
-                        {% if s.classification == CLASSIFICATION_ANOMALY %}
+                        {% if statistic.classification == CLASSIFICATION_ANOMALY %}
                             <a href="#" class="btn btn-classification-anomaly btn-xs"> ANOMALY </a>
-                        {% elif s.classification == CLASSIFICATION_NORMAL %}
+                        {% elif statistic.classification == CLASSIFICATION_NORMAL %}
                             <a href="#" class="btn btn-classification-normal btn-xs"> NORMAL </a>
-                        {% elif s.classification == CLASSIFICATION_UNKNOWN %}
+                        {% elif statistic.classification == CLASSIFICATION_UNKNOWN %}
                             <a href="#" class="btn btn-classification-unknown btn-xs"> UNKNOWN </a>
                         {% endif %}
                     </td>
-                    <td>
-                        <a href="{% url 'bash:review_detection_results_show_daily_user_statistic' %}?statistic_id={{ s.id}}"  target="_blank" class="pure-button button-success">
-                            <i class="fa fa-info-circle" aria-hidden="true"></i>
-                            View details
-                        </a>
-                    </td>
                 </tr>
-            {% endfor %}
             </tbody>
         </table>
-    {% endif %}
+
+</div>
+
+<div class="clear-float"></div>
+<h3>Commands statistics</h3>
+
+
+{% if commands_statistics %}
+
+<p class="chart-text">
+Summary count
+</p>
+    <div class="ct-chart ct-perfect-fourth" id="commands_chart"></div>
+<p class="chart-text chart-text-right">
+Command id
+</p>
+
+    <script>
+    var data = {
+      labels: [
+              {% for c in commands_statistics %}
+                "{{ c.command_id }}",
+              {% endfor %}
+      ],
+      series: [
+        [
+          {% for c in commands_statistics %}
+            {{ c.summary }},
+          {% endfor %}
+        ]
+      ]
+    }
+    var options = {
+      showArea: true,
+      height: 350
+    }
+    new Chartist.Line('#commands_chart', data, options);
+    </script>
+{% endif %}
+
+<div class="col-sm-12">
+
+    <div class="next-page-section">
+        {% if commands_statistics %}
+            <table class="table table custab sortable scrollable">
+                <thead>
+                    <tr>
+                        <th><button class="custab-head-button">Command</button></th>
+                        <th><button class="custab-head-button">Command id</button></th>
+                        <th><button class="custab-head-button">Summary count</button></th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <!-- &#8203; is a bug workaround for rows that contains only digits in sorttable -->
+                    {% for c in commands_statistics %}
+                    <tr {% cycle '' 'class="custab-odd"' %}>
+                        <td>&#8203;{{ c.command_name|truncatechars:55  }} </td>
+                        <td>{{ c.command_id }}</td>
+                        <td> {{ c.summary }} </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <i class="fa fa-exclamation" aria-hidden="true"></i>
+            Empty commands set.
+        {% endif %}
+    </div>
+
 </div>
 
 <section class="fr-offcanvas fr-offcanvas--right js-fr-offcanvas slas-offcanvas" id="help_box">

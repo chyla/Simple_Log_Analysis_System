@@ -32,8 +32,8 @@ class DatabaseFunctions : public detail::DatabaseFunctionsInterface {
 
   void CreateTables() override;
 
-  void AddSystemUser(type::UID uid) override;
-  ::database::type::RowId GetSystemUserId(type::UID uid) override;
+  void AddSystemUser(::bash::database::type::UID uid) override;
+  ::database::type::RowId GetSystemUserId(::bash::database::type::UID uid) override;
   ::bash::database::detail::entity::SystemUser GetSystemUserById(::database::type::RowId id) override;
   ::database::type::RowIds GetSystemUsersIdsFromLogs(::database::type::RowId agent_name_id) override;
 
@@ -57,6 +57,7 @@ class DatabaseFunctions : public detail::DatabaseFunctionsInterface {
   ::database::type::RowId GetDailyUserStatisticId(::database::type::RowId agent_name_id,
                                                   ::database::type::RowId user_id,
                                                   ::database::type::RowId date_id) override;
+  ::bash::database::detail::entity::DailyUserStatistic GetDailyUserStatisticById(const ::database::type::RowId &id) override;
   void SetDailyUserStatisticsClassification(const ::database::type::RowIds &ids, ::database::type::Classification classification) override;
   void AddDailyUserCommandStatistic(const ::bash::database::detail::entity::DailyUserCommandStatistic &ucs) override;
 
@@ -71,9 +72,9 @@ class DatabaseFunctions : public detail::DatabaseFunctionsInterface {
                                                                                                          ::database::type::RowsCount limit,
                                                                                                          ::database::type::RowsCount offset) override;
 
-  type::AnomalyDetectionConfigurations GetAnomalyDetectionConfigurations() override;
+  ::bash::database::type::AnomalyDetectionConfigurations GetAnomalyDetectionConfigurations() override;
   void RemoveAnomalyDetectionConfiguration(::database::type::RowId id) override;
-  void AddAnomalyDetectionConfiguration(const type::AnomalyDetectionConfiguration &configuration) override;
+  void AddAnomalyDetectionConfiguration(const ::bash::database::type::AnomalyDetectionConfiguration &configuration) override;
   ::database::type::RowId GetConfigurationIdForAgent(::database::type::RowId agent_id) override;
   void RemoveAllCommandsFromConfiguration(::database::type::RowId configuration_id) override;
   void AddDefaultCommandsToConfiguration(::database::type::RowId configuration_id) override;
@@ -119,6 +120,8 @@ class DatabaseFunctions : public detail::DatabaseFunctionsInterface {
                                                                                                                                           ::database::type::RowsCount limit,
                                                                                                                                           ::database::type::RowsCount offset) override;
   ::bash::database::detail::entity::DailyUserCommandsStatistics GetSelectedDailyUserCommandsStatistics(::database::type::RowId statistic_id) override;
+
+  ::bash::database::detail::type::DailyUserNamedCommandsStatistics GetDailyUserNamedCommandsStatistics(::database::type::RowId daily_user_statistic_id) override;
 
  private:
   ::bash::database::detail::RawDatabaseFunctionsInterfacePtr raw_database_functions_;

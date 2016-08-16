@@ -118,3 +118,9 @@ def bash_get_agents_with_existing_sessions():
 
 def bash_set_sessions_as_anomalies(configuration_id, all_ids, anomalies_ids):
     return connect_and_get_result_from_command('bash.set_sessions_as_anomalies', [int(configuration_id), all_ids, anomalies_ids])
+
+def bash_get_daily_user_statistic_by_id(statistic_id):
+    return connect_and_get_result_from_command('bash.get_daily_user_statistic_by_id', [int(statistic_id)])
+
+def bash_get_daily_user_named_commands_statistics(statistic_id):
+    return connect_and_get_result_from_command('bash.get_daily_user_named_commands_statistics', [int(statistic_id)])

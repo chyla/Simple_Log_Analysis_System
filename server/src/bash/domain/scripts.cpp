@@ -241,6 +241,24 @@ void Scripts::RemoveDailyStatisticsFromConfiguration(::database::type::RowId con
   return statistics;
 }
 
+::bash::domain::type::DailyUserStatistic Scripts::GetDailyUserStatisticById(::database::type::RowId id) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::domain::Scripts::GetDailyUserStatisticById: Function call";
+
+  auto raw_dus = database_functions_->GetDailyUserStatisticById(id);
+
+  ::bash::domain::type::DailyUserStatistic s;
+
+  s.id = raw_dus.id;
+  s.agent_name = general_database_functions_->GetAgentNameById(raw_dus.agent_name_id);
+  s.classification = raw_dus.classification;
+  s.date = general_database_functions_->GetDateById(raw_dus.date_id);
+
+  auto system_user = database_functions_->GetSystemUserById(raw_dus.user_id);
+  s.uid = system_user.uid;
+
+  return s;
+}
+
 ::database::entity::AgentNames Scripts::GetAgentsWithExistingDailyUserStatistics() {
   BOOST_LOG_TRIVIAL(debug) << "bash::domain::Scripts::GetAgentsWithExistingDailyUserStatistics: Function call";
 
@@ -379,6 +397,12 @@ void Scripts::SelectDefaultCommands(::database::type::RowId configuration_id) {
   database_functions_->AddDefaultCommandsToConfiguration(configuration_id);
 
   database_functions_->MarkConfigurationAsChanged(configuration_id);
+}
+
+::bash::database::detail::type::DailyUserNamedCommandsStatistics Scripts::GetDailyUserNamedCommandsStatistics(::database::type::RowId statistic_id) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::domain::Scripts::GetDailyUserNamedCommandsStatistics: Function call";
+
+  return database_functions_->GetDailyUserNamedCommandsStatistics(statistic_id);
 }
 
 Scripts::Scripts(::bash::database::detail::DatabaseFunctionsInterfacePtr database_functions,

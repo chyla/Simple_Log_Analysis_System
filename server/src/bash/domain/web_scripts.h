@@ -34,6 +34,7 @@ class WebScripts : public detail::WebScriptsInterface {
   ::bash::domain::type::DailyUserStatistics GetDailyUserStatisticsForAgent(::database::type::RowId agent_name_id,
                                                                            const ::type::Date &begin_date,
                                                                            const ::type::Date &end_date) override;
+  ::bash::domain::type::DailyUserStatistic GetDailyUserStatisticById(::database::type::RowId id) override;
   ::database::entity::AgentNames GetAgentsWithExistingDailyUserStatistics() override;
 
   ::bash::domain::type::DailyUserStatistics GetDailyUserStatisticsFromConfiguration(::database::type::RowId configuration_id) override;
@@ -49,6 +50,7 @@ class WebScripts : public detail::WebScriptsInterface {
   void SaveSelectedCommands(::database::type::RowId configuration_id, ::database::type::RowIds command_names_ids) override;
   void SelectDefaultCommands(::database::type::RowId configuration_id) override;
 
+  ::bash::database::detail::type::DailyUserNamedCommandsStatistics GetDailyUserNamedCommandsStatistics(::database::type::RowId statistic_id) override;
  private:
   ::bash::domain::detail::ScriptsInterfacePtr scripts_;
 

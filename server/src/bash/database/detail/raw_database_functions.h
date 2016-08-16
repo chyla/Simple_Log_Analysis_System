@@ -58,6 +58,7 @@ class RawDatabaseFunctions : public RawDatabaseFunctionsInterface {
   ::database::type::RowId GetDailyUserStatisticId(::database::type::RowId agent_name_id,
                                                   ::database::type::RowId user_id,
                                                   ::database::type::RowId date_id) override;
+  entity::DailyUserStatistic GetDailyUserStatisticById(const ::database::type::RowId &id) override;
   void SetDailyUserStatisticsClassification(const ::database::type::RowIds &ids, ::database::type::Classification classification) override;
   void AddDailyUserCommandStatistic(const ::bash::database::detail::entity::DailyUserCommandStatistic &ucs) override;
   ::database::entity::AgentNames GetAgentsWithExistingDailyUserStatistics() override;
@@ -116,6 +117,8 @@ class RawDatabaseFunctions : public RawDatabaseFunctionsInterface {
                                                                                                                                           ::database::type::RowsCount limit,
                                                                                                                                           ::database::type::RowsCount offset) override;
   ::bash::database::detail::entity::DailyUserCommandsStatistics GetSelectedDailyUserCommandsStatistics(::database::type::RowId statistic_id) override;
+
+  ::bash::database::detail::type::DailyUserNamedCommandsStatistics GetDailyUserNamedCommandsStatistics(::database::type::RowId daily_user_statistic_id) override;
 
  private:
   ::database::detail::SQLiteWrapperInterfacePtr sqlite_wrapper_;

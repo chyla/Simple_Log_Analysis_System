@@ -17,6 +17,7 @@
 #include "src/bash/database/detail/entity/command_statistic.h"
 #include "src/bash/database/detail/entity/system_user.h"
 #include "src/database/entity/agent_name.h"
+#include "src/bash/database/detail/type/daily_user_named_command_statistic.h"
 
 #include <memory>
 
@@ -35,8 +36,8 @@ class DatabaseFunctionsInterface {
 
   virtual void CreateTables() = 0;
 
-  virtual void AddSystemUser(type::UID uid) = 0;
-  virtual ::database::type::RowId GetSystemUserId(type::UID uid) = 0;
+  virtual void AddSystemUser(::bash::database::type::UID uid) = 0;
+  virtual ::database::type::RowId GetSystemUserId(::bash::database::type::UID uid) = 0;
   virtual ::bash::database::detail::entity::SystemUser GetSystemUserById(::database::type::RowId id) = 0;
   virtual ::database::type::RowIds GetSystemUsersIdsFromLogs(::database::type::RowId agent_name_id) = 0;
 
@@ -64,6 +65,7 @@ class DatabaseFunctionsInterface {
   virtual ::database::type::RowId GetDailyUserStatisticId(::database::type::RowId agent_name_id,
                                                           ::database::type::RowId user_id,
                                                           ::database::type::RowId date_id) = 0;
+  virtual entity::DailyUserStatistic GetDailyUserStatisticById(const ::database::type::RowId &id) = 0;
   virtual void SetDailyUserStatisticsClassification(const ::database::type::RowIds &ids, ::database::type::Classification classification) = 0;
   virtual void AddDailyUserCommandStatistic(const ::bash::database::detail::entity::DailyUserCommandStatistic &ucs) = 0;
   virtual ::database::entity::AgentNames GetAgentsWithExistingDailyUserStatistics() = 0;
@@ -74,9 +76,9 @@ class DatabaseFunctionsInterface {
                                                                                                                  ::database::type::RowsCount limit,
                                                                                                                  ::database::type::RowsCount offset) = 0;
 
-  virtual type::AnomalyDetectionConfigurations GetAnomalyDetectionConfigurations() = 0;
+  virtual ::bash::database::type::AnomalyDetectionConfigurations GetAnomalyDetectionConfigurations() = 0;
   virtual void RemoveAnomalyDetectionConfiguration(::database::type::RowId id) = 0;
-  virtual void AddAnomalyDetectionConfiguration(const type::AnomalyDetectionConfiguration &configuration) = 0;
+  virtual void AddAnomalyDetectionConfiguration(const ::bash::database::type::AnomalyDetectionConfiguration &configuration) = 0;
   virtual ::database::type::RowId GetConfigurationIdForAgent(::database::type::RowId agent_id) = 0;
   virtual void RemoveAllCommandsFromConfiguration(::database::type::RowId configuration_id) = 0;
   virtual void AddDefaultCommandsToConfiguration(::database::type::RowId configuration_id) = 0;
@@ -122,6 +124,8 @@ class DatabaseFunctionsInterface {
                                                                                                                                                   ::database::type::RowsCount limit,
                                                                                                                                                   ::database::type::RowsCount offset) = 0;
   virtual ::bash::database::detail::entity::DailyUserCommandsStatistics GetSelectedDailyUserCommandsStatistics(::database::type::RowId statistic_id) = 0;
+
+  virtual ::bash::database::detail::type::DailyUserNamedCommandsStatistics GetDailyUserNamedCommandsStatistics(::database::type::RowId daily_user_statistic_id) = 0;
 };
 
 typedef std::shared_ptr<DatabaseFunctionsInterface> DatabaseFunctionsInterfacePtr;
