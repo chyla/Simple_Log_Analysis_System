@@ -29,3 +29,5 @@ urlpatterns = [
     url(r'^user/logout/$', 'web.views.user_logout'),
     url(r'^user/invalid_login/$', 'web.views.user_invalid_login'),
 ]
+
+admin.site.site_header = 'SLAS web module administration tool'
