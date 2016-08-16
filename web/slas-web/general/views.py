@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 
 from django.shortcuts import render_to_response
+from django.contrib.auth.decorators import login_required
 import util
 
+@login_required
 def status(request):
     exception = None
     process_id = None

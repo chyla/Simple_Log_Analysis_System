@@ -2,11 +2,12 @@
 
 from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response, render, redirect
+from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
 from util.type import Classification
 import util
 
-
+@login_required
 def status(request):
     exception = None
     configurations = None
@@ -25,6 +26,7 @@ def status(request):
                    'agents_with_existing_sessions' : agents_with_existing_sessions,
                    })
 
+@login_required
 def configure_anomaly_detection_select_agent(request):
     exception = None
     unconfigured_agents = None
@@ -45,6 +47,7 @@ def configure_anomaly_detection_select_agent(request):
                    'unconfigured_agents' : unconfigured_agents,
                    })
 
+@login_required
 def configure_anomaly_detection_remove_configuration(request):
     exception = None
     configuration_id = request.POST.get('configuration_id', '')
@@ -62,6 +65,7 @@ def configure_anomaly_detection_remove_configuration(request):
     else:
         return redirect('bash:status', permanent=False)
 
+@login_required
 def configure_anomaly_detection_save_configuration(request):
     exception = None
     agent_name_id = request.POST.get('agent_name_id', '')
@@ -89,6 +93,7 @@ def configure_anomaly_detection_save_configuration(request):
     else:
         return redirect('bash:status', permanent=False)
 
+@login_required
 def configure_anomaly_detection_select_date_range(request):
     exception = None
     configurations = None
@@ -113,6 +118,7 @@ def configure_anomaly_detection_select_date_range(request):
                    'commands_statistics' : commands_statistics,
                    })
 
+@login_required
 def configure_anomaly_detection_select_commands(request):
     exception = None
     configuration_id = request.GET.get('configuration_id', None)
@@ -133,6 +139,7 @@ def configure_anomaly_detection_select_commands(request):
                    'selected_commands' : selected_commands,
                    })
 
+@login_required
 def configure_anomaly_detection_select_commands_save_selected(request):
     configuration_id = request.POST.get('configuration_id', None)
     select_default_commands = request.POST.get('select_default_commands', 'false')
@@ -154,6 +161,7 @@ def configure_anomaly_detection_select_commands_save_selected(request):
 
     return redirect('bash:status', permanent=False)
 
+@login_required
 def configure_anomaly_detection_correct_sessions_marks(request):
     exception = None
     configuration_id = request.GET.get('configuration_id', None)
@@ -174,6 +182,7 @@ def configure_anomaly_detection_correct_sessions_marks(request):
                    'CLASSIFICATION_UNKNOWN' : Classification.UNKNOWN,
                    })
 
+@login_required
 def configure_anomaly_detection_correct_sessions_marks_save(request):
     exception = None
     configuration_id = request.POST.get('configuration_id', None)
@@ -194,7 +203,7 @@ def configure_anomaly_detection_correct_sessions_marks_save(request):
                        });
 
     return redirect('bash:status', permanent=False)
-
+@login_required
 def review_detection_results_show_results(request):
     exception = None
     sessions = None

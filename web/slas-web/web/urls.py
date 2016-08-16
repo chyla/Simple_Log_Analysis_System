@@ -23,4 +23,9 @@ urlpatterns = [
 
     # index
     url(r'^$', 'general.views.status', name='index'),
+
+    url(r'^user/login/$', 'web.views.user_login'),
+    url(r'^user/auth$', 'web.views.user_auth'),
+    url(r'^user/logout/$', 'web.views.user_logout'),
+    url(r'^user/invalid_login/$', 'web.views.user_invalid_login'),
 ]

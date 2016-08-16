@@ -2,10 +2,12 @@
 
 from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response, render, redirect
+from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
 from util.type import Classification
 import util
 
+@login_required
 def status(request):
     exception = None
     configuration = None
@@ -24,6 +26,7 @@ def status(request):
                    'available_classification_for_agent_host_names' : available_classification_for_agent_host_names,
                    })
 
+@login_required
 def configure_anomaly_detection_select_agent_and_virtualhost(request):
     agent_name = request.GET.get('agent_name', '')
     virtualhost_name = request.GET.get('virtualhost_name', '')
@@ -62,6 +65,7 @@ def configure_anomaly_detection_select_agent_and_virtualhost(request):
                                'configuration' : configuration,
                                })
 
+@login_required
 def configure_anomaly_detection_select_data_range(request):
     agent_name = request.GET.get('agent_name', '')
     virtualhost_name = request.GET.get('virtualhost_name', '')
@@ -88,6 +92,7 @@ def configure_anomaly_detection_select_data_range(request):
                    'CLASSIFICATION_UNKNOWN' : Classification.UNKNOWN,
                    })
 
+@login_required
 def configure_anomaly_detection_select_data_range_save_settings(request):
     agent_name = request.POST.get('agent_name', '')
     virtualhost_name = request.POST.get('virtualhost_name', '')
@@ -113,6 +118,7 @@ def configure_anomaly_detection_select_data_range_save_settings(request):
     else:
         return redirect('apache:status', permanent=False)
 
+@login_required
 def configure_anomaly_detection_correct_sessions_marks(request, *args, **kwargs):
     exception = None
     sessions = []
@@ -135,6 +141,7 @@ def configure_anomaly_detection_correct_sessions_marks(request, *args, **kwargs)
                    'CLASSIFICATION_UNKNOWN' : Classification.UNKNOWN,
                    })
 
+@login_required
 def configure_anomaly_detection_correct_sessions_marks_automatically_mark_anomalies(request):
     exception = None
     sessions = []
@@ -150,6 +157,7 @@ def configure_anomaly_detection_correct_sessions_marks_automatically_mark_anomal
     return redirect((url + "?agent_name={}&virtualhost_name={}").format(agent_name, virtualhost_name),
                     permanent=False)
 
+@login_required
 def configure_anomaly_detection_save_settings(request):
     exception = None
     agent_name = request.POST.get('agent_name', '')
@@ -172,6 +180,7 @@ def configure_anomaly_detection_save_settings(request):
     else:
         return redirect('apache:status', permanent=False)
 
+@login_required
 def review_detection_results_show_results(request):
     agent_name = request.GET.get('agent_name', '')
     virtualhost_name = request.GET.get('virtualhost_name', '')
@@ -199,6 +208,7 @@ def review_detection_results_show_results(request):
                    'CLASSIFICATION_UNKNOWN' : Classification.UNKNOWN,
                    })
 
+@login_required
 def remove_configuration(request):
     exception = None
     configuration_id = request.POST.get('configuration_id', '')
