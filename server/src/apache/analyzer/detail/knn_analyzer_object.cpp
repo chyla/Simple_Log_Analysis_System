@@ -94,7 +94,7 @@ void KnnAnalyzerObject::AnalyzeSessions(const ::database::type::RowId &agent_nam
     neighbours_table_.SetSession(session);
 
     util::RunPartially(MAX_ROWS_IN_MEMORY, learning_set_count, [&](long long part_count, long long offset) {
-      AnalyzeSessionsWithLearningSet(agent_name_id, virtualhost_name_id, part_count, offset, session);
+      AnalyzeSessionsWithLearningSet(agent_name_id, virtualhost_name_id, part_count, 0, session);
     });
 
     auto classification = GetSessionClassification();
