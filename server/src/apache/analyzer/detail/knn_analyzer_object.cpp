@@ -68,7 +68,7 @@ void KnnAnalyzerObject::AnalyzeVirtualhost(const ::database::type::RowId &agent_
   analyze_summary_.push_back(type::KnnVirtualhostAnalyzeStatistics());
 
   util::RunPartially(MAX_ROWS_IN_MEMORY, sessions_count, [&](long long part_count, long long offset) {
-    AnalyzeSessions(agent_name_id, virtualhost_name_id, part_count, offset);
+    AnalyzeSessions(agent_name_id, virtualhost_name_id, part_count, 0);
   });
 }
 
@@ -80,7 +80,7 @@ void KnnAnalyzerObject::AnalyzeSessions(const ::database::type::RowId &agent_nam
   BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::KnnAnalyzerObject::AnalyzeSessions: Analyzing sessions: agent_name_id=" << agent_name_id << "; virtualhost_name_id=" << virtualhost_name_id << " (limit=" << limit << "; offset=" << offset << ")";
   constexpr RowsCount MAX_ROWS_IN_MEMORY = 100;
 
-  auto sessions_part = apache_database_functions_->GetNotClassifiedSessionStatistics(agent_name_id, virtualhost_name_id, limit, offset);
+  auto sessions_part = apache_database_functions_->GetNotClassifiedSessionStatistics(agent_name_id, virtualhost_name_id, limit, 0);
   BOOST_LOG_TRIVIAL(debug) << "apache::analyzer::detail::KnnAnalyzerObject::AnalyzeSessions: Received " << sessions_part.size() << " sessions statictics";
 
   type::KnnVirtualhostAnalyzeStatistics &stats = analyze_summary_.at(analyze_summary_.size() - 1);
