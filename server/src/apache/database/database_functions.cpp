@@ -41,7 +41,7 @@ DatabaseFunctionsPtr DatabaseFunctions::Create(::database::DatabasePtr db,
 void DatabaseFunctions::CreateTables() {
   BOOST_LOG_TRIVIAL(debug) << "apache::database::DatabaseFunctions::CreateTables: Function call";
 
-  sqlite_wrapper_->Exec("create table if not exists APACHE_LOGS_TABLE("
+  sqlite_wrapper_->Exec("create table if not exists APACHE_LOGS_TABLE ("
                         "  ID integer primary key, "
                         "  AGENT_NAME text,"
                         "  VIRTUALHOST text, "
@@ -58,6 +58,9 @@ void DatabaseFunctions::CreateTables() {
                         "  USER_AGENT text, "
                         "  USED_IN_STATISTICS integer default 0"
                         ");");
+
+  sqlite_wrapper_->Exec("create index if not exists APACHE_LOGS_TABLE_AGENT_NAME_VIRTUALHOST_USED_IN_STATISTICS "
+                        " on APACHE_LOGS_TABLE (AGENT_NAME, VIRTUALHOST, USED_IN_STATISTICS);");
 
   sqlite_wrapper_->Exec("create table if not exists APACHE_LAST_RUN_TABLE ( "
                         "  ID integer primary key not null, "
@@ -84,6 +87,9 @@ void DatabaseFunctions::CreateTables() {
                         "  unique(AGENT_NAME_ID, VIRTUALHOST_NAME_ID, SESSION_ID) "
                         ");");
 
+  sqlite_wrapper_->Exec("create index if not exists APACHE_LEARNING_SESSIONS_AGENT_NAME_ID_VIRTUALHOST_NAME_ID"
+                        " on APACHE_LEARNING_SESSIONS (AGENT_NAME_ID, VIRTUALHOST_NAME_ID);");
+
   sqlite_wrapper_->Exec("create table if not exists APACHE_SESSION_TABLE ("
                         "  ID integer primary key, "
                         "  AGENT_NAME text,"
@@ -103,6 +109,9 @@ void DatabaseFunctions::CreateTables() {
                         "  USER_AGENT text, "
                         "  CLASSIFICATION integer default 0 "
                         ");");
+
+  sqlite_wrapper_->Exec("create index if not exists APACHE_SESSION_TABLE_AGENT_NAME_VIRTUALHOST_CLASSIFICATION"
+                        " on APACHE_SESSION_TABLE (AGENT_NAME, VIRTUALHOST, CLASSIFICATION);");
 
   sqlite_wrapper_->Exec("create table if not exists APACHE_ANOMALY_DETECTION_CONFIGURATION_TABLE ("
                         "  ID integer primary key, "
@@ -179,6 +188,7 @@ void DatabaseFunctions::AddLogs(const ::type::ApacheLogs &log_entries) {
 
   string sql =
       "select count(*) from APACHE_LOGS_TABLE "
+      " indexed by APACHE_LOGS_TABLE_AGENT_NAME_VIRTUALHOST_USED_IN_STATISTICS "
       "  where "
       "    ( "
       "      AGENT_NAME=? "
@@ -211,6 +221,7 @@ void DatabaseFunctions::AddLogs(const ::type::ApacheLogs &log_entries) {
 
   string sql =
       "select ID, AGENT_NAME, VIRTUALHOST, CLIENT_IP, UTC_HOUR, UTC_MINUTE, UTC_SECOND, UTC_DAY, UTC_MONTH, UTC_YEAR, REQUEST, STATUS_CODE, BYTES, USER_AGENT from APACHE_LOGS_TABLE"
+      " indexed by APACHE_LOGS_TABLE_AGENT_NAME_VIRTUALHOST_USED_IN_STATISTICS "
       "  where"
       "    ("
       "      AGENT_NAME=?"
@@ -304,6 +315,7 @@ bool DatabaseFunctions::AddSessionStatistics(const ::apache::type::ApacheSession
 
   string sql =
       "select count(*) from APACHE_SESSION_TABLE "
+      " indexed by APACHE_SESSION_TABLE_AGENT_NAME_VIRTUALHOST_CLASSIFICATION "
       "  where "
       "    ( "
       "      AGENT_NAME=? "
@@ -343,6 +355,7 @@ bool DatabaseFunctions::AddSessionStatistics(const ::apache::type::ApacheSession
   string sql =
       "select ID, AGENT_NAME, VIRTUALHOST, CLIENT_IP, UTC_HOUR, UTC_MINUTE, UTC_SECOND, UTC_DAY, UTC_MONTH, UTC_YEAR, SESSION_LENGTH, BANDWIDTH_USAGE, REQUESTS_COUNT, ERRORS_COUNT, ERROR_PERCENTAGE, USER_AGENT, CLASSIFICATION "
       " from APACHE_SESSION_TABLE "
+      " indexed by APACHE_SESSION_TABLE_AGENT_NAME_VIRTUALHOST_CLASSIFICATION "
       "  where"
       "    ("
       "      AGENT_NAME=?"
@@ -832,7 +845,9 @@ std::string DatabaseFunctions::GetVirtualhostNameById(const ::database::type::Ro
   ::database::type::RowIds rows;
 
   string sql =
-      "select SESSION_ID from APACHE_LEARNING_SESSIONS where "
+      "select SESSION_ID from APACHE_LEARNING_SESSIONS "
+      " indexed by APACHE_LEARNING_SESSIONS_AGENT_NAME_ID_VIRTUALHOST_NAME_ID "
+      " where "
       "    AGENT_NAME_ID=" + to_string(agent_id) +
       "  and " +
       "    VIRTUALHOST_NAME_ID=" + to_string(virtualhost_id) +
@@ -869,7 +884,9 @@ std::string DatabaseFunctions::GetVirtualhostNameById(const ::database::type::Ro
   BOOST_LOG_TRIVIAL(debug) << "database::DatabaseFunctions::GetLearningSessionsCount: Function call";
 
   string sql =
-      "select count(*) from APACHE_LEARNING_SESSIONS where "
+      "select count(*) from APACHE_LEARNING_SESSIONS "
+      " indexed by APACHE_LEARNING_SESSIONS_AGENT_NAME_ID_VIRTUALHOST_NAME_ID "
+      " where "
       "    AGENT_NAME_ID=" + to_string(agent_id) +
       "  and " +
       "    VIRTUALHOST_NAME_ID=" + to_string(virtualhost_id) +
