@@ -40,6 +40,13 @@ make -j 3
 make install
 make -j 3 check
 
+# build bash
+cd ${START_DIR}/agent/bash/bash-4.3
+./autogen.sh
+./configure --prefix=${BASH_INSTALL_DIR}
+make -j 3
+make install
+
 # check web server
 cd ${START_DIR}/web
 tox
