@@ -10,7 +10,7 @@ import select
 
 class Network(object):
 
-    TIMEOUT_SECONDS = 3
+    TIMEOUT_SECONDS = 60
     MAX_MESSAGE_LENGTH = 255
 
     class TimeoutException(IOError):

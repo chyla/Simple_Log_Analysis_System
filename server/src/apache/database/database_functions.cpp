@@ -230,6 +230,7 @@ void DatabaseFunctions::AddLogs(const ::type::ApacheLogs &log_entries) {
       "    )"
       "  and "
       "  USED_IN_STATISTICS=0 "
+      "  order by UTC_YEAR, UTC_MONTH, UTC_DAY, UTC_HOUR, UTC_MINUTE, UTC_SECOND "
       "   limit " + to_string(limit) + " offset " + to_string(offset) +
       ";";
 
