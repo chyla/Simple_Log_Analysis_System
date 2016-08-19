@@ -68,6 +68,7 @@
         {% if sessions|length == 0 %}
             There is no data to display.
         {% else %}
+        <div class="scrollable">
             <table class="table custab">
                 <thead>
                     <tr>
@@ -115,6 +116,7 @@
                 {% endfor %}
                 </tbody>
             </table>
+        </div>
         {% endif %}
     </div>
 </div>
