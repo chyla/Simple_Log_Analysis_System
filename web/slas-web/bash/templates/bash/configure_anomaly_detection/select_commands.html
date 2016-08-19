@@ -28,7 +28,8 @@
 
     <div class="col-sm-12">
         {% if all_commands_statistics %}
-            <table class="table table custab sortable scrollable">
+        <div class="scrollable">
+            <table class="table table custab sortable">
                 <thead>
                     <tr>
                         <th><button type="button" class="custab-head-button">Command</button></th>
@@ -54,6 +55,7 @@
                     {% endfor %}
                 </tbody>
             </table>
+        </div>
         {% else %}
             <div>
                 <i class="fa fa-exclamation" aria-hidden="true"></i>

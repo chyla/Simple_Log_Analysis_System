@@ -17,6 +17,8 @@
 
 <div class="col-sm-12">
     {% if configurations %}
+
+    <div class="scrollable">
         <table class="table table custab sortable">
             <thead>
                 <tr>
@@ -53,6 +55,7 @@
                 {% endfor %}
             </tbody>
         </table>
+    </div>
     {% else %}
         <i class="fa fa-exclamation" aria-hidden="true"></i>
         No configuration found.
@@ -73,7 +76,8 @@
 
 <div class="col-sm-12">
     {% if agents_with_existing_sessions|length > 0 %}
-            <table class="table table custab sortable">
+    <div class="scrollable">
+        <table class="table table custab sortable">
             <thead>
                 <tr>
                     <th><button class="custab-head-button">Agent</button></th>
@@ -95,6 +99,7 @@
                 {% endfor %}
             </tbody>
         </table>
+    </div>
     {% else %}
     <p>
         <i class="fa fa-exclamation" aria-hidden="true"></i>

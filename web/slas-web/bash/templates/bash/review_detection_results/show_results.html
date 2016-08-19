@@ -43,7 +43,8 @@
     {% if begin_date == '' or end_date == '' or sessions|length == 0 or sessions == None %}
         There is no data to display.
     {% else %}
-        <table class="table scrollable custab">
+    <div class="scrollable">
+        <table class="table custab">
             <thead>
                 <tr>
                     <th>ID</th>
@@ -87,6 +88,7 @@
             {% endfor %}
             </tbody>
         </table>
+    </div>
     {% endif %}
 </div>
 

@@ -64,7 +64,8 @@
 <div class="col-sm-12">
     <div class="next-page-section">
       {% if commands_statistics %}
-            <table class="table table custab sortable scrollable">
+        <div class="scrollable">
+            <table class="table table custab sortable">
                 <thead>
                     <tr>
                         <th><button class="custab-head-button">Command</button></th>
@@ -82,6 +83,7 @@
                     {% endfor %}
                 </tbody>
             </table>
+        </div>
         {% else %}
             <i class="fa fa-exclamation" aria-hidden="true"></i>
             Empty commands set.
