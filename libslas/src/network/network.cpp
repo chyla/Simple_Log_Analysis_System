@@ -209,7 +209,7 @@ NetworkMessage Network::RecvMessage(int socket) {
     total += received;
   }
 
-  BOOST_LOG_TRIVIAL(debug) << "libpatlms::network::Network::RecvMessage: Received.";
+  BOOST_LOG_TRIVIAL(debug) << "libpatlms::network::Network::RecvMessage: Received";
   return message;
 }
 
