@@ -26,8 +26,9 @@
         {% csrf_token %}
 
         <input type="hidden" name="configuration_id" value="{{ configuration_id }}"/>
-    
+
         <div class="scrollable">
+          {% if sessions %}
             <table class="table custab">
                 <thead>
                     <tr>
@@ -38,7 +39,7 @@
                         <th></th>
                     </tr>
                 </thead>
-    
+
                 <tbody>
                 {% for s in sessions %}
                     <tr id="table_row_{{ s.id }}"
@@ -57,7 +58,7 @@
                             <input type="hidden" name="rows_ids" value="{{ s.id }}">
                             <input id="table_check_button_{{ s.id }}" type="checkbox" name="checks" value="{{ s.id }}"
                              {% if s.classification == CLASSIFICATION_ANOMALY %}
-                                checked="checked" 
+                                checked="checked"
                              {% endif %}
                                 onclick="change_table_row_color({{ s.id }})"
                              >
@@ -72,6 +73,12 @@
                 {% endfor %}
                 </tbody>
             </table>
+            {% else %}
+                <div>
+                    <i class="fa fa-exclamation" aria-hidden="true"></i>
+                    There is no data to display.
+                </div>
+            {% endif %}
         </div>
 
         <p class="action-buttons-left">
