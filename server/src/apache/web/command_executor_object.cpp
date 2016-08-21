@@ -364,7 +364,7 @@ const ::web::type::JsonMessage CommandExecutorObject::MarkLearningSetWithIqrMeth
 }
 
 const ::web::type::JsonMessage CommandExecutorObject::GetAgentsAndVirtualhostsNamesFilteredBySessionsClassificationExists() {
-  BOOST_LOG_TRIVIAL(debug) << "apache::web::CommandExecutorObject::MarkLearningSetWithIqrMethod: Function call";
+  BOOST_LOG_TRIVIAL(debug) << "apache::web::CommandExecutorObject::GetAgentsAndVirtualhostsNamesFilteredBySessionsClassificationExists: Function call";
 
   json j, r = json::array();
 
