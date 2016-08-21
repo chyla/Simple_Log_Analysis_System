@@ -313,11 +313,12 @@ detail::entity::CommandsStatistics DatabaseFunctions::GetCommandsStatistics(::da
   return raw_database_functions_->GetMarkedCommandsIds(configuration_id);
 }
 
-::database::type::RowsCount DatabaseFunctions::CommandSummary(::database::type::RowId command_id,
+::database::type::RowsCount DatabaseFunctions::CommandSummary(::database::type::RowId agent_name_id,
+                                                              ::database::type::RowId command_id,
                                                               ::database::type::RowIds date_range_ids) {
   BOOST_LOG_TRIVIAL(debug) << "bash::database::DatabaseFunctions::CommandSummary: Function call";
 
-  return raw_database_functions_->CommandSummary(command_id, date_range_ids);
+  return raw_database_functions_->CommandSummary(agent_name_id, command_id, date_range_ids);
 }
 
 void DatabaseFunctions::AddSelectedCommandsIds(::database::type::RowId configuration_id,

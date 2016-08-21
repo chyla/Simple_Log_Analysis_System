@@ -304,7 +304,7 @@ void Scripts::CalculateCommandStatistics(::database::type::RowId agent_name_id,
           << "agent_name_id=" << agent_name_id << "; command_id=" << command_id
           << "; begin_date_id=" << begin_date_id << "; end_date_id=" << end_date_id;
 
-      auto summary = database_functions_->CommandSummary(command_id, date_range_ids);
+      auto summary = database_functions_->CommandSummary(agent_name_id, command_id, date_range_ids);
 
       cs.command_id = command_id;
       cs.summary = summary;

@@ -68,8 +68,8 @@ void RawDatabaseFunctions::CreateTables() {
                         "  foreign key(COMMAND_ID) references BASH_COMMAND_TABLE(ID) "
                         ");");
 
-  sqlite_wrapper_->Exec("create index if not exists BASH_DAILY_STATISTICS_TABLE_DATE_COMMAND"
-                        " on BASH_DAILY_STATISTICS_TABLE (DATE_ID, COMMAND_ID);");
+  sqlite_wrapper_->Exec("create index if not exists BASH_DAILY_STATISTICS_TABLE_DATE_COMMAND_AGENT_NAME_ID"
+                        " on BASH_DAILY_STATISTICS_TABLE (DATE_ID, COMMAND_ID, AGENT_NAME_ID);");
 
   sqlite_wrapper_->Exec("create table if not exists BASH_ANOMALY_DETECTION_CONFIGURATION_TABLE ("
                         "  ID integer primary key, "
@@ -1086,12 +1086,12 @@ void RawDatabaseFunctions::AddSelectedCommandsIds(::database::type::RowId config
   sqlite_wrapper_->Exec(sql);
 }
 
-::database::type::RowsCount RawDatabaseFunctions::CommandSummary(::database::type::RowId command_id, ::database::type::RowIds date_range_ids) {
+::database::type::RowsCount RawDatabaseFunctions::CommandSummary(::database::type::RowId agent_name_id, ::database::type::RowId command_id, ::database::type::RowIds date_range_ids) {
   BOOST_LOG_TRIVIAL(debug) << "bash::database::detail::RawDatabaseFunctions::CommandSummary: Function call";
 
   string sql =
       "select sum(SUMMARY) from BASH_DAILY_STATISTICS_TABLE "
-      " indexed by BASH_DAILY_STATISTICS_TABLE_DATE_COMMAND "
+      " indexed by BASH_DAILY_STATISTICS_TABLE_DATE_COMMAND_AGENT_NAME_ID "
       " where "
       "  DATE_ID in (";
 
@@ -1103,7 +1103,10 @@ void RawDatabaseFunctions::AddSelectedCommandsIds(::database::type::RowId config
       sql += ", ";
   }
 
-  sql += ") and COMMAND_ID=" + to_string(command_id) + ";";
+  sql += ") "
+      " and COMMAND_ID=" + to_string(command_id) +
+      " and AGENT_NAME_ID=" + to_string(agent_name_id) +
+      ";";
 
   return sqlite_wrapper_->GetFirstInt64Column(sql, 0);
 }

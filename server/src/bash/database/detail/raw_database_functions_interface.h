@@ -96,7 +96,8 @@ class RawDatabaseFunctionsInterface {
   virtual ::database::type::RowIds GetMarkedCommandsIds(::database::type::RowId configuration_id) = 0;
   virtual void AddSelectedCommandsIds(::database::type::RowId configuration_id,
                                       ::database::type::RowIds command_names_ids) = 0;
-  virtual ::database::type::RowsCount CommandSummary(::database::type::RowId command_id,
+  virtual ::database::type::RowsCount CommandSummary(::database::type::RowId agent_name_id,
+                                                     ::database::type::RowId command_id,
                                                      ::database::type::RowIds date_range_ids) = 0;
 
   virtual ::database::type::RowIds GetNotCalculatedDatesIdsFromLogs(::database::type::RowId agent_name_id,

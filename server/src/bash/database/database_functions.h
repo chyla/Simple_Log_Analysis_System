@@ -92,7 +92,8 @@ class DatabaseFunctions : public detail::DatabaseFunctionsInterface {
                                                            ::database::type::RowId end_date_id) override;
   detail::entity::CommandsStatistics GetCommandsStatistics(::database::type::RowId configuration_id) override;
   ::database::type::RowIds GetMarkedCommandsIds(::database::type::RowId configuration_id) override;
-  ::database::type::RowsCount CommandSummary(::database::type::RowId command_id,
+  ::database::type::RowsCount CommandSummary(::database::type::RowId agent_name_id,
+                                             ::database::type::RowId command_id,
                                              ::database::type::RowIds date_range_ids) override;
   void AddSelectedCommandsIds(::database::type::RowId configuration_id,
                               ::database::type::RowIds command_names_ids) override;

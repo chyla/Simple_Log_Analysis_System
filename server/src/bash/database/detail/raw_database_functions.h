@@ -91,7 +91,8 @@ class RawDatabaseFunctions : public RawDatabaseFunctionsInterface {
   ::database::type::RowIds GetMarkedCommandsIds(::database::type::RowId configuration_id) override;
   void AddSelectedCommandsIds(::database::type::RowId configuration_id,
                               ::database::type::RowIds command_names_ids) override;
-  ::database::type::RowsCount CommandSummary(::database::type::RowId command_id,
+  ::database::type::RowsCount CommandSummary(::database::type::RowId agent_name_id,
+                                             ::database::type::RowId command_id,
                                              ::database::type::RowIds date_range_ids) override;
 
   ::database::type::RowIds GetNotCalculatedDatesIdsFromLogs(::database::type::RowId agent_name_id,
