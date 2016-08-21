@@ -97,8 +97,8 @@ void RawDatabaseFunctions::CreateTables() {
                         "  unique (AGENT_NAME_ID, COMMAND_ID, BEGIN_DATE_ID, END_DATE_ID) "
                         ");");
 
-  sqlite_wrapper_->Exec("create index if not exists BASH_DATE_RANGE_COMMANDS_STATISTICS_TABLE_AGENT_NAME_BEGIN_DATE_END_DATE"
-                        " on BASH_DATE_RANGE_COMMANDS_STATISTICS_TABLE (AGENT_NAME_ID, BEGIN_DATE_ID, END_DATE_ID);");
+  sqlite_wrapper_->Exec("create index if not exists BASH_DATE_RANGE_COMMANDS_STATISTICS_TABLE_AGENT_NAME_BEGIN_DATE_END_DATE_SUMMARY"
+                        " on BASH_DATE_RANGE_COMMANDS_STATISTICS_TABLE (AGENT_NAME_ID, BEGIN_DATE_ID, END_DATE_ID, SUMMARY);");
 
   sqlite_wrapper_->Exec("create index if not exists BASH_DATE_RANGE_COMMANDS_STATISTICS_TABLE_AGENT_NAME_COMMAND_BEGIN_DATE_END_DATE"
                         " on BASH_DATE_RANGE_COMMANDS_STATISTICS_TABLE (AGENT_NAME_ID, COMMAND_ID, BEGIN_DATE_ID, END_DATE_ID);");
@@ -946,13 +946,15 @@ entity::CommandsStatistics RawDatabaseFunctions::GetCommandsStatistics(::databas
   stat.end_date_id = end_date_id;
 
   string sql = "select ID, SUMMARY, COMMAND_ID from BASH_DATE_RANGE_COMMANDS_STATISTICS_TABLE "
-      " indexed by BASH_DATE_RANGE_COMMANDS_STATISTICS_TABLE_AGENT_NAME_BEGIN_DATE_END_DATE"
+      " indexed by BASH_DATE_RANGE_COMMANDS_STATISTICS_TABLE_AGENT_NAME_BEGIN_DATE_END_DATE_SUMMARY"
       " where "
       "  AGENT_NAME_ID=" + to_string(agent_name_id) +
       " and "
       "  BEGIN_DATE_ID=" + to_string(begin_date_id) +
       " and "
       "  END_DATE_ID=" + to_string(end_date_id) +
+      " and "
+      " SUMMARY > 0 "
       ";";
 
   sqlite3_stmt *statement = nullptr;
@@ -999,7 +1001,10 @@ entity::CommandsStatistics RawDatabaseFunctions::GetCommandsStatistics(::databas
       " on BDRCST.AGENT_NAME_ID=BADCT.AGENT_NAME_ID "
       "   and BDRCST.BEGIN_DATE_ID=BADCT.BEGIN_DATE_ID "
       "   and BDRCST.END_DATE_ID=BADCT.END_DATE_ID "
-      " where BADCT.ID=" + to_string(configuration_id) + ";";
+      " where BADCT.ID=" + to_string(configuration_id) +
+      " and "
+      " BDRCST.SUMMARY > 0 "
+      ";";
 
   sqlite3_stmt *statement = nullptr;
   sqlite_wrapper_->Prepare(sql, &statement);
