@@ -41,7 +41,7 @@ make install
 make -j 3 check
 
 # build bash
-cd ${START_DIR}/agent/bash/bash-4.3
+cd ${START_DIR}/bash/bash-4.3
 ./autogen.sh
 ./configure --prefix=${BASH_INSTALL_DIR}
 make -j 3
