@@ -24,20 +24,22 @@
     <div class="action-buttons-right">
         <form class="pure-form" method="post" action="{% url 'apache:configure_anomaly_detection_correct_sessions_marks_automatically_mark_anomalies' %}">
             {% csrf_token %}
-            
+
             <input type="hidden" name="agent_name" value="{{ agent_name }}">
             <input type="hidden" name="virtualhost_name" value="{{ virtualhost_name }}">
-    
+
             <button type="submit" class="pure-button pure-button-primary">
                 <i class="fa fa-magic" aria-hidden="true"></i>
                 Automatically mark sessions as anomalies
             </button>
         </form>
     </div>
+</div>
     
+<div class="col-sm-12">
     <form class="pure-form" method="post" action="{% url 'apache:configure_anomaly_detection_save_settings' %}">
         {% csrf_token %}
-        
+
         <input type="hidden" name="agent_name" value="{{ agent_name }}">
         <input type="hidden" name="virtualhost_name" value="{{ virtualhost_name }}">
 
@@ -56,7 +58,7 @@
                         <th>Is anomaly</th>
                     </tr>
                 </thead>
-    
+
                 <tbody>
                 {% for s in sessions %}
                     <tr id="table_row_{{ s.id }}"
@@ -80,7 +82,7 @@
                             <input type="hidden" name="rows_ids" value="{{ s.id }}">
                             <input id="table_check_button_{{ s.id }}" type="checkbox" name="checks" value="{{ s.id }}"
                              {% if s.classification == CLASSIFICATION_ANOMALY %}
-                                checked="checked" 
+                                checked="checked"
                              {% endif %}
                                 onclick="change_table_row_color({{ s.id }})"
                              >
