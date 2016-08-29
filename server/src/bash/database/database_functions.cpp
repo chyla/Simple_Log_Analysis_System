@@ -369,6 +369,13 @@ void DatabaseFunctions::RemoveDailyStatisticsFromConfiguration(::database::type:
   return raw_database_functions_->GetDailyUserStatisticsForAgent(agent_name_id, date_range_ids);
 }
 
+::bash::database::detail::entity::DailyUserStatistics DatabaseFunctions::GetDailyUserStatisticsWithoutLearningSetForAgent(::database::type::RowId agent_name_id,
+                                                                                                                          const ::database::type::RowIds &date_range_ids) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::DatabaseFunctions::GetDailyUserStatisticsWithoutLearningSetForAgent: Function call";
+
+  return raw_database_functions_->GetDailyUserStatisticsWithoutLearningSetForAgent(agent_name_id, date_range_ids);
+}
+
 ::database::type::RowIds DatabaseFunctions::GetUsersIdsFromSelectedDailyStatisticsInConfiguration(::database::type::RowId configuration_id) {
   BOOST_LOG_TRIVIAL(debug) << "bash::database::DatabaseFunctions::GetUsersIdsFromDailyStatistics: Function call";
 

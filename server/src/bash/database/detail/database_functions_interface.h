@@ -115,6 +115,8 @@ class DatabaseFunctionsInterface {
 
   virtual ::bash::database::detail::entity::DailyUserStatistics GetDailyUserStatisticsForAgent(::database::type::RowId agent_name_id,
                                                                                                const ::database::type::RowIds &date_range_ids) = 0;
+  virtual ::bash::database::detail::entity::DailyUserStatistics GetDailyUserStatisticsWithoutLearningSetForAgent(::database::type::RowId agent_name_id,
+                                                                                                                 const ::database::type::RowIds &date_range_ids) = 0;
 
   virtual ::database::type::RowIds GetUsersIdsFromSelectedDailyStatisticsInConfiguration(::database::type::RowId configuration_id) = 0;
   virtual ::database::type::RowId CountSelectedDailyStatisticsWithoutUnknownClassificationInConfiguration(::database::type::RowId configuration_id) = 0;

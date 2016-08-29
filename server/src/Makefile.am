@@ -27,6 +27,7 @@ slas_server_SOURCES	= main.cpp \
 				bash/web/command_executor_object.cpp \
 				bash/web/detail/get_agents_with_existing_daily_user_statistics.cpp \
 				bash/web/detail/get_daily_user_statistics_for_agent.cpp \
+				bash/web/detail/get_daily_user_statistics_without_learning_set_for_agent.cpp \
 				bash/web/detail/get_anomaly_detection_configuration.cpp \
 				bash/web/detail/get_commands_statistics.cpp \
 				bash/web/detail/get_commands_statistics_by_configuration_id.cpp \

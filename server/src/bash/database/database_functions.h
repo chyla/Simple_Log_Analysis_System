@@ -111,6 +111,8 @@ class DatabaseFunctions : public detail::DatabaseFunctionsInterface {
 
   ::bash::database::detail::entity::DailyUserStatistics GetDailyUserStatisticsForAgent(::database::type::RowId agent_name_id,
                                                                                        const ::database::type::RowIds &date_range_ids) override;
+  ::bash::database::detail::entity::DailyUserStatistics GetDailyUserStatisticsWithoutLearningSetForAgent(::database::type::RowId agent_name_id,
+                                                                                                         const ::database::type::RowIds &date_range_ids) override;
 
   ::database::type::RowIds GetUsersIdsFromSelectedDailyStatisticsInConfiguration(::database::type::RowId agent_name_id) override;
   ::database::type::RowId CountSelectedDailyStatisticsWithoutUnknownClassificationInConfiguration(::database::type::RowId configuration_id) override;

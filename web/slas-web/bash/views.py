@@ -212,7 +212,7 @@ def review_detection_results_show_results(request):
     end_date = request.GET.get('end_date', util.get_default_end_date())
 
     try:
-        sessions = util.bash_get_daily_user_statistics_for_agent(agent_name_id, begin_date, end_date)
+        sessions = util.bash_get_daily_user_statistics_without_learning_set_for_agent(agent_name_id, begin_date, end_date)
     except Exception as e:
         exception = str(e)
 

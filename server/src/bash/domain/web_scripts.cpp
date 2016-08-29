@@ -68,6 +68,14 @@ void WebScripts::SaveConfiguration(::database::type::RowId agent_name_id,
   return scripts_->GetDailyUserStatisticsForAgent(agent_name_id, begin_date, end_date);
 }
 
+::bash::domain::type::DailyUserStatistics WebScripts::GetDailyUserStatisticsWithoutLearningSetForAgent(::database::type::RowId agent_name_id,
+                                                                                                       const ::type::Date &begin_date,
+                                                                                                       const ::type::Date &end_date) {
+  BOOST_LOG_TRIVIAL(debug) << "bash::domain::WebScripts::GetDailyUserStatisticsWithoutLearningSetForAgent: Function call";
+
+  return scripts_->GetDailyUserStatisticsWithoutLearningSetForAgent(agent_name_id, begin_date, end_date);
+}
+
 ::bash::domain::type::DailyUserStatistic WebScripts::GetDailyUserStatisticById(::database::type::RowId id) {
   BOOST_LOG_TRIVIAL(debug) << "bash::domain::WebScripts::GetDailyUserStatisticById: Function call";
 
