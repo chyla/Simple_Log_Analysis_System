@@ -35,6 +35,7 @@ Vagrant.configure(2) do |config|
      sudo bash /vagrant/vagrant_scripts/install_gtest_gmock.sh
 
      echo 'export PYTHONDONTWRITEBYTECODE=1' >> /home/vagrant/.bashrc
+     echo 'cd /vagrant' >> /home/vagrant/.bashrc
    SHELL
 
    config.vm.define "server", primary: true do |server|
