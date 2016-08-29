@@ -44,25 +44,12 @@ Vagrant.configure(2) do |config|
      server.vm.network "forwarded_port", guest: 8000, host: 8000
    end
 
-   config.vm.define "agentA" do |agentA|
-     agentA.vm.hostname = "agentA"
-     agentA.vm.network "private_network", ip: "192.168.173.20"
-     agentA.vm.network "forwarded_port", guest: 80, host: 8081
+   config.vm.define "agent" do |agent|
+     agent.vm.hostname = "agent"
+     agent.vm.network "private_network", ip: "192.168.173.20"
+     agent.vm.network "forwarded_port", guest: 80, host: 8081
 
-     agentA.vm.provision "shell", inline: <<-SHELL
-       set -v
-       export DEBIAN_FRONTEND=noninteractive
-
-       sudo apt-get install -y apache2 httping
-     SHELL
-   end
-
-   config.vm.define "agentB" do |agentB|
-     agentB.vm.hostname = "agentB"
-     agentB.vm.network "private_network", ip: "192.168.173.21"
-     agentB.vm.network "forwarded_port", guest: 80, host: 8082
-
-     agentB.vm.provision "shell", inline: <<-SHELL
+     agent.vm.provision "shell", inline: <<-SHELL
        set -v
        export DEBIAN_FRONTEND=noninteractive
 
