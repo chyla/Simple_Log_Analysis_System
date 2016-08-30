@@ -11,11 +11,11 @@ import util
 def status(request):
     exception = None
     configurations = None
-    agents_with_existing_sessions = None
+    bash_get_agents_with_existing_sessions_not_in_learning_set = None
 
     try:
         configurations = util.bash_get_anomaly_detection_configurations()
-        agents_with_existing_sessions = util.bash_get_agents_with_existing_sessions()
+        bash_get_agents_with_existing_sessions_not_in_learning_set = util.bash_get_agents_with_existing_sessions_not_in_learning_set()
     except Exception as e:
         exception = str(e)
 
@@ -23,7 +23,7 @@ def status(request):
                   'bash/status.html',
                   {'exception' : exception,
                    'configurations' : configurations,
-                   'agents_with_existing_sessions' : agents_with_existing_sessions,
+                   'bash_get_agents_with_existing_sessions_not_in_learning_set' : bash_get_agents_with_existing_sessions_not_in_learning_set,
                    })
 
 @login_required

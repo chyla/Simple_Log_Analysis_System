@@ -22,6 +22,7 @@
 #include "detail/get_daily_user_statistic_by_id.h"
 #include "detail/get_daily_user_named_commands_statistics.h"
 #include "detail/get_daily_user_statistics_without_learning_set_for_agent.h"
+#include "detail/get_agents_with_existing_sessions_not_in_learning_set.h"
 
 #include <boost/log/trivial.hpp>
 #include <json/json.hpp>
@@ -81,7 +82,8 @@ scripts_(scripts) {
     detail::SetSessionsAsAnomalies::Create(scripts),
     detail::GetDailyUserStatisticById::Create(scripts),
     detail::GetDailyUserNamedCommandsStatistics::Create(scripts),
-    detail::GetDailyUserStatisticsWithoutLearningSetForAgent::Create(scripts)
+    detail::GetDailyUserStatisticsWithoutLearningSetForAgent::Create(scripts),
+    detail::GetAgentsWithExistingSessionsNotInLearningSet::Create(scripts)
   };
 
   for (auto &c : web_commands)

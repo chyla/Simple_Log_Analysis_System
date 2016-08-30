@@ -694,6 +694,48 @@ void RawDatabaseFunctions::AddDailyUserCommandStatistic(const ::bash::database::
   return names;
 }
 
+::database::entity::AgentNames RawDatabaseFunctions::GetAgentsWithExistingDailyUserStatisticsNotInLearningSet() {
+  BOOST_LOG_TRIVIAL(debug) << "bash::database::detail::RawDatabaseFunctions::GetAgentsWithExistingDailyUserStatisticsNotInLearningSet: Function call";
+
+  ::database::entity::AgentNames names;
+  ::database::entity::AgentName name;
+
+  const char *sql =
+      "select distinct AN.ID, AN.AGENT_NAME from BASH_DAILY_USER_STATISTICS_TABLE as BDUST "
+      " left join AGENT_NAMES as AN "
+      " on BDUST.AGENT_NAME_ID=AN.ID "
+      " where "
+      " BDUST.ID not in (select STATISTIC_ID from BASH_ANOMALY_DETECTION_CONFIGURATION_SELECTED_STATISTICS_TABLE);";
+
+  sqlite3_stmt *statement = nullptr;
+  sqlite_wrapper_->Prepare(sql, &statement);
+
+  try {
+    do {
+      auto ret = sqlite_wrapper_->Step(statement);
+
+      if (ret == SQLITE_ROW) {
+        name.id = sqlite_wrapper_->ColumnInt64(statement, 0);
+        name.agent_name = sqlite_wrapper_->ColumnText(statement, 1);
+
+        names.push_back(name);
+      }
+      else
+        break;
+    }
+    while (true);
+  }
+  catch (::database::exception::DatabaseException &ex) {
+    BOOST_LOG_TRIVIAL(debug) << "bash::database::detail::RawDatabaseFunctions::GetAgentsWithExistingDailyUserStatistics: Exception catched: " << ex.what();
+    sqlite_wrapper_->Finalize(statement);
+    throw;
+  }
+
+  sqlite_wrapper_->Finalize(statement);
+
+  return names;
+}
+
 ::database::type::RowsCount RawDatabaseFunctions::CountDailyUserStatisticsForAgentWithClassification(::database::type::RowId agent_name_id,
                                                                                                      ::database::type::Classification classification) {
   BOOST_LOG_TRIVIAL(debug) << "bash::database::detail::RawDatabaseFunctions::CountDailyUserStatisticsForAgentWithClassification: Function call";
@@ -1340,7 +1382,7 @@ void RawDatabaseFunctions::RemoveDailyStatisticsFromConfiguration(::database::ty
 }
 
 ::bash::database::detail::entity::DailyUserStatistics RawDatabaseFunctions::GetDailyUserStatisticsWithoutLearningSetForAgent(::database::type::RowId agent_name_id,
-                                                                                                           const ::database::type::RowIds &date_range_ids) {
+                                                                                                                             const ::database::type::RowIds &date_range_ids) {
   BOOST_LOG_TRIVIAL(debug) << "bash::database::detail::RawDatabaseFunctions::GetDailyUserStatisticsWithoutLearningSetForAgent: Function call";
 
   string sql =

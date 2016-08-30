@@ -58,6 +58,7 @@ class ScriptsInterface {
                                                                                                      const ::type::Date &end_date) = 0;
   virtual ::bash::domain::type::DailyUserStatistic GetDailyUserStatisticById(::database::type::RowId id) = 0;
   virtual ::database::entity::AgentNames GetAgentsWithExistingDailyUserStatistics() = 0;
+  virtual ::database::entity::AgentNames GetAgentsWithExistingDailyUserStatisticsNotInLearningSet() = 0;
   virtual void UpdateDailyUserStatisticsClassification(::database::type::RowId configuration_id,
                                                        ::database::type::RowIds normal_ids,
                                                        ::database::type::RowIds anomaly_ids) = 0;

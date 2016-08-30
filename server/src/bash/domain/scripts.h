@@ -53,6 +53,8 @@ class Scripts : public detail::ScriptsInterface {
                                                                                              const ::type::Date &end_date) override;
   ::bash::domain::type::DailyUserStatistic GetDailyUserStatisticById(::database::type::RowId id) override;
   ::database::entity::AgentNames GetAgentsWithExistingDailyUserStatistics() override;
+  ::database::entity::AgentNames GetAgentsWithExistingDailyUserStatisticsNotInLearningSet() override;
+
   void UpdateDailyUserStatisticsClassification(::database::type::RowId configuration_id,
                                                ::database::type::RowIds normal_ids,
                                                ::database::type::RowIds anomaly_ids) override;

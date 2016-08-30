@@ -75,7 +75,7 @@
 <h2>Sessions classification</h2>
 
 <div class="col-sm-12">
-    {% if agents_with_existing_sessions|length > 0 %}
+    {% if bash_get_agents_with_existing_sessions_not_in_learning_set|length > 0 %}
     <div class="scrollable">
         <table class="table table custab sortable">
             <thead>
@@ -86,7 +86,7 @@
             </thead>
 
             <tbody>
-                {% for s in agents_with_existing_sessions %}
+                {% for s in bash_get_agents_with_existing_sessions_not_in_learning_set %}
                     <tr {% cycle '' 'class="custab-odd"' %}>
                         <td> {{ s.agent_name }} </td>
                         <td>

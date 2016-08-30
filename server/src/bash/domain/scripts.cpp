@@ -287,6 +287,12 @@ void Scripts::RemoveDailyStatisticsFromConfiguration(::database::type::RowId con
   return s;
 }
 
+::database::entity::AgentNames Scripts::GetAgentsWithExistingDailyUserStatisticsNotInLearningSet() {
+  BOOST_LOG_TRIVIAL(debug) << "bash::domain::Scripts::GetAgentsWithExistingDailyUserStatisticsNotInLearningSet: Function call";
+
+  return database_functions_->GetAgentsWithExistingDailyUserStatisticsNotInLearningSet();
+}
+
 ::database::entity::AgentNames Scripts::GetAgentsWithExistingDailyUserStatistics() {
   BOOST_LOG_TRIVIAL(debug) << "bash::domain::Scripts::GetAgentsWithExistingDailyUserStatistics: Function call";
 
