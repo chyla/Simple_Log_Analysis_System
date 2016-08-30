@@ -42,6 +42,8 @@ class System : public ::network::detail::SystemInterface {
 
   MOCK_METHOD5(Getsockopt, int(int sockfd, int level, int optname, void *optval, socklen_t *optlen));
 
+  MOCK_METHOD5(Setsockopt, int(int sockfd, int level, int optname, void *optval, socklen_t *optlen));
+
   MOCK_METHOD1(Time, time_t(time_t *t));
 
   MOCK_METHOD1(GMTime, struct tm*(const time_t *timep));

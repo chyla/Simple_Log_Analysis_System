@@ -36,6 +36,8 @@ class System : public SystemInterface {
 
   int Getsockopt(int sockfd, int level, int optname, void *optval, socklen_t *optlen) override;
 
+  int Setsockopt(int sockfd, int level, int optname, const void *optval, socklen_t optlen) override;
+
   time_t Time(time_t *t) override;
 
   struct tm *GMTime(const time_t *timep) override;

@@ -42,6 +42,8 @@ class SystemInterface {
 
   virtual int Getsockopt(int sockfd, int level, int optname, void *optval, socklen_t *optlen) = 0;
 
+  virtual int Setsockopt(int sockfd, int level, int optname, const void *optval, socklen_t optlen) = 0;
+
   virtual time_t Time(time_t *t) = 0;
 
   virtual struct tm *GMTime(const time_t *timep) = 0;

@@ -62,6 +62,10 @@ int System::Getsockopt(int sockfd, int level, int optname, void *optval, socklen
   return getsockopt(sockfd, level, optname, optval, optlen);
 }
 
+int System::Setsockopt(int sockfd, int level, int optname, const void *optval, socklen_t optlen) {
+  return setsockopt(sockfd, level, optname, optval, optlen);
+}
+
 time_t System::Time(time_t *t) {
   return time(t);
 }

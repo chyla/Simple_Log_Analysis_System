@@ -283,6 +283,13 @@ int Network::OpenSocket(int domain, struct sockaddr *saddr, int saddr_size) {
 
   socket_fd = Socket(domain);
 
+  int optval = 1;
+  ret = system_->Setsockopt(socket_fd, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof optval);
+  if (ret < 0) {
+    BOOST_LOG_TRIVIAL(error) << "libpatlms::network::Network::OpenSocket: Setsockopt error: " << strerror(errno);
+    throw exception::detail::CantOpenSocketException();
+  }
+
   ret = system_->Bind(socket_fd, saddr, saddr_size);
   if (ret < 0) {
     BOOST_LOG_TRIVIAL(error) << "libpatlms::network::Network::OpenSocket: Bind error: " << strerror(errno);
