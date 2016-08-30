@@ -307,3 +307,8 @@ input.slas-form-input {
 #commands_chart {
   height: 350px;
 }
+
+.help-title {
+  font-weight: bold;
+  
+}
