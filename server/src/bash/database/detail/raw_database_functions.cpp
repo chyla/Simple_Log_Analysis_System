@@ -491,7 +491,10 @@ void RawDatabaseFunctions::AddDailySystemStatistics(const entity::DailySystemSta
   string sql =
       "select AN.ID from AGENT_NAMES as AN "
       " left join BASH_ANOMALY_DETECTION_CONFIGURATION_TABLE as BADCT "
-      " on AN.ID=BADCT.AGENT_NAME_ID where BADCT.ID is null;";
+      " on AN.ID=BADCT.AGENT_NAME_ID "
+      " where BADCT.ID is null "
+      "   and AN.ID in (select distinct AGENT_NAME_ID from BASH_DAILY_USER_STATISTICS_TABLE)"
+      ";";
 
   sqlite3_stmt *statement = nullptr;
   sqlite_wrapper_->Prepare(sql, &statement);
