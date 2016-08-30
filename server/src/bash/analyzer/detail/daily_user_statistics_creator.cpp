@@ -32,6 +32,8 @@ void DailyUserStatisticsCreator::CreateStatistics(const ::type::Date &today) {
 
   us.classification = ::database::type::Classification::UNKNOWN;
 
+  auto current_date_id = general_database_functions_->GetDateId(today);
+
   auto agents = general_database_functions_->GetAgentsIds();
   BOOST_LOG_TRIVIAL(debug) << "bash::analyzer::detail::DailyUserStatisticsCreator::CreateStatistics: Found " << agents.size() << " agents";
   for (const auto &agent : agents) {
@@ -45,6 +47,11 @@ void DailyUserStatisticsCreator::CreateStatistics(const ::type::Date &today) {
       auto dates = database_functions_->GetNotCalculatedDatesIdsFromLogs(agent, user);
       BOOST_LOG_TRIVIAL(debug) << "bash::analyzer::detail::DailyUserStatisticsCreator::CreateStatistics: Found " << dates.size() << " dates for agent " << agent << ", user " << user;
       for (const auto &date : dates) {
+        if (date == current_date_id) {
+          BOOST_LOG_TRIVIAL(debug) << "bash::analyzer::detail::DailyUserStatisticsCreator::CreateStatistics: Ignoring current date (id=" << current_date_id << ")";
+          continue;
+        }
+
         us.date_id = date;
 
         database_functions_->AddDailyUserStatistic(us);
