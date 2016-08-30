@@ -51,6 +51,7 @@
 <h3>Select agent</h3>
 
 <div class="col-sm-12">
+    {% if unconfigured_agents|length != 0 %}
     <form class="pure-form ws-validate" method="get" action="#">
         <label for="agent_name_id" class="control-label">Agent name:</label>
         <select name="agent_name_id" class='input-max-width' onchange="this.form.submit()">
@@ -69,6 +70,10 @@
             {% endfor %}
         </select>
     </form>
+    {% else %}
+        <i class="fa fa-exclamation" aria-hidden="true"></i>
+        Agents with existing sessions not found.
+    {% endif %}
 </div>
 
 <div class="col-sm-12">

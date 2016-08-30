@@ -53,6 +53,7 @@
 <h3>Select agent and virtualhost</h3>
 
 <div class="col-sm-12">
+    {% if agent_names|length != 0 %}
     <form class="pure-form ws-validate" method="get" action="#">
         <div class="col-sm-6 ws-success">
             <label for="agent_name" class="control-label">Agent name:</label>
@@ -92,6 +93,10 @@
             </select>
         </div>
     </form>
+    {% else %}
+        <i class="fa fa-exclamation" aria-hidden="true"></i>
+        Agents with existing sessions not found.
+    {% endif %}
 
     {% if virtualhost_name != '' and  agent_name != ''%}
         <p class="action-buttons-left">
