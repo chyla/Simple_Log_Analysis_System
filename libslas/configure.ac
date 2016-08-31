@@ -10,7 +10,7 @@ m4_include([m4/ax_boost_log_setup.m4])
 
 AC_PREREQ([2.69])
 AC_INIT(libslas,
-	m4_esyscmd_s(git describe --dirty --always --tags || ( echo "Not a git repository, can't check application version. You can ignore that error." 1>&2 && echo "unknown-version" )),
+  mgr-2016,
 	adam@chyla.org)
 AM_INIT_AUTOMAKE
 AC_CONFIG_HEADERS([config.h])
@@ -136,4 +136,3 @@ PKG_CHECK_MODULES([DBUS], dbus-1 >= 1.6.18)
 # Checks for library functions.
 
 AC_OUTPUT(Makefile src/Makefile tests/Makefile)
-
