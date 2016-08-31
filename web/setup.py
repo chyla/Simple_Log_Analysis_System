@@ -11,7 +11,7 @@ setup(
     description='SLAS web server',
     author='Adam Chyła',
     author_email='adam@chyla.org',
-    license='GPLv3',
+    license='MIT',
     url='https://github.com/chyla/slas',
     packages=find_packages(exclude=['tests.*', 'tests', 'test.*', 'test*']),
 
