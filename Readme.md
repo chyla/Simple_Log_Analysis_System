@@ -1,6 +1,6 @@
 # SLAS - Simple Log Analysis System
 
-[Documentation [PL]](http://docs.chyla.org/doku.php?id=chyla:oprogramowanie:slas)
+[Documentation [PL]](http://chyla.org/project/Simple_Log_Analysis_System/)
 
 [Travis](https://travis-ci.org/chyla/slas)
 
